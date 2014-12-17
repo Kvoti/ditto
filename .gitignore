@@ -30,3 +30,5 @@ node_modules/
 
 # Campass
 .sass-cache
+
+production-vars.py

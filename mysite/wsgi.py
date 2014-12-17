@@ -21,6 +21,7 @@ import os
 # os.environ["DJANGO_SETTINGS_MODULE"] = ".settings"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config")
 os.environ.setdefault("DJANGO_CONFIGURATION", "Production")
+execfile('/srv/venv/mysite/mysite/production-vars.py')
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
