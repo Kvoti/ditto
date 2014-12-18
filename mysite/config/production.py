@@ -88,14 +88,14 @@ class Production(Common):
     # END STORAGE CONFIGURATION
 
     # EMAIL
-    DEFAULT_FROM_EMAIL = values.Value('mysite <noreply@example.com>')
-    EMAIL_HOST = values.Value('smtp.sendgrid.com')
-    # EMAIL_HOST_PASSWORD = values.SecretValue(environ_prefix="", environ_name="SENDGRID_PASSWORD")
-    # EMAIL_HOST_USER = values.SecretValue(environ_prefix="", environ_name="SENDGRID_USERNAME")
-    EMAIL_PORT = values.IntegerValue(587, environ_prefix="", environ_name="EMAIL_PORT")
+    DEFAULT_FROM_EMAIL = values.Value('hello <hello@digital-impacts.com>')
+    EMAIL_HOST = values.Value('smtp.mailgun.com')
+    EMAIL_HOST_PASSWORD = values.SecretValue(environ_prefix="", environ_name="MAILGUN_PASSWORD")
+    EMAIL_HOST_USER = values.SecretValue(environ_prefix="", environ_name="MAILGUN_USERNAME")
+    EMAIL_PORT = values.IntegerValue(465, environ_prefix="", environ_name="EMAIL_PORT")
     EMAIL_SUBJECT_PREFIX = values.Value('[mysite] ', environ_name="EMAIL_SUBJECT_PREFIX")
-    EMAIL_USE_TLS = True
-    # SERVER_EMAIL = EMAIL_HOST_USER
+    EMAIL_USE_SSL = True
+    SERVER_EMAIL = EMAIL_HOST_USER
     # END EMAIL
 
     # TEMPLATE CONFIGURATION
