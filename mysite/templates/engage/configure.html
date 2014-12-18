@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="POST" action="{% url 'configure' %}">
+    {% csrf_token %}
+    <fieldset>
+        <legend>{% trans "Name" %}</legend>
+        {{ form|crispy }}
+    </fieldset>
+    <fieldset>
+        <legend>{% trans "Roles" %}</legend>
+        {{ formset|crispy }}
+    </fieldset>
+    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+</form>
+{% endblock %}
