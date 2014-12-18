@@ -32,3 +32,5 @@ node_modules/
 .sass-cache
 
 production-vars.py
+
+.vagrant
