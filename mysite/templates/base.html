@@ -42,6 +42,7 @@
 
           {% if request.user.is_authenticated %}
             <li><a href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a></li>
+            <li><a href="{% url 'engage:configure' %}">{% trans "Configure" %}</a></li>
             <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
           {% else %}
             <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
@@ -50,6 +51,7 @@
         </ul>
       </div>
     </div>
+    <div class="container">{% block subnav %}{% endblock %}</div>
 
     <div class="container">
         

@@ -1,10 +1,12 @@
-{% extends "base.html" %}
+{% extends "engage/base.html" %}
 
 {% load i18n %}
 {% load crispy_forms_tags %}
 
+{% block roles_active %}active{% endblock %}
+
 {% block content %}
-<form method="POST" action="{% url 'configure' %}">
+<form method="POST" action="{% url 'engage:configure' %}">
     {% csrf_token %}
     <fieldset>
         <legend>{% trans "Name" %}</legend>

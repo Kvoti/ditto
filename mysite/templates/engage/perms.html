@@ -1,10 +1,12 @@
-{% extends "base.html" %}
+{% extends "engage/base.html" %}
 
 {% load i18n %}
 {% load crispy_forms_tags %}
 
+{% block perms_active %}active{% endblock %}
+
 {% block content %}
-<form method="POST" action="{% url 'permissions' %}">
+<form method="POST" action="{% url 'engage:permissions' %}">
     {% csrf_token %}
     {# TODO |crispy makes something go nuts here and produce 1000's of queries! #}
     {{ formset }}
