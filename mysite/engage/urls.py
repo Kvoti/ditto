@@ -10,4 +10,10 @@ urlpatterns = patterns('',
         view=views.configure,
         name='configure'
     ),
+
+    url(
+        regex=r'^perms/$',
+        view=views.features,
+        name='permissions'
+    ),
 )

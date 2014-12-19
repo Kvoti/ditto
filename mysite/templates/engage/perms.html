@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="POST" action="{% url 'permissions' %}">
+    {% csrf_token %}
+    {# TODO |crispy makes something go nuts here and produce 1000's of queries! #}
+    {{ formset }}
+    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+</form>
+{% endblock %}
