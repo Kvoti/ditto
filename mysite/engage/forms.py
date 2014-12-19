@@ -24,7 +24,13 @@ class PermissionsForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ('name', 'permissions',)
-        widgets = {'permissions': forms.CheckboxSelectMultiple}
+        widgets = {
+            'permissions': forms.CheckboxSelectMultiple,
+            # TODO use a proper read only widget
+            'name': forms.TextInput(attrs={
+                'readonly': 'readonly',
+            }),
+        }
         
     def __init__(self, *args, **kwargs):
         super(PermissionsForm, self).__init__(*args, **kwargs)
