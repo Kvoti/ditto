@@ -233,6 +233,17 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         }
         _currentID = null;
         _threadType = action.threadType;
+        if (_threadType === SESSION) {
+            _currentSessionID = _currentID
+        } else {
+            _currentMessageID = _currentID
+        }
+        if (!_threads[_currentID]) {
+            _threads[_currentID] = {
+                id: _currentID,
+                name: _currentID
+            }
+        }
         ThreadStore.emitChange();
         break;
         
