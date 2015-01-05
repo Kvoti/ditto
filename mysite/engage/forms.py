@@ -36,8 +36,13 @@ class PermissionsForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super(PermissionsForm, self).__init__(*args, **kwargs)
-        self.fields['permissions'].queryset = Permission.objects.annotate(
-            features=Count('feature')).filter(features__gt=0)
+        self.fields['permissions'].queryset = (
+            Permission.objects.filter(
+                feature__is_active=True)
+            .annotate(
+                features=Count('feature'))
+            .filter(features__gt=0)
+        )
 
         
 PermissionsFormSet = forms.models.modelformset_factory(
