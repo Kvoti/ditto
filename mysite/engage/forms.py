@@ -4,6 +4,8 @@ from django.contrib.sites.models import Site
 from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 
+from . import models
+
 
 class NetworkNameForm(forms.ModelForm):
     class Meta:
@@ -40,3 +42,6 @@ class PermissionsForm(forms.ModelForm):
         
 PermissionsFormSet = forms.models.modelformset_factory(
     Group, form=PermissionsForm)
+
+FeatureFormSet = forms.models.modelformset_factory(
+    models.Feature, fields=('is_active',), extra=0)

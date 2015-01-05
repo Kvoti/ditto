@@ -5,7 +5,10 @@ class Feature(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField()
     permissions = models.ManyToManyField('auth.Permission')
-
+    # default is_active to True so any fresh instance has everything
+    # turned on
+    is_active = models.BooleanField(default=True)
+    
     class Meta:
         # TODO put these here for now until we have the right model/app to hang them off
         permissions = (

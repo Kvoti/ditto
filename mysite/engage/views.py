@@ -26,7 +26,7 @@ def configure(request):
     })
 
 
-def features(request):
+def permissions(request):
     if request.method == 'POST':
         formset = forms.PermissionsFormSet(data=request.POST)
         if formset.is_valid():
@@ -37,5 +37,20 @@ def features(request):
         formset = forms.PermissionsFormSet()
         
     return render(request, 'engage/perms.html', {
+        'formset': formset,
+    })
+
+
+def features(request):
+    if request.method == 'POST':
+        formset = forms.FeatureFormSet(data=request.POST)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "Configuration successfully updated")
+            return HttpResponseRedirect(request.path)
+    else:
+        formset = forms.FeatureFormSet()
+        
+    return render(request, 'engage/features.html', {
         'formset': formset,
     })

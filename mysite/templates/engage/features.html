@@ -1,0 +1,17 @@
+{% extends "engage/base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block features_active %}active{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'engage:features' %}">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form.instance.name }} {{ form|crispy }}
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+</form>
+{% endblock %}
