@@ -49,5 +49,28 @@ PermissionsFormSet = forms.models.modelformset_factory(
     Group, form=PermissionsForm)
 
 
+class FeatureForm(forms.ModelForm):
+    """Used with FeatureFormSet to set the label for the is_active field
+    to the feature name. Used on the feature selection page so you get
+
+             Blog: [ ]
+        Messaging: [ ]
+
+    instead of
+
+        Is active: [ ]
+        Is active: [ ]
+
+    """
+    
+    class Meta:
+        model = models.Feature
+
+    def __init__(self, *args, **kwargs):
+        super(FeatureForm, self).__init__(*args, **kwargs)
+        self.fields['is_active'].label = self.instance.name
+        
+
 FeatureFormSet = forms.models.modelformset_factory(
-    models.Feature, fields=('is_active',), extra=0)
+    models.Feature, fields=('is_active',), extra=0,
+    form=FeatureForm)

@@ -7,11 +7,9 @@
 {% block content %}
 <div class="row">
   <form class="form-horizontal" role="form" action="{% url 'engage:features' %}" method="post">
-    {% csrf_token %}
-    {{ formset.management_form }}
-    {% for form in formset %}
-        {{ form.instance.name }} {% form form using "floppyforms/layouts/bootstrap3-horizontal.html" %}
-    {% endfor %}
+      {% csrf_token %}
+      {{ formset.management_form }} 
+      {% form formset using "floppyforms/layouts/bootstrap3-horizontal.html" %}
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-default">Save</button>
