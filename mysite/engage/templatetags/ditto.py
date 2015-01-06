@@ -12,3 +12,9 @@ def theme():
     except models.Config.DoesNotExist:
         theme = ""
     return theme
+
+
+@register.assignment_tag
+def features():
+    # TODO features probably need ordering
+    return models.Feature.objects.filter(is_active=True)

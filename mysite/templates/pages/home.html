@@ -1,1 +1,15 @@
 {% extends "base.html" %}
+
+{% load ditto %}
+
+{% block content %}
+<h1>Welcome to {{ request.site.name }}!</h1>
+
+<div class="row">
+{% features as features %}
+{% for feature in features %}
+    {% include "engage/module/"|add:feature.slug|add:".html" with feature=feature %}
+{% endfor %}
+</div>
+
+{% endblock %}
