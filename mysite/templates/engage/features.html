@@ -1,17 +1,22 @@
 {% extends "engage/base.html" %}
 
-{% load i18n %}
-{% load crispy_forms_tags %}
+{% load i18n floppyforms %}
 
 {% block features_active %}active{% endblock %}
 
 {% block content %}
-<form method="POST" action="{% url 'engage:features' %}">
+<div class="row">
+  <form class="form-horizontal" role="form" action="{% url 'engage:features' %}" method="post">
     {% csrf_token %}
     {{ formset.management_form }}
     {% for form in formset %}
-        {{ form.instance.name }} {{ form|crispy }}
+        {{ form.instance.name }} {% form form using "floppyforms/layouts/bootstrap3-horizontal.html" %}
     {% endfor %}
-    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
-</form>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default">Save</button>
+      </div>
+    </div>
+  </form>
+</div>
 {% endblock %}

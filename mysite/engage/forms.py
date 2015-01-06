@@ -1,4 +1,4 @@
-from django import forms
+import floppyforms.__future__ as forms
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
 from django.db.models import Count
@@ -47,6 +47,7 @@ class PermissionsForm(forms.ModelForm):
         
 PermissionsFormSet = forms.models.modelformset_factory(
     Group, form=PermissionsForm)
+
 
 FeatureFormSet = forms.models.modelformset_factory(
     models.Feature, fields=('is_active',), extra=0)

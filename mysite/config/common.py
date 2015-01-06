@@ -37,6 +37,9 @@ class Common(Configuration):
         'django.contrib.admin',
     )
     THIRD_PARTY_APPS = (
+        'floppyforms_bootstrap3',
+        'floppyforms',
+        # TODO remove crispy forms: floppy forms seems a better choice as forms are controlled from the template not python
         'crispy_forms',  # Form layouts
         'avatar',  # for user avatars
         'allauth',  # registration
