@@ -20,3 +20,26 @@ class Feature(models.Model):
             
             ('can_message', 'Can send message'),
         )
+
+
+class Config(models.Model):
+    THEMES = (
+        'cerulean',
+        'cosmo',
+        'cyborg',
+        'darkly',
+        'flatly',
+        'journal',
+        'lumen',
+        'paper',
+        'readable',
+        'sandstone',
+        'simplex',
+        'slate',
+        'spacelab',
+        'superhero',
+        'united',
+        'yeti'
+    )
+    theme = models.CharField(
+        max_length=20, choices=zip(THEMES, THEMES), blank=True)

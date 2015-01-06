@@ -1,4 +1,4 @@
-{% load staticfiles i18n %}<!DOCTYPE html>
+{% load staticfiles i18n ditto %}<!DOCTYPE html>
 <html lang="en" ng-app>
   <head>
     <meta charset="utf-8">
@@ -13,11 +13,10 @@
     <![endif]-->
 
     {% block css %}
+    {% theme as theme %}
     <!-- Latest compiled and minified CSS -->
-    <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"> -->
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.1/cosmo/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css">
+    
     <!-- Your stuff: Third-party css libraries go here -->
 
     <!-- This file store project specific CSS -->

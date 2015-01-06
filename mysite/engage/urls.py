@@ -6,6 +6,12 @@ from . import views
 urlpatterns = patterns('',
     # URL pattern for the UserListView  # noqa
     url(
+        regex=r'^config/$',
+        view=views.config,
+        name='config'
+    ),
+                       
+    url(
         regex=r'^features/$',
         view=views.features,
         name='features'
