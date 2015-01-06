@@ -6,10 +6,6 @@
 {% block perms_active %}active{% endblock %}
 
 {% block content %}
-<form method="POST" action="{% url 'engage:permissions' %}">
-    {% csrf_token %}
-    {# TODO |crispy makes something go nuts here and produce 1000's of queries! #}
-    {{ formset }}
-    <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
-</form>
+    {% url 'engage:permissions' as action %}
+    {% include "common/includes/forms/formset.html" with action=action %}
 {% endblock %}
