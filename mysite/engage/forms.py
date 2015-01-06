@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
 from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import capfirst
 
 from . import models
 
@@ -25,13 +26,9 @@ RoleFormSet = forms.models.modelformset_factory(Group, form=RoleForm, extra=3)
 class PermissionsForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ('name', 'permissions',)
+        fields = ('permissions',)
         widgets = {
             'permissions': forms.CheckboxSelectMultiple,
-            # TODO use a proper read only widget
-            'name': forms.TextInput(attrs={
-                'readonly': 'readonly',
-            }),
         }
         
     def __init__(self, *args, **kwargs):
@@ -43,7 +40,8 @@ class PermissionsForm(forms.ModelForm):
                 features=Count('feature'))
             .filter(features__gt=0)
         )
-
+        self.fields['permissions'].label = capfirst(self.instance.name)
+        
         
 PermissionsFormSet = forms.models.modelformset_factory(
     Group, form=PermissionsForm)
