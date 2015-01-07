@@ -89,7 +89,7 @@ def features(request):
 def config(request):
     try:
         config = models.Config.objects.all()[0]
-    except models.Config.DoesNotExist:
+    except IndexError:
         config = None
     if request.method == 'POST':
         form = forms.ConfigForm(data=request.POST, instance=config)
