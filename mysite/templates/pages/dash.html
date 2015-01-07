@@ -3,7 +3,7 @@
 {% load ditto %}
 
 {% block content %}
-<div class="row">
+{% m "row" %}
     <div class="col-sm-3 col-md-2 sidebar">
         {% m "sidenav" %}
             {% navitem "tasks" "#" _("Tasks") %}
@@ -15,7 +15,7 @@
         {% endm %}
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <h1 class="page-header">Dashboard</h1>
+        {% m "pagehead" %}Dashboard{% endm %}
     </div>
-</div>
+{% endm %}
 {% endblock %}
