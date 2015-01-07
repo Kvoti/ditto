@@ -9,7 +9,7 @@ register = template.Library()
 def theme():
     try:
         theme = models.Config.objects.all()[0].theme
-    except models.Config.DoesNotExist:
+    except IndexError:
         theme = ""
     return theme
 
