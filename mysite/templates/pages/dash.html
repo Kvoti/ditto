@@ -16,6 +16,12 @@
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         {% m "pagehead" %}Dashboard{% endm %}
+        {% include "engage/dashlet/tasks.html" %}
+        {% include "engage/dashlet/usermgmt.html" %}
+        {% include "engage/dashlet/safeguard.html" %}
+        {% include "engage/dashlet/evaluation.html" %}
+        {% include "engage/dashlet/reports.html" %}
+        {% include "engage/dashlet/settings.html" %}
     </div>
 {% endm %}
 {% endblock %}
