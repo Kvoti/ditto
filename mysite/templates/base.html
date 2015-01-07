@@ -56,6 +56,18 @@
             <li><a href="{% url 'account_login' %}">{% trans "Log In" %}</a></li>
           {% endif %}
         </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% navitem "profile" "#" request.user.username %}
+            {% navitem "profile" "#" _("TODO: ROLE") %}
+            {# TODO extend navitem to allow arbitrary content #}
+            <li{% if "settings" in nav %} class="active"{% endif %}>
+                {% url "engage:settings" as url %}
+                <a href="{{ url }}">
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    <span class="sr-only">Settings</span>
+                </a>
+            </li>
+        </ul>
       </div>
     </nav>
     <div class="container">{% block subnav %}{% endblock %}</div>
