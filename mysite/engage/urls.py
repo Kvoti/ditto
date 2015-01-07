@@ -27,9 +27,9 @@ urlpatterns = patterns('',
     ),
                        
     url(
-        regex=r'^configure/$',
+        regex=r'^settings/$',
         view=views.configure,
-        name='configure'
+        name='settings'
     ),
 
     url(

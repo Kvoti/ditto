@@ -6,22 +6,30 @@
 {% m "row" %}
     <div class="col-sm-3 col-md-2 sidebar">
         {% m "sidenav" %}
-            {% navitem "tasks" "#" _("Tasks") %}
-            {% navitem "usermgmt" "#" _("User Management") %}
-            {% navitem "safeguarding" "#" _("Safeguarding") %}
-            {% navitem "evaluation" "#" _("Evaluation") %}
-            {% navitem "reports" "#" _("Reports") %}
-            {% navitem "settings" "#" _("Settings") %}
+            {# TODO correct way to add a title on a nav? #}
+            <li><a>{% block section %}{% endblock %}</a></li>
+            {% block sidenav %}
+                {% navitem "tasks" "#" _("Tasks") %}
+                {% navitem "usermgmt" "#" _("User Management") %}
+                {% navitem "safeguarding" "#" _("Safeguarding") %}
+                {% navitem "evaluation" "#" _("Evaluation") %}
+                {% navitem "reports" "#" _("Reports") %}
+        
+                {% url "engage:config" as url %}
+                {% navitem "settings" url _("Settings") %}
+            {% endblock %}
         {% endm %}
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        {% m "pagehead" %}Dashboard{% endm %}
-        {% include "engage/dashlet/tasks.html" %}
-        {% include "engage/dashlet/usermgmt.html" %}
-        {% include "engage/dashlet/safeguard.html" %}
-        {% include "engage/dashlet/evaluation.html" %}
-        {% include "engage/dashlet/reports.html" %}
-        {% include "engage/dashlet/settings.html" %}
+        {% block dash-content %}
+            {% m "pagehead" %}Dashboard{% endm %}
+            {% include "engage/dashlet/tasks.html" %}
+            {% include "engage/dashlet/usermgmt.html" %}
+            {% include "engage/dashlet/safeguard.html" %}
+            {% include "engage/dashlet/evaluation.html" %}
+            {% include "engage/dashlet/reports.html" %}
+            {% include "engage/dashlet/settings.html" %}
+        {% endblock %}
     </div>
 {% endm %}
 {% endblock %}

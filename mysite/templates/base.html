@@ -44,9 +44,6 @@
               {% url 'users:detail' request.user.username as url %}
               {% navitem "profile" url _("My Profile") %}
 
-              {% url 'engage:configure' as url %}
-              {% navitem "configure" url _("Configure") %}
-
               {% url 'engage:dash' as url %}
               {% navitem "dash" url _("Dashboard") %}
 
@@ -61,7 +58,7 @@
             {% navitem "profile" "#" _("TODO: ROLE") %}
             {# TODO extend navitem to allow arbitrary content #}
             <li{% if "settings" in nav %} class="active"{% endif %}>
-                {% url "engage:settings" as url %}
+                {% url "engage:config" as url %}
                 <a href="{{ url }}">
                     <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                     <span class="sr-only">Settings</span>

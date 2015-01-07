@@ -1,10 +1,18 @@
-{% extends "base.html" %}
+{% extends "pages/dash.html" %}
 
-{% block subnav %}
-<ul class="nav nav-pills">
-  <li role="presentation" class="{% block config_active %}{% endblock %}"><a href="{% url 'engage:config' %}">Theme</a></li>
-  <li role="presentation" class="{% block features_active %}{% endblock %}"><a href="{% url 'engage:features' %}">Features</a></li>
-  <li role="presentation" class="{% block roles_active %}{% endblock %}"><a href="{% url 'engage:configure' %}">Roles</a></li>
-  <li role="presentation" class="{% block perms_active %}{% endblock %}"><a href="{% url 'engage:permissions' %}">Permissions</a></li>
-</ul>
+{% load ditto %}
+
+{% block section %}SETTINGS{% endblock %}
+
+{% block sidenav %}
+    {% url 'engage:config' as url %}
+    {% navitem "settings" url _("Basic Information") %}
+
+    {% url 'engage:settings' as url %}
+    {% navitem "roles" url _("Roles") %}
+
+    {% url 'engage:permissions' as url %}
+    {% navitem "perms" url _("Permissions") %}
 {% endblock %}
+
+{% block dash-content %}{% endblock %}

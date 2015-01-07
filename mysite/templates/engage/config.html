@@ -1,11 +1,6 @@
 {% extends "engage/base.html" %}
 
-{% load i18n %}
-{% load crispy_forms_tags %}
-
-{% block config_active %}active{% endblock %}
-
-{% block content %}
+{% block dash-content %}
     {% url 'engage:config' as action %}
     {% include "common/includes/forms/form.html" with action=action %}
 {% endblock %}

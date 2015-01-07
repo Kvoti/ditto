@@ -1,8 +1,6 @@
 {% extends "engage/base.html" %}
 
-{% block roles_active %}active{% endblock %}
-
-{% block content %}
+{% block dash-content %}
     {% url 'engage:configure' as action %}
     {% include "engage/includes/roles_form.html" with action=action %}
 {% endblock %}

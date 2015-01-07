@@ -55,7 +55,7 @@ def configure(request):
     return render(request, 'engage/configure.html', {
         'form': form,
         'formset': formset,
-        'nav': ['configure'],
+        'nav': ['dash', 'roles'],
     })
 
 
@@ -71,7 +71,7 @@ def permissions(request):
         
     return render(request, 'engage/perms.html', {
         'formset': formset,
-        'nav': ['configure'],
+        'nav': ['dash', 'perms'],
     })
 
 
@@ -108,5 +108,5 @@ def config(request):
     return render(request, 'engage/config.html', {
         'form': form,
         # TODO set nav state in decorator, bit neater?
-        'nav': ['configure'],
+        'nav': ['dash', 'settings'],
     })
