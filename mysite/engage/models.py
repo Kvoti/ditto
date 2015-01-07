@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+    
 
 
 class Feature(models.Model):
@@ -41,5 +43,29 @@ class Config(models.Model):
         'united',
         'yeti'
     )
+    TYPES = (
+        'Business',
+        'Social',
+        'Charity',
+        'Volunteer',
+    )
+    SIZES = (1000, 5000, 10000)
+    
     theme = models.CharField(
+        _("theme"),
         max_length=20, choices=zip(THEMES, THEMES), blank=True)
+    type = models.CharField(
+        _("type"),
+        help_text=_("What sector are you?"),
+        max_length=20, choices=zip(TYPES, TYPES)
+    )
+    description = models.TextField(
+        _("description"),
+        help_text=_("A brief description of your network"),
+        blank=True,
+    )
+    size_cap = models.IntegerField(
+        _("size cap"),
+        help_text=_("How many people are you likely to have?"),
+        choices=zip(SIZES, SIZES)
+    )

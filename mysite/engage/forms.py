@@ -15,7 +15,12 @@ class NetworkNameForm(forms.ModelForm):
         labels = {'name': _('Network name')}
 
 
-ConfigForm = forms.models.modelform_factory(models.Config, fields=('theme',))
+ConfigForm = forms.models.modelform_factory(models.Config, fields=(
+    'theme',
+    'type',
+    'description',
+    'size_cap',
+))
 
 
 class RoleForm(forms.ModelForm):
