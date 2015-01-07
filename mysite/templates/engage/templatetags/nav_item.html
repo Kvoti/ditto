@@ -1,1 +1,1 @@
-<li{% if active %} class="active"{% endif %}><a href="{{ url }}">{{ text }}</a></li>
+<li{% if active %} class="active"{% endif %}><a href="{{ url }}">{{ text }}{% if active %} <span class="sr-only">(current)</span>{% endif %}</a></li>

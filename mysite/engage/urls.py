@@ -10,6 +10,9 @@ urlpatterns = patterns('',
     url(r'^about/$',
         views.AboutView.as_view(),
         name="about"),
+    url(r'^dashboard/$',
+        views.DashView.as_view(),
+        name="dash"),
 
     url(
         regex=r'^config/$',

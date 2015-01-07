@@ -31,6 +31,11 @@ class HomeView(NavTemplateView):
 class AboutView(NavTemplateView):
     template_name = 'pages/about.html'
     nav = ['about']
+
+
+class DashView(NavTemplateView):
+    template_name = 'pages/dash.html'
+    nav = ['dash']
     
 
 def configure(request):
