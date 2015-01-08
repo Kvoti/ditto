@@ -60,8 +60,7 @@
             <li{% if "settings" in nav %} class="active"{% endif %}>
                 {% url "engage:config" as url %}
                 <a href="{{ url }}">
-                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                    <span class="sr-only">Settings</span>
+                    {% include "engage/markup/icon.html" with icon="cog" assist_text=_("Settings") %}
                 </a>
             </li>
         </ul>

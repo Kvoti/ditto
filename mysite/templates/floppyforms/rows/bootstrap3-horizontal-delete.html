@@ -6,8 +6,7 @@
         {{ block.super }}
         <div class="input-group-addon">
             <a href="{% url 'engage:delete-role' form.instance.pk %}" class="btn btn-xs btn-danger">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                <span class="sr-only">Delete</span>
+                {% include "engage/markup/icon.html" with icon="remove" assist_text=_("Delete") %}
             </a>
         </div>
     </div>
