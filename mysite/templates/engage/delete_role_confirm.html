@@ -5,7 +5,7 @@
 {% block page-heading %}{% trans "Confirm delete" %}{% endblock %}
 
 {% block dash-content %}
-    {% m "p" %}Are you sure you want to delete the '{{ group.name }}' role?{% endm %}
+    {% m "p" %}{% blocktrans with role=group.name %}Are you sure you want to delete the '{{ role }}' role?{% endblocktrans %}{% endm %}
     <form class="form-horizontal" role="form" action="{{ request.path }}" method="post">
         {% csrf_token %}
         <a href="{% url 'engage:settings' %}" class="btn btn-default">{% trans "Cancel" %}</a>

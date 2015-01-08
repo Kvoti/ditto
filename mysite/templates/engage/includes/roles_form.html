@@ -1,8 +1,0 @@
-{% extends "common/includes/forms/base.html" %}
-
-{% load floppyforms i18n %}
-
-{% block form %}
-   {{ formset.management_form }} 
-   {% form formset using "floppyforms/layouts/bootstrap3-horizontal-delete.html" %}
-{% endblock %}

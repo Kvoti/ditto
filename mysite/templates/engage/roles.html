@@ -3,6 +3,5 @@
 {% block page-heading %}Roles{% endblock %}
 
 {% block dash-content %}
-    {% url 'engage:configure' as action %}
-    {% include "engage/includes/roles_form.html" with action=action %}
+    {% include "common/includes/forms/formset.html" with action=request.path using="floppyforms/layouts/bootstrap3-horizontal-delete.html" %}
 {% endblock %}
