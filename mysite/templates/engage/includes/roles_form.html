@@ -7,3 +7,12 @@
     {% include "engage/includes/read_only_row.html" with label=_("Name") value=_("Member") help=_("All new members on your network will have member status, unless you assign them a role") %}
     {{ block.super }}
 {% endblock %}
+
+{% block submit %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">Add role <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+        </div>
+    </div>
+   {{ block.super }}
+{% endblock %}
