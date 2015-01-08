@@ -31,7 +31,8 @@ class RoleForm(forms.ModelForm):
 
 
 class BaseRoleFormSet(forms.models.BaseModelFormSet):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, extra, *args, **kwargs):
+        self.extra = extra
         super(BaseRoleFormSet, self).__init__(*args, **kwargs)
         self.queryset = Group.objects.exclude(name__in=config.DEFAULT_ROLES)
 
@@ -39,7 +40,7 @@ class BaseRoleFormSet(forms.models.BaseModelFormSet):
 RoleFormSet = forms.models.modelformset_factory(
     Group,
     formset=BaseRoleFormSet,
-    form=RoleForm, extra=3)
+    form=RoleForm)
 
 
 class PermissionsForm(forms.ModelForm):

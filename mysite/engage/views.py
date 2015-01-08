@@ -42,14 +42,15 @@ class DashView(NavTemplateView):
     
 
 def roles(request):
+    extra = 1 if 'add' in request.GET else 0
     if request.method == 'POST':
-        formset = forms.RoleFormSet(data=request.POST)
+        formset = forms.RoleFormSet(extra, data=request.POST)
         if formset.is_valid():
             formset.save()
             messages.success(request, "Configuration successfully updated")
             return HttpResponseRedirect(request.path)
     else:
-        formset = forms.RoleFormSet()
+        formset = forms.RoleFormSet(extra)
         
     return render(request, 'engage/roles.html', {
         'formset': formset,
