@@ -31,6 +31,11 @@ urlpatterns = patterns('',
         view=views.roles,
         name='settings'
     ),
+    url(
+        regex=r'^settings/roles/(\d+)/delete/$',
+        view=views.delete_role,
+        name='delete-role'
+    ),
 
     url(
         regex=r'^perms/$',

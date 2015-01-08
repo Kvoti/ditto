@@ -1,7 +1,10 @@
 from django.contrib.sites.models import Site
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.contrib import messages
+from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
 
 from . import forms
@@ -53,6 +56,20 @@ def roles(request):
         'nav': ['dash', 'roles'],
     })
 
+
+# TODO @something_required
+def delete_role(request, role_id):
+    group = get_object_or_404(Group, pk=role_id)
+    if request.method == 'POST':
+        group.delete()
+        # TODO trans
+        messages.success(request, "Deleted '%s' role" % group.name)
+        return HttpResponseRedirect(reverse('engage:settings'))
+    return render(request, 'engage/delete_role_confirm.html', {
+        'group': group,
+        'nav': ['dash', 'roles'],
+    })
+    
 
 def permissions(request):
     if request.method == 'POST':

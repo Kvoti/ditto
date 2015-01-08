@@ -33,6 +33,10 @@
   border-color: #eed3d7;
 }
 
+.page-header {
+    text-transform: uppercase;
+}
+
 /* stlyes below taken from bootstap's example dashboard.css */
 /*
  * Base structure

@@ -3,13 +3,6 @@
 {% load floppyforms i18n %}
 
 {% block form %}
-    <fieldset>
-        <legend>{% trans "Name" %}</legend>
-        {% form form using "floppyforms/layouts/bootstrap3-horizontal.html" %}
-    </fieldset>
-    <fieldset>
-        <legend>{% trans "Roles" %}</legend>
-        {{ formset.management_form }} 
-        {% form formset using "floppyforms/layouts/bootstrap3-horizontal.html" %}
-    </fieldset>
+   {{ formset.management_form }} 
+   {% form formset using "floppyforms/layouts/bootstrap3-horizontal-delete.html" %}
 {% endblock %}
