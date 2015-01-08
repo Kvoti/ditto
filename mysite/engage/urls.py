@@ -27,8 +27,8 @@ urlpatterns = patterns('',
     ),
                        
     url(
-        regex=r'^settings/$',
-        view=views.configure,
+        regex=r'^settings/roles/$',
+        view=views.roles,
         name='settings'
     ),
 

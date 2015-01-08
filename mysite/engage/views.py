@@ -38,7 +38,7 @@ class DashView(NavTemplateView):
     nav = ['dash']
     
 
-def configure(request):
+def roles(request):
     if request.method == 'POST':
         form = forms.NetworkNameForm(instance=Site.objects.all()[0],
                                      data=request.POST)
