@@ -1,0 +1,16 @@
+{% extends "floppyforms/rows/bootstrap3-horizontal.html" %}
+
+{% block widget %}
+{% if form.instance.pk %}
+    <div class="input-group">
+        {{ block.super }}
+        <div class="input-group-addon">
+            <a href="{% url 'engage:delete-role' form.instance.pk %}" class="btn btn-xs btn-danger">
+                {% include "engage/markup/icon.html" with icon="remove" assist_text=_("Delete") %}
+            </a>
+        </div>
+    </div>
+{% else %}
+    {{ block.super }}
+{% endif %}
+{% endblock %}

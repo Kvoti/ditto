@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
+from . import config
 from . import models
 
 
@@ -15,7 +16,12 @@ class NetworkNameForm(forms.ModelForm):
         labels = {'name': _('Network name')}
 
 
-ConfigForm = forms.models.modelform_factory(models.Config, fields=('theme',))
+ConfigForm = forms.models.modelform_factory(models.Config, fields=(
+    'theme',
+    'type',
+    'description',
+    'size_cap',
+))
 
 
 class RoleForm(forms.ModelForm):
@@ -23,7 +29,18 @@ class RoleForm(forms.ModelForm):
         model = Group
         fields = ('name',)
 
-RoleFormSet = forms.models.modelformset_factory(Group, form=RoleForm, extra=3)
+
+class BaseRoleFormSet(forms.models.BaseModelFormSet):
+    def __init__(self, extra, *args, **kwargs):
+        self.extra = extra
+        super(BaseRoleFormSet, self).__init__(*args, **kwargs)
+        self.queryset = Group.objects.exclude(name__in=config.DEFAULT_ROLES)
+
+        
+RoleFormSet = forms.models.modelformset_factory(
+    Group,
+    formset=BaseRoleFormSet,
+    form=RoleForm)
 
 
 class PermissionsForm(forms.ModelForm):

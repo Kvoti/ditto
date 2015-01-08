@@ -10,6 +10,9 @@ urlpatterns = patterns('',
     url(r'^about/$',
         views.AboutView.as_view(),
         name="about"),
+    url(r'^dashboard/$',
+        views.DashView.as_view(),
+        name="dash"),
 
     url(
         regex=r'^config/$',
@@ -24,9 +27,14 @@ urlpatterns = patterns('',
     ),
                        
     url(
-        regex=r'^configure/$',
-        view=views.configure,
-        name='configure'
+        regex=r'^settings/roles/$',
+        view=views.roles,
+        name='settings'
+    ),
+    url(
+        regex=r'^settings/roles/(\d+)/delete/$',
+        view=views.delete_role,
+        name='delete-role'
     ),
 
     url(

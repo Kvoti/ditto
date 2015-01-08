@@ -1,7 +1,10 @@
 from django.contrib.sites.models import Site
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.contrib import messages
+from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
 
 from . import forms
@@ -31,28 +34,43 @@ class HomeView(NavTemplateView):
 class AboutView(NavTemplateView):
     template_name = 'pages/about.html'
     nav = ['about']
+
+
+class DashView(NavTemplateView):
+    template_name = 'pages/dash.html'
+    nav = ['dash']
     
 
-def configure(request):
+def roles(request):
+    extra = 1 if 'add' in request.GET else 0
     if request.method == 'POST':
-        form = forms.NetworkNameForm(instance=Site.objects.all()[0],
-                                     data=request.POST)
-        formset = forms.RoleFormSet(data=request.POST)
-        if form.is_valid() and formset.is_valid():
-            form.save()
+        formset = forms.RoleFormSet(extra, data=request.POST)
+        if formset.is_valid():
             formset.save()
             messages.success(request, "Configuration successfully updated")
             return HttpResponseRedirect(request.path)
     else:
-        form = forms.NetworkNameForm(instance=Site.objects.all()[0])
-        formset = forms.RoleFormSet()
+        formset = forms.RoleFormSet(extra)
         
-    return render(request, 'engage/configure.html', {
-        'form': form,
+    return render(request, 'engage/roles.html', {
         'formset': formset,
-        'nav': ['configure'],
+        'nav': ['dash', 'roles'],
     })
 
+
+# TODO @something_required
+def delete_role(request, role_id):
+    group = get_object_or_404(Group, pk=role_id)
+    if request.method == 'POST':
+        group.delete()
+        # TODO trans
+        messages.success(request, "Deleted '%s' role" % group.name)
+        return HttpResponseRedirect(reverse('engage:settings'))
+    return render(request, 'engage/delete_role_confirm.html', {
+        'group': group,
+        'nav': ['dash', 'roles'],
+    })
+    
 
 def permissions(request):
     if request.method == 'POST':
@@ -66,7 +84,7 @@ def permissions(request):
         
     return render(request, 'engage/perms.html', {
         'formset': formset,
-        'nav': ['configure'],
+        'nav': ['dash', 'perms'],
     })
 
 
@@ -103,5 +121,5 @@ def config(request):
     return render(request, 'engage/config.html', {
         'form': form,
         # TODO set nav state in decorator, bit neater?
-        'nav': ['configure'],
+        'nav': ['dash', 'settings'],
     })

@@ -3,6 +3,8 @@
 {% load floppyforms %}
 
 {% block form %}
-    {{ formset.management_form }} 
-    {% form formset using "floppyforms/layouts/bootstrap3-horizontal.html" %}
+    {{ formset.management_form }}
+    {% with layout=using|default:"floppyforms/layouts/bootstrap3-horizontal.html" %}
+        {% form formset using layout %}
+    {% endwith %}
 {% endblock %}
