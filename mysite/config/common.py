@@ -45,6 +45,7 @@ class Common(Configuration):
         'allauth',  # registration
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
+        'django_extensions'
     )
 
     # Apps specific for this project go here.
