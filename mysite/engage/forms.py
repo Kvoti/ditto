@@ -63,9 +63,12 @@ class PermissionsForm(forms.Form):
             ).exists()
 
     def save(self):
+        is_changed = False
         for field, value in self.cleaned_data.items():
             if self._is_changed(field, value):
+                is_changed = True
                 self._save_field(field, value)
+        return is_changed
 
     def _is_changed(self, field, clean_value):
         return self.fields[field].initial != clean_value

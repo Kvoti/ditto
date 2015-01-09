@@ -94,8 +94,9 @@ def permissions_between(request, pk1, pk2):
     if request.method == 'POST':
         form = forms.PermissionsForm(role1, role2, data=request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "XXXXX")
+            is_changed = form.save()
+            if is_changed:
+                messages.success(request, _("Permissions updated"))
             return HttpResponseRedirect(request.path)
     else:
         form = forms.PermissionsForm(role1, role2)
