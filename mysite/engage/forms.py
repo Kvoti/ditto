@@ -49,45 +49,32 @@ class PermissionsForm(forms.Form):
         self.role2 = role2
         super(PermissionsForm, self).__init__(*args, **kwargs)
         for interaction in models.Interaction.objects.all():
-            is_permitted = self._is_permitted(interaction, role1, role2)
+            is_permitted = interaction.is_permitted(role1, role2)
             self.fields[interaction.name] = forms.BooleanField(
                 required=False,
                 initial=is_permitted,
             )
-
-    def _is_permitted(self, interaction, role1, role2):
-        return models.PermittedInteraction.objects.filter(
-            interaction=interaction).filter(
-                Q(role1=role1, role2=role2) |
-                Q(role1=role2, role2=role1)
-            ).exists()
-
+            self.fields[interaction.name].interaction = interaction
+            
     def save(self):
         is_changed = False
-        for field, value in self.cleaned_data.items():
-            if self._is_changed(field, value):
+        for name, value in self.cleaned_data.items():
+            if self._is_changed(name, value):
                 is_changed = True
-                self._save_field(field, value)
+                self._save_field(name, value)
         return is_changed
 
     def _is_changed(self, field, clean_value):
         return self.fields[field].initial != clean_value
 
-    def _save_field(self, interaction_name, is_permitted):
+    def _save_field(self, name, is_permitted):
+        interaction = self.fields[name].interaction
         if is_permitted:
-            interaction = models.Interaction.objects.get(name=interaction_name)
-            models.PermittedInteraction.objects.create(
-                interaction=interaction,
-                role1=self.role1,
-                role2=self.role2
-            )
+            interaction.allow(self.role1, self.role2)
         else:
-            models.PermittedInteraction.objects.filter(interaction__name=interaction_name).filter(
-                Q(role1=self.role1, role2=self.role2) |
-                Q(role1=self.role2, role2=self.role1)
-            ).delete()
+            interaction.deny(self.role1, self.role2)
 
-
+            
 class FeatureForm(forms.ModelForm):
     """Used with FeatureFormSet to set the label for the is_active field
     to the feature name. Used on the feature selection page so you get
