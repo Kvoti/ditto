@@ -75,12 +75,7 @@ class Interaction(models.Model):
     name = models.CharField(max_length=20)
 
     def is_permitted(self, role1, role2):
-        return PermittedInteraction.objects.filter(
-            interaction=self
-        ).filter(
-            models.Q(role1=role1, role2=role2) |
-            models.Q(role1=role2, role2=role1)
-        ).exists()
+        return self._get_permission(role1, role2).exists()
 
     def allow(self, role1, role2):
         if not self.is_permitted(role1, role2):
@@ -91,15 +86,17 @@ class Interaction(models.Model):
             )
 
     def deny(self, role1, role2):
-        if self.is_permitted(role1, role2):
-            PermittedInteraction.objects.filter(
-                interaction=self
-            ).filter(
-                models.Q(role1=role1, role2=role2) |
-                models.Q(role1=role2, role2=role1)
-            ).delete()
-    
-    
+        self._get_permission(role1, role2).delete()
+
+    def _get_permission(self, role1, role2):
+        return PermittedInteraction.objects.filter(
+            interaction=self
+        ).filter(
+            models.Q(role1=role1, role2=role2) |
+            models.Q(role1=role2, role2=role1)
+        )
+
+        
 class PermittedInteraction(models.Model):
     interaction = models.ForeignKey('Interaction', related_name="permitted")
     role1 = models.ForeignKey('auth.Group', related_name="permitted_interactions_1")

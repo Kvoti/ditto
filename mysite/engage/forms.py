@@ -45,11 +45,10 @@ RoleFormSet = forms.models.modelformset_factory(
 
 class PermissionsForm(forms.Form):
     def __init__(self, role1, role2, *args, **kwargs):
-        self.role1 = role1
-        self.role2 = role2
+        self.roles = [role1, role2]
         super(PermissionsForm, self).__init__(*args, **kwargs)
         for interaction in models.Interaction.objects.all():
-            is_permitted = interaction.is_permitted(role1, role2)
+            is_permitted = interaction.is_permitted(*self.roles)
             self.fields[interaction.name] = forms.BooleanField(
                 required=False,
                 initial=is_permitted,
@@ -70,9 +69,9 @@ class PermissionsForm(forms.Form):
     def _save_field(self, name, is_permitted):
         interaction = self.fields[name].interaction
         if is_permitted:
-            interaction.allow(self.role1, self.role2)
+            interaction.allow(*self.roles)
         else:
-            interaction.deny(self.role1, self.role2)
+            interaction.deny(*self.roles)
 
             
 class FeatureForm(forms.ModelForm):
