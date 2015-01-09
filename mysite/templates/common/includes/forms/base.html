@@ -1,5 +1,5 @@
 <div class="row">
-    <form class="form-horizontal" role="form" action="{{ action }}" method="post">
+    <form class="form-horizontal" role="form" action="{{ action|default:request.path }}" method="post">
         {% csrf_token %}
         {% block form %}{% endblock %}
         {% block submit %}

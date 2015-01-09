@@ -69,3 +69,16 @@ class Config(models.Model):
         help_text=_("How many people are you likely to have?"),
         choices=zip(SIZES, SIZES)
     )
+
+
+class Interaction(models.Model):
+    name = models.CharField(max_length=20)
+
+
+class PermittedInteraction(models.Model):
+    interaction = models.ForeignKey('Interaction', related_name="permitted")
+    role1 = models.ForeignKey('auth.Group', related_name="permitted_interactions_1")
+    role2 = models.ForeignKey('auth.Group', related_name="permitted_interactions_2")
+    
+    class Meta:
+        unique_together = ('interaction', 'role1', 'role2')

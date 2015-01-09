@@ -1,0 +1,13 @@
+{% extends "engage/base.html" %}
+
+{% load ditto %}
+
+{% block page-heading %}Which other roles can '{{ role.name }}' talk to?{% endblock %}
+
+{% block dash-content %}
+<ul>
+    {% for other in roles %}
+    <li>{{ other.name }} <input type="checkbox" indeterminate> <a href="{% url 'engage:permissions-between' role.pk other.pk %}">Go</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

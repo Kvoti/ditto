@@ -1,7 +1,7 @@
 import floppyforms.__future__ as forms
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
@@ -43,28 +43,46 @@ RoleFormSet = forms.models.modelformset_factory(
     form=RoleForm)
 
 
-class PermissionsForm(forms.ModelForm):
-    class Meta:
-        model = Group
-        fields = ('permissions',)
-        widgets = {
-            'permissions': forms.CheckboxSelectMultiple,
-        }
-        
-    def __init__(self, *args, **kwargs):
+class PermissionsForm(forms.Form):
+    def __init__(self, role1, role2, *args, **kwargs):
+        self.role1 = role1
+        self.role2 = role2
         super(PermissionsForm, self).__init__(*args, **kwargs)
-        self.fields['permissions'].queryset = (
-            Permission.objects.filter(
-                feature__is_active=True)
-            .annotate(
-                features=Count('feature'))
-            .filter(features__gt=0)
-        )
-        self.fields['permissions'].label = capfirst(self.instance.name)
-        
-        
-PermissionsFormSet = forms.models.modelformset_factory(
-    Group, form=PermissionsForm)
+        for interaction in models.Interaction.objects.all():
+            is_permitted = self._is_permitted(interaction, role1, role2)
+            self.fields[interaction.name] = forms.BooleanField(
+                required=False,
+                initial=is_permitted,
+            )
+
+    def _is_permitted(self, interaction, role1, role2):
+        return models.PermittedInteraction.objects.filter(
+            interaction=interaction).filter(
+                Q(role1=role1, role2=role2) |
+                Q(role1=role2, role2=role1)
+            ).exists()
+
+    def save(self):
+        for field, value in self.cleaned_data.items():
+            if self._is_changed(field, value):
+                self._save_field(field, value)
+
+    def _is_changed(self, field, clean_value):
+        return self.fields[field].initial != clean_value
+
+    def _save_field(self, interaction_name, is_permitted):
+        if is_permitted:
+            interaction = models.Interaction.objects.get(name=interaction_name)
+            models.PermittedInteraction.objects.create(
+                interaction=interaction,
+                role1=self.role1,
+                role2=self.role2
+            )
+        else:
+            models.PermittedInteraction.objects.filter(interaction__name=interaction_name).filter(
+                Q(role1=self.role1, role2=self.role2) |
+                Q(role1=self.role2, role2=self.role1)
+            ).delete()
 
 
 class FeatureForm(forms.ModelForm):

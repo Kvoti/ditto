@@ -38,8 +38,18 @@ urlpatterns = patterns('',
     ),
 
     url(
-        regex=r'^perms/$',
-        view=views.permissions,
+        regex=r'^settings/permissions/$',
+        view=views.RoleList.as_view(),
         name='permissions'
+    ),
+    url(
+        regex=r'^settings/permissions/(\d+)/$',
+        view=views.permissions_for,
+        name='permissions-for'
+    ),
+    url(
+        regex=r'^settings/permissions/(\d+)/(\d+)/$',
+        view=views.permissions_between,
+        name='permissions-between'
     ),
 )
