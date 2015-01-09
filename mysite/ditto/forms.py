@@ -1,27 +1,39 @@
+import collections
+
 import floppyforms.__future__ as forms
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
-from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import capfirst
 
 from . import config
 from . import models
 
 
-class NetworkNameForm(forms.ModelForm):
+class ConfigForm(forms.ModelForm):
     class Meta:
-        model = Site
-        fields = ('name',)
-        labels = {'name': _('Network name')}
+        model = models.Config
+        fields = (
+            'theme',
+            'type',
+            'description',
+            'size_cap',
+        )
 
+    def __init__(self, *args, **kwargs):
+        super(ConfigForm, self).__init__(*args, **kwargs)
+        self.fields = collections.OrderedDict(
+            [('name', forms.CharField(
+                label=_("Name"),
+                initial=Site.objects.all()[0].name,
+                help_text=_("Type a name for network")
+            ))] + self.fields.items()
+        )
 
-ConfigForm = forms.models.modelform_factory(models.Config, fields=(
-    'theme',
-    'type',
-    'description',
-    'size_cap',
-))
+    def save(self):
+        super(ConfigForm, self).save()
+        site = Site.objects.all()[0]
+        site.name = self.cleaned_data['name']
+        site.save()
 
 
 class RoleForm(forms.ModelForm):
