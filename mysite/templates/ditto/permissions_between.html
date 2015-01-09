@@ -1,0 +1,9 @@
+{% extends "ditto/base.html" %}
+
+{% load ditto %}
+
+{% block page-heading %}How can {{ role1.name }} and {{ role2.name }} communicate?{% endblock %}
+
+{% block dash-content %}
+    {% include "common/includes/forms/form.html" %}
+{% endblock %}

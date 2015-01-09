@@ -1,0 +1,18 @@
+{% extends "pages/dash.html" %}
+
+{% load ditto %}
+
+{% block section %}SETTINGS{% endblock %}
+
+{% block sidenav %}
+    {% url 'ditto:config' as url %}
+    {% navitem "settings" url _("Basic Information") %}
+
+    {% url 'ditto:settings' as url %}
+    {% navitem "roles" url _("Roles") %}
+
+    {% url 'ditto:permissions' as url %}
+    {% navitem "perms" url _("Permissions") %}
+{% endblock %}
+
+{% block dash-content %}{% endblock %}

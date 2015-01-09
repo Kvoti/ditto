@@ -1,0 +1,13 @@
+{% extends "ditto/base.html" %}
+
+{% load ditto %}
+
+{% block page-heading %}Which other roles can '{{ role.name }}' talk to?{% endblock %}
+
+{% block dash-content %}
+    <div class="list-group">
+        {% for other in roles %}
+            <a class="list-group-item" href="{% url 'ditto:permissions-between' role.pk other.pk %}">{{ other.name }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}

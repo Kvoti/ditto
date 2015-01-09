@@ -1,6 +1,0 @@
-{% extends "engage/base.html" %}
-
-{% block dash-content %}
-    {% url 'engage:permissions' as action %}
-    {% include "common/includes/forms/formset.html" with action=action %}
-{% endblock %}

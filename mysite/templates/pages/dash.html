@@ -15,7 +15,7 @@
                 {% navitem "evaluation" "#" _("Evaluation") %}
                 {% navitem "reports" "#" _("Reports") %}
         
-                {% url "engage:config" as url %}
+                {% url "ditto:config" as url %}
                 {% navitem "settings" url _("Settings") %}
             {% endblock %}
         {% endm %}
@@ -23,12 +23,12 @@
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         {% m "pagehead" %}{% block page-heading %}Dashboard{% endblock %}{% endm %}
         {% block dash-content %}
-            {% include "engage/dashlet/tasks.html" %}
-            {% include "engage/dashlet/usermgmt.html" %}
-            {% include "engage/dashlet/safeguard.html" %}
-            {% include "engage/dashlet/evaluation.html" %}
-            {% include "engage/dashlet/reports.html" %}
-            {% include "engage/dashlet/settings.html" %}
+            {% include "ditto/dashlet/tasks.html" %}
+            {% include "ditto/dashlet/usermgmt.html" %}
+            {% include "ditto/dashlet/safeguard.html" %}
+            {% include "ditto/dashlet/evaluation.html" %}
+            {% include "ditto/dashlet/reports.html" %}
+            {% include "ditto/dashlet/settings.html" %}
         {% endblock %}
     </div>
 {% endm %}

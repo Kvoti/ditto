@@ -1,0 +1,6 @@
+{% extends "ditto/base.html" %}
+
+{% block dash-content %}
+    {% url 'ditto:config' as action %}
+    {% include "common/includes/forms/form.html" with action=action %}
+{% endblock %}

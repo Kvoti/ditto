@@ -35,16 +35,16 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="/">{{ request.site.name }}</a>
         <ul class="nav navbar-nav">
-            {% url 'engage:home' as url %}
+            {% url 'ditto:home' as url %}
             {% navitem "home" url _("Home") %}
-            {% url 'engage:about' as url %}
+            {% url 'ditto:about' as url %}
             {% navitem "about" url _("About") %}
 
           {% if request.user.is_authenticated %}
               {% url 'users:detail' request.user.username as url %}
               {% navitem "profile" url _("My Profile") %}
 
-              {% url 'engage:dash' as url %}
+              {% url 'ditto:dash' as url %}
               {% navitem "dash" url _("Dashboard") %}
 
               <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
@@ -58,9 +58,9 @@
             {% navitem "profile" "#" _("TODO: ROLE") %}
             {# TODO extend navitem to allow arbitrary content #}
             <li{% if "settings" in nav %} class="active"{% endif %}>
-                {% url "engage:config" as url %}
+                {% url "ditto:config" as url %}
                 <a href="{{ url }}">
-                    {% include "engage/markup/icon.html" with icon="cog" assist_text=_("Settings") %}
+                    {% include "ditto/markup/icon.html" with icon="cog" assist_text=_("Settings") %}
                 </a>
             </li>
         </ul>

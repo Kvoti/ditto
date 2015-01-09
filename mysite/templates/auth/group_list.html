@@ -1,4 +1,4 @@
-{% extends "engage/base.html" %}
+{% extends "ditto/base.html" %}
 
 {% load ditto %}
 
@@ -9,7 +9,7 @@
 
     <div class="list-group">
         {% for role in object_list %}
-            <a class="list-group-item" href="{% url 'engage:permissions-for' role.pk %}">{{ role.name }}</a></li>
+            <a class="list-group-item" href="{% url 'ditto:permissions-for' role.pk %}">{{ role.name }}</a></li>
         {% endfor %}
     </div>
 {% endblock %}
