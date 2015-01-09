@@ -5,8 +5,8 @@
     <div class="input-group">
         {{ block.super }}
         <div class="input-group-addon">
-            <a href="{% url 'engage:delete-role' form.instance.pk %}" class="btn btn-xs btn-danger">
-                {% include "engage/markup/icon.html" with icon="remove" assist_text=_("Delete") %}
+            <a href="{% url 'ditto:delete-role' form.instance.pk %}" class="btn btn-xs btn-danger">
+                {% include "ditto/markup/icon.html" with icon="remove" assist_text=_("Delete") %}
             </a>
         </div>
     </div>

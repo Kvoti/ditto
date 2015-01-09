@@ -8,7 +8,7 @@
 <div class="row">
 {% features as features %}
 {% for feature in features %}
-    {% include "engage/module/"|add:feature.slug|add:".html" with feature=feature %}
+    {% include "ditto/module/"|add:feature.slug|add:".html" with feature=feature %}
 {% endfor %}
 </div>
 

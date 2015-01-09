@@ -23,6 +23,6 @@ urlpatterns = patterns('',
     url(r'^avatar/', include('avatar.urls')),
 
     # Your stuff: custom urls go here
-    url(r'', include('engage.urls', namespace="engage")),
+    url(r'', include('ditto.urls', namespace="ditto")),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

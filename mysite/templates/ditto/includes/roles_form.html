@@ -1,0 +1,18 @@
+{% extends "common/includes/forms/formset.html" %}
+
+{% load floppyforms i18n %}
+
+{% block form %}
+    {% include "ditto/includes/read_only_row.html" with label=_("Name") value=_("Admin") help=_("You, unless you change this :)") %}
+    {% include "ditto/includes/read_only_row.html" with label=_("Name") value=_("Member") help=_("All new members on your network will have member status, unless you assign them a role") %}
+    {{ block.super }}
+{% endblock %}
+
+{% block submit %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a href="?add" class="btn btn-primary">Add role {% include "ditto/markup/icon.html" with icon="plus" %}</span></a>
+        </div>
+    </div>
+   {{ block.super }}
+{% endblock %}

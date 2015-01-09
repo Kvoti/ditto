@@ -1,0 +1,10 @@
+{% extends "ditto/base.html" %}
+
+{% load i18n floppyforms %}
+
+{% block features_active %}active{% endblock %}
+
+{% block content %}
+    {% url 'ditto:features' as action %}
+    {% include "common/includes/forms/formset.html" with action=action %}
+{% endblock %}
