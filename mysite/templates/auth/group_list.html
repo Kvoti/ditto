@@ -1,0 +1,15 @@
+{% extends "engage/base.html" %}
+
+{% load ditto %}
+
+{% block page-heading %}Permissions{% endblock %}
+
+{% block dash-content %}
+    {% m "p" %}Give your roles 'permissions'. Set whom they talk to, i.e. other roles and 'how' you want them to communicate.{% endm %}
+
+    <div class="list-group">
+        {% for role in object_list %}
+            <a class="list-group-item" href="{% url 'engage:permissions-for' role.pk %}">{{ role.name }}</a></li>
+        {% endfor %}
+    </div>
+{% endblock %}

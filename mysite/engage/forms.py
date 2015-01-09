@@ -1,7 +1,7 @@
 import floppyforms.__future__ as forms
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
@@ -43,30 +43,37 @@ RoleFormSet = forms.models.modelformset_factory(
     form=RoleForm)
 
 
-class PermissionsForm(forms.ModelForm):
-    class Meta:
-        model = Group
-        fields = ('permissions',)
-        widgets = {
-            'permissions': forms.CheckboxSelectMultiple,
-        }
-        
-    def __init__(self, *args, **kwargs):
+class PermissionsForm(forms.Form):
+    def __init__(self, role1, role2, *args, **kwargs):
+        self.roles = [role1, role2]
         super(PermissionsForm, self).__init__(*args, **kwargs)
-        self.fields['permissions'].queryset = (
-            Permission.objects.filter(
-                feature__is_active=True)
-            .annotate(
-                features=Count('feature'))
-            .filter(features__gt=0)
-        )
-        self.fields['permissions'].label = capfirst(self.instance.name)
-        
-        
-PermissionsFormSet = forms.models.modelformset_factory(
-    Group, form=PermissionsForm)
+        for interaction in models.Interaction.objects.all():
+            is_permitted = interaction.is_permitted(*self.roles)
+            self.fields[interaction.name] = forms.BooleanField(
+                required=False,
+                initial=is_permitted,
+            )
+            self.fields[interaction.name].interaction = interaction
+            
+    def save(self):
+        is_changed = False
+        for name, value in self.cleaned_data.items():
+            if self._is_changed(name, value):
+                is_changed = True
+                self._save_field(name, value)
+        return is_changed
 
+    def _is_changed(self, field, clean_value):
+        return self.fields[field].initial != clean_value
 
+    def _save_field(self, name, is_permitted):
+        interaction = self.fields[name].interaction
+        if is_permitted:
+            interaction.allow(*self.roles)
+        else:
+            interaction.deny(*self.roles)
+
+            
 class FeatureForm(forms.ModelForm):
     """Used with FeatureFormSet to set the label for the is_active field
     to the feature name. Used on the feature selection page so you get

@@ -69,3 +69,38 @@ class Config(models.Model):
         help_text=_("How many people are you likely to have?"),
         choices=zip(SIZES, SIZES)
     )
+
+
+class Interaction(models.Model):
+    name = models.CharField(max_length=20)
+
+    def is_permitted(self, role1, role2):
+        return self._get_permission(role1, role2).exists()
+
+    def allow(self, role1, role2):
+        if not self.is_permitted(role1, role2):
+            PermittedInteraction.objects.create(
+                interaction=self,
+                role1=role1,
+                role2=role2
+            )
+
+    def deny(self, role1, role2):
+        self._get_permission(role1, role2).delete()
+
+    def _get_permission(self, role1, role2):
+        return PermittedInteraction.objects.filter(
+            interaction=self
+        ).filter(
+            models.Q(role1=role1, role2=role2) |
+            models.Q(role1=role2, role2=role1)
+        )
+
+        
+class PermittedInteraction(models.Model):
+    interaction = models.ForeignKey('Interaction', related_name="permitted")
+    role1 = models.ForeignKey('auth.Group', related_name="permitted_interactions_1")
+    role2 = models.ForeignKey('auth.Group', related_name="permitted_interactions_2")
+    
+    class Meta:
+        unique_together = ('interaction', 'role1', 'role2')

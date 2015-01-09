@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
 from . import forms
 from . import models
@@ -72,19 +72,40 @@ def delete_role(request, role_id):
     })
     
 
-def permissions(request):
+class RoleList(ListView):
+    model = Group
+
+
+def permissions_for(request, pk):
+    role = get_object_or_404(Group, pk=pk)
+    roles = Group.objects.exclude(pk=pk)
+    
+    return render(request, 'engage/permissions_for.html', {
+        'role': role,
+        'roles': roles,
+        'nav': ['configure'],
+    })
+
+
+def permissions_between(request, pk1, pk2):
+    role1 = get_object_or_404(Group, pk=pk1)
+    role2 = get_object_or_404(Group, pk=pk2)
+
     if request.method == 'POST':
-        formset = forms.PermissionsFormSet(data=request.POST)
-        if formset.is_valid():
-            formset.save()
-            messages.success(request, "Configuration successfully updated")
+        form = forms.PermissionsForm(role1, role2, data=request.POST)
+        if form.is_valid():
+            is_changed = form.save()
+            if is_changed:
+                messages.success(request, _("Permissions updated"))
             return HttpResponseRedirect(request.path)
     else:
-        formset = forms.PermissionsFormSet()
+        form = forms.PermissionsForm(role1, role2)
         
-    return render(request, 'engage/perms.html', {
-        'formset': formset,
-        'nav': ['dash', 'perms'],
+    return render(request, 'engage/permissions_between.html', {
+        'role1': role1,
+        'role2': role2,
+        'form': form,
+        'nav': ['configure'],
     })
 
 
