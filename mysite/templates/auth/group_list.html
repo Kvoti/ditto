@@ -7,9 +7,9 @@
 {% block dash-content %}
     {% m "p" %}Give your roles 'permissions'. Set whom they talk to, i.e. other roles and 'how' you want them to communicate.{% endm %}
 
-<ul>
-    {% for role in object_list %}
-    <li>{{ role.name }} <a href="{% url 'engage:permissions-for' role.pk %}">Go</a></li>
-    {% endfor %}
-</ul>
+    <div class="list-group">
+        {% for role in object_list %}
+            <a class="list-group-item" href="{% url 'engage:permissions-for' role.pk %}">{{ role.name }}</a></li>
+        {% endfor %}
+    </div>
 {% endblock %}

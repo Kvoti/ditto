@@ -5,9 +5,9 @@
 {% block page-heading %}Which other roles can '{{ role.name }}' talk to?{% endblock %}
 
 {% block dash-content %}
-<ul>
-    {% for other in roles %}
-    <li>{{ other.name }} <input type="checkbox" indeterminate> <a href="{% url 'engage:permissions-between' role.pk other.pk %}">Go</a></li>
-    {% endfor %}
-</ul>
+    <div class="list-group">
+        {% for other in roles %}
+            <a class="list-group-item" href="{% url 'engage:permissions-between' role.pk other.pk %}">{{ other.name }}</a>
+        {% endfor %}
+    </div>
 {% endblock %}
