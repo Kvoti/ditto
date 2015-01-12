@@ -49,8 +49,8 @@ def setup_features():
 
 def setup_default_roles():
     for group in ditto.config.DEFAULT_ROLES:
-        Group.objects.get_or_create(name=group)
-
+        group, _ = Group.objects.get_or_create(name=group)
+        
 
 def setup_admin_permission():
     content_type = ContentType.objects.get_for_model(User)
@@ -59,6 +59,7 @@ def setup_admin_permission():
         content_type=content_type)
     perm.name = 'Can administer'
     perm.save()
+    Group.objects.get(name=ditto.config.ADMIN_ROLE).permissions.add(perm)
     
 
 def setup_interactions():
@@ -72,3 +73,4 @@ def setup_admin_user():
     if created:
         user.set_password("let me in")
         user.save()
+    user.groups.add(Group.objects.get(name=ditto.config.ADMIN_ROLE))

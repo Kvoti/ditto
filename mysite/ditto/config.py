@@ -1,1 +1,3 @@
-DEFAULT_ROLES = ["Admin", "Member"]
+ADMIN_ROLE = "Admin"
+
+DEFAULT_ROLES = [ADMIN_ROLE, "Member"]
