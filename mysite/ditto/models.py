@@ -1,15 +1,15 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-    
 
 
 class Feature(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField()
-    permissions = models.ManyToManyField('auth.Permission')
+    name = models.CharField(_('name'), max_length=100)
+    slug = models.SlugField(_('slug'))
+    permissions = models.ManyToManyField(
+        'auth.Permission', verbose_name=_('permissions'))
     # default is_active to True so any fresh instance has everything
     # turned on
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(_('is active'), default=True)
 
 
 class Config(models.Model):
@@ -60,7 +60,7 @@ class Config(models.Model):
 
 
 class Interaction(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(_('name'), max_length=20)
 
     def is_permitted(self, role1, role2):
         return self._get_permission(role1, role2).exists()
@@ -86,9 +86,9 @@ class Interaction(models.Model):
 
         
 class PermittedInteraction(models.Model):
-    interaction = models.ForeignKey('Interaction', related_name="permitted")
-    role1 = models.ForeignKey('auth.Group', related_name="permitted_interactions_1")
-    role2 = models.ForeignKey('auth.Group', related_name="permitted_interactions_2")
+    interaction = models.ForeignKey('Interaction', related_name="permitted", verbose_name=_('interaction'))
+    role1 = models.ForeignKey('auth.Group', related_name="permitted_interactions_1", verbose_name=_('role 1'))
+    role2 = models.ForeignKey('auth.Group', related_name="permitted_interactions_2", verbose_name=_('role 2'))
     
     class Meta:
         unique_together = ('interaction', 'role1', 'role2')
