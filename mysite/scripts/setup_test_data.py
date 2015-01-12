@@ -32,7 +32,7 @@ def setup_features():
                 ('can_blog', 'Can Blog'),
                 ('can_comment', 'Can commenet'),
             ]),
-            ('messaging', 'Messaging', [('can_message', 'Can Message')]),
+            ('news', 'News', [('can_news', 'Can manage news')]),
             ('polls', 'Polls', [('can_poll', 'Can add polls')]),
     ):
         feature, _ = ditto.models.Feature.objects.get_or_create(
