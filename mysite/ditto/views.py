@@ -1,9 +1,10 @@
-from django.contrib.sites.models import Site
 from django.contrib import messages
 from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, ListView
 
@@ -11,6 +12,15 @@ from . import forms
 from . import models
 
 
+admin_required = permission_required('user.can_admin')
+
+
+class AdminRequiredMixin(object):
+    @method_decorator(admin_required)
+    def dispatch(self, *args, **kwargs):
+        super(AdminRequiredMixin, self).dispatch(*args, **kwargs)
+    
+    
 class NavTemplateView(TemplateView):
     """TemplateView subclass for pages that net to set the nav state.
 
@@ -36,11 +46,12 @@ class AboutView(NavTemplateView):
     nav = ['about']
 
 
-class DashView(NavTemplateView):
+class DashView(AdminRequiredMixin, NavTemplateView):
     template_name = 'pages/dash.html'
     nav = ['dash']
     
 
+@admin_required
 def roles(request):
     extra = 1 if 'add' in request.GET else 0
     if request.method == 'POST':
@@ -58,7 +69,7 @@ def roles(request):
     })
 
 
-# TODO @something_required
+@admin_required
 def delete_role(request, role_id):
     group = get_object_or_404(Group, pk=role_id)
     if request.method == 'POST':
@@ -72,10 +83,11 @@ def delete_role(request, role_id):
     })
     
 
-class RoleList(ListView):
+class RoleList(AdminRequiredMixin, ListView):
     model = Group
 
 
+@admin_required
 def permissions_for(request, pk):
     role = get_object_or_404(Group, pk=pk)
     roles = Group.objects.exclude(pk=pk)
@@ -87,6 +99,7 @@ def permissions_for(request, pk):
     })
 
 
+@admin_required
 def permissions_between(request, pk1, pk2):
     role1 = get_object_or_404(Group, pk=pk1)
     role2 = get_object_or_404(Group, pk=pk2)
@@ -109,7 +122,7 @@ def permissions_between(request, pk1, pk2):
     })
 
 
-class Features(ListView):
+class Features(AdminRequiredMixin, ListView):
     model = Group
     template_name = 'ditto/features.html'
     
@@ -118,8 +131,9 @@ class Features(ListView):
         context['features'] = models.Feature.objects.all()
         context['nav'] = ['dash', 'features']
         return context
-        
 
+    
+@admin_required
 def feature_permissions(request, role_slug, feature_slug):
     group = get_object_or_404(Group, name__iexact=role_slug)
     feature = get_object_or_404(models.Feature, slug=feature_slug)
@@ -141,6 +155,7 @@ def feature_permissions(request, role_slug, feature_slug):
     })
 
 
+@admin_required
 def config(request):
     try:
         config = models.Config.objects.all()[0]

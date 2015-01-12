@@ -21,6 +21,7 @@ INTERACTIONS = ["Message", "Private chat", "Group chat"]
 def run():
     setup_features()
     setup_default_roles()
+    setup_admin_permission()
     setup_interactions()
     setup_admin_user()
 
@@ -50,6 +51,15 @@ def setup_default_roles():
     for group in ditto.config.DEFAULT_ROLES:
         Group.objects.get_or_create(name=group)
 
+
+def setup_admin_permission():
+    content_type = ContentType.objects.get_for_model(User)
+    perm, _ = Permission.objects.get_or_create(
+        codename='can_admin',
+        content_type=content_type)
+    perm.name = 'Can administer'
+    perm.save()
+    
 
 def setup_interactions():
     for interaction in INTERACTIONS:
