@@ -109,18 +109,34 @@ def permissions_between(request, pk1, pk2):
     })
 
 
-def features(request):
+class Features(ListView):
+    model = Group
+    template_name = 'ditto/features.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(Features, self).get_context_data(**kwargs)
+        context['features'] = models.Feature.objects.all()
+        context['nav'] = ['dash', 'features']
+        return context
+        
+
+def feature_permissions(request, role_slug, feature_slug):
+    group = get_object_or_404(Group, name__iexact=role_slug)
+    feature = get_object_or_404(models.Feature, slug=feature_slug)
+    
     if request.method == 'POST':
-        formset = forms.FeatureFormSet(data=request.POST)
-        if formset.is_valid():
-            formset.save()
-            messages.success(request, "Configuration successfully updated")
+        form = forms.FeaturePermissionsForm(group, feature, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Permissions saved"))
             return HttpResponseRedirect(request.path)
     else:
-        formset = forms.FeatureFormSet()
+        form = forms.FeaturePermissionsForm(group, feature)
         
-    return render(request, 'ditto/features.html', {
-        'formset': formset,
+    return render(request, 'ditto/feature_permissions.html', {
+        'form': form,
+        'group': group,
+        'feature': feature,
         'nav': ['configure'],
     })
 

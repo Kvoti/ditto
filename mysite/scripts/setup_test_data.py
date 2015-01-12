@@ -8,6 +8,7 @@ script instead of a bunch of data migrations.
 
 """
 from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 
 import ditto.models
 import ditto.config
@@ -27,18 +28,22 @@ def run():
 def setup_features():
     for slug, name, perms in (
             ('blog', 'Blog', [
-                'view_post',
-                'add_post',
-                'change_post',
-                'delete_post',
-                'moderate_post',
+                ('can_blog', 'Can Blog'),
+                ('can_comment', 'Can commenet'),
             ]),
-            ('messaging', 'Messaging', ['can_message'])
+            ('messaging', 'Messaging', [('can_message', 'Can Message')]),
+            ('polls', 'Polls', [('can_poll', 'Can add polls')]),
     ):
         feature, _ = ditto.models.Feature.objects.get_or_create(
             slug=slug, name=name)
-        for perm in perms:
-            feature.permissions.add(Permission.objects.get(codename=perm))
+        content_type = ContentType.objects.get_for_model(ditto.models.Feature)
+        for codename, name in perms:
+            perm, _ = Permission.objects.get_or_create(
+                codename=codename,
+                content_type=content_type)
+            perm.name = name
+            perm.save()
+            feature.permissions.add(perm)
 
 
 def setup_default_roles():

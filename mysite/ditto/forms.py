@@ -86,28 +86,23 @@ class PermissionsForm(forms.Form):
             interaction.deny(*self.roles)
 
             
-class FeatureForm(forms.ModelForm):
-    """Used with FeatureFormSet to set the label for the is_active field
-    to the feature name. Used on the feature selection page so you get
+class FeaturePermissionsForm(forms.Form):
+    def __init__(self, group, feature, *args, **kwargs):
+        self.group = group
+        super(FeaturePermissionsForm, self).__init__(*args, **kwargs)
+        permissions = feature.permissions.all()
+        enabled_permissions = group.permissions.all()
+        for perm in permissions:
+            is_enabled = perm in enabled_permissions
+            self.fields[perm.name] = forms.BooleanField(
+                required=False,
+                initial=is_enabled,
+            )
+            self.fields[perm.name].permission = perm
 
-             Blog: [ ]
-        Messaging: [ ]
-
-    instead of
-
-        Is active: [ ]
-        Is active: [ ]
-
-    """
-    
-    class Meta:
-        model = models.Feature
-
-    def __init__(self, *args, **kwargs):
-        super(FeatureForm, self).__init__(*args, **kwargs)
-        self.fields['is_active'].label = self.instance.name
-        
-
-FeatureFormSet = forms.models.modelformset_factory(
-    models.Feature, fields=('is_active',), extra=0,
-    form=FeatureForm)
+    def save(self):
+        for name, is_enabled in self.cleaned_data.items():
+            if is_enabled:
+                self.group.permissions.add(self.fields[name].permission)
+            else:
+                self.group.permissions.remove(self.fields[name].permission)

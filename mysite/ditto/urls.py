@@ -15,15 +15,20 @@ urlpatterns = patterns('',
         name="dash"),
 
     url(
-        regex=r'^config/$',
+        regex=r'^settings/config/$',
         view=views.config,
         name='config'
     ),
                        
     url(
-        regex=r'^features/$',
-        view=views.features,
+        regex=r'^settings/features/$',
+        view=views.Features.as_view(),
         name='features'
+    ),
+    url(
+        regex=r'^settings/features/(\w+)/(\w+)/$',
+        view=views.feature_permissions,
+        name='feature-permissions'
     ),
                        
     url(

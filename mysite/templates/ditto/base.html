@@ -13,6 +13,9 @@
 
     {% url 'ditto:permissions' as url %}
     {% navitem "perms" url _("Permissions") %}
+
+    {% url 'ditto:features' as url %}
+    {% navitem "features" url _("Features") %}
 {% endblock %}
 
 {% block dash-content %}{% endblock %}
