@@ -38,4 +38,5 @@ pytz==2014.7
 
 # Your custom requirements go here
 django-extensions
-wrapt=1.4.2
+wrapt==1.10.2
+django-postman==3.2.0
