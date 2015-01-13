@@ -1,5 +1,5 @@
 {% load staticfiles i18n ditto %}<!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <title>{% block title %}{{ request.site.name }}{% endblock title %}</title>
@@ -21,10 +21,6 @@
 
     <!-- This file store project specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
-    {% endblock %}
-
-    {% block angular %}
-      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
     {% endblock %}
 
   </head>
