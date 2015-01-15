@@ -9,7 +9,7 @@ script instead of a bunch of data migrations.
 """
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-
+from postman.models import Alias, Message, Recipient, STATUS_ACCEPTED
 import ditto.models
 import ditto.config
 
@@ -24,7 +24,9 @@ def run():
     setup_admin_permission()
     setup_interactions()
     setup_admin_user()
-
+    setup_members()
+    setup_conversations()
+    
     
 def setup_features():
     for slug, name, perms in (
@@ -68,9 +70,39 @@ def setup_interactions():
 
 
 def setup_admin_user():
-    user, created = User.objects.get_or_create(username="admin")
-    user.emailaddress_set.get_or_create(verified=1)
+    _create_user('admin', ditto.config.ADMIN_ROLE)
+
+
+def setup_members():
+    for name in ['mark', 'sarah', 'ross', 'emma']:
+        _create_user(name, ditto.config.MEMBER_ROLE)
+
+
+def setup_conversations():
+    mark = User.objects.get(username='mark')
+    sarah = User.objects.get(username='sarah')
+    admin = User.objects.get(username='admin')
+
+    msg, _ = Message.objects.get_or_create(
+        sender=admin,
+        subject="Hello members!",
+        moderation_status=STATUS_ACCEPTED,
+    )
+    for user in [mark, sarah]:
+        Recipient.objects.get_or_create(
+            message=msg,
+            user=user
+        )
+    testers, _ = Alias.objects.get_or_create(name="testers")
+    testers.users = [mark, sarah]
+    
+
+def _create_user(username, group_name):
+    user, created = User.objects.get_or_create(username=username)
+    user.emailaddress_set.get_or_create(
+        verified=1,
+        defaults={'email': '%s@example.com' % username})
     if created:
         user.set_password("let me in")
         user.save()
-    user.groups.add(Group.objects.get(name=ditto.config.ADMIN_ROLE))
+    user.groups.add(Group.objects.get(name=group_name))

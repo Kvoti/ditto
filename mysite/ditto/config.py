@@ -1,3 +1,4 @@
-ADMIN_ROLE = "Admin"
+ADMIN_ROLE = "Administrator"
+MEMBER_ROLE = "Member"
 
-DEFAULT_ROLES = [ADMIN_ROLE, "Member"]
+DEFAULT_ROLES = [ADMIN_ROLE, MEMBER_ROLE]
