@@ -40,4 +40,4 @@ pytz==2014.7
 django-extensions
 wrapt==1.10.2
 # postman doesn't support groups out of the box so we've forked it for now
--e hg+ssh://hg@bitbucket.org/mallison/django-postman#egg=django-postman
+-e hg+https://hg@bitbucket.org/mallison/django-postman#egg=django-postman
