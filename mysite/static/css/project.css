@@ -150,3 +150,8 @@ body {
   border-radius: 50%;
 }
 /* end of dashboard.css */
+
+.avatar {
+  display: inline-block;
+  border-radius: 50%;
+}
