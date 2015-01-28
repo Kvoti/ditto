@@ -39,8 +39,9 @@ $(document).ready(function () {
     }
     
     connection = new Strophe.Connection(BOSH_SERVICE);
-    // TODO how to authenticate to keep these details private??
-    connection.connect('mark@localhost', 'pass', onConnect);
+    connection.connect(
+	DITTO.chat_name, DITTO.chat_pass, onConnect
+    );
 
     $('#msg').submit(function (e) {
         e.preventDefault();

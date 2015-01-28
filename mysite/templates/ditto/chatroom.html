@@ -39,4 +39,9 @@
             </div>
         </div>
     </script>
+    <script>
+        var DITTO = DITTO || {};
+        DITTO.chat_name = '{{ request.user }}@localhost';
+        DITTO.chat_pass = '{{ request.session.session_key }}';
+    </script>
 {% endblock %}

@@ -63,4 +63,20 @@ urlpatterns = patterns('',
         view=views.ChatroomView.as_view(),
         name='chatroom'
     ),
+
+    # auth api endpoints for mongooseim
+    # TODO move into separate module?
+    url(
+        regex=r'^check_password$',
+        view=views.check_password,
+    ),
+    url(
+        regex=r'^user_exists$',
+        view=views.user_exists,
+    ),
+    url(
+        regex=r'^get_password$',
+        view=views.get_password,
+    ),
+
 )
