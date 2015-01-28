@@ -52,7 +52,8 @@ $(document).ready(function () {
             connection.muc.groupchat('muc1@muc.localhost', msg);
         }
     });
-
+    $('#msg').find('input[type=text]').focus();
+    
     var message_template = $('#message_template').text();
     
 });
