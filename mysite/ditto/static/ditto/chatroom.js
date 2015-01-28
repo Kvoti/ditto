@@ -34,7 +34,7 @@ $(document).ready(function () {
         var d = new Date();
         if (status === 5) {
             connection.muc.init(connection);
-            connection.muc.join('muc1@muc.localhost', d.toISOString(), onMessage);
+            connection.muc.join('muc1@muc.ditto.com', d.toISOString(), onMessage);
         }
     }
     
@@ -50,7 +50,7 @@ $(document).ready(function () {
         input.val('');
         if (msg) {
             // TODO handle errors
-            connection.muc.groupchat('muc1@muc.localhost', msg);
+            connection.muc.groupchat('muc1@muc.ditto.com', msg);
         }
     });
     $('#msg').find('input[type=text]').focus();
