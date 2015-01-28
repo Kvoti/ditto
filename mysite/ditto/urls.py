@@ -57,4 +57,10 @@ urlpatterns = patterns('',
         view=views.permissions_between,
         name='permissions-between'
     ),
+                       
+    url(
+        regex=r'^chatroom/$',
+        view=views.ChatroomView.as_view(),
+        name='chatroom'
+    ),
 )

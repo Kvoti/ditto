@@ -70,6 +70,11 @@ class DashView(NavMixin, AdminRequiredMixin, TemplateView):
     nav = ['dash']
     
 
+class ChatroomView(NavMixin, TemplateView):
+    template_name = 'ditto/chatroom.html'
+    nav = ['chatroom']
+
+    
 @admin_required
 @nav(['dash', 'roles'])
 def roles(request):

@@ -1,18 +1,31 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Strophe.js Basic Example</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src='strophejs/strophe.js'></script>
-    <script src='strophejs-plugins/muc/strophe.muc.js'></script>
-    <script src='chatroom.js'></script>
-  </head>
-  <body>
-      <div style="position:fixed">
-          <form id="msg">
-              <input type="text"> <input type="submit">
-          </form>
-      </div>
-      <div id="msgs" style="height:400px;overflow-y:scroll"></div>
-  </body>
-</html>
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div class="row">
+    <div id="msgs" class="col-md-8"
+         {# TODO how to set this with bootstrap so we get an auto scrolling chat window? #}         
+         style="height:700px;overflow-y:scroll"
+         >
+    </div>
+    <div id="presence" class="col-md-4">
+    </div>
+</div>
+<div class="navbar navbar-default navbar-fixed-bottom">
+    <form id="msg" class="navbar-form navbar-left">
+        <div class="form-group">
+            <input style="width:600px" {# TODO how to set this width the bootstrap way? #}
+                   placeholder="Type your message here..." type="text" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-success">Say it!</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'vendor/strophe.js' %}"></script>
+    <script src="{% static 'vendor/strophe.muc.js' %}"></script>
+    <script src="{% static 'ditto/chatroom.js' %}"></script>
+{% endblock %}
