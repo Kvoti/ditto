@@ -5,7 +5,8 @@ $(document).ready(function () {
     var chatroom = 'muc1@muc.' + DITTO.chat_host;
     var presence = {};
     var presence_ui = $('#presence');
-
+    var loading = true;
+    
     // TODO tidy up properly
     window.onunload = function () {
 	connection.muc.leave(
@@ -31,6 +32,12 @@ $(document).ready(function () {
         // console.log(msg);
         var msgs = $('#msgs');
 
+	// cancel loading indicator on first message
+	if (loading) {
+	    $('.progress').remove();
+	    loading = false;
+	}
+	
 	// extract sender and message text
         var msg = $(msg);
         var body = msg.find("body:first").text();
