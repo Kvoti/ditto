@@ -2,7 +2,7 @@ $(document).ready(function () {
     // TODO try websockets too
     var BOSH_SERVICE = '/http-bind/';
     var connection = null;
-    var chatroom = 'muc1@muc' + DITTO.chat_host;
+    var chatroom = 'muc1@muc.' + DITTO.chat_host;
 
     function rawInput(data)
     {
@@ -48,24 +48,24 @@ $(document).ready(function () {
     }
 
     function onConnect (status) {
-        // TODO figure out nick stuff
-        // Want to not need nicks and connect as real user, somehow authenticating with django
-        var d = new Date();
-	
 	if (status == Strophe.Status.CONNECTING) {
 	    console.log('Strophe is connecting.');
+
 	} else if (status == Strophe.Status.CONNFAIL) {
 	    console.log('Strophe failed to connect.');
 	    $('#connect').get(0).value = 'connect';
+
 	} else if (status == Strophe.Status.DISCONNECTING) {
 	    console.log('Strophe is disconnecting.');
+
 	} else if (status == Strophe.Status.DISCONNECTED) {
 	    console.log('Strophe is disconnected.');
 	    $('#connect').get(0).value = 'connect';
+
 	} else if (status == Strophe.Status.CONNECTED) {
 	    console.log('Strophe is connected.');
             connection.muc.init(connection);
-            connection.muc.join(chatroom, d.toISOString(), onMessage);
+            connection.muc.join(chatroom, DITTO.chat_nick, onMessage);
 	}
     }
     

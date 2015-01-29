@@ -43,6 +43,7 @@
         var DITTO = DITTO || {};
         DITTO.chat_host = '{{ debug|yesno:"localhost,ditto.com" }}';
         DITTO.chat_name = '{{ request.user }}@' + DITTO.chat_host;
+        DITTO.chat_nick = '{{ request.user }}';
         {% comment %}
         no password in debug is workaround for development where mongoose thinks it
         gets an empty response from /get_password
