@@ -6,6 +6,8 @@ $(document).ready(function () {
     var presence = {};
     var presence_ui = $('#presence');
     var loading = true;
+    var themes = ['sky', 'vine', 'lava', 'gray', 'industrial', 'social'];
+    var avatars = {};
     
     // TODO tidy up properly
     window.onunload = function () {
@@ -17,7 +19,7 @@ $(document).ready(function () {
 	    }
 	);
     };
-	
+
     function rawInput(data)
     {
 	// console.log('RECV: ', data);
@@ -47,8 +49,13 @@ $(document).ready(function () {
 	var formatted_message = $(message_template);
         formatted_message.find('.media-body').text(body);
 	var avatar = formatted_message.find('img');
+	var avatar_theme = avatars[from];
+	if (!avatar_theme) {
+	    avatar_theme = themes[Math.floor(Math.random() * (themes.length - 1))];
+	    avatars[from] = avatar_theme;
+	}
 	// TODO check .attr with untrusted input is safe!
-	avatar.attr('data-src', 'holder.js/50x50/auto/sky/text:' + from);
+	avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
 	avatar.attr('alt', from);
 	Holder.run({images:formatted_message.find('img')[0]});
 
