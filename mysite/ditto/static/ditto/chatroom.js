@@ -32,6 +32,13 @@ $(document).ready(function () {
 	avatar.attr('alt', from);
 	Holder.run({images:formatted_message.find('img')[0]});
 
+	// check for errors
+	var error = msg.find('error');
+	if (error.length) {
+	    // TODO presume there can be a bunch of errors to handle?
+	    formatted_message.addClass('btn-danger');
+	}
+	
 	// add message to page and scroll message in to view
         msgs.append(formatted_message);
         msgs.scrollTop(msgs[0].scrollHeight);
