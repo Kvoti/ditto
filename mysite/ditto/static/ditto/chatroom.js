@@ -4,6 +4,17 @@ $(document).ready(function () {
     var connection = null;
     var chatroom = 'muc1@muc.' + DITTO.chat_host;
 
+    // TODO tidy up properly
+    window.onunload = function () {
+	connection.muc.leave(
+	    chatroom,
+	    DITTO.chat_nick,
+	    function () {
+		connection.disconnect();
+	    }
+	);
+    };
+	
     function rawInput(data)
     {
 	console.log('RECV: ' + data);
@@ -21,7 +32,7 @@ $(document).ready(function () {
 	// extract sender and message text
         var msg = $(msg);
         var body = msg.find("body:first").text();
-        var from = msg.attr("from");
+        var from = msg.attr("from").split('/')[1];
 
 	// construct message markup
 	var formatted_message = $(message_template);
@@ -36,7 +47,7 @@ $(document).ready(function () {
 	var error = msg.find('error');
 	if (error.length) {
 	    // TODO presume there can be a bunch of errors to handle?
-	    formatted_message.addClass('btn-danger');
+	    formatted_message.addClass('bg-danger');
 	}
 	
 	// add message to page and scroll message in to view
@@ -47,25 +58,32 @@ $(document).ready(function () {
         return true;
     }
 
+    function onPresence(pres) {
+	console.log('PRES', pres);
+	var msg = $(pres);
+	var nick_taken = msg.find('conflict');
+	if (nick_taken.length) {
+	    $('#myModal').modal('show');
+	}
+    }
+    
     function onConnect (status) {
 	if (status == Strophe.Status.CONNECTING) {
 	    console.log('Strophe is connecting.');
 
 	} else if (status == Strophe.Status.CONNFAIL) {
 	    console.log('Strophe failed to connect.');
-	    $('#connect').get(0).value = 'connect';
 
 	} else if (status == Strophe.Status.DISCONNECTING) {
 	    console.log('Strophe is disconnecting.');
 
 	} else if (status == Strophe.Status.DISCONNECTED) {
 	    console.log('Strophe is disconnected.');
-	    $('#connect').get(0).value = 'connect';
 
 	} else if (status == Strophe.Status.CONNECTED) {
 	    console.log('Strophe is connected.');
             connection.muc.init(connection);
-            connection.muc.join(chatroom, DITTO.chat_nick, onMessage);
+            connection.muc.join(chatroom, DITTO.chat_nick, onMessage, onPresence);
 	}
     }
     

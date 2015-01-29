@@ -21,6 +21,22 @@
         <button type="submit" class="btn btn-success">Say it!</button>
     </form>
 </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header alert-danger">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Error</h4>
+      </div>
+      <div class="modal-body alert-danger">
+          <p>Looks like you are already in the chatroom.</p>
+          <p>Are you logged in in another browser, tab or device?</p>
+          <p>TODO let people get in from as many places as they want!</p>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
