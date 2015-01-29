@@ -3,6 +3,16 @@ $(document).ready(function () {
     var BOSH_SERVICE = '/http-bind/';
     var connection = null;
     var chatroom = 'muc1@muc' + DITTO.chat_host;
+
+    function rawInput(data)
+    {
+	console.log('RECV: ' + data);
+    }
+
+    function rawOutput(data)
+    {
+	console.log('SENT: ' + data);
+    }
     
     function onMessage(msg) {
         console.log(msg);
@@ -34,13 +44,28 @@ $(document).ready(function () {
         // TODO figure out nick stuff
         // Want to not need nicks and connect as real user, somehow authenticating with django
         var d = new Date();
-        if (status === 5) {
+	
+	if (status == Strophe.Status.CONNECTING) {
+	    console.log('Strophe is connecting.');
+	} else if (status == Strophe.Status.CONNFAIL) {
+	    console.log('Strophe failed to connect.');
+	    $('#connect').get(0).value = 'connect';
+	} else if (status == Strophe.Status.DISCONNECTING) {
+	    console.log('Strophe is disconnecting.');
+	} else if (status == Strophe.Status.DISCONNECTED) {
+	    console.log('Strophe is disconnected.');
+	    $('#connect').get(0).value = 'connect';
+	} else if (status == Strophe.Status.CONNECTED) {
+	    console.log('Strophe is connected.');
             connection.muc.init(connection);
             connection.muc.join(chatroom, d.toISOString(), onMessage);
-        }
+	}
     }
     
     connection = new Strophe.Connection(BOSH_SERVICE);
+    connection.rawInput = rawInput;
+    connection.rawOutput = rawOutput;
+
     connection.connect(
 	DITTO.chat_name, DITTO.chat_pass, onConnect
     );
