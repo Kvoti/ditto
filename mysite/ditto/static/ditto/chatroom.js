@@ -84,11 +84,12 @@ $(document).ready(function () {
     }
 
     function renderPresence() {
-	console.log('called');
 	presence_ui.empty();
-	var pres = $('<ul></ul>');
+	var pres = $('<ul class="list-group"></ul>');
 	$.each(presence, function (key) {
-	    pres.append('<li>' + key + '</li>');
+	    var item = $('<li class="list-group-item"></li>');
+	    item.text(key);
+	    pres.append(item);
 	});
 	presence_ui.append(pres);
     }
