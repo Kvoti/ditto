@@ -3,6 +3,8 @@ $(document).ready(function () {
     var BOSH_SERVICE = '/http-bind/';
     var connection = null;
     var chatroom = 'muc1@muc.' + DITTO.chat_host;
+    var presence = {};
+    var presence_ui = $('#presence');
 
     // TODO tidy up properly
     window.onunload = function () {
@@ -17,16 +19,16 @@ $(document).ready(function () {
 	
     function rawInput(data)
     {
-	console.log('RECV: ' + data);
+	// console.log('RECV: ', data);
     }
 
     function rawOutput(data)
     {
-	console.log('SENT: ' + data);
+	// console.log('SENT: ', data);
     }
     
     function onMessage(msg) {
-        console.log(msg);
+        // console.log(msg);
         var msgs = $('#msgs');
 
 	// extract sender and message text
@@ -65,8 +67,32 @@ $(document).ready(function () {
 	if (nick_taken.length) {
 	    $('#myModal').modal('show');
 	}
+
+	var added = msg.find('item[role!=none]');
+	if (added.length) {
+	    presence[msg.attr('from').split('/')[1]] = 1;
+	    renderPresence();
+	}
+
+	var removed = msg.find('item[role=none]');
+	if (removed.length) {
+	    delete presence[msg.attr('from').split('/')[1]];
+	    renderPresence();
+	}
+	
+	return true;
     }
-    
+
+    function renderPresence() {
+	console.log('called');
+	presence_ui.empty();
+	var pres = $('<ul></ul>');
+	$.each(presence, function (key) {
+	    pres.append('<li>' + key + '</li>');
+	});
+	presence_ui.append(pres);
+    }
+		  
     function onConnect (status) {
 	if (status == Strophe.Status.CONNECTING) {
 	    console.log('Strophe is connecting.');
@@ -83,7 +109,23 @@ $(document).ready(function () {
 	} else if (status == Strophe.Status.CONNECTED) {
 	    console.log('Strophe is connected.');
             connection.muc.init(connection);
-            connection.muc.join(chatroom, DITTO.chat_nick, onMessage, onPresence);
+
+	    // TODO trying on demand room creation from js but can't get it to work
+	    // (_probably_ not needed as we can configure the site chatrooms in config)
+	    // connection.muc.listRooms(
+	    // 	'localhost',
+	    // 	function (r) { console.log(r) },
+	    // 	function (r) { console.log(r) }
+	    // );
+	    // connection.muc.createInstantRoom(
+	    // 	'muc1@muc.localhost',
+	    // 	function (r) { console.log(r) },
+	    // 	function (r) { console.log(r) }
+	    // );
+	    
+	    // temp workaround while we figure out the page refresh/multiple tabs stuff
+	    var nick = DITTO.chat_nick + Math.floor(Math.random(1, 5) * 100);
+            connection.muc.join(chatroom, nick, onMessage, onPresence);
 	}
     }
     
