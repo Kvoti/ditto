@@ -1,7 +1,9 @@
 $(document).ready(function () {
+    // TODO try websockets too
     var BOSH_SERVICE = '/http-bind/';
     var connection = null;
-
+    var chatroom = 'muc1@muc' + DITTO.chat_host;
+    
     function onMessage(msg) {
         console.log(msg);
         var msgs = $('#msgs');
@@ -34,7 +36,7 @@ $(document).ready(function () {
         var d = new Date();
         if (status === 5) {
             connection.muc.init(connection);
-            connection.muc.join('muc1@muc.ditto.com', d.toISOString(), onMessage);
+            connection.muc.join(chatroom, d.toISOString(), onMessage);
         }
     }
     
@@ -50,7 +52,7 @@ $(document).ready(function () {
         input.val('');
         if (msg) {
             // TODO handle errors
-            connection.muc.groupchat('muc1@muc.ditto.com', msg);
+            connection.muc.groupchat(chatroom, msg);
         }
     });
     $('#msg').find('input[type=text]').focus();

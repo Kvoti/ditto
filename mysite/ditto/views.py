@@ -237,6 +237,8 @@ def user_exists(request):
 
 @never_cache
 def get_password(request):
+    if settings.DEBUG:
+        return HttpResponse()
     username = request.GET['user']
     user = get_object_or_404(User, username=username)
     from django.contrib.sessions.models import Session
