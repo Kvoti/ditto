@@ -101,6 +101,7 @@ function onMessage(msg) {
 	// TODO check .attr with untrusted input is safe!
 	avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
 	avatar.attr('alt', from);
+        formatted_message.find('.media-left').remove();
 	Holder.run({images:formatted_message.find('img')[0]});
 
 	// add message to page and scroll message in to view
@@ -129,7 +130,7 @@ $(document).ready(function () {
     connection = new Strophe.Connection(BOSH_SERVICE);
 
     // Uncomment the following lines to spy on the wire traffic.
-    // connection.rawInput = function (data) { log('RECV: ' + data); };
+    connection.rawInput = function (data) { log('RECV: ' + data); };
     connection.rawOutput = function (data) { log('SEND: ' + data); };
 
     // Uncomment the following line to see all the debug output.
@@ -152,6 +153,7 @@ $(document).ready(function () {
                 .c('body').t(msg).up();
             // TODO handle errors
 	    connection.send(reply.tree());
+            onMessage(reply.tree());
         }
     });
 
