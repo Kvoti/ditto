@@ -2,6 +2,11 @@
 
 {% load staticfiles %}
 
+{% block messages %}
+    {{ block.super }}
+    <div id="presence" class="col-md-4"></div>
+{% endblock %}
+
 {% block plugins %}
     <script src="{% static 'vendor/strophe.muc.js' %}"></script>
 {% endblock %}
