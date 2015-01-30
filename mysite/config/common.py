@@ -46,7 +46,6 @@ class Common(Configuration):
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
         'django_extensions',
-        'postman',
     )
 
     # Apps specific for this project go here.
@@ -272,4 +271,3 @@ class Common(Configuration):
     # END LOGGING CONFIGURATION
 
     # Your common stuff: Below this line define 3rd party library settings
-    POSTMAN_AUTO_MODERATE_AS = True   # TODO add message moderation

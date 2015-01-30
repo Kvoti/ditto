@@ -24,6 +24,5 @@ urlpatterns = patterns('',
 
     # Your stuff: custom urls go here
     url(r'', include('ditto.urls', namespace="ditto")),
-    url(r'^messages/', include('postman.urls')),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
