@@ -42,6 +42,9 @@
 
               {% url 'ditto:dash' as url %}
               {% navitem "dash" url _("Dashboard") %}
+            
+              {% url 'ditto:chatroom' as url %}
+              {% navitem "chatroom" url _("Chatroom") %}
 
               <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
           {% else %}

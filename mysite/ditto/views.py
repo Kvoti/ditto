@@ -88,6 +88,13 @@ class PrivateChatView(NavMixin, DetailView):
     context_object_name = 'chatee'
     template_name = 'ditto/chat/private_chat.html'
     nav = ['private_chat']
+
+
+class PrivateChatsView(NavMixin, ListView):
+    model = User
+    context_object_name = 'chatees'
+    template_name = 'ditto/chat/private_chats.html'
+    nav = ['private_chat']
     
     
 @admin_required

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="page-heading">Messages</h1>
+    <ul>
+    {% for chatee in chatees %}
+        {% if chatee != user %}
+            <li><a href="{% url 'ditto:private_chat' chatee.username %}">{{ chatee.username }}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+{% endblock %}
