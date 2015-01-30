@@ -1,0 +1,12 @@
+{% extends "ditto/chat/base.html" %}
+
+{% load staticfiles %}
+
+{% block plugins %}
+    <script src="{% static 'vendor/strophe.muc.js' %}"></script>
+{% endblock %}
+
+{% block config %}
+    {{ block.super }}
+    DITTO.chat_nick = '{{ user.username }}';    
+{% endblock %}

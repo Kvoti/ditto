@@ -78,7 +78,7 @@ class DashView(NavMixin, AdminRequiredMixin, TemplateView):
     
 
 class ChatroomView(NavMixin, TemplateView):
-    template_name = 'ditto/chatroom.html'
+    template_name = 'ditto/chat/chatroom.html'
     nav = ['chatroom']
 
 
@@ -86,7 +86,7 @@ class PrivateChatView(NavMixin, DetailView):
     model = User
     slug_field = 'username'
     context_object_name = 'chatee'
-    template_name = 'ditto/private_chat.html'
+    template_name = 'ditto/chat/private_chat.html'
     nav = ['private_chat']
     
     

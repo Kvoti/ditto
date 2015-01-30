@@ -1,0 +1,18 @@
+{% extends "ditto/chat/base.html" %}
+
+{% load staticfiles %}
+
+{% block messages %}
+    <h1 class="page-heading">Chatting with {{ chatee.username }}</h1>
+    {{ block.super }}
+{% endblock %}
+
+{% block plugins %}
+    <script src="{% static 'vendor/strophe.rsm.js' %}"></script>
+    <script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
+{% endblock %}
+
+{% block config %}
+    {{ block.super }}
+    DITTO.chatee = '{{ chatee.username }}@' + DITTO.chat_host;
+{% endblock %}

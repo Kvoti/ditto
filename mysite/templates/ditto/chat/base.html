@@ -4,17 +4,13 @@
 
 {% block content %}
 <div class="row">
+    {% block messages %}
     <div id="msgs" class="col-md-8"
          {# TODO how to set this with bootstrap so we get an auto scrolling chat window? #}         
-         style="height:700px;overflow-y:scroll"
+         style="height:500px;overflow-y:scroll"
          >
-        <div class="progress">
-            <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%">
-            </div>
-        </div>
     </div>
-    <div id="presence" class="col-md-4">
-    </div>
+    {% endblock %}
 </div>
 <div class="navbar navbar-default navbar-fixed-bottom">
     <form id="msg" class="navbar-form navbar-left">
@@ -25,29 +21,13 @@
         <button type="submit" class="btn btn-success">Say it!</button>
     </form>
 </div>
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header alert-danger">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Error</h4>
-      </div>
-      <div class="modal-body alert-danger">
-          <p>Looks like you are already in the chatroom.</p>
-          <p>Are you logged in in another browser, tab or device?</p>
-          <p>TODO let people get in from as many places as they want!</p>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block javascript %}
     {{ block.super }}
     <script src="{% static 'vendor/strophe.js' %}"></script>
-    <script src="{% static 'vendor/strophe.muc.js' %}"></script>
-    <script src="{% static 'ditto/chatroom.js' %}"></script>
+    {% block plugins %}{% endblock %}
+    <script src="{% static 'ditto/chat.js' %}"></script>
     <script id="message_template" type="text/template">
         <div class="media">
             <div class="media-left media-middle">
@@ -55,19 +35,24 @@
                     <img class="media-object avatar" data-src="" alt="">
                 </a>
             </div>
-            <div class="media-body">
+            <div style="width:90%" class="media-body">
             </div>
-        </div>
+            <div class="media-right media-middle">
+                <a href="#">
+                    <img class="media-object avatar" data-src="" alt="">
+                </a>
+            </div>
     </script>
     <script>
+        {% block config %}
         var DITTO = DITTO || {};
         DITTO.chat_host = '{{ debug|yesno:"localhost,ditto.com" }}';
-        DITTO.chat_name = '{{ request.user }}@' + DITTO.chat_host;
-        DITTO.chat_nick = '{{ request.user }}';
+        DITTO.chat_name = '{{ user.username }}@' + DITTO.chat_host;
         {% comment %}
-        no password in debug is workaround for development where mongoose thinks it
+        no password in debug is workaround for development where mongooseim thinks it
         gets an empty response from /get_password
         {% endcomment %}
         DITTO.chat_pass = '{% if not debug %}{{ request.session.session_key }}{% endif %}';
+        {% endblock %}
     </script>
 {% endblock %}
