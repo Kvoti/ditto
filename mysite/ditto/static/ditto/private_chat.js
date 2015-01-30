@@ -1,6 +1,8 @@
 var BOSH_SERVICE = '/http-bind/';
 var connection = null;
 var message_template;
+var avatars = {};
+var themes = ['sky', 'vine', 'lava', 'gray', 'industrial', 'social'];
 
 function log(msg) 
 {
@@ -28,15 +30,48 @@ function onConnect(status)
 	connection.send($pres().tree());
 
         connection.mam.init(connection);
-        var aa = connection.mam.query(
-            'mark@localhost',
+        connection.mam.query(
+            DITTO.chat_name,
             {'with': DITTO.chatee,
-             onMessage: function (r) { console.log('GGGG', r); return true },
+             onMessage: onArchivedMessage,
              onComplete: function (r) { console.log('RRRR', r) },
             }
         );
-        console.log('HEREE', aa);
     }
+}
+
+function onArchivedMessage(msg) {
+    var msgs = $('#msgs');
+    var avatar_placement;
+    console.log(msg);
+    // extract sender and message text
+    var msg = $(msg);
+    var body = msg.find("body:first").text();
+    var from = msg.find('message').attr("from");
+
+    // construct message markup
+    var formatted_message = $(message_template);
+    formatted_message.find('.media-body').text(body);
+    var avatar = formatted_message.find('img');
+    var avatar_theme = avatars[from];
+    if (!avatar_theme) {
+	avatar_theme = themes[Math.floor(Math.random() * (themes.length - 1))];
+	avatars[from] = avatar_theme;
+    }
+    // TODO check .attr with untrusted input is safe!
+    avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
+    avatar.attr('alt', from);
+    console.log('XXX', DITTO.chat_name.split('@')[0], from);
+    if (from !== DITTO.chat_name) {
+        formatted_message.find('.media-left').remove();
+    } else {
+        formatted_message.find('.media-right').remove();
+    }
+    Holder.run({images:formatted_message.find('img')[0]});
+    msgs.append(formatted_message);
+    msgs.scrollTop(msgs[0].scrollHeight);
+
+    return true;
 }
 
 function onMessage(msg) {
@@ -57,16 +92,16 @@ function onMessage(msg) {
 	// construct message markup
 	var formatted_message = $(message_template);
         formatted_message.find('.media-body').text(body);
-	// var avatar = formatted_message.find('img');
-	// var avatar_theme = avatars[from];
-	// if (!avatar_theme) {
-	//     avatar_theme = themes[Math.floor(Math.random() * (themes.length - 1))];
-	//     avatars[from] = avatar_theme;
-	// }
-	// // TODO check .attr with untrusted input is safe!
-	// avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
-	// avatar.attr('alt', from);
-	// Holder.run({images:formatted_message.find('img')[0]});
+	var avatar = formatted_message.find('img');
+	var avatar_theme = avatars[from];
+	if (!avatar_theme) {
+	    avatar_theme = themes[Math.floor(Math.random() * (themes.length - 1))];
+	    avatars[from] = avatar_theme;
+	}
+	// TODO check .attr with untrusted input is safe!
+	avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
+	avatar.attr('alt', from);
+	Holder.run({images:formatted_message.find('img')[0]});
 
 	// add message to page and scroll message in to view
         console.log(formatted_message);
