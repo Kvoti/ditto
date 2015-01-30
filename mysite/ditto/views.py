@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 from django.views.decorators.cache import never_cache
 
 import wrapt
@@ -81,6 +81,14 @@ class ChatroomView(NavMixin, TemplateView):
     template_name = 'ditto/chatroom.html'
     nav = ['chatroom']
 
+
+class PrivateChatView(NavMixin, DetailView):
+    model = User
+    slug_field = 'username'
+    context_object_name = 'chatee'
+    template_name = 'ditto/private_chat.html'
+    nav = ['private_chat']
+    
     
 @admin_required
 @nav(['dash', 'roles'])

@@ -57,13 +57,19 @@ urlpatterns = patterns('',
         view=views.permissions_between,
         name='permissions-between'
     ),
-                       
+
+    # chatroom and private chat                       
     url(
         regex=r'^chatroom/$',
         view=views.ChatroomView.as_view(),
         name='chatroom'
     ),
-
+    url(
+        regex=r'^messages/(?P<slug>\w+)/$',
+        view=views.PrivateChatView.as_view(),
+        name='private_chat'
+    ),
+                       
     # auth api endpoints for mongooseim
     # TODO move into separate module?
     url(
