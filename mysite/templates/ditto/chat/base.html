@@ -20,6 +20,38 @@
         </div>
         <button type="submit" class="btn btn-success">Say it!</button>
     </form>
+    <form class="navbar-form navbar-left">
+        <div class="form-group">
+            <select id="status-show" class="form-control">
+                <option value="">Online</option>
+                <option value="away">Away</option>
+                <option value="chat">Free for chat</option>
+                <option value="dnd">Do not disturb</option>
+                <option value="xa">Away for a while</option>
+            </select>
+            <label><input id="status-status-enabled" type="checkbox" class="form-control"> Custom message</label>
+        </div>
+    </form>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Set status</h4>
+            </div>
+            <div class="modal-body">
+                <input id="status-status" type="text" class="form-control" placeholder="Custom message ...">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -47,12 +79,12 @@
         {% block config %}
         var DITTO = DITTO || {};
         DITTO.chat_host = '{{ debug|yesno:"localhost,ditto.com" }}';
-        DITTO.chat_name = '{{ user.username }}@' + DITTO.chat_host;
+        DITTO.chat_name = '{{ user.username }}@' + DITTO.chat_host + '/Ditto';
         {% comment %}
         no password in debug is workaround for development where mongooseim thinks it
         gets an empty response from /get_password
         {% endcomment %}
-        DITTO.chat_pass = '{% if not debug %}{{ request.session.session_key }}{% endif %}';
+        DITTO.chat_pass = '{% if debug %}pass{% else %}{{ request.session.session_key }}{% endif %}';
         {% endblock %}
     </script>
 {% endblock %}

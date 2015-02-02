@@ -19,17 +19,13 @@ $(document).ready(function () {
     message_input.focus();
 
     var check_typing = function () {
-	console.log('checking typing');
 	if (i_am_composing) {
-	    console.log('am composing');
 	    var now = new Date();
 	    if (now - last_keypress > typing_pause) {
-		console.log('but stopped typing');
 		i_am_composing = false;
 		last_keypress = undefined;
 		connection.chatstates.sendActive(DITTO.chatee);
 	    } else {
-		console.log('typed recently');
 		window.setTimeout(check_typing, typing_pause);
 	    }
 	}
@@ -103,6 +99,8 @@ $(document).ready(function () {
 	} else if (status == Strophe.Status.CONNECTED) {
 	    console.log('Strophe is connected.');
 
+            $(document).trigger('connected.ditto.chat', connection);
+            
 	    if (loading) {
 		$('.progress').remove();
 		loading = false;
@@ -110,6 +108,7 @@ $(document).ready(function () {
 	
 	    if (DITTO.chatee) {
 		connection.addHandler(onPrivateMessage, null, 'message', 'chat',  null); 
+		connection.addHandler(onPresence, null, 'presence', null,  null); 
 		connection.send($pres().tree());
 		
 		connection.mam.init(connection);
@@ -117,19 +116,46 @@ $(document).ready(function () {
 		    DITTO.chat_name,
 		    {
 			'with': DITTO.chatee,
-			onMessage: onArchivedPrivateMessage
+			// onMessage: onArchivedPrivateMessage
 		    }
 		);
 
 		// Chat states ('composing' etc.)
 		connection.chatstates.init(connection);
+
+		// Roster/presence
+		connection.roster.init(connection);
+		connection.roster.registerRequestCallback(acceptFriendRequest);
+		connection.roster.subscribe(DITTO.chatee);
+		connection.roster.registerCallback(handleRoster);
+		connection.roster.get();
 	    } else {
 		connection.muc.init(connection);
 		// temp nick workaround while we figure out the page refresh/multiple tabs stuff
 		var nick = DITTO.chat_nick + '-' + Math.floor(Math.random(1, 5) * 100);
-		connection.muc.join(chatroom, nick, onGroupMessage, onPresence);
+		connection.muc.join(chatroom, nick, onGroupMessage, onGroupPresence);
 	    }
 	}
+    }
+
+    function acceptFriendRequest (from) {
+	console.log('FR', from);
+	connection.roster.authorize(friend.jid);
+	return true;
+    }
+    
+    function handleRoster (roster, item) {
+	console.log('ROSTER', roster, item);
+	$.each(roster, function (i, friend) {
+	    console.log('XXXX', friend);
+	    if (friend.ask === "subscribe") {
+		console.log('FWIENDS');
+		// TODO auto approving for now, not yet sure what we need to do here
+		connection.roster.authorize(friend.jid);
+	    }
+	});
+
+	return true;
     }
     
     function onGroupMessage(msg) {
@@ -161,7 +187,7 @@ $(document).ready(function () {
     }
     
     function onPrivateMessage(msg) {
- 	console.log(msg);
+ 	// console.log(msg);
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
 	var from = msg.attr("from").split('@')[0];
@@ -186,8 +212,31 @@ $(document).ready(function () {
 	}
 	return true;
     }
-    
+
     function onPresence(pres) {
+	var msg = $(pres);
+	var from = Strophe.getBareJidFromJid(msg.attr('from'));
+	var show, status;
+	
+	if (from === DITTO.chatee) {
+	    show = msg.find('show').text();
+	    status = msg.find('status').text();
+	    if (show) {
+		$('#other-status-show').text(show);
+	    } else {
+		$('#other-status-show').text('online');
+	    }
+	    if (status) {
+		$('#other-status-status').text(status);
+	    } else {
+		$('#other-status-status').text('');
+	    }		
+	}
+	
+	return true;
+    }
+    
+    function onGroupPresence(pres) {
 	console.log('PRES', pres);
 	var msg = $(pres);
 	var nick_taken = msg.find('conflict');
@@ -253,11 +302,11 @@ $(document).ready(function () {
     }
 
     function rawInput(data) {
-	// console.log('RECV: ', data);
+	console.log('RECV: ', data);
     }
 
     function rawOutput(data) {
-	// console.log('SENT: ', data);
+	console.log('SENT: ', data);
     }
 
     connect();
