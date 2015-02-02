@@ -11,9 +11,22 @@ $(document).ready(function () {
     var msgs = $('#msgs');
     var message_input = $('#msg').find('input[type=text]');
     var me = DITTO.chat_name.split('@')[0];
+    var other_is_typing_notification;
+    var i_am_composing = false;
     
     message_input.focus();
 
+    if (DITTO.chatee) {
+	message_input.keypress(function () {
+	    if (!i_am_composing) {
+		// spec says we don't send multiples of the same notifications in succession
+		connection.chatstates.sendComposing(DITTO.chatee);
+		i_am_composing = true;
+		// TODO have a timeout so if user stops typing and doesn't send message we revert to 'active' status?
+	    }
+	});
+    }
+    
     $('#msg').submit(function (e) {
         e.preventDefault();
 	if (!connection) {
@@ -29,7 +42,12 @@ $(document).ready(function () {
 		    from: DITTO.chat_name,
 		    type: 'chat'
 		}).c('body').t(msg);
+
+		// spec says to send <active/> with message when using chatstates
+		connection.chatstates.addActive(payload);
+
 		connection.send(payload.tree());
+		i_am_composing = false;
 		renderMessage(me, msg);
 	    } else {
 		// TODO we could optimistically render the message before we receive it back
@@ -82,6 +100,9 @@ $(document).ready(function () {
 			onMessage: onArchivedPrivateMessage
 		    }
 		);
+
+		// Chat states ('composing' etc.)
+		connection.chatstates.init(connection);
 	    } else {
 		connection.muc.init(connection);
 		// temp nick workaround while we figure out the page refresh/multiple tabs stuff
@@ -111,7 +132,7 @@ $(document).ready(function () {
     }
 
     function onArchivedPrivateMessage(msg) {
-	console.log(msg);
+	// console.log(msg);
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
 	var from = msg.find('message').attr("from").split('@')[0];
@@ -120,11 +141,27 @@ $(document).ready(function () {
     }
     
     function onPrivateMessage(msg) {
-	console.log(msg);
+ 	console.log(msg);
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
 	var from = msg.attr("from").split('@')[0];
-	renderMessage(from, body);
+	var composing = msg.find('composing'),
+	    paused = msg.find('paused'),
+	    active = msg.find('active');
+
+	// The chatstates plugin let's you register jquery event
+	// handlers to handle these state changes but I couldn't get
+	// it to work: sending <active/> in the sent message didn't
+	// trigger the active.chatstates event.
+	if (composing.length) {
+	    renderMessage(from, "is typing ...");
+	    other_is_typing_notification = msgs.find('>div').get(-1);	    
+	} else {
+	    if (active.length) {
+		other_is_typing_notification.remove();
+	    }
+	    renderMessage(from, body);
+	}
 	return true;
     }
     
@@ -194,11 +231,11 @@ $(document).ready(function () {
     }
 
     function rawInput(data) {
-	console.log('RECV: ', data);
+	// console.log('RECV: ', data);
     }
 
     function rawOutput(data) {
-	console.log('SENT: ', data);
+	// console.log('SENT: ', data);
     }
 
     connect();
