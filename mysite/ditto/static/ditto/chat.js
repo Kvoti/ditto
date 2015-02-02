@@ -13,16 +13,36 @@ $(document).ready(function () {
     var me = DITTO.chat_name.split('@')[0];
     var other_is_typing_notification;
     var i_am_composing = false;
+    var last_keypress;
+    var typing_pause = 2000;  // 2 seconds
     
     message_input.focus();
 
+    var check_typing = function () {
+	console.log('checking typing');
+	if (i_am_composing) {
+	    console.log('am composing');
+	    var now = new Date();
+	    if (now - last_keypress > typing_pause) {
+		console.log('but stopped typing');
+		i_am_composing = false;
+		last_keypress = undefined;
+		connection.chatstates.sendActive(DITTO.chatee);
+	    } else {
+		console.log('typed recently');
+		window.setTimeout(check_typing, typing_pause);
+	    }
+	}
+    };
+    
     if (DITTO.chatee) {
 	message_input.keypress(function () {
+	    last_keypress = new Date();
 	    if (!i_am_composing) {
 		// spec says we don't send multiples of the same notifications in succession
 		connection.chatstates.sendComposing(DITTO.chatee);
 		i_am_composing = true;
-		// TODO have a timeout so if user stops typing and doesn't send message we revert to 'active' status?
+		window.setTimeout(check_typing, typing_pause);
 	    }
 	});
     }
@@ -160,7 +180,9 @@ $(document).ready(function () {
 	    if (active.length) {
 		other_is_typing_notification.remove();
 	    }
-	    renderMessage(from, body);
+	    if (body) {
+		renderMessage(from, body);
+	    }
 	}
 	return true;
     }
