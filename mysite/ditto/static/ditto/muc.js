@@ -9,13 +9,14 @@
     $(document).on('connected.ditto.chat', function (e, conn) {
         connection = conn;
 	connection.muc.init(connection);
-
-	// temp nick workaround while we figure out the page refresh/multiple tabs stuff
-	var nick = DITTO.chat_nick + '-' + Math.floor(Math.random(1, 5) * 100);
-
-	connection.muc.join(chatroom, nick, onGroupMessage, onGroupPresence);
+	connection.muc.join(chatroom, DITTO.chat_nick, onGroupMessage, onGroupPresence);
     });
 
+    $(document).on('disconnected.ditto.chat', function () {
+        alert('You got disconnected, maybe you opened another tab or device?');
+        window.location.href = '/';
+    });
+    
     DITTO.chat.sendMessage = function (msg) {
 	// TODO we could optimistically render the message before we receive it back
 	// (though it's pretty quick!)
@@ -27,17 +28,8 @@
         var msg = $(msg);
         var body = msg.find("body:first").text();
         var from = msg.attr("from").split('/')[1];
-	// handle the nick hack
-	if (from) {
-	    from = from.split('-')[0];
-	}
+
 	DITTO.chat.renderMessage(from, body);
-	// // check for errors
-	// var error = msg.find('error');
-	// if (error.length) {
-	//     // TODO presume there can be a bunch of errors to handle?
-	//     formatted_message.addClass('bg-danger');
-	// }
         return true;
     }
 

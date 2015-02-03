@@ -53,7 +53,6 @@ DITTO.chat = {
 };
 
 $(document).ready(function () {
-    var BOSH_SERVICE = '/http-bind/';  // TODO try websockets too
     var connection = null;
     
     DITTO.chat.message_input.focus();
@@ -72,7 +71,7 @@ $(document).ready(function () {
     });
     
     function connect () {
-	connection = new Strophe.Connection(BOSH_SERVICE);
+	connection = new Strophe.Connection('ws://' + DITTO.chat_host + ':5280/ws-xmpp');
 	connection.rawInput = rawInput;
 	connection.rawOutput = rawOutput;
 	
@@ -93,6 +92,7 @@ $(document).ready(function () {
 
 	} else if (status == Strophe.Status.DISCONNECTED) {
 	    console.log('Strophe is disconnected.');
+            $(document).trigger('disconnected.ditto.chat', connection);
 
 	} else if (status == Strophe.Status.CONNECTED) {
 	    console.log('Strophe is connected.');
