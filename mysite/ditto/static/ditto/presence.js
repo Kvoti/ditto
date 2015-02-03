@@ -12,13 +12,10 @@
     
     $(document).on('connected.ditto.chat', function (e, conn) {
         connection = conn;
-	
 	connection.addHandler(onPresence, null, 'presence', null,  null); 
-
 	connection.roster.init(connection);
 	connection.roster.registerRequestCallback(acceptFriendRequest);
 	connection.roster.subscribe(DITTO.chatee);
-	connection.roster.registerCallback(handleRoster);
 	connection.roster.get();
     });
 
@@ -52,42 +49,33 @@
     function onPresence(pres) {
 	var msg = $(pres);
 	var from = Strophe.getBareJidFromJid(msg.attr('from'));
+	var type = Strophe.getBareJidFromJid(msg.attr('type'));
 	var show, status;
 	
 	if (from === DITTO.chatee) {
-	    show = msg.find('show').text();
-	    status = msg.find('status').text();
-	    if (show) {
-		$('#other-status-show').text(show);
-	    } else {
-		$('#other-status-show').text('online');
-	    }
-	    if (status) {
-		$('#other-status-status').text(status);
-	    } else {
+	    if (type === 'unavailable') {
+		$('#other-status-show').text('offline');
 		$('#other-status-status').text('');
-	    }		
+	    } else {
+		show = msg.find('show').text();
+		status = msg.find('status').text();
+		if (show) {
+		    $('#other-status-show').text(show);
+		} else {
+		    $('#other-status-show').text('online');
+		}
+		if (status) {
+		    $('#other-status-status').text(status);
+		} else {
+		    $('#other-status-status').text('');
+		}
+	    }
 	}
 	return true;
     }
 
     function acceptFriendRequest (from) {
-	console.log('FR', from);
-	connection.roster.authorize(friend.jid);
-	return true;
-    }
-    
-    function handleRoster (roster, item) {
-	console.log('ROSTER', roster, item);
-	$.each(roster, function (i, friend) {
-	    console.log('XXXX', friend);
-	    if (friend.ask === "subscribe") {
-		console.log('FWIENDS');
-		// TODO auto approving for now, not yet sure what we need to do here
-		connection.roster.authorize(friend.jid);
-	    }
-	});
-
+	connection.roster.authorize(from);
 	return true;
     }
     
