@@ -53,31 +53,31 @@
         </div>
     </div>
 </div>
+<script id="message_template" type="text/template">
+    <div class="media">
+        <div class="media-left media-middle">
+            <a href="#">
+                <img class="media-object avatar" data-src="" alt="">
+            </a>
+        </div>
+        <div style="width:90%" class="media-body">
+        </div>
+        <div class="media-right media-middle">
+            <a href="#">
+                <img class="media-object avatar" data-src="" alt="">
+            </a>
+        </div>
+    </div>
+</script>
 {% endblock %}
 
 {% block javascript %}
     {{ block.super }}
     <script src="{% static 'vendor/strophe.js' %}"></script>
-    {% block plugins %}{% endblock %}
-    <script src="{% static 'ditto/chat.js' %}"></script>
-    <script id="message_template" type="text/template">
-        <div class="media">
-            <div class="media-left media-middle">
-                <a href="#">
-                    <img class="media-object avatar" data-src="" alt="">
-                </a>
-            </div>
-            <div style="width:90%" class="media-body">
-            </div>
-            <div class="media-right media-middle">
-                <a href="#">
-                    <img class="media-object avatar" data-src="" alt="">
-                </a>
-            </div>
-    </script>
+    {% block strophe-plugins %}{% endblock %}
     <script>
         {% block config %}
-        var DITTO = DITTO || {};
+        var DITTO = {};
         DITTO.chat_host = '{{ debug|yesno:"localhost,ditto.com" }}';
         DITTO.chat_name = '{{ user.username }}@' + DITTO.chat_host + '/Ditto';
         {% comment %}
@@ -85,6 +85,9 @@
         gets an empty response from /get_password
         {% endcomment %}
         DITTO.chat_pass = '{% if debug %}pass{% else %}{{ request.session.session_key }}{% endif %}';
+        DITTO.chat_pass = '{% if debug %}{% else %}{{ request.session.session_key }}{% endif %}';
         {% endblock %}
     </script>
+    <script src="{% static 'ditto/chat.js' %}"></script>
+    {% block plugins %}{% endblock %}
 {% endblock %}

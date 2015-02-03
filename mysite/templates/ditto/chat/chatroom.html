@@ -7,11 +7,15 @@
     <div id="presence" class="col-md-4"></div>
 {% endblock %}
 
-{% block plugins %}
+{% block strophe-plugins %}
     <script src="{% static 'vendor/strophe.muc.js' %}"></script>
 {% endblock %}
 
 {% block config %}
     {{ block.super }}
     DITTO.chat_nick = '{{ user.username }}';    
+{% endblock %}
+
+{% block plugins %}
+    <script src="{% static 'ditto/muc.js' %}"></script>
 {% endblock %}

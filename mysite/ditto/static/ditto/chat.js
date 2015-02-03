@@ -1,75 +1,73 @@
+DITTO.chat = {
+    message_template: $('#message_template').text(),
+    message_input: $('#msg').find('input[type=text]'),
+    msgs: $('#msgs'),
+    
+    themes: ['sky', 'vine', 'lava', 'gray', 'industrial', 'social'],
+    avatars: {},
+
+    privateMessageCallbacks: [],
+    outgoingMessageCallbacks: [],
+
+    me: DITTO.chat_name.split('@')[0],
+    
+    renderMessage: function (from, msg) {
+	// construct skeleton message from template
+	var formatted_message = $(this.message_template);
+
+	// add message text
+        formatted_message.find('.media-body').text(msg);
+
+	// configure avatar
+	var avatar = formatted_message.find('img');
+	var avatar_theme = this.avatars[from];
+	if (!avatar_theme) {
+	    avatar_theme = this.themes[Math.floor(Math.random() * (this.themes.length - 1))];
+	    this.avatars[from] = avatar_theme;
+	}
+	// TODO check .attr with untrusted input is safe!
+	avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
+	avatar.attr('alt', from);
+	// decide whether avatar goes to the left or right
+	if (from === this.me) {
+	    formatted_message.find('.media-left').remove();
+	    formatted_message.find('.media-body').css('text-align', 'right');
+	} else {
+	    formatted_message.find('.media-right').remove();
+	}
+	Holder.run({images:formatted_message.find('img')[0]});
+
+	// add message to page and scroll message in to view
+        this.msgs.append(formatted_message);
+        this.msgs.scrollTop(this.msgs[0].scrollHeight);
+    },
+
+    addPrivateMessageCallback: function (callback) {
+	this.privateMessageCallbacks.push(callback);
+    },
+
+    addOutgoingMessageCallback: function (callback) {
+	this.outgoingMessageCallbacks.push(callback);
+    }
+	
+};
+
 $(document).ready(function () {
     var BOSH_SERVICE = '/http-bind/';  // TODO try websockets too
     var connection = null;
-    var chatroom = 'muc1@muc.' + DITTO.chat_host;
-    var presence = {};
-    var presence_ui = $('#presence');
-    var loading = true;
-    var themes = ['sky', 'vine', 'lava', 'gray', 'industrial', 'social'];
-    var avatars = {};
-    var message_template = $('#message_template').text();
-    var msgs = $('#msgs');
-    var message_input = $('#msg').find('input[type=text]');
-    var me = DITTO.chat_name.split('@')[0];
-    var other_is_typing_notification;
-    var i_am_composing = false;
-    var last_keypress;
-    var typing_pause = 2000;  // 2 seconds
     
-    message_input.focus();
+    DITTO.chat.message_input.focus();
 
-    var check_typing = function () {
-	if (i_am_composing) {
-	    var now = new Date();
-	    if (now - last_keypress > typing_pause) {
-		i_am_composing = false;
-		last_keypress = undefined;
-		connection.chatstates.sendActive(DITTO.chatee);
-	    } else {
-		window.setTimeout(check_typing, typing_pause);
-	    }
-	}
-    };
-    
-    if (DITTO.chatee) {
-	message_input.keypress(function () {
-	    last_keypress = new Date();
-	    if (!i_am_composing) {
-		// spec says we don't send multiples of the same notifications in succession
-		connection.chatstates.sendComposing(DITTO.chatee);
-		i_am_composing = true;
-		window.setTimeout(check_typing, typing_pause);
-	    }
-	});
-    }
-    
     $('#msg').submit(function (e) {
         e.preventDefault();
 	if (!connection) {
 	    // TODO give user feedback that we're waiting on the connection?
 	    return;
 	}
-        var msg = message_input.val();
+        var msg = DITTO.chat.message_input.val();
         if (msg) {
-            message_input.val('');
-	    if (DITTO.chatee) {
-		var payload = $msg({
-		    to: DITTO.chatee,
-		    from: DITTO.chat_name,
-		    type: 'chat'
-		}).c('body').t(msg);
-
-		// spec says to send <active/> with message when using chatstates
-		connection.chatstates.addActive(payload);
-
-		connection.send(payload.tree());
-		i_am_composing = false;
-		renderMessage(me, msg);
-	    } else {
-		// TODO we could optimistically render the message before we receive it back
-		// (though it's pretty quick!)
-		connection.muc.groupchat(chatroom, msg);
-	    }
+            DITTO.chat.message_input.val('');
+	    DITTO.chat.sendMessage(msg);
         }
     });
     
@@ -98,207 +96,8 @@ $(document).ready(function () {
 
 	} else if (status == Strophe.Status.CONNECTED) {
 	    console.log('Strophe is connected.');
-
             $(document).trigger('connected.ditto.chat', connection);
-            
-	    if (loading) {
-		$('.progress').remove();
-		loading = false;
-	    }
-	
-	    if (DITTO.chatee) {
-		connection.addHandler(onPrivateMessage, null, 'message', 'chat',  null); 
-		connection.addHandler(onPresence, null, 'presence', null,  null); 
-		connection.send($pres().tree());
-		
-		connection.mam.init(connection);
-		connection.mam.query(
-		    DITTO.chat_name,
-		    {
-			'with': DITTO.chatee,
-			// onMessage: onArchivedPrivateMessage
-		    }
-		);
-
-		// Chat states ('composing' etc.)
-		connection.chatstates.init(connection);
-
-		// Roster/presence
-		connection.roster.init(connection);
-		connection.roster.registerRequestCallback(acceptFriendRequest);
-		connection.roster.subscribe(DITTO.chatee);
-		connection.roster.registerCallback(handleRoster);
-		connection.roster.get();
-	    } else {
-		connection.muc.init(connection);
-		// temp nick workaround while we figure out the page refresh/multiple tabs stuff
-		var nick = DITTO.chat_nick + '-' + Math.floor(Math.random(1, 5) * 100);
-		connection.muc.join(chatroom, nick, onGroupMessage, onGroupPresence);
-	    }
 	}
-    }
-
-    function acceptFriendRequest (from) {
-	console.log('FR', from);
-	connection.roster.authorize(friend.jid);
-	return true;
-    }
-    
-    function handleRoster (roster, item) {
-	console.log('ROSTER', roster, item);
-	$.each(roster, function (i, friend) {
-	    console.log('XXXX', friend);
-	    if (friend.ask === "subscribe") {
-		console.log('FWIENDS');
-		// TODO auto approving for now, not yet sure what we need to do here
-		connection.roster.authorize(friend.jid);
-	    }
-	});
-
-	return true;
-    }
-    
-    function onGroupMessage(msg) {
-	console.log(msg);
-        var msg = $(msg);
-        var body = msg.find("body:first").text();
-        var from = msg.attr("from").split('/')[1];
-	// handle the nick hack
-	if (from) {
-	    from = from.split('-')[0];
-	}
-	renderMessage(from, body);
-	// // check for errors
-	// var error = msg.find('error');
-	// if (error.length) {
-	//     // TODO presume there can be a bunch of errors to handle?
-	//     formatted_message.addClass('bg-danger');
-	// }
-        return true;
-    }
-
-    function onArchivedPrivateMessage(msg) {
-	// console.log(msg);
-	var msg = $(msg);
-	var body = msg.find("body:first").text();
-	var from = msg.find('message').attr("from").split('@')[0];
-	renderMessage(from, body);
-	return true;
-    }
-    
-    function onPrivateMessage(msg) {
- 	// console.log(msg);
-	var msg = $(msg);
-	var body = msg.find("body:first").text();
-	var from = msg.attr("from").split('@')[0];
-	var composing = msg.find('composing'),
-	    paused = msg.find('paused'),
-	    active = msg.find('active');
-
-	// The chatstates plugin let's you register jquery event
-	// handlers to handle these state changes but I couldn't get
-	// it to work: sending <active/> in the sent message didn't
-	// trigger the active.chatstates event.
-	if (composing.length) {
-	    renderMessage(from, "is typing ...");
-	    other_is_typing_notification = msgs.find('>div').get(-1);	    
-	} else {
-	    if (active.length) {
-		other_is_typing_notification.remove();
-	    }
-	    if (body) {
-		renderMessage(from, body);
-	    }
-	}
-	return true;
-    }
-
-    function onPresence(pres) {
-	var msg = $(pres);
-	var from = Strophe.getBareJidFromJid(msg.attr('from'));
-	var show, status;
-	
-	if (from === DITTO.chatee) {
-	    show = msg.find('show').text();
-	    status = msg.find('status').text();
-	    if (show) {
-		$('#other-status-show').text(show);
-	    } else {
-		$('#other-status-show').text('online');
-	    }
-	    if (status) {
-		$('#other-status-status').text(status);
-	    } else {
-		$('#other-status-status').text('');
-	    }		
-	}
-	
-	return true;
-    }
-    
-    function onGroupPresence(pres) {
-	console.log('PRES', pres);
-	var msg = $(pres);
-	var nick_taken = msg.find('conflict');
-	if (nick_taken.length) {
-	    $('#myModal').modal('show');
-	}
-
-	var added = msg.find('item[role!=none]');
-	if (added.length) {
-	    presence[msg.attr('from').split('/')[1]] = 1;
-	    renderPresence();
-	}
-
-	var removed = msg.find('item[role=none]');
-	if (removed.length) {
-	    delete presence[msg.attr('from').split('/')[1]];
-	    renderPresence();
-	}
-	
-	return true;
-    }
-
-    function renderMessage (from, msg) {
-	// construct skeleton message from template
-	var formatted_message = $(message_template);
-
-	// add message text
-        formatted_message.find('.media-body').text(msg);
-
-	// configure avatar
-	var avatar = formatted_message.find('img');
-	var avatar_theme = avatars[from];
-	if (!avatar_theme) {
-	    avatar_theme = themes[Math.floor(Math.random() * (themes.length - 1))];
-	    avatars[from] = avatar_theme;
-	}
-	// TODO check .attr with untrusted input is safe!
-	avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
-	avatar.attr('alt', from);
-	// decide whether avatar goes to the left or right
-	if (from === me) {
-	    formatted_message.find('.media-left').remove();
-	    formatted_message.find('.media-body').css('text-align', 'right');
-	} else {
-	    formatted_message.find('.media-right').remove();
-	}
-	Holder.run({images:formatted_message.find('img')[0]});
-
-	// add message to page and scroll message in to view
-        msgs.append(formatted_message);
-        msgs.scrollTop(msgs[0].scrollHeight);
-    }
-    
-    function renderPresence() {
-	presence_ui.empty();
-	var pres = $('<ul class="list-group"></ul>');
-	$.each(presence, function (key) {
-	    var item = $('<li class="list-group-item"></li>');
-	    item.text(key);
-	    pres.append(item);
-	});
-	presence_ui.append(pres);
     }
 
     function rawInput(data) {

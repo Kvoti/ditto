@@ -5,19 +5,24 @@
 {% block messages %}
 <h1 class="page-heading">Chatting with {{ chatee.username }}: <span id="other-status-show"></span> <em><span id="other-status-status"></span></em></h1>
     {{ block.super }}
-    <div id="presence" class="col-md-4"></div>
 {% endblock %}
 
-{% block plugins %}
+{% block strophe-plugins %}
     <script src="{% static 'vendor/strophe.rsm.js' %}"></script>
     <script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
     <script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
     <script src="{% static 'vendor/strophe.roster.js' %}"></script>
-    <script src="{% static 'ditto/presence.js' %}"></script>
 {% endblock %}
 
 {% block config %}
     {{ block.super }}
     DITTO.chatee = '{{ chatee.username }}@' + DITTO.chat_host;
     //DITTO.chatee = 'linux@' + DITTO.chat_host;
+{% endblock %}
+
+{% block plugins %}
+    <script src="{% static 'ditto/composing.js' %}"></script>
+    <script src="{% static 'ditto/privatechat.js' %}"></script>
+    <script src="{% static 'ditto/presence.js' %}"></script>
+    <script src="{% static 'ditto/mam.js' %}"></script>
 {% endblock %}
