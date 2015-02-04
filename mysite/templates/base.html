@@ -39,39 +39,39 @@
             <a class="navbar-brand" href="/">{{ request.site.name }}</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-            {% url 'ditto:home' as url %}
-            {% navitem "home" url _("Home") %}
-            {% url 'ditto:about' as url %}
-            {% navitem "about" url _("About") %}
+          <ul class="nav navbar-nav">
+              {% url 'ditto:home' as url %}
+              {% navitem "home" url _("Home") %}
+              {% url 'ditto:about' as url %}
+              {% navitem "about" url _("About") %}
 
-          {% if request.user.is_authenticated %}
-              {% url 'users:detail' request.user.username as url %}
-              {% navitem "profile" url _("My Profile") %}
+            {% if request.user.is_authenticated %}
+                {% url 'users:detail' request.user.username as url %}
+                {% navitem "profile" url _("My Profile") %}
 
-              {% url 'ditto:dash' as url %}
-              {% navitem "dash" url _("Dashboard") %}
-            
-              {% url 'ditto:chatroom' as url %}
-              {% navitem "chatroom" url _("Chatroom") %}
+                {% url 'ditto:dash' as url %}
+                {% navitem "dash" url _("Dashboard") %}
+              
+                {% url 'ditto:chatroom' as url %}
+                {% navitem "chatroom" url _("Chatroom") %}
 
-              <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
-          {% else %}
-            <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
-            <li><a href="{% url 'account_login' %}">{% trans "Log In" %}</a></li>
-          {% endif %}
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            {% navitem "profile" "#" request.user.username %}
-            {% navitem "profile" "#" _("TODO: ROLE") %}
-            {# TODO extend navitem to allow arbitrary content #}
-            <li{% if "settings" in nav %} class="active"{% endif %}>
-                {% url "ditto:config" as url %}
-                <a href="{{ url }}">
-                    {% include "ditto/markup/icon.html" with icon="cog" assist_text=_("Settings") %}
-                </a>
-            </li>
-        </ul>
+                <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
+            {% else %}
+              <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
+              <li><a href="{% url 'account_login' %}">{% trans "Log In" %}</a></li>
+            {% endif %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              {% navitem "profile" "#" request.user.username %}
+              {% navitem "profile" "#" _("TODO: ROLE") %}
+              {# TODO extend navitem to allow arbitrary content #}
+              <li{% if "settings" in nav %} class="active"{% endif %}>
+                  {% url "ditto:config" as url %}
+                  <a href="{{ url }}">
+                      {% include "ditto/markup/icon.html" with icon="cog" assist_text=_("Settings") %}
+                  </a>
+              </li>
+          </ul>
         </div>
       </div>
     </nav>
