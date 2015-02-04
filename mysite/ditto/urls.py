@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
+from django.views.generic import TemplateView
 
 from . import views
 
@@ -63,6 +64,14 @@ urlpatterns = patterns('',
         regex=r'^chatroom/$',
         view=views.ChatroomView.as_view(),
         name='chatroom'
+    ),
+    # Candy chatroom(s) for comparison
+    url(
+        regex=r'^candy/$',
+        view=TemplateView.as_view(
+            template_name="ditto/chat/candy.html",
+        ),
+        name='candy'
     ),
     url(
         regex=r'^messages/$',
