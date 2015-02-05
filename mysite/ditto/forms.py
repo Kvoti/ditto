@@ -5,6 +5,8 @@ from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 
+from users.models import User
+
 from . import config
 from . import models
 
@@ -106,3 +108,14 @@ class FeaturePermissionsForm(forms.Form):
                 self.group.permissions.add(self.fields[name].permission)
             else:
                 self.group.permissions.remove(self.fields[name].permission)
+
+
+class NewChatroomForm(forms.Form):
+    name = forms.CharField()
+    participants = forms.ModelMultipleChoiceField(User.objects.all())
+    # open_from = ?
+    # open_until = ?
+
+    def __init__(self, user, *args, **kwargs):
+        super(NewChatroomForm, self).__init__(*args, **kwargs)
+        self.fields['participants'].queryset = User.objects.exclude(pk=user.pk)

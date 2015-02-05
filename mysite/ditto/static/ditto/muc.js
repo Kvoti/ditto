@@ -2,7 +2,7 @@
 // Group chat
 //
 (function () {
-    var chatroom = 'muc1@muc.' + DITTO.chat_host;
+    var chatroom = DITTO.room + '@muc.' + DITTO.chat_host;
     var presence = {};
     var presence_ui = $('#presence');
 

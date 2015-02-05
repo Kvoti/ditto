@@ -3,7 +3,7 @@ from importlib import import_module
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404
@@ -80,6 +80,22 @@ class DashView(NavMixin, AdminRequiredMixin, TemplateView):
 class ChatroomView(NavMixin, TemplateView):
     template_name = 'ditto/chat/chatroom.html'
     nav = ['chatroom']
+
+    
+@nav(['chatroom'])
+def private_chatroom(request, room):
+    # invite-only chatroom
+    return TemplateResponse(
+        request, 'ditto/chat/chatroom.html', {'room': room})
+
+
+@nav(['newchatroom'])
+# @admin_required
+@login_required
+def new_chatroom(request):
+    form = forms.NewChatroomForm(request.user)
+    return TemplateResponse(
+        request, 'ditto/chat/newchatroom.html', {'form': form})
 
 
 class PrivateChatView(NavMixin, DetailView):

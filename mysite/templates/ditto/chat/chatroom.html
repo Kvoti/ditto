@@ -13,7 +13,8 @@
 
 {% block config %}
     {{ block.super }}
-    DITTO.chat_nick = '{{ user.username }}';    
+    DITTO.chat_nick = '{{ user.username }}';
+    DITTO.room = '{{ room|default:"muc1" }}';
 {% endblock %}
 
 {% block plugins %}

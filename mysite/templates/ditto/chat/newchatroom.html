@@ -1,0 +1,11 @@
+{% extends "ditto/chat/chatroom.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+    {% include "common/includes/forms/form.html" %}
+{% endblock %}
+
+{% block chat %}
+    <script src="{% static 'ditto/newroom.js' %}"></script>
+{% endblock %}

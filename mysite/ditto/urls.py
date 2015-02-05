@@ -65,6 +65,16 @@ urlpatterns = patterns('',
         view=views.ChatroomView.as_view(),
         name='chatroom'
     ),
+    url(
+        regex=r'^chatroom/new/$',
+        view=views.new_chatroom,
+        name='new-chatroom'
+    ),
+    url(
+        regex=r'^chatroom/(\w+)/$',
+        view=views.private_chatroom,
+        name='private-chatroom'
+    ),
     # Candy chatroom(s) for comparison
     url(
         regex=r'^candy/$',

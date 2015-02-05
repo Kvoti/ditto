@@ -78,6 +78,7 @@
     <script>
         {% block config %}
         var DITTO = {};
+        DITTO.chat_domain = '{{ debug|yesno:"localhost,134.213.147.235" }}';
         DITTO.chat_host = '{{ debug|yesno:"localhost,ditto.com" }}';
         DITTO.chat_name = '{{ user.username }}@' + DITTO.chat_host + '/Ditto';
         {% comment %}
@@ -85,9 +86,12 @@
         gets an empty response from /get_password
         {% endcomment %}
         DITTO.chat_pass = '{% if debug %}pass{% else %}{{ request.session.session_key }}{% endif %}';
-        DITTO.chat_pass = '{% if debug %}{% else %}{{ request.session.session_key }}{% endif %}';
+        // use line below when using http auth module
+        //DITTO.chat_pass = '{% if debug %}{% else %}{{ request.session.session_key }}{% endif %}';
         {% endblock %}
     </script>
-    <script src="{% static 'ditto/chat.js' %}"></script>
-    {% block plugins %}{% endblock %}
+    {% block chat %}
+        <script src="{% static 'ditto/chat.js' %}"></script>
+        {% block plugins %}{% endblock %}
+    {% endblock %}
 {% endblock %}
