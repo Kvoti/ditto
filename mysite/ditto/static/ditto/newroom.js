@@ -38,7 +38,7 @@ $(document).ready(function () {
     function addMembers(participants) {
 	var callback = function () { };
         $.each(participants, function (i, participant) {
-	    if (participants[i] === participant) {
+	    if (participants[participants.length - 1] === participant) {
 		callback = function () {
 		    window.location.href = '../' + name + '/';
 		};
