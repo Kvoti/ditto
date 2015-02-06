@@ -13,3 +13,14 @@ def deploy():
             sudo(' ../../bin/python manage.py collectstatic --noinput',
                  user="pydev")
     run('apachectl graceful')
+
+
+def builddb():
+    with cd('/srv/venv/mysite/mysite'):
+        with shell_env(DJANGO_CONFIGURATION='Production'):
+            sudo("echo 'drop database app_data;create database app_data' | ../../bin/python manage.py dbshell",
+                 user="pydev")
+            sudo(' ../../bin/python manage.py migrate',
+                 user="pydev")
+            sudo(' ../../bin/python manage.py runscript setup_test_data',
+                 user="pydev")
