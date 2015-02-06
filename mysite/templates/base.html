@@ -15,9 +15,11 @@
     {% block css %}
     {% theme as theme %}
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css"> -->
     
     <!-- Your stuff: Third-party css libraries go here -->
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet">
 
     <!-- This file store project specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
@@ -27,7 +29,7 @@
 
   <body>
 
-    <nav class="header navbar navbar-default navbar-fixed-top">
+    <nav class="header navbar navbar-default navbar-fixed-top navbar-inverse">
       <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">

@@ -191,6 +191,8 @@ class Common(Configuration):
     # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
     STATICFILES_DIRS = (
         join(BASE_DIR, 'static'),
+        # compiled boostrap assets
+        join(BASE_DIR, 'bootstrap-3.3.2/dist'),
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
