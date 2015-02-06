@@ -1,5 +1,7 @@
 from importlib import import_module
 
+from braces.views import LoginRequiredMixin
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group
@@ -61,13 +63,22 @@ class NavMixin(object):
         context['nav'] = self.nav
         return context
 
-
-class HomeView(NavMixin, TemplateView):
+    
+class _HomeView(NavMixin, TemplateView):
     template_name = 'pages/home.html'
     nav = ['home']
+_home = _HomeView.as_view()
 
 
-class AboutView(NavMixin, TemplateView):
+@login_required
+def home(request):
+    if request.user.is_new:
+        return TemplateResponse(request, 'ditto/create.html')
+    else:
+        return _home(request)
+    
+        
+class AboutView(LoginRequiredMixin, NavMixin, TemplateView):
     template_name = 'pages/about.html'
     nav = ['about']
 
@@ -77,7 +88,7 @@ class DashView(NavMixin, AdminRequiredMixin, TemplateView):
     nav = ['dash']
     
 
-class ChatroomView(NavMixin, TemplateView):
+class ChatroomView(LoginRequiredMixin, NavMixin, TemplateView):
     template_name = 'ditto/chat/chatroom.html'
     nav = ['chatroom']
 
@@ -98,7 +109,7 @@ def new_chatroom(request):
         request, 'ditto/chat/newchatroom.html', {'form': form})
 
 
-class PrivateChatView(NavMixin, DetailView):
+class PrivateChatView(LoginRequiredMixin, NavMixin, DetailView):
     model = User
     slug_field = 'username'
     context_object_name = 'chatee'
@@ -106,7 +117,7 @@ class PrivateChatView(NavMixin, DetailView):
     nav = ['private_chat']
 
 
-class PrivateChatsView(NavMixin, ListView):
+class PrivateChatsView(LoginRequiredMixin, NavMixin, ListView):
     model = User
     context_object_name = 'chatees'
     template_name = 'ditto/chat/private_chats.html'

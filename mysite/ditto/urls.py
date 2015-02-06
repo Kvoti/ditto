@@ -6,7 +6,7 @@ from . import views
 
 urlpatterns = patterns('',
     url(r'^$',  # noqa
-        views.HomeView.as_view(),
+        views.home,
         name="home"),
     url(r'^about/$',
         views.AboutView.as_view(),

@@ -9,7 +9,6 @@ script instead of a bunch of data migrations.
 """
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from postman.models import Alias, Message, Recipient, STATUS_ACCEPTED
 import ditto.models
 import ditto.config
 
@@ -25,7 +24,6 @@ def run():
     setup_interactions()
     setup_admin_user()
     setup_members()
-    setup_conversations()
     
     
 def setup_features():
@@ -74,27 +72,8 @@ def setup_admin_user():
 
 
 def setup_members():
-    for name in ['mark', 'sarah', 'ross', 'emma']:
+    for name in ['mark', 'sarah', 'ross', 'emma', 'visitor']:
         _create_user(name, ditto.config.MEMBER_ROLE)
-
-
-def setup_conversations():
-    mark = User.objects.get(username='mark')
-    sarah = User.objects.get(username='sarah')
-    admin = User.objects.get(username='admin')
-
-    msg, _ = Message.objects.get_or_create(
-        sender=admin,
-        subject="Hello members!",
-        moderation_status=STATUS_ACCEPTED,
-    )
-    for user in [mark, sarah]:
-        Recipient.objects.get_or_create(
-            message=msg,
-            user=user
-        )
-    testers, _ = Alias.objects.get_or_create(name="testers")
-    testers.users = [mark, sarah]
     
 
 def _create_user(username, group_name):
@@ -104,5 +83,7 @@ def _create_user(username, group_name):
         defaults={'email': '%s@example.com' % username})
     if created:
         user.set_password("let me in")
+        if username != 'visitor':
+            user.is_new = False
         user.save()
     user.groups.add(Group.objects.get(name=group_name))

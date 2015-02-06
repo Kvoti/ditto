@@ -70,6 +70,7 @@ class Common(Configuration):
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'django.contrib.sites.middleware.CurrentSiteMiddleware',
+        'ditto.middleware.VisitorMiddleware',
     )
     # END MIDDLEWARE CONFIGURATION
 
@@ -232,7 +233,7 @@ class Common(Configuration):
     # Custom user app defaults
     # Select the correct user model
     AUTH_USER_MODEL = 'users.User'
-    LOGIN_REDIRECT_URL = 'users:redirect'
+    LOGIN_REDIRECT_URL = 'ditto:home'
     LOGIN_URL = 'account_login'
     # END Custom user app defaults
 

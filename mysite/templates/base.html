@@ -38,12 +38,10 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">{{ request.site.name }}</a>
+            <a class="navbar-brand" href="{% url 'ditto:home' %}">{{ request.site.name }}</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-              {% url 'ditto:home' as url %}
-              {% navitem "home" url _("Home") %}
               {% url 'ditto:about' as url %}
               {% navitem "about" url _("About") %}
 
