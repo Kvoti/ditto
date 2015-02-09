@@ -3,6 +3,7 @@
 {% load staticfiles %}
 
 {% block messages %}
+<audio src="" ></audio>
 <h1 class="page-heading">Chatting with {{ chatee.username }}: <span id="other-status-show"></span> <em><span id="other-status-status"></span></em></h1>
     {{ block.super }}
 {% endblock %}
@@ -25,4 +26,9 @@
     <script src="{% static 'ditto/privatechat.js' %}"></script>
     <script src="{% static 'ditto/presence.js' %}"></script>
     <script src="{% static 'ditto/mam.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'vendor/notification.js' %}"></script>
+    {{ block.super }}
 {% endblock %}

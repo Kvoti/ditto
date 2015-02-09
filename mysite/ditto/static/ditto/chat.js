@@ -57,20 +57,22 @@ DITTO.chat = {
     newMessageText: 'New Message...',
 
     isPageHidden: function () {
-	return document.webkitHidden;
+	return document.webkitHidden || document.mozHidden;
     },
 	
     notifyNewMessage: function (callback) {
 	// TOOD play sound
-	// TODO desktop alert
+
+	new Notification("New message", {
+	    icon : "/static/images/ditto-logo.png"
+	});
+	
+	// toggle page title
+	// (notificaiton shim falls back to title toggling in
+	// notifications not supported, perhaps we don't need both?)
 	var title = $('title');
 	this.orig_page_title = title.text();
-	title.text(this.newMessageText);
-	var self = this;
-	this.title_interval = window.setTimeout(
-	    function () { self.toggleTitle(); },
-	    this.titleTogglePeriod
-	);
+	this.toggleTitle();
     },
 
     toggleTitle: function () {
@@ -90,6 +92,7 @@ DITTO.chat = {
 	    );
 	}
     }
+
 };
 
 $(document).ready(function () {
@@ -97,6 +100,14 @@ $(document).ready(function () {
     
     DITTO.chat.message_input.focus();
 
+    function getNotificationPermission () {
+	if (Notification.permission !== 'granted') {
+	    Notification.requestPermission();
+	}
+    }
+    getNotificationPermission();
+    $('body').one("click", getNotificationPermission);  // chrome
+    
     $('#msg').submit(function (e) {
         e.preventDefault();
 	if (!connection) {
