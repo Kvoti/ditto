@@ -67,8 +67,8 @@ DITTO.chat = {
 	this.orig_page_title = title.text();
 	title.text(this.newMessageText);
 	var self = this;
-	this.title_interval = window.setInterval(
-	    function () { self.toggleTitle.apply(self); },
+	this.title_interval = window.setTimeout(
+	    function () { self.toggleTitle(); },
 	    this.titleTogglePeriod
 	);
     },
@@ -76,7 +76,6 @@ DITTO.chat = {
     toggleTitle: function () {
 	var title = $('title');
 	if (!this.isPageHidden()) {
-	    window.clearTimeout(this.title_interval);
 	    title.text(this.orig_page_title);
 	} else {
 	    if (title.text() === this.newMessageText) {
@@ -84,6 +83,11 @@ DITTO.chat = {
 	    } else {
 		title.text(this.newMessageText);
 	    }
+	    var self = this;
+	    window.setTimeout(
+		function () { self.toggleTitle(); },
+		this.titleTogglePeriod
+	    );
 	}
     }
 };
