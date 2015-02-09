@@ -122,7 +122,7 @@ $(document).ready(function () {
     });
     
     function connect () {
-	connection = new Strophe.Connection('ws://' + DITTO.chat_host + ':5280/ws-xmpp');
+	connection = new Strophe.Connection('ws://' + DITTO.chat_domain + ':5280/ws-xmpp');
 	connection.rawInput = rawInput;
 	connection.rawOutput = rawOutput;
 	
