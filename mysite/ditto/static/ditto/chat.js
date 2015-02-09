@@ -10,7 +10,9 @@ DITTO.chat = {
     outgoingMessageCallbacks: [],
 
     me: DITTO.chat_name.split('@')[0],
-    
+
+    titleTogglePeriod: 1000,  // can't be any smaller for chrome/ffox
+
     renderMessage: function (from, msg) {
 	// construct skeleton message from template
 	var formatted_message = $(this.message_template);
@@ -48,8 +50,42 @@ DITTO.chat = {
 
     addOutgoingMessageCallback: function (callback) {
 	this.outgoingMessageCallbacks.push(callback);
-    }
+    },
+
+    in_focus: true,
+    
+    newMessageText: 'New Message...',
+
+    isPageHidden: function () {
+	return document.webkitHidden;
+    },
 	
+    notifyNewMessage: function (callback) {
+	// TOOD play sound
+	// TODO desktop alert
+	var title = $('title');
+	this.orig_page_title = title.text();
+	title.text(this.newMessageText);
+	var self = this;
+	this.title_interval = window.setInterval(
+	    function () { self.toggleTitle.apply(self); },
+	    this.titleTogglePeriod
+	);
+    },
+
+    toggleTitle: function () {
+	var title = $('title');
+	if (!this.isPageHidden()) {
+	    window.clearTimeout(this.title_interval);
+	    title.text(this.orig_page_title);
+	} else {
+	    if (title.text() === this.newMessageText) {
+		title.text(this.orig_page_title);
+	    } else {
+		title.text(this.newMessageText);
+	    }
+	}
+    }
 };
 
 $(document).ready(function () {

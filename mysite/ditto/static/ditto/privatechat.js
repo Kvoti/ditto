@@ -24,6 +24,9 @@
 
 	if (body) {
 	    this.renderMessage(from, body);
+            if (this.isPageHidden()) {
+                this.notifyNewMessage();
+            }
             // return false to prevent further processing of this message
             return false;
         }
