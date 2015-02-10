@@ -72,9 +72,13 @@ def setup_admin_user():
 
 
 def setup_members():
-    for name in ['mark', 'sarah', 'ross', 'emma', 'visitor']:
+    for name in ['mark', 'sarah', 'ross', 'emma']:
         _create_user(name, ditto.config.MEMBER_ROLE)
-    
+    # 'visitor' is someone who's come to the site to create their own
+    # network, hence we give them the admin role so they can do all
+    # the configuration necessary for a new network.
+    _create_user('visitor', ditto.config.ADMIN_ROLE)
+        
 
 def _create_user(username, group_name):
     user, created = User.objects.get_or_create(username=username)

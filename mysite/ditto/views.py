@@ -126,19 +126,40 @@ class PrivateChatsView(LoginRequiredMixin, NavMixin, ListView):
     
 @admin_required
 @nav(['dash', 'roles'])
-def roles(request):
-    extra = 1 if 'add' in request.GET else 0
-    if request.method == 'POST':
+def roles(request, template='ditto/roles.html', success_url=None, on_success=None):
+    if success_url is None:
+        success_url = request.path
+    try:
+        extra = int(request.POST.get('extra'))
+    except (TypeError, ValueError):
+        extra = 1
+    if request.method == 'POST' and 'delete' in request.POST:
+        group = get_object_or_404(Group, pk=request.POST['delete'])
+        group.delete()
+        return HttpResponseRedirect(request.path)
+    if request.method == 'POST' and 'add' not in request.POST:
         formset = forms.RoleFormSet(extra, data=request.POST)
         if formset.is_valid():
             formset.save()
             messages.success(request, "Configuration successfully updated")
-            return HttpResponseRedirect(request.path)
+            if on_success:
+                on_success(request)
+            return HttpResponseRedirect(success_url)
     else:
-        formset = forms.RoleFormSet(extra)
-        
-    return TemplateResponse(request, 'ditto/roles.html', {
+        i = 0
+        initial = []
+        while True:
+            name_key = 'form-{}-name'.format(i)
+            id_key = 'form-{}-id'.format(i)
+            if id_key not in request.POST:
+                break
+            if not request.POST[id_key]:
+                initial.append({'name': request.POST[name_key]})
+            i += 1
+        formset = forms.RoleFormSet(extra, initial=initial)
+    return TemplateResponse(request, template, {
         'formset': formset,
+        'extra': extra + 1
     })
 
 
@@ -231,7 +252,9 @@ def feature_permissions(request, role_slug, feature_slug):
 
 @admin_required
 @nav(['dash', 'settings'])
-def config(request):
+def config(request, template='ditto/config.html', success_url=None):
+    if success_url is None:
+        success_url = request.path
     try:
         config = models.Config.objects.all()[0]
     except IndexError:
@@ -241,14 +264,39 @@ def config(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Configuration successfully updated")
-            return HttpResponseRedirect(request.path)
+            return HttpResponseRedirect(success_url)
     else:
         form = forms.ConfigForm(instance=config)
         
-    return TemplateResponse(request, 'ditto/config.html', {
+    return TemplateResponse(request, template, {
         'form': form,
     })
 
+
+@admin_required
+def step1(request):
+    return config(
+        request,
+        template='ditto/signup/step1.html',
+        success_url=reverse('ditto:create-step2')
+    )
+
+
+@admin_required
+def step2(request):
+    return roles(
+        request,
+        template='ditto/signup/step2.html',
+        success_url=reverse('ditto:home'),
+        on_success=_on_setup_finish
+    )
+
+
+def _on_setup_finish(request):
+    user = request.user
+    user.is_new = False
+    user.save()
+    
 
 # Chat server auth endpoints
 # TODO secure these views so only chat server can access
@@ -292,3 +340,10 @@ def get_password(request):
         if s.get_decoded().get('_auth_user_id') == user.pk:
             return HttpResponse(s.pk)
     raise Http404
+
+
+def start_again(request):
+    user = request.user
+    user.is_new = True
+    user.save()
+    return HttpResponseRedirect(reverse('ditto:home'))

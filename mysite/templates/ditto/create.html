@@ -1,11 +1,10 @@
 {% extends "landing.html" %}
 
 {% block outer %}
-<div class="container" style="margin-top:150px">
+<div class="container" style="margin-top:150px;text-align:center">
     <div class="junbotron">
-        <h1>Welcome to Ditto!</h1>
-        <p>This is gonna be AWESOME...!</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Create your network</a></p>
+        <h1>Build your own Social Support Service Network.</h1>
+        <p><a class="btn btn-primary btn-lg" href="{% url 'ditto:create-step1' %}" role="button">GET STARTED</a></p>
     </div>
 </div>
 {% endblock %}

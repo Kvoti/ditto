@@ -5,7 +5,7 @@
     <div class="input-group">
         {{ block.super }}
         <div class="input-group-addon">
-            <a href="{% url 'ditto:delete-role' form.instance.pk %}" class="btn btn-xs btn-danger">
+            <button type="sumbit" class="btn btn-xs btn-danger" name="delete" value="{{ form.instance.pk }}">
                 {% include "ditto/markup/icon.html" with icon="remove" assist_text=_("Delete") %}
             </a>
         </div>

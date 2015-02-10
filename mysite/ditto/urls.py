@@ -14,6 +14,10 @@ urlpatterns = patterns('',
     url(r'^dashboard/$',
         views.DashView.as_view(),
         name="dash"),
+                       
+    url(r'^/debug/start-again/$',
+        views.start_again,
+        name="start-again"),
 
     url(
         regex=r'^settings/config/$',
@@ -59,6 +63,18 @@ urlpatterns = patterns('',
         name='permissions-between'
     ),
 
+    # inital configuration
+    url(
+        regex=r'^create/step1/$',
+        view=views.step1,
+        name='create-step1'
+    ),
+    url(
+        regex=r'^create/step2/$',
+        view=views.step2,
+        name='create-step2'
+    ),
+                       
     # chatroom and private chat                       
     url(
         regex=r'^chatroom/$',
