@@ -44,7 +44,8 @@ def nav(nav):
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         template_response = wrapped(*args, **kwargs)
-        template_response.context_data['nav'] = nav
+        if hasattr(template_response, 'context_data'):
+            template_response.context_data['nav'] = nav
         return template_response
     return wrapper
 
