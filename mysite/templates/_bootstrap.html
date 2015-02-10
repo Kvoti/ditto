@@ -1,0 +1,15 @@
+div[class="row"], .form-group {
+    border: 1px dotted rgba(0, 0, 0, 0.5);
+}
+
+[class*="col-"] {
+    background-color: rgba(255, 0, 0, 0.2);
+    border: 1px dotted rgba(0, 0, 0, 0.5);
+}
+
+
+            <div class="row">
+                {% for i in "............"|make_list %}
+                <div class="col-md-1">{{ forloop.counter }}</div>
+                {% endfor %}
+            </div>
