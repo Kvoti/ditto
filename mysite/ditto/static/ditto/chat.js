@@ -63,9 +63,12 @@ DITTO.chat = {
     notifyNewMessage: function (callback) {
 	// TOOD play sound
 
-	new Notification("New message", {
+	var notification = new Notification("New message", {
 	    icon : "/static/images/ditto-logo.png"
 	});
+	notification.onclick = function () {
+            window.focus();
+        };
 	
 	// toggle page title
 	// (notificaiton shim falls back to title toggling in
