@@ -15,7 +15,7 @@ urlpatterns = patterns('',
         views.DashView.as_view(),
         name="dash"),
                        
-    url(r'^/debug/start-again/$',
+    url(r'^debug/start-again/$',
         views.start_again,
         name="start-again"),
 
