@@ -22,6 +22,9 @@ class Common(Configuration):
 
     # APP CONFIGURATION
     DJANGO_APPS = (
+        # Must come first to patch model._meta
+        'multitenancy',
+        
         # Default Django apps:
         'django.contrib.auth',
         'django.contrib.contenttypes',
@@ -63,6 +66,8 @@ class Common(Configuration):
     MIDDLEWARE_CLASSES = (
         # Make sure djangosecure.middleware.SecurityMiddleware is listed first
         'djangosecure.middleware.SecurityMiddleware',
+        # multitenancy must come second (or first?)
+        'multitenancy.middleware.CurrentTenantMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -232,7 +237,9 @@ class Common(Configuration):
     # Custom user app defaults
     # Select the correct user model
     AUTH_USER_MODEL = 'users.User'
-    LOGIN_REDIRECT_URL = 'ditto:home'
+    # TODO this needs to be dynamic (or overriden somewhere)
+    # (as url is different if you are loggin in to the main ditto site or one of the networks)
+    LOGIN_REDIRECT_URL = 'tenant:home'
     LOGIN_URL = 'account_login'
     # END Custom user app defaults
 
