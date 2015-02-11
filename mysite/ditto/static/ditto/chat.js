@@ -13,6 +13,8 @@ DITTO.chat = {
 
     titleTogglePeriod: 1000,  // can't be any smaller for chrome/ffox
 
+    beep: $('audio').get(0),
+    
     renderMessage: function (from, msg) {
 	// construct skeleton message from template
 	var formatted_message = $(this.message_template);
@@ -61,8 +63,8 @@ DITTO.chat = {
     },
 	
     notifyNewMessage: function (callback) {
-	// TOOD play sound
-
+        this.beep.play();
+        
 	var notification = new Notification("New message", {
 	    icon : "/static/images/ditto-logo.png"
 	});
