@@ -73,17 +73,21 @@ DITTO.chat = {
         };
 	
 	// toggle page title
-	// (notificaiton shim falls back to title toggling in
+	// (notification shim falls back to title toggling if
 	// notifications not supported, perhaps we don't need both?)
-	var title = $('title');
-	this.orig_page_title = title.text();
-	this.toggleTitle();
+        if (!this.is_toggling_title) {
+            this.is_toggling_title = true;
+	    var title = $('title');
+	    this.orig_page_title = title.text();
+	    this.toggleTitle();
+        }
     },
 
     toggleTitle: function () {
 	var title = $('title');
 	if (!this.isPageHidden()) {
 	    title.text(this.orig_page_title);
+            this.is_toggling_title = false;
 	} else {
 	    if (title.text() === this.newMessageText) {
 		title.text(this.orig_page_title);
