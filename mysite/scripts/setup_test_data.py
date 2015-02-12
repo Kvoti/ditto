@@ -31,10 +31,12 @@ def run():
     setup_tenants()
 
 
-def setup_site():
+def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
     site = Site.objects.get_current()
-    site.name = 'DITTO.TECHNOLOGY'
-    site.domain = 'localhost' if settings.DEBUG else site.name.lower()
+    site.name = name
+    domain = 'localhost' if settings.DEBUG else site.name.lower()
+    if subdomain:
+        domain = '%s.%s' % (subdomain, domain)
     site.save()
 
 
@@ -112,3 +114,4 @@ def setup_tenants():
         network_name='Digital Impacts',
         slug='di'
     )
+    setup_site(name='Digital Impacts', subdomain='di')
