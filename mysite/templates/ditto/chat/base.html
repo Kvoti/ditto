@@ -85,9 +85,9 @@
         no password in debug is workaround for development where mongooseim thinks it
         gets an empty response from /get_password
         {% endcomment %}
-        DITTO.chat_pass = '{% if debug %}pass{% else %}{{ request.session.session_key }}{% endif %}';
-        // use line below when using http auth module
-        //DITTO.chat_pass = '{% if debug %}{% else %}{{ request.session.session_key }}{% endif %}';
+        //DITTO.chat_pass = '{% if debug %}pass{% else %}{{ request.session.session_key }}{% endif %}';
+        // use line below when using http auth module locally
+        DITTO.chat_pass = '{% if debug %}{% else %}{{ request.session.session_key }}{% endif %}';
         {% endblock %}
     </script>
     {% block chat %}
