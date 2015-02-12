@@ -1,3 +1,4 @@
+from django.contrib.sites.models import Site
 from . import tenant
 
 
@@ -7,7 +8,9 @@ class CurrentTenantMiddleware(object):
         tenant._set_for_request(request)
         if tenant._is_main():
             request.urlconf = 'main_urls'
-
+        # TODO wonder what else is screwed up by changing _meta.db_table on the fly!!??
+        Site.objects.clear_cache()
+        
     def process_response(self, request, response):
         self._unset()
         return response

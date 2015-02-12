@@ -3,7 +3,7 @@
     <head>
         <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
         <meta charset="utf-8">
-        <title>{% block title %}Ditto{% endblock %}</title>
+        <title>{% block title %}{{ request.site.name }}{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
@@ -47,7 +47,7 @@
     </head>
     <body>
         <div class="banner">
-            <a href="/">DITTO.TECHNOLOGY</a>
+            <a href="/">{{ request.site.name }}</a>
         </div>
         {% block outer %}
         <div class="logo">

@@ -23,7 +23,6 @@ urlpatterns = patterns('',
     url(r'^avatar/', include('avatar.urls')),
 
     # Your stuff: custom urls go here
-    url(r'^$', TemplateView.as_view(template_name='landing.html')),
-    url(r'^ditto/', include('ditto.urls', namespace="ditto")),
+    url(r'', include('ditto.urls', namespace="ditto")),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

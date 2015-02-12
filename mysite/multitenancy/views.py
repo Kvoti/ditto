@@ -62,6 +62,7 @@ def _create_network_instance(tenant):
         
         # copy the current user to the network database and make an admin
         admin.pk = None
+        admin.is_new = True
         admin.save()
         for email in admin_emails:
             admin.emailaddress_set.create(

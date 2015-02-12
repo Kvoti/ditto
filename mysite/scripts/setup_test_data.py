@@ -7,8 +7,10 @@ In any case, it's probably easier/better to have a single bootstrap
 script instead of a bunch of data migrations.
 
 """
+from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 import ditto.models
 import ditto.config
 
@@ -18,12 +20,20 @@ INTERACTIONS = ["Message", "Private chat", "Group chat"]
 
 
 def run():
+    setup_site()
     setup_features()
     setup_default_roles()
     setup_admin_permission()
     setup_interactions()
     setup_admin_user()
     setup_members()
+
+
+def setup_site():
+    site = Site.objects.get_current()
+    site.name = 'DITTO.TECHNOLOGY'
+    site.domain = 'localhost' if settings.DEBUG else site.name.lower()
+    site.save()
     
     
 def setup_features():
