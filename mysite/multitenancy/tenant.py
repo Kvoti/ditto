@@ -1,6 +1,7 @@
+from contextlib import contextmanager
 from threading import local
 
-_tenant = local()
+_current_tenant = local()
 
 _MAIN = '__main__'
 
@@ -10,13 +11,13 @@ class _DBTable(object):
         orig = getattr(obj, '_db_table', '')
         if orig:
             # TODO exempt some tables so they're shared (will screw up migrate...)
-            return '%s%s' % (_tenant.table_prefix, orig)
+            return '%s%s' % (_current_tenant.table_prefix, orig)
         else:
             return ''
 
     def __set__(self, obj, value):
         if value:
-            obj._db_table = value.replace(_tenant.table_prefix, '')
+            obj._db_table = value.replace(_current_tenant.table_prefix, '')
         
         
 def _patch_table_names():
@@ -48,12 +49,19 @@ def _set_default():
 
     
 def _set(table_prefix):
-    _tenant.table_prefix = table_prefix
+    _current_tenant.table_prefix = table_prefix
 
 
 def _unset():
-    del _tenant.table_prefix
+    del _current_tenant.table_prefix
 
 
 def _is_main():
-    return _tenant.table_prefix == _MAIN
+    return _current_tenant.table_prefix == _MAIN
+
+
+@contextmanager
+def _tenant(tenant_id):
+    _set_for_tenant(tenant_id)
+    yield
+    _unset()
