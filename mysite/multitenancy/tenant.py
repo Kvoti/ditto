@@ -31,22 +31,26 @@ def _patch_table_names():
 def _set_for_request(request):
     host = request.get_host()
     log.debug('Request host is %s' % host)
-    with _tenant(_MAIN):
-        # **Must** have this import here, not at the top of the file
-        from django.contrib.sites.models import Site
-        Site.objects.clear_cache()
-        domain = Site.objects.get_current().domain
-        log.debug('Parent domain is %s' % domain)
-    if not host.startswith(domain):
-        tenant = host.split('.')[0]
-        log.debug('Tenant is %s' % tenant)
-        with _tenant(_MAIN):
-            from . import models  # fix circ. import
-            if not models.Tenant.objects.filter(slug=tenant).exists():
-                log.error('Tenant %s not found' % tenant)
-                raise ValueError
+    # special case for request from chat server
+    if host == 'localhost':
+        tenant = _MAIN
     else:
-        log.debug('No tenant found')
+        with _tenant(_MAIN):
+            # **Must** have this import here, not at the top of the file
+            from django.contrib.sites.models import Site
+            Site.objects.clear_cache()
+            domain = Site.objects.get_current().domain
+            log.debug('Parent domain is %s' % domain)
+        if not host.startswith(domain):
+            tenant = host.split('.')[0]
+            log.debug('Tenant is %s' % tenant)
+            with _tenant(_MAIN):
+                from . import models  # fix circ. import
+                if not models.Tenant.objects.filter(slug=tenant).exists():
+                    log.error('Tenant %s not found' % tenant)
+                    raise ValueError
+        else:
+            log.debug('No tenant found')
         tenant = _MAIN
     return _set(tenant)
 
