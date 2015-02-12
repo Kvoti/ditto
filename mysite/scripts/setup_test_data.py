@@ -28,7 +28,8 @@ def run():
     setup_interactions()
     setup_admin_user()
     setup_members()
-    setup_tenants()
+    if not settings.DEBUG:
+        setup_tenants()
 
 
 def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
@@ -37,6 +38,7 @@ def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
     domain = 'localhost' if settings.DEBUG else site.name.lower()
     if subdomain:
         domain = '%s.%s' % (subdomain, domain)
+    site.domain = domain
     site.save()
 
 
