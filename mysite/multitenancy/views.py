@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.core import management
+from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
@@ -88,12 +89,6 @@ def get_password(request):
         return HttpResponse()
     username = request.GET['user']
     user = get_object_or_404(User, username=username)
-    from django.contrib.sessions.models import Session
-    # TODO this could take a while when there are lots of sessions
-    # TODO users can end up with several sessions, does it always work taking most recent?
-    # TODO we don't actually need to use session key here, could be any token
-    for s in Session.objects.order_by('-expire_date'):
-        # TODO handle expired sessions
-        if s.get_decoded().get('_auth_user_id') == user.pk:
-            return HttpResponse(s.pk)
-    raise Http404
+    signer = Signer()
+    value = signer.sign(user.username)
+    return HttpResponse(value)
