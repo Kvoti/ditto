@@ -1,5 +1,6 @@
 import os
 from django.conf import settings
+from django.core.validators import RegexValidator
 from django.db import models
 
 from . import tenant
@@ -15,8 +16,16 @@ tenant._patch_table_names()
 
 class Tenant(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    network_name = models.CharField(max_length=20, unique=True)
-    slug = models.SlugField(unique=True)
+    network_name = models.CharField(
+        max_length=20,
+        unique=True,
+    )
+    slug = models.CharField(
+        validators=[RegexValidator('^[a-z]+$')],
+        max_length=10,
+        unique=True,
+        help_text='A short identifier for your network, lower case letters only'
+    )
 
     @property
     def network_url(self):
