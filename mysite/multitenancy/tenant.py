@@ -2,8 +2,7 @@ from contextlib import contextmanager
 from threading import local
 
 _current_tenant = local()
-
-_MAIN = '__main__'
+_MAIN = 'main'
 
 
 class _DBTable(object):
@@ -30,14 +29,17 @@ def _set_for_request(request):
     host = request.get_host()
     if '.' in host:
         tenant = host.split('.')[0]
-        table_prefix = _table_prefix(tenant)
+        with _tenant(_MAIN):
+            from . import models  # fix circ. import
+            if not models.Tenant.objects.filter(slug=tenant).exists():
+                raise ValueError
     else:
-        table_prefix = _MAIN
-    return _set(table_prefix)
+        tenant = _MAIN
+    return _set(tenant)
 
 
 def _set_for_tenant(tenant):
-    _set(_table_prefix(tenant))
+    _set(tenant)
 
 
 def _table_prefix(tenant):
@@ -48,8 +50,8 @@ def _set_default():
     _set(_MAIN)
 
     
-def _set(table_prefix):
-    _current_tenant.table_prefix = table_prefix
+def _set(tenant_id):
+    _current_tenant.table_prefix = _table_prefix(tenant_id)
 
 
 def _unset():
@@ -57,7 +59,7 @@ def _unset():
 
 
 def _is_main():
-    return _current_tenant.table_prefix == _MAIN
+    return _current_tenant.table_prefix == _table_prefix(_MAIN)
 
 
 @contextmanager
