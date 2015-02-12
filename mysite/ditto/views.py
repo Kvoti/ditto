@@ -89,6 +89,15 @@ class ChatroomView(LoginRequiredMixin, NavMixin, TemplateView):
     template_name = 'ditto/chat/chatroom.html'
     nav = ['chatroom']
 
+    # TOOD move this to a mixin as serveral views require chat connection
+    def get_context_data(self, **kwargs):
+        context = super(ChatroomView, self).get_context_data(**kwargs)
+        from django.core.signing import Signer
+        signer = Signer()
+        value = signer.sign(self.request.user.username)
+        context['pass'] = value
+        return context
+
     
 @nav(['chatroom'])
 def private_chatroom(request, room):
@@ -113,7 +122,7 @@ class PrivateChatView(LoginRequiredMixin, NavMixin, DetailView):
     template_name = 'ditto/chat/private_chat.html'
     nav = ['private_chat']
 
-
+    
 class PrivateChatsView(LoginRequiredMixin, NavMixin, ListView):
     model = User
     context_object_name = 'chatees'
