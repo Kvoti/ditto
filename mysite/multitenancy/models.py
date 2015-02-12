@@ -15,8 +15,8 @@ tenant._patch_table_names()
 
 class Tenant(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    network_name = models.CharField(max_length=20)
-    slug = models.SlugField()
+    network_name = models.CharField(max_length=20, unique=True)
+    slug = models.SlugField(unique=True)
 
     @property
     def network_url(self):
