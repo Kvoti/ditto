@@ -27,7 +27,12 @@ def _patch_table_names():
             
 def _set_for_request(request):
     host = request.get_host()
-    if '.' in host:
+    with _tenant(_MAIN):
+        # **Must** have this import here, not at the top of the file
+        from django.contrib.sites.models import Site
+        Site.objects.clear_cache()
+        domain = Site.objects.get_current().domain
+    if not host.startswith(domain):
         tenant = host.split('.')[0]
         with _tenant(_MAIN):
             from . import models  # fix circ. import
