@@ -11,6 +11,6 @@ from django.views.generic import TemplateView
 urlpatterns = patterns('',
     url(r'^accounts/', include('allauth.urls')),
     # url(r'^$', TemplateView.as_view(template_name='landing.html'), name='landing'),
-    url(r'', include('multitenancy.urls', namespace="tenant")),
+    url(r'', include('multitenancy.urls', namespace="ditto")),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

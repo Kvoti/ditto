@@ -237,9 +237,7 @@ class Common(Configuration):
     # Custom user app defaults
     # Select the correct user model
     AUTH_USER_MODEL = 'users.User'
-    # TODO this needs to be dynamic (or overriden somewhere)
-    # (as url is different if you are loggin in to the main ditto site or one of the networks)
-    LOGIN_REDIRECT_URL = 'tenant:home'
+    LOGIN_REDIRECT_URL = 'ditto:home'
     LOGIN_URL = 'account_login'
     # END Custom user app defaults
 

@@ -15,6 +15,4 @@ class TenantForm(forms.ModelForm):
         
     def save(self, *args, **kwargs):
         self.instance.slug = slugify(self.cleaned_data['network_name'])
-        super(TenantForm, self).save(*args, **kwargs)
-        
-                                     
+        return super(TenantForm, self).save(*args, **kwargs)
