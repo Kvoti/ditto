@@ -1,4 +1,4 @@
-from django import forms
+import floppyforms.__future__ as forms
 from slugify import slugify
 
 from . import models
