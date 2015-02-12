@@ -1,5 +1,8 @@
+import logging
 from contextlib import contextmanager
 from threading import local
+
+log = logging.getLogger(__name__)
 
 _current_tenant = local()
 _MAIN = 'main'
@@ -27,18 +30,23 @@ def _patch_table_names():
             
 def _set_for_request(request):
     host = request.get_host()
+    log.debug('Request host is %s' % host)
     with _tenant(_MAIN):
         # **Must** have this import here, not at the top of the file
         from django.contrib.sites.models import Site
         Site.objects.clear_cache()
         domain = Site.objects.get_current().domain
+        log.debug('Parent domain is %s' % domain)
     if not host.startswith(domain):
         tenant = host.split('.')[0]
+        log.debug('Tenant is %s' % tenant)
         with _tenant(_MAIN):
             from . import models  # fix circ. import
             if not models.Tenant.objects.filter(slug=tenant).exists():
+                log.error('Tenant %s not found' % tenant)
                 raise ValueError
     else:
+        log.debug('No tenant found')
         tenant = _MAIN
     return _set(tenant)
 
@@ -57,10 +65,12 @@ def _set_default():
     
 def _set(tenant_id):
     _current_tenant.table_prefix = _table_prefix(tenant_id)
+    log.debug('Set tenant to %s' % tenant_id)
 
 
 def _unset():
     del _current_tenant.table_prefix
+    log.debug('Unset tenant')
 
 
 def _is_main():
