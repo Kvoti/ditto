@@ -5,10 +5,12 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.core import management
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.shortcuts import render, get_object_or_404
+from django.views.decorators.cache import never_cache
 
 import ditto.config
+from users.models import User
 
 from . import forms
 from . import models
@@ -73,7 +75,25 @@ def _create_network_instance(tenant):
 
         # copy over network name
         site = Site.objects.get_current()
-        site.domain = '%s.%s' % (subdomain, parent_domain),
+        site.domain = '%s.%s' % (subdomain, parent_domain)
         site.name = network_name
         site.save()
     utils._set_default()  # TODO maybe context manager should handle this?
+
+
+# TODO restrict this to requests from chat (localhost for now)?
+@never_cache
+def get_password(request):
+    if settings.DEBUG:
+        return HttpResponse()
+    username = request.GET['user']
+    user = get_object_or_404(User, username=username)
+    from django.contrib.sessions.models import Session
+    # TODO this could take a while when there are lots of sessions
+    # TODO users can end up with several sessions, does it always work taking most recent?
+    # TODO we don't actually need to use session key here, could be any token
+    for s in Session.objects.order_by('-expire_date'):
+        # TODO handle expired sessions
+        if s.get_decoded().get('_auth_user_id') == user.pk:
+            return HttpResponse(s.pk)
+    raise Http404

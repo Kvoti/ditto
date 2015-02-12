@@ -1,19 +1,15 @@
-from importlib import import_module
-
 from braces.views import LoginRequiredMixin
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, ListView, DetailView
-from django.views.decorators.cache import never_cache
 
 import wrapt
 
@@ -297,50 +293,6 @@ def _on_setup_finish(request):
     user = request.user
     user.is_new = False
     user.save()
-    
-
-# Chat server auth endpoints
-# TODO secure these views so only chat server can access
-def check_password(request):
-    username = request.GET['user']
-    # TODO validate the domain? (esp. when have multiple networks)
-    # domain = request.GET['domain']
-    token = request.GET['pass']
-
-    SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
-    session = SessionStore(token)
-    uid = session.get_decoded().get('_auth_user_id')
-    if uid:
-        user = User.objects.get(pk=uid)
-        if user.username == username:
-            return HttpResponse('true')
-    return HttpResponse('false')
-
-
-def user_exists(request):
-    username = request.GET['user']
-    if User.objects.filter(username=username).exists():
-        r = 'true'
-    else:
-        r = 'false'
-    return HttpResponse(r)
-
-
-@never_cache
-def get_password(request):
-    if settings.DEBUG:
-        return HttpResponse()
-    username = request.GET['user']
-    user = get_object_or_404(User, username=username)
-    from django.contrib.sessions.models import Session
-    # TODO this could take a while when there are lots of sessions
-    # TODO users can end up with several sessions, does it always work taking most recent?
-    # TODO we don't actually need to use session key here, could be any token
-    for s in Session.objects.order_by('-expire_date'):
-        # TODO handle expired sessions
-        if s.get_decoded().get('_auth_user_id') == user.pk:
-            return HttpResponse(s.pk)
-    raise Http404
 
 
 def start_again(request):
