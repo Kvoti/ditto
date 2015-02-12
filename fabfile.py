@@ -20,6 +20,19 @@ def builddb():
         with shell_env(DJANGO_CONFIGURATION='Production'):
             sudo("echo 'drop database app_data;create database app_data' | ../../bin/python manage.py dbshell",
                  user="pydev")
+            # Set up data for main site
+            sudo(' ../../bin/python manage.py migrate',
+                 user="pydev")
+            sudo(' ../../bin/python manage.py runscript setup_test_data',
+                 user="pydev")
+    # Set up data for example network for digital impacts
+    newnetwork('di')
+
+    
+def newnetwork(name):
+    # TODO this needs to create the Tenant record in the main 'database'
+    with cd('/srv/venv/mysite/mysite'):
+        with shell_env(DJANGO_CONFIGURATION='Production', DJANGO_TENANT=name):
             sudo(' ../../bin/python manage.py migrate',
                  user="pydev")
             sudo(' ../../bin/python manage.py runscript setup_test_data',

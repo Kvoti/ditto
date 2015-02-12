@@ -13,6 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 import ditto.models
 import ditto.config
+import multitenancy.models
 
 from users.models import User
 
@@ -27,6 +28,7 @@ def run():
     setup_interactions()
     setup_admin_user()
     setup_members()
+    setup_tenants()
 
 
 def setup_site():
@@ -34,8 +36,8 @@ def setup_site():
     site.name = 'DITTO.TECHNOLOGY'
     site.domain = 'localhost' if settings.DEBUG else site.name.lower()
     site.save()
-    
-    
+
+
 def setup_features():
     for slug, name, perms in (
             ('blog', 'Blog', [
@@ -101,3 +103,12 @@ def _create_user(username, group_name):
             user.is_new = False
         user.save()
     user.groups.add(Group.objects.get(name=group_name))
+
+
+def setup_tenants():
+    user = User.objects.get_or_create(username='mark')
+    multitenancy.models.Tenant.objects.create(
+        user=user,
+        network_name='Digital Impacts',
+        slug='di'
+    )
