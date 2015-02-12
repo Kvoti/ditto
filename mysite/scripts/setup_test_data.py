@@ -106,7 +106,7 @@ def _create_user(username, group_name):
 
 
 def setup_tenants():
-    user = User.objects.get_or_create(username='mark')
+    user = User.objects.get(username='mark')
     multitenancy.models.Tenant.objects.create(
         user=user,
         network_name='Digital Impacts',
