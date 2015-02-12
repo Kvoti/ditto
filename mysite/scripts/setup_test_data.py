@@ -14,6 +14,7 @@ from django.contrib.sites.models import Site
 import ditto.models
 import ditto.config
 import multitenancy.models
+import multitenancy.tenant
 
 from users.models import User
 
@@ -28,8 +29,7 @@ def run():
     setup_interactions()
     setup_admin_user()
     setup_members()
-    if not settings.DEBUG:
-        setup_tenants()
+    setup_tenants()
 
 
 def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
@@ -116,4 +116,5 @@ def setup_tenants():
         network_name='Digital Impacts',
         slug='di'
     )
-    setup_site(name='Digital Impacts', subdomain='di')
+    if not multitenancy.tenant._is_main():
+        setup_site(name='Digital Impacts', subdomain='di')
