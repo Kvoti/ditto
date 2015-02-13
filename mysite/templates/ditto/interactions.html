@@ -1,9 +1,15 @@
 {% extends "ditto/base.html" %}
 
 {% block dash-content %}
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    {% for role1 in roles %}
-        {% include "ditto/includes/interactions_panel.html" %}
-    {% endfor %}
-</div>
+<form class="form-horizontal" role="form" action="{{ action|default:request.path }}" method="post">
+    {% csrf_token %}
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        {% for role1, others in grid %}
+            {% include "ditto/includes/interactions_panel.html" %}
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">{{ save|default:"Save" }}</button>
+    </div>
+</form>
 {% endblock %}

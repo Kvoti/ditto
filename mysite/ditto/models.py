@@ -80,8 +80,8 @@ class Interaction(models.Model):
         return PermittedInteraction.objects.filter(
             interaction=self
         ).filter(
-            models.Q(role1=role1, role2=role2) |
-            models.Q(role1=role2, role2=role1)
+            models.Q(role1__name=role1, role2__name=role2) |
+            models.Q(role1__name=role2, role2__name=role1)
         )
 
         

@@ -204,7 +204,7 @@ def permissions(request):
         form = forms.InteractionsForm()
     return TemplateResponse(request, 'ditto/interactions.html', {
         'form': form,
-        'roles': Group.objects.all(),
+        'grid': form._get_role_grid(),
         'interactions': models.Interaction.objects.all()
     })
 

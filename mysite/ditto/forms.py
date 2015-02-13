@@ -60,21 +60,19 @@ RoleFormSet = forms.models.modelformset_factory(
 class InteractionsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(InteractionsForm, self).__init__(*args, **kwargs)
-        roles = Group.objects.all()
-        for role1 in roles:
-            for role2 in roles:
-                if role1 == role2:
-                    continue
+        grid = self._get_role_grid()
+        for role1, others in grid:
+            for role2 in others:
                 for interaction in models.Interaction.objects.all():
                     is_permitted = interaction.is_permitted(role1, role2)
-                    name = '%s-%s-%s' % (interaction.name, role1.name, role2.name)
+                    name = '-'.join((interaction.name, role1, role2))
                     checkbox = forms.BooleanField(
                         required=False,
                         initial=is_permitted,
                     )
                     checkbox.interaction = interaction
-                    checkbox.role1 = role1
-                    checkbox.role2 = role2
+                    checkbox.role1 = Group.objects.get(name=role1)
+                    checkbox.role2 = Group.objects.get(name=role2)
                     self.fields[name] = checkbox
             
     def save(self):
@@ -96,6 +94,17 @@ class InteractionsForm(forms.Form):
             interaction.allow(role1, role2)
         else:
             interaction.deny(role1, role2)
+
+    @staticmethod
+    def _get_role_grid():
+        roles = list(Group.objects.values_list('name', flat=True))
+        grid = []
+        while roles:
+            role = roles.pop(0)
+            grid.append((role, roles[::]))
+        return grid
+    
+
 
             
 class FeaturePermissionsForm(forms.Form):
