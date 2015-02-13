@@ -15,6 +15,7 @@ from django.views.generic import TemplateView, ListView, DetailView
 import wrapt
 
 from users.models import User
+from utils.views import ContextMixin
 
 from . import forms
 from . import models
@@ -47,8 +48,8 @@ def nav(nav):
     return wrapper
 
     
-class NavMixin(object):
-    """Mixin for pages that net to set the nav state.
+class NavMixin(ContextMixin):
+    """Mixin for setting navigation state.
 
     E.g.
 
@@ -56,8 +57,7 @@ class NavMixin(object):
             nav = ['home']
 
     """
-    def get_context_data(self, **kwargs):
-        context = super(NavMixin, self).get_context_data(**kwargs)
+    def process_context(self, context):
         context['nav'] = self.nav
         return context
 
@@ -71,10 +71,10 @@ def chat_view(wrapped, instance, args, kwargs):
     return template_response
 
 
-class ChatAuthMixin(object):
-    def get_context_data(self, **kwargs):
-        context = super(ChatAuthMixin, self).get_context_data(**kwargs)
-        context[CHAT_AUTH_CONTEXT_VAR] = _get_chat_password(self.request.user.username)
+class ChatAuthMixin(ContextMixin):
+    def process_context(self, context):
+        context[CHAT_AUTH_CONTEXT_VAR] = \
+            _get_chat_password(self.request.user.username)
         return context
 
 
