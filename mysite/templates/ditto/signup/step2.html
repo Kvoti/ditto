@@ -8,5 +8,6 @@
     {% m "p" %}Set the number + name of the roles in your Ditto network.{% endm %}
     {% m "p" %}'Administrator' and 'Member' roles are set as default.{% endm %}
 
-    {% include "ditto/includes/roles_form.html" with save="FINISH" using="floppyforms/layouts/bootstrap3-horizontal-delete.html" %}
+    {% url 'ditto:create-step3' as skip %}
+    {% include "ditto/includes/roles_form.html" with skip=skip using="floppyforms/layouts/bootstrap3-horizontal-delete.html" %}
 {% endblock %}

@@ -140,7 +140,7 @@ class PrivateChatsView(LoginRequiredMixin, NavMixin, ListView):
     
 @admin_required
 @nav(['dash', 'roles'])
-def roles(request, template='ditto/roles.html', success_url=None, on_success=None):
+def roles(request, template='ditto/roles.html', success_url=None):
     if success_url is None:
         success_url = request.path
     try:
@@ -156,8 +156,6 @@ def roles(request, template='ditto/roles.html', success_url=None, on_success=Non
         if formset.is_valid():
             formset.save()
             messages.success(request, "Configuration successfully updated")
-            if on_success:
-                on_success(request)
             return HttpResponseRedirect(success_url)
     else:
         i = 0
@@ -193,16 +191,20 @@ def delete_role(request, role_id):
 
 @admin_required
 @nav(['dash', 'permissions'])
-def permissions(request):
+def permissions(request, template='ditto/interactions.html', success_url=None, on_success=None):
+    if success_url is None:
+        success_url = request.path
     if request.method == 'POST':
         form = forms.InteractionsForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Configuration updated")
-            return HttpResponseRedirect(request.path)
+            if on_success:
+                on_success(request)
+            return HttpResponseRedirect(success_url)
     else:
         form = forms.InteractionsForm()
-    return TemplateResponse(request, 'ditto/interactions.html', {
+    return TemplateResponse(request, template, {
         'form': form,
         'grid': form._get_role_grid(),
         'interactions': models.Interaction.objects.all()
@@ -279,6 +281,15 @@ def step2(request):
     return roles(
         request,
         template='ditto/signup/step2.html',
+        success_url=reverse('ditto:home'),
+    )
+
+
+@admin_required
+def step3(request):
+    return permissions(
+        request,
+        template='ditto/signup/step3.html',
         success_url=reverse('ditto:home'),
         on_success=_on_setup_finish
     )

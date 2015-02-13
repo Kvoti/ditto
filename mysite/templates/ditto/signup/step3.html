@@ -1,0 +1,9 @@
+{% extends "ditto/signup/base.html" %}
+
+{% load ditto %}
+
+{% block heading %}Give each role ‘permissions’.{% endblock %}
+
+{% block content %}
+    {% include "ditto/includes/perms_form.html" with save="FINISH" %}
+{% endblock %}

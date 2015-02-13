@@ -64,6 +64,11 @@ urlpatterns = patterns('',
         view=views.step2,
         name='create-step2'
     ),
+    url(
+        regex=r'^create/step3/$',
+        view=views.step3,
+        name='create-step3'
+    ),
                        
     # chatroom and private chat                       
     url(
