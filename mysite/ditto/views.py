@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, ListView, DetailView
 
 from users.models import User
-from utils.views import ContextMixin, extra_context
+from utils.views import extra_context
 
 from . import forms
 from . import models
@@ -43,7 +43,7 @@ def nav(nav):
     return wrapper
 
     
-class NavMixin(ContextMixin):
+class NavMixin(object):
     """Mixin for setting navigation state.
 
     E.g.
@@ -52,7 +52,8 @@ class NavMixin(ContextMixin):
             nav = ['home']
 
     """
-    def process_context(self, context):
+    def get_context_data(self, **kwargs):
+        context = super(NavMixin, self).get_context_data(**kwargs)
         context['nav'] = self.nav
         return context
 
@@ -62,8 +63,9 @@ def chat_auth(request, context):
     context[CHAT_AUTH_CONTEXT_VAR] = _get_chat_password(request.user.username)
 
 
-class ChatAuthMixin(ContextMixin):
-    def process_context(self, context):
+class ChatAuthMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super(ChatAuthMixin, self).get_context_data(**kwargs)
         context[CHAT_AUTH_CONTEXT_VAR] = \
             _get_chat_password(self.request.user.username)
         return context

@@ -1,13 +1,6 @@
 import wrapt
 
 
-class ContextMixin(object):
-    def get_context_data(self, **kwargs):
-        context = super(ContextMixin, self).get_context_data(**kwargs)
-        self.process_context(context)
-        return context
-
-
 # Let's you decorate a function to turn *it* into a decorator that can
 # be applied to a view function to modify the context of the
 # (template) response. An example is infinitely clearer!
