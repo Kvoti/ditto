@@ -12,10 +12,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, ListView, DetailView
 
-import wrapt
-
 from users.models import User
-from utils.views import ContextMixin
+from utils.views import ContextMixin, extra_context
 
 from . import forms
 from . import models
@@ -39,12 +37,9 @@ def nav(nav):
     def my_view(request):
         ...
     """
-    @wrapt.decorator
-    def wrapper(wrapped, instance, args, kwargs):
-        template_response = wrapped(*args, **kwargs)
-        if hasattr(template_response, 'context_data'):
-            template_response.context_data['nav'] = nav
-        return template_response
+    @extra_context
+    def wrapper(request, context):
+        context['nav'] = nav
     return wrapper
 
     
@@ -62,13 +57,9 @@ class NavMixin(ContextMixin):
         return context
 
 
-@wrapt.decorator
-def chat_view(wrapped, instance, args, kwargs):
-    template_response = wrapped(*args, **kwargs)
-    if hasattr(template_response, 'context_data'):
-        template_response.context_data[CHAT_AUTH_CONTEXT_VAR] = \
-            _get_chat_password(args[0].user.username)
-    return template_response
+@extra_context
+def chat_auth(request, context):
+    context[CHAT_AUTH_CONTEXT_VAR] = _get_chat_password(request.user.username)
 
 
 class ChatAuthMixin(ContextMixin):
@@ -114,7 +105,7 @@ class ChatroomView(LoginRequiredMixin, NavMixin, ChatAuthMixin, TemplateView):
     
 @login_required  # @admin_required
 @nav(['chatroom'])
-@chat_view
+@chat_auth
 def private_chatroom(request, room):
     # invite-only chatroom
     return TemplateResponse(
@@ -123,7 +114,7 @@ def private_chatroom(request, room):
 
 @login_required  # @admin_required
 @nav(['newchatroom'])
-@chat_view
+@chat_auth
 def new_chatroom(request):
     form = forms.NewChatroomForm(request.user)
     return TemplateResponse(
