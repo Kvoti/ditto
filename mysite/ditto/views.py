@@ -3,6 +3,7 @@ from braces.views import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import permission_required, login_required
+from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -18,7 +19,7 @@ from users.models import User
 from . import forms
 from . import models
 
-
+CHAT_AUTH_CONTEXT_VAR = 'pass'
 admin_required = permission_required('users.can_admin', raise_exception=True)
 
 
@@ -60,6 +61,27 @@ class NavMixin(object):
         context['nav'] = self.nav
         return context
 
+
+@wrapt.decorator
+def chat_view(wrapped, instance, args, kwargs):
+    template_response = wrapped(*args, **kwargs)
+    if hasattr(template_response, 'context_data'):
+        template_response.context_data[CHAT_AUTH_CONTEXT_VAR] = \
+            _get_chat_password(args[0].user.username)
+    return template_response
+
+
+class ChatAuthMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super(ChatAuthMixin, self).get_context_data(**kwargs)
+        context[CHAT_AUTH_CONTEXT_VAR] = _get_chat_password(self.request.user.username)
+        return context
+
+
+def _get_chat_password(username):
+    signer = Signer()
+    return signer.sign(username)
+    
     
 class _HomeView(NavMixin, TemplateView):
     template_name = 'pages/home.html'
@@ -85,37 +107,30 @@ class DashView(NavMixin, AdminRequiredMixin, TemplateView):
     nav = ['dash']
     
 
-class ChatroomView(LoginRequiredMixin, NavMixin, TemplateView):
+class ChatroomView(LoginRequiredMixin, NavMixin, ChatAuthMixin, TemplateView):
     template_name = 'ditto/chat/chatroom.html'
     nav = ['chatroom']
 
-    # TOOD move this to a mixin as serveral views require chat connection
-    def get_context_data(self, **kwargs):
-        context = super(ChatroomView, self).get_context_data(**kwargs)
-        from django.core.signing import Signer
-        signer = Signer()
-        value = signer.sign(self.request.user.username)
-        context['pass'] = value
-        return context
-
     
+@login_required  # @admin_required
 @nav(['chatroom'])
+@chat_view
 def private_chatroom(request, room):
     # invite-only chatroom
     return TemplateResponse(
         request, 'ditto/chat/chatroom.html', {'room': room})
 
 
+@login_required  # @admin_required
 @nav(['newchatroom'])
-# @admin_required
-@login_required
+@chat_view
 def new_chatroom(request):
     form = forms.NewChatroomForm(request.user)
     return TemplateResponse(
         request, 'ditto/chat/newchatroom.html', {'form': form})
 
 
-class PrivateChatView(LoginRequiredMixin, NavMixin, DetailView):
+class PrivateChatView(LoginRequiredMixin, NavMixin, ChatAuthMixin, DetailView):
     model = User
     slug_field = 'username'
     context_object_name = 'chatee'
