@@ -49,18 +49,8 @@ urlpatterns = patterns('',
 
     url(
         regex=r'^settings/permissions/$',
-        view=views.RoleList.as_view(),
+        view=views.permissions,
         name='permissions'
-    ),
-    url(
-        regex=r'^settings/permissions/(\d+)/$',
-        view=views.permissions_for,
-        name='permissions-for'
-    ),
-    url(
-        regex=r'^settings/permissions/(\d+)/(\d+)/$',
-        view=views.permissions_between,
-        name='permissions-between'
     ),
 
     # inital configuration

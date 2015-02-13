@@ -1,0 +1,27 @@
+{% extends "ditto/includes/accordion_panel.html" %}
+
+{% block title %}{{ role1.name }}{% endblock %}
+
+{% block body %}
+    {% for role2 in roles %}
+
+        {% if forloop.first %}
+        <div class="row">
+            <div class="col-md-3"></div>
+            {% for interaction in interactions %}
+                <div class="col-md-3">{{ interaction.name }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if role1 != role2 %}
+        <div class="row">
+            <div class="col-md-3">{{ role2.name }}</div>
+            {% for interaction in interactions %}
+                <div class="col-md-3"><input name="{{ interaction.name }}-{{ role1.name }}-{{ role2.name }}" type="checkbox"></div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    {% endfor %}
+{% endblock %}

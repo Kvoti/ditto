@@ -57,17 +57,25 @@ RoleFormSet = forms.models.modelformset_factory(
     form=RoleForm)
 
 
-class PermissionsForm(forms.Form):
-    def __init__(self, role1, role2, *args, **kwargs):
-        self.roles = [role1, role2]
-        super(PermissionsForm, self).__init__(*args, **kwargs)
-        for interaction in models.Interaction.objects.all():
-            is_permitted = interaction.is_permitted(*self.roles)
-            self.fields[interaction.name] = forms.BooleanField(
-                required=False,
-                initial=is_permitted,
-            )
-            self.fields[interaction.name].interaction = interaction
+class InteractionsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(InteractionsForm, self).__init__(*args, **kwargs)
+        roles = Group.objects.all()
+        for role1 in roles:
+            for role2 in roles:
+                if role1 == role2:
+                    continue
+                for interaction in models.Interaction.objects.all():
+                    is_permitted = interaction.is_permitted(role1, role2)
+                    name = '%s-%s-%s' % (interaction.name, role1.name, role2.name)
+                    checkbox = forms.BooleanField(
+                        required=False,
+                        initial=is_permitted,
+                    )
+                    checkbox.interaction = interaction
+                    checkbox.role1 = role1
+                    checkbox.role2 = role2
+                    self.fields[name] = checkbox
             
     def save(self):
         is_changed = False
@@ -82,10 +90,12 @@ class PermissionsForm(forms.Form):
 
     def _save_field(self, name, is_permitted):
         interaction = self.fields[name].interaction
+        role1 = self.fields[name].role1
+        role2 = self.fields[name].role2
         if is_permitted:
-            interaction.allow(*self.roles)
+            interaction.allow(role1, role2)
         else:
-            interaction.deny(*self.roles)
+            interaction.deny(role1, role2)
 
             
 class FeaturePermissionsForm(forms.Form):

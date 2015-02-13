@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                {% block title %}{% endblock %}
+            </a>
+        </h4>
+    </div>
+    <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse{% if forloop.first %} in{% endif %}" role="tabpanel" aria-labelledby="heading{{ forloop.counter }}">
+        <div class="panel-body">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+</div>

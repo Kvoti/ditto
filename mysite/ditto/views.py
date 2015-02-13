@@ -191,43 +191,21 @@ def delete_role(request, role_id):
     })
     
 
-class RoleList(NavMixin, AdminRequiredMixin, ListView):
-    model = Group
-    nav = ['dash', 'permissions']
-
-    
 @admin_required
 @nav(['dash', 'permissions'])
-def permissions_for(request, pk):
-    role = get_object_or_404(Group, pk=pk)
-    roles = Group.objects.exclude(pk=pk)
-    
-    return TemplateResponse(request, 'ditto/permissions_for.html', {
-        'role': role,
-        'roles': roles,
-    })
-
-
-@admin_required
-@nav(['dash', 'permissions'])
-def permissions_between(request, pk1, pk2):
-    role1 = get_object_or_404(Group, pk=pk1)
-    role2 = get_object_or_404(Group, pk=pk2)
-
+def permissions(request):
     if request.method == 'POST':
-        form = forms.PermissionsForm(role1, role2, data=request.POST)
+        form = forms.InteractionsForm(request.POST)
         if form.is_valid():
-            is_changed = form.save()
-            if is_changed:
-                messages.success(request, _("Permissions updated"))
+            form.save()
+            messages.success(request, "Configuration updated")
             return HttpResponseRedirect(request.path)
     else:
-        form = forms.PermissionsForm(role1, role2)
-        
-    return TemplateResponse(request, 'ditto/permissions_between.html', {
-        'role1': role1,
-        'role2': role2,
+        form = forms.InteractionsForm()
+    return TemplateResponse(request, 'ditto/interactions.html', {
         'form': form,
+        'roles': Group.objects.all(),
+        'interactions': models.Interaction.objects.all()
     })
 
 

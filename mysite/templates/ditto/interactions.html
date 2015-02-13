@@ -1,0 +1,9 @@
+{% extends "ditto/base.html" %}
+
+{% block dash-content %}
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {% for role1 in roles %}
+        {% include "ditto/includes/interactions_panel.html" %}
+    {% endfor %}
+</div>
+{% endblock %}
