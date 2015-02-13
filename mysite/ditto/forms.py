@@ -101,10 +101,9 @@ class InteractionsForm(forms.Form):
         grid = []
         while roles:
             role = roles.pop(0)
-            grid.append((role, roles[::]))
+            if roles:
+                grid.append((role, roles[::]))
         return grid
-    
-
 
             
 class FeaturePermissionsForm(forms.Form):
