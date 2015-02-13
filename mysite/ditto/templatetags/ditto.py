@@ -92,3 +92,13 @@ class MarkupNode(template.Node):
         return t.render(template.Context({
             'content': output,
         }))
+
+
+# annoys the hell out of me that you can't do dynamic lookups in
+# django templates out of the box!
+@register.filter
+def lookup(obj, attr):
+    try:
+        return getattr(obj, attr)
+    except AttributeError:
+        return obj[attr]
