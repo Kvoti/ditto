@@ -2,6 +2,8 @@ import logging
 from contextlib import contextmanager
 from threading import local
 
+from django.conf import settings
+
 log = logging.getLogger(__name__)
 
 _current_tenant = local()
@@ -37,7 +39,7 @@ def _set_for_request(request):
         Site.objects.clear_cache()
         domain = Site.objects.get_current().domain
         log.debug('Parent domain is %s' % domain)
-    if not host.startswith(domain):
+    if not _is_main_request(host, domain):
         tenant = host.split('.')[0]
         log.debug('Tenant is %s' % tenant)
         with _tenant(_MAIN):
@@ -50,6 +52,14 @@ def _set_for_request(request):
         tenant = _MAIN
     return _set(tenant)
 
+
+def _is_main_request(host, domain):
+    if settings.DEBUG:
+        return host.startswith('localhost')
+    else:
+        # chat server makes auth requests to django from localhost
+        return host in ['localhost', domain]
+    
 
 def _set_for_tenant(tenant):
     _set(tenant)
