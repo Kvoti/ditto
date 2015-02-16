@@ -5,23 +5,19 @@
 {% block content %}
 <div class="row">
     {% block messages %}
-    <div id="msgs" class="col-md-8"
-         {# TODO how to set this with bootstrap so we get an auto scrolling chat window? #}         
-         style="height:500px;overflow-y:scroll"
-         >
+    <div id="msgs" class="col-md-8">
     </div>
     {% endblock %}
 </div>
-<div class="navbar navbar-default navbar-fixed-bottom">
-    <form id="msg" class="navbar-form navbar-left">
-        <div class="form-group">
-            <input style="width:600px" {# TODO how to set this width the bootstrap way? #}
-                   placeholder="Type your message here..." type="text" class="form-control">
+<div class="row msgbar">
+    <form id="msg" class="">
+        <div class="col-md-4">
+            <input placeholder="Type your message here..." type="text" class="form-control">
         </div>
-        <button type="submit" class="btn btn-success">Say it!</button>
-    </form>
-    <form class="navbar-form navbar-left">
-        <div class="form-group">
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-success">Say it!</button>
+        </div>
+        <div class="col-md-2">
             <select id="status-show" class="form-control">
                 <option value="">Online</option>
                 <option value="away">Away</option>
@@ -29,7 +25,16 @@
                 <option value="dnd">Do not disturb</option>
                 <option value="xa">Away for a while</option>
             </select>
-            <label><input id="status-status-enabled" type="checkbox" class="form-control"> Custom message</label>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="status-status-enabled">Custom message</label>
+                </div>
+                <div class="col-md-8">
+                    <input id="status-status-enabled" type="checkbox" class="form-control">
+                </div>
+            </div>
         </div>
     </form>
 </div>

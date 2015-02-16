@@ -43,9 +43,13 @@ DITTO.chat = {
 
 	// add message to page and scroll message in to view
         this.msgs.append(formatted_message);
-        this.msgs.scrollTop(this.msgs[0].scrollHeight);
+        this.scrollMessages();
     },
 
+    scrollMessages: function () {
+        this.msgs.scrollTop(this.msgs[0].scrollHeight);
+    },
+        
     addPrivateMessageCallback: function (callback) {
 	this.privateMessageCallbacks.push(callback);
     },
@@ -116,6 +120,16 @@ $(document).ready(function () {
     }
     getNotificationPermission();
     $('body').one("click", getNotificationPermission);  // chrome
+
+
+    function resizeMessageContainer() {
+        var height = $(window).height() - $('.msgbar').height() - 50;
+        var msgs = $('#msgs');
+        msgs.css('height', height);
+        DITTO.chat.scrollMessages();
+    }
+    window.onresize = resizeMessageContainer;
+    resizeMessageContainer();
     
     $('#msg').submit(function (e) {
         e.preventDefault();
