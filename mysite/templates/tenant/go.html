@@ -1,7 +1,7 @@
-{% extends "ditto/signup/base.html" %}
+{% extends "tenant/base.html" %}
 
 {% block heading %}Go to your network!{% endblock %}
 
-{% block content %}
+{% block tenant-content %}
 <p>Open <a href="{{ tenant.network_url }}">{{ tenant.network_name }}</a></p>
 {% endblock %}

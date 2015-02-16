@@ -110,7 +110,7 @@ DITTO.chat = {
 
 $(document).ready(function () {
     var connection = null;
-    
+
     DITTO.chat.message_input.focus();
 
     function getNotificationPermission () {
@@ -123,7 +123,7 @@ $(document).ready(function () {
 
 
     function resizeMessageContainer() {
-        var height = $(window).height() - $('.msgbar').height() - 50;
+        var height = $(window).height() - $('.msgbar').height() - $('.navbar').height() - parseInt($('.navbar').css('margin-bottom'), 10);
         var msgs = $('#msgs');
         msgs.css('height', height);
         DITTO.chat.scrollMessages();

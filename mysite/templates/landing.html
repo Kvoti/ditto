@@ -1,79 +1,29 @@
-{% load staticfiles %}<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-        <meta charset="utf-8">
-        <title>{% block title %}{{ request.site.name }}{% endblock %}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
+{% extends "base.html" %}
 
-        <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
-        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-        <!--[if lt IE 9]>
-            <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-            <![endif]-->
-        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-        <style>
-            body {
-            font-family: 'Lato', sans-serif;
-            }
-            html, body, .logo {height:100%}
-            body {
-            background-color:#e9e2f2;
-            display:table;
-            width:100%;
-            }
-            .logo {
-            display: table-cell;
-            vertical-align:middle;
-            }
-            a, a:link, a:visited, a:hover, a:active {
-            text-decoration:none;
-            color:#ffffff;
-            font-size: 150%;
-            }
-            div.banner {
-            position:absolute;
-            height:150px;
-            line-height:150px;
-            background-color:#210040;
-            text-align:center;
-            width:100%;
-            }
-            img {
-            margin-top:150px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="banner">
-            <a href="/">{{ request.site.name }}</a>
-        </div>
-        {% block outer %}
-        <div class="logo">
-            {% block content %}
-            <div style="text-align:center">
-                <a href="{% url 'account_signup' %}"><img alt="" src="{% static 'images/ditto-logo.png' %}"></a>
-            </div>
-            {% endblock %}
-        </div>
-        {% endblock %}
-        <!-- Le javascript
-             ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        {% block javascript %}
-        <!-- Latest JQuery -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+{% load staticfiles %}
 
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+{% block css %}
+{{ block.super }}
+<style>
+    html, body, .logo {height:100%}
+    nav {
+    position:absolute;
+    }
+    body {
+    display:table;
+    width:100%;
+    }
+    .logo {
+    display: table-cell;
+    vertical-align:middle;
+    }
+</style>
+{% endblock %}
 
-        <!-- Your stuff: Third-party javascript libraries go here -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.4.1/holder.js"></script>
-        
-        <!-- place project specific Javascript in this file -->
-        <script src="{% static 'js/project.js' %}"></script>
-        {% endblock javascript %}
-    </body>
-</html>
+{% block main %}
+<div class="logo">
+    <div style="text-align:center">
+        <a href="{% url 'account_signup' %}"><img alt="Sign up" src="{% static 'images/ditto-logo.png' %}"></a>
+    </div>
+</div>
+{% endblock %}

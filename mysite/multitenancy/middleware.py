@@ -12,6 +12,8 @@ class CurrentTenantMiddleware(object):
             raise Http404
         if tenant._is_main():
             request.urlconf = 'main_urls'
+        else:
+            request.for_tenant = True
         # TODO wonder what else is screwed up by changing _meta.db_table on the fly!!??
         Site.objects.clear_cache()
         

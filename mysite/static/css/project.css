@@ -47,9 +47,9 @@
  * Base structure
  */
 
-/* Move down content because we have a fixed navbar that is 50px tall */
+/* Move down content because we have a fixed navbar that is 120px tall */
 body {
-  padding-top: 50px;
+  padding-top: 120px;
 }
 
 
@@ -157,4 +157,12 @@ body {
 
 #msgs {
     overflow-y: scroll;
+}
+
+.navbar-inverse big .navbar-text  {
+    color: #fff;
+}
+big .navbar-text {
+    float: none;
+    text-align: center;
 }

@@ -1,6 +1,7 @@
 {% load staticfiles i18n ditto %}<!DOCTYPE html>
 <html lang="en">
   <head>
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
     <meta charset="utf-8">
     <title>{% block title %}{{ request.site.name }}{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,7 @@
     
     <!-- Your stuff: Third-party css libraries go here -->
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-    <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet">
+    <!-- <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet"> -->
 
     <!-- This file store project specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
@@ -40,8 +41,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'ditto:home' %}">{{ request.site.name }}</a>
+            <a class="navbar-brand" href="{% url 'ditto:home' %}">
+                <img width="62" height="63" alt="{{ request.site.name }}" src="{% static 'images/ditto-logo.png' %}">
+            </a>
         </div>
+        {% block nav %}{% if request.for_tenant %}
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
               {% url 'ditto:about' as url %}
@@ -70,19 +74,33 @@
             {% endif %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
-              {% navitem "profile" "#" request.user.username %}
-              {% navitem "profile" "#" _("TODO: ROLE") %}
-              {# TODO extend navitem to allow arbitrary content #}
+              <li>
+                  {% url "ditto:private_chats" as url %}
+                  <a href="{{ url }}">
+                      <img width="71" height="71" alt="Messages" src="{% static 'images/icons/message.png' %}">
+                  </a>
+              </li>
+              <li>
+                  {% url "users:detail" request.user.username as url %}
+                  <a href="{{ url }}">
+                      <img width="71" height="71" alt="Logged in as {{ request.user.username }}" src="{% static 'images/icons/monkey.png' %}">
+                  </a>
+              </li>
               <li{% if "settings" in nav %} class="active"{% endif %}>
                   {% url "ditto:config" as url %}
                   <a href="{{ url }}">
-                      {% include "ditto/markup/icon.html" with icon="cog" assist_text=_("Settings") %}
+                      <img width="71" height="71" alt="Settings" src="{% static 'images/icons/settings.png' %}">
                   </a>
               </li>
           </ul>
         </div>
+        {% else %}
+        <big><big><p class="navbar-text">DITTO.TECHNOLOGY</p></big></big>
+        {% endif %}
+        {% endblock nav %}
       </div>
     </nav>
+    {% block main %}
     <div class="container">{% block subnav %}{% endblock %}</div>
 
     <div class="container-fluid">
@@ -100,7 +118,8 @@
     </div> <!-- /container -->
     
     {% block modal %}{% endblock modal %}
-
+    {% endblock %}
+    
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
