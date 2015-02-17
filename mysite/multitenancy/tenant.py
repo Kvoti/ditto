@@ -36,25 +36,23 @@ def _set_for_request(request):
     parts = request.path.split('/')
     tenant = parts[1]
     if not tenant:
-        log.error('No tenant')
-        raise ValueError('No tenant')
+        tenant = _MAIN
+    if tenant != _MAIN:
+        log.debug('Tenant is %s' % tenant)
+        with _tenant(_MAIN):
+            from . import models  # fix circ. import
+            try:
+                tenant = models.Tenant.objects.get(slug=tenant)
+            except models.Tenant.DoesNotExist:
+                log.error('Tenant %s not found' % tenant)
+                raise ValueError('Tenant does not exist: %s' % tenant)
+            else:
+                is_configured = tenant.is_configured
+                tenant = tenant.slug
     else:
-        if tenant != _MAIN:
-            log.debug('Tenant is %s' % tenant)
-            with _tenant(_MAIN):
-                from . import models  # fix circ. import
-                try:
-                    tenant = models.Tenant.objects.get(slug=tenant)
-                except models.Tenant.DoesNotExist:
-                    log.error('Tenant %s not found' % tenant)
-                    raise ValueError('Tenant does not exist: %s' % tenant)
-                else:
-                    is_configured = tenant.is_configured
-                    tenant = tenant.slug
-        else:
-            log.debug('No tenant found')
-            tenant = _MAIN
-            is_configured = None
+        log.debug('No tenant found')
+        tenant = _MAIN
+        is_configured = None
     _set(tenant)
     # TODO this should be part of the _set function
     if is_configured is not None:
