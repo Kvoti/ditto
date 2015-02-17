@@ -43,3 +43,19 @@ class Local(Common):
 
     # Your local stuff: Below this line define 3rd party libary settings
     TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+    LOGGING = Common.LOGGING
+    LOGGING['formatters'] = {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s',
+        }
+    }
+    LOGGING['handlers']['console'] = {
+        'level': 'DEBUG',
+        'class': 'logging.StreamHandler',
+        'formatter': 'verbose',
+    }
+    LOGGING['root'] = {
+        'level': 'DEBUG',
+        'handlers': ['console'],
+    }
