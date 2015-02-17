@@ -2,7 +2,9 @@ import logging
 from contextlib import contextmanager
 from threading import local
 
+from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls import patterns, include, url
 
 log = logging.getLogger(__name__)
 
@@ -31,31 +33,28 @@ def _patch_table_names():
 
             
 def _set_for_request(request):
-    host = request.get_host()
-    log.debug('Request host is %s' % host)
-    with _tenant(_MAIN):
-        # **Must** have this import here, not at the top of the file
-        from django.contrib.sites.models import Site
-        Site.objects.clear_cache()
-        domain = Site.objects.get_current().domain
-        log.debug('Parent domain is %s' % domain)
-    if not _is_main_request(host, domain):
-        tenant = host.split('.')[0]
-        log.debug('Tenant is %s' % tenant)
-        with _tenant(_MAIN):
-            from . import models  # fix circ. import
-            try:
-                tenant = models.Tenant.objects.select_related().get(slug=tenant)
-            except models.Tenant.DoesNotExist:
-                log.error('Tenant %s not found' % tenant)
-                raise ValueError
-            else:
-                is_configured = tenant.is_configured
-                tenant = tenant.slug
+    parts = request.path.split('/')
+    tenant = parts[1]
+    if not tenant:
+        log.error('No tenant')
+        raise ValueError('No tenant')
     else:
-        log.debug('No tenant found')
-        tenant = _MAIN
-        is_configured = None
+        if tenant != _MAIN:
+            log.debug('Tenant is %s' % tenant)
+            with _tenant(_MAIN):
+                from . import models  # fix circ. import
+                try:
+                    tenant = models.Tenant.objects.get(slug=tenant)
+                except models.Tenant.DoesNotExist:
+                    log.error('Tenant %s not found' % tenant)
+                    raise ValueError('Tenant does not exist: %s' % tenant)
+                else:
+                    is_configured = tenant.is_configured
+                    tenant = tenant.slug
+        else:
+            log.debug('No tenant found')
+            tenant = _MAIN
+            is_configured = None
     _set(tenant)
     # TODO this should be part of the _set function
     if is_configured is not None:
@@ -66,14 +65,6 @@ def _set_for_request(request):
         _current_tenant.is_configured = is_configured
 
     
-def _is_main_request(host, domain):
-    if settings.DEBUG:
-        return host.startswith('localhost')
-    else:
-        # chat server makes auth requests to django from localhost
-        return host in ['localhost', domain]
-    
-
 def _set_for_tenant(tenant):
     _set(tenant)
 
@@ -124,6 +115,20 @@ def _set_configured(is_configured):
         tenant.is_configured = is_configured
         tenant.save()
 
+
+def _get_id():
+    return _current_tenant.table_prefix[2:-2]
+
+
+def _get_urls():
+    tid = _get_id()
+    # Note, need 'tuple' here otherwise url stuff blows up
+    return tuple(
+        patterns(
+            '',
+            url(r'^%s/' % tid, include('network_urls')),
+        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
+    
         
 # TODO think we need a version of this that *restores* the current tenant
 @contextmanager

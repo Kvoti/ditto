@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 # url patterns required for someone to sign up and create their own
 # new network
 urlpatterns = patterns('',
-    url(r'^accounts/', include('allauth.urls')),
-    url(r'', include('multitenancy.urls', namespace="ditto")),
+    url(r'^main/accounts/', include('allauth.urls')),
+    url(r'^main/', include('multitenancy.urls', namespace="ditto")),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
