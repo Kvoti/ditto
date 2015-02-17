@@ -44,15 +44,28 @@ def _set_for_request(request):
         log.debug('Tenant is %s' % tenant)
         with _tenant(_MAIN):
             from . import models  # fix circ. import
-            if not models.Tenant.objects.filter(slug=tenant).exists():
+            try:
+                tenant = models.Tenant.objects.select_related().get(slug=tenant)
+            except models.Tenant.DoesNotExist:
                 log.error('Tenant %s not found' % tenant)
                 raise ValueError
+            else:
+                is_configured = tenant.is_configured
+                tenant = tenant.slug
     else:
         log.debug('No tenant found')
         tenant = _MAIN
-    return _set(tenant)
+        is_configured = None
+    _set(tenant)
+    # TODO this should be part of the _set function
+    if is_configured is not None:
+        if is_configured:
+            log.debug('Tenant is configured')
+        else:
+            log.debug('Tenant is not configured')
+        _current_tenant.is_configured = is_configured
 
-
+    
 def _is_main_request(host, domain):
     if settings.DEBUG:
         return host.startswith('localhost')
@@ -80,6 +93,8 @@ def _set(tenant_id):
 
 def _unset():
     del _current_tenant.table_prefix
+    if hasattr(_current_tenant, 'is_configured'):
+        del _current_tenant.is_configured
     log.debug('Unset tenant')
 
 
@@ -87,6 +102,30 @@ def _is_main():
     return _current_tenant.table_prefix == _table_prefix(_MAIN)
 
 
+def is_configured():
+    return _current_tenant.is_configured
+
+
+def set_configured():
+    _set_configured(True)
+
+    
+def reset_configured():
+    _set_configured(False)
+
+
+def _set_configured(is_configured):
+    from . import models  # fix circ. import
+    slug = _current_tenant.table_prefix[2:-2]  # FIXME
+    with _tenant(_MAIN):
+        tenant = models.Tenant.objects.get(
+            slug=slug
+        )
+        tenant.is_configured = is_configured
+        tenant.save()
+
+        
+# TODO think we need a version of this that *restores* the current tenant
 @contextmanager
 def _tenant(tenant_id):
     _set_for_tenant(tenant_id)

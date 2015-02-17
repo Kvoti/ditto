@@ -13,7 +13,8 @@ class CurrentTenantMiddleware(object):
         if tenant._is_main():
             request.urlconf = 'main_urls'
         else:
-            request.for_tenant = True
+            # TODO more usual to attach a class than module!?
+            request.tenant = tenant
         # TODO wonder what else is screwed up by changing _meta.db_table on the fly!!??
         Site.objects.clear_cache()
         

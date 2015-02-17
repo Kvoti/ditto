@@ -103,8 +103,6 @@ def _create_user(username, group_name):
         defaults={'email': '%s@example.com' % username})
     if created:
         user.set_password("let me in")
-        if username != 'visitor':
-            user.is_new = False
         user.save()
     user.groups.add(Group.objects.get(name=group_name))
 

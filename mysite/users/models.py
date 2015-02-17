@@ -10,7 +10,5 @@ from django.utils.translation import ugettext_lazy as _
 
 # Subclass AbstractUser
 class User(AbstractUser):
-    is_new = models.BooleanField(default=True)
-
     def __unicode__(self):
         return self.username

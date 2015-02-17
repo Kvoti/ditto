@@ -46,7 +46,8 @@
                 {{ request.site.name }}                
             </a>
         </div>
-        {% block nav %}{% if request.for_tenant %}
+        {% block nav %}{% if request.tenant %}
+        {% if request.tenant.is_configured %}
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
               {% url 'ditto:about' as url %}
@@ -98,6 +99,7 @@
               </li>
           </ul>
         </div>
+        {% endif %}
         {% else %}
         <big><big><p class="navbar-text">DITTO.TECHNOLOGY</p></big></big>
         {% endif %}

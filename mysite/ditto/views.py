@@ -84,7 +84,7 @@ _home = _HomeView.as_view()
 
 @login_required
 def home(request):
-    if request.user.is_new:
+    if not request.tenant.is_configured():
         return TemplateResponse(request, 'ditto/create.html')
     else:
         return _home(request)
@@ -296,13 +296,9 @@ def step3(request):
 
 
 def _on_setup_finish(request):
-    user = request.user
-    user.is_new = False
-    user.save()
+    request.tenant.set_configured()
 
 
 def start_again(request):
-    user = request.user
-    user.is_new = True
-    user.save()
+    request.tenant.reset_configured()
     return HttpResponseRedirect(reverse('ditto:home'))

@@ -26,7 +26,8 @@ class Tenant(models.Model):
         unique=True,
         help_text='A short identifier for your network, lower case letters only'
     )
-
+    is_configured = models.BooleanField(default=False, editable=False)
+    
     @property
     def network_url(self):
         if settings.DEBUG:
