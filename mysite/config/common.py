@@ -216,7 +216,7 @@ class Common(Configuration):
     # END MEDIA CONFIGURATION
 
     # URL Configuration
-    ROOT_URLCONF = 'urls'
+    ROOT_URLCONF = 'main_urls'
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
     WSGI_APPLICATION = 'wsgi.application'
@@ -232,6 +232,7 @@ class Common(Configuration):
     ACCOUNT_AUTHENTICATION_METHOD = 'username'
     ACCOUNT_EMAIL_REQUIRED = True
     ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+    ACCOUNT_LOGOUT_REDIRECT_URL = 'ditto:home'
     # END AUTHENTICATION CONFIGURATION
 
     # Custom user app defaults
