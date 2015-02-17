@@ -160,15 +160,13 @@ body {
     overflow-y: scroll;
 }
 
-.navbar-inverse big .navbar-text  {
+.navbar-inverse big {
     color: #fff;
 }
-big .navbar-text {
-    float: none;
-    text-align: center;
-}
+
 .navbar-brand {
     background-image: url(../images/ditto-logo.png);
+    width: 100px;
 }
 nav .messages {
     background-image: url(../images/icons/message.png);
@@ -179,8 +177,10 @@ nav .profile {
 nav .settings {
     background-image: url(../images/icons/settings.png);
 }
-.navbar-brand, .navbar-right li {
+.navbar-brand, .navbar-right li.icon {
     background-repeat: no-repeat;
     background-position: center center;
+}
+.navbar-brand, .navbar-right li.messages, .navbar-right li.settings, .navbar-right li.icon>a {
     text-indent: -9999px;
 }
