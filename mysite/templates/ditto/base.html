@@ -6,7 +6,7 @@
 
 {% block sidenav %}
     {% url 'ditto:config' as url %}
-    {% navitem "settings" url _("Basic Information") %}
+    {% navitem "basicinfo" url _("Basic Information") %}
 
     {% url 'ditto:settings' as url %}
     {% navitem "roles" url _("Roles") %}

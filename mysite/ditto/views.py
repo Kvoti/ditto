@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.signing import Signer
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -28,7 +28,7 @@ class AdminRequiredMixin(object):
         return super(AdminRequiredMixin, self).dispatch(*args, **kwargs)
 
 
-def nav(nav):
+def nav(nav, back=None):
     """Decorator for setting navigation state.
 
     E.g.
@@ -40,6 +40,7 @@ def nav(nav):
     @extra_context
     def wrapper(request, context):
         context['nav'] = nav
+        context['back'] = back
     return wrapper
 
     
@@ -55,6 +56,8 @@ class NavMixin(object):
     def get_context_data(self, **kwargs):
         context = super(NavMixin, self).get_context_data(**kwargs)
         context['nav'] = self.nav
+        if hasattr(self, 'back'):
+            context['back'] = self.back
         return context
 
 
@@ -139,7 +142,7 @@ class PrivateChatsView(LoginRequiredMixin, NavMixin, ListView):
     
     
 @admin_required
-@nav(['dash', 'roles'])
+@nav(['dash', 'roles'], back=reverse_lazy('ditto:dash'))
 def roles(request, template='ditto/roles.html', success_url=None):
     if success_url is None:
         success_url = request.path
@@ -190,7 +193,7 @@ def delete_role(request, role_id):
     
 
 @admin_required
-@nav(['dash', 'permissions'])
+@nav(['dash', 'permissions'], back=reverse_lazy('ditto:dash'))
 def permissions(request, template='ditto/interactions.html', success_url=None, on_success=None):
     if success_url is None:
         success_url = request.path
@@ -215,6 +218,7 @@ class Features(NavMixin, AdminRequiredMixin, ListView):
     model = Group
     template_name = 'ditto/features.html'
     nav = ['dash', 'features']
+    back = reverse_lazy('ditto:dash')
     
     def get_context_data(self, **kwargs):
         context = super(Features, self).get_context_data(**kwargs)
@@ -223,7 +227,7 @@ class Features(NavMixin, AdminRequiredMixin, ListView):
 
     
 @admin_required
-@nav(['dash', 'features'])
+@nav(['dash', 'features'], back=reverse_lazy('ditto:dash'))
 def feature_permissions(request, role_slug, feature_slug):
     group = get_object_or_404(Group, name__iexact=role_slug)
     feature = get_object_or_404(models.Feature, slug=feature_slug)
@@ -245,7 +249,7 @@ def feature_permissions(request, role_slug, feature_slug):
 
 
 @admin_required
-@nav(['dash', 'settings'])
+@nav(['dash', 'basicinfo'], back=reverse_lazy('ditto:dash'))
 def config(request, template='ditto/config.html', success_url=None):
     if success_url is None:
         success_url = request.path

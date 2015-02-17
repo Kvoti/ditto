@@ -5,9 +5,12 @@
 {% block content %}
 {% m "row" %}
     <div class="col-sm-3 col-md-2 sidebar">
-        {% m "sidenav" %}
+            {% if back %}
+                <p><a href="{% url 'ditto:dash' %}">{% include "ditto/markup/icon.html" with icon="chevron-left" %} DASHBOARD</a></p>
+            {% endif %}
             {# TODO correct way to add a title on a nav? #}
-            <li><a>{% block section %}{% endblock %}</a></li>
+            <p>{% block section %}DASHBOARD{% endblock %}</p>
+        {% m "sidenav" %}
             {% block sidenav %}
                 {% navitem "tasks" "#" _("Tasks") %}
                 {% navitem "usermgmt" "#" _("User Management") %}
@@ -21,7 +24,6 @@
         {% endm %}
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        {% m "pagehead" %}{% block page-heading %}Dashboard{% endblock %}{% endm %}
         {% block dash-content %}
             {% include "ditto/dashlet/tasks.html" %}
             {% include "ditto/dashlet/usermgmt.html" %}
