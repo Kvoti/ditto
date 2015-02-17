@@ -150,6 +150,7 @@ body {
 }
 /* end of dashboard.css */
 
+/* Mark's stuff to be fixed one day! */
 .avatar {
   display: inline-block;
   border-radius: 50%;
@@ -165,4 +166,21 @@ body {
 big .navbar-text {
     float: none;
     text-align: center;
+}
+.navbar-brand {
+    background-image: url(../images/ditto-logo.png);
+}
+nav .messages {
+    background-image: url(../images/icons/message.png);
+}
+nav .profile {
+    background-image: url(../images/icons/monkey.png);
+}
+nav .settings {
+    background-image: url(../images/icons/settings.png);
+}
+.navbar-brand, .navbar-right li {
+    background-repeat: no-repeat;
+    background-position: center center;
+    text-indent: -9999px;
 }

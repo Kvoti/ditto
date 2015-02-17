@@ -42,7 +42,8 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="{% url 'ditto:home' %}">
-                <img width="62" height="63" alt="{{ request.site.name }}" src="{% static 'images/ditto-logo.png' %}">
+                <!-- <img width="62" height="63" alt="{{ request.site.name }}" src="{% static 'images/ditto-logo.png' %}"> -->
+                {{ request.site.name }}                
             </a>
         </div>
         {% block nav %}{% if request.for_tenant %}
@@ -74,22 +75,25 @@
             {% endif %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
-              <li>
+              <li class="messages">
                   {% url "ditto:private_chats" as url %}
                   <a href="{{ url }}">
-                      <img width="71" height="71" alt="Messages" src="{% static 'images/icons/message.png' %}">
+                      <!-- <img width="71" height="71" alt="Messages" src="{% static 'images/icons/message.png' %}"> -->
+                      Messages
                   </a>
               </li>
-              <li>
+              <li class="profile">
                   {% url "users:detail" request.user.username as url %}
                   <a href="{{ url }}">
-                      <img width="71" height="71" alt="Logged in as {{ request.user.username }}" src="{% static 'images/icons/monkey.png' %}">
+                      Profile
+                      <!-- <img width="71" height="71" alt="Logged in as {{ request.user.username }}" src="{% static 'images/icons/monkey.png' %}"> -->
                   </a>
               </li>
-              <li{% if "settings" in nav %} class="active"{% endif %}>
+              <li class="settings{% if "settings" in nav %} active{% endif %}">
                   {% url "ditto:config" as url %}
                   <a href="{{ url }}">
-                      <img width="71" height="71" alt="Settings" src="{% static 'images/icons/settings.png' %}">
+                      <!-- <img width="71" height="71" alt="Settings" src="{% static 'images/icons/settings.png' %}"> -->
+                      Settings
                   </a>
               </li>
           </ul>
