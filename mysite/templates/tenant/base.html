@@ -6,6 +6,10 @@
     <h1 class="page-heading">{% block heading %}{% endblock %}</h1>
     {% block tenant-content %}
     {% endblock %}
+    <h2>Other networks</h2>
+    {% for network in networks %}
+    <p>Go to <a href="{{ network.network_url }}">{{ network.network_name }}</a></p>
+    {% endfor %}
     </div>
 </div>
 {% endblock %}

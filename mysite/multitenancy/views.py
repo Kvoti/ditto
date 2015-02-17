@@ -40,11 +40,17 @@ def _create_my_network(request):
             return HttpResponseRedirect(reverse('ditto:home'))
     else:
         form = forms.TenantForm(request.user)
-    return render(request, 'tenant/create.html', {'form': form})
+    return render(request, 'tenant/create.html', {
+        'form': form,
+        'networks': models.Tenant.objects.all(),
+    })
 
 
 def _go_to_my_network(request, tenant):
-    return render(request, 'tenant/go.html', {'tenant': tenant})
+    return render(request, 'tenant/go.html', {
+        'tenant': tenant,
+        'networks': models.Tenant.objects.all(),
+    })
 
 
 def _create_network_instance(tenant):
