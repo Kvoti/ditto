@@ -57,8 +57,8 @@
                     </ul>
                 </li>
                 
-                {% if request.tenant.is_configured %}
                 <li class="{% if "settings" in nav %} active{% endif %}">
+                {% if request.tenant.is_configured and perms.users.can_admin %}
                     {% url "ditto:config" as url %}
                     <a class="navicon navicon-settings" href="{{ url }}">
                         Settings
