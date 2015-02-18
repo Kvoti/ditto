@@ -168,19 +168,17 @@ body {
     background-image: url(../images/ditto-logo.png);
     width: 100px;
 }
-nav .messages {
+.navicon-messages {
     background-image: url(../images/icons/message.png);
 }
-nav .profile {
+.navicon-profile {
     background-image: url(../images/icons/monkey.png);
 }
-nav .settings {
+.navicon-settings {
     background-image: url(../images/icons/settings.png);
 }
-.navbar-brand, .navbar-right li.icon {
+.navbar-brand, .navicon {
     background-repeat: no-repeat;
     background-position: center center;
-}
-.navbar-brand, .navbar-right li.messages, .navbar-right li.settings, .navbar-right li.icon>a {
-    text-indent: -9999px;
+    text-indent: -9999px;  /* TODO prob use .sr-only for this? */
 }
