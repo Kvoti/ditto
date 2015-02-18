@@ -10,12 +10,8 @@ class CurrentTenantMiddleware(object):
             tenant._set_for_request(request)
         except ValueError as e:
             raise Http404(e)
-        if tenant._is_main():
-            request.urlconf = 'main_urls'
-        else:
-            request.urlconf = tenant._get_urls()
-            # TODO more usual to attach a class than module!?
-            request.tenant = tenant
+        request.urlconf = tenant._get_urls()
+        request.tenant = tenant
         # TODO wonder what else is screwed up by changing _meta.db_table on the fly!!??
         Site.objects.clear_cache()
         

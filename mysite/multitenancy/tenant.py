@@ -8,22 +8,45 @@ from django.conf.urls import patterns, include, url
 
 log = logging.getLogger(__name__)
 
-_current_tenant = local()
+_current = local()
+_table_prefix = local()
 _MAIN = 'main'
 
 
+def is_main():
+    return _current.value == _Main
+
+
+def is_configured():
+    return _current.value.is_configured
+
+
+def chat_domain():
+    pass
+
+
+class _Main(object):
+    slug = _MAIN
+
+    
 class _DBTable(object):
+    @property
+    def _table_prefix(self):
+        if hasattr(_table_prefix, 'value'):
+            return _table_prefix.value
+        else:
+            return _table_prefix(_current.value.slug)
+        
     def __get__(self, obj, objtype):
         orig = getattr(obj, '_db_table', '')
         if orig:
-            # TODO exempt some tables so they're shared (will screw up migrate...)
-            return '%s%s' % (_current_tenant.table_prefix, orig)
+            return '%s%s' % (self._table_prefix, orig)
         else:
             return ''
 
     def __set__(self, obj, value):
         if value:
-            obj._db_table = value.replace(_current_tenant.table_prefix, '')
+            obj._db_table = value.replace(self._table_prefix, '')
         
         
 def _patch_table_names():
@@ -31,68 +54,58 @@ def _patch_table_names():
     _meta = sys.modules['django.db.models.options'].Options
     _meta.db_table = _DBTable()
 
-            
-def _set_for_request(request):
-    parts = request.path.split('/')
-    tenant = parts[1]
-    if not tenant:
-        tenant = _MAIN
-    if tenant != _MAIN:
-        log.debug('Tenant is %s' % tenant)
-        with _tenant(_MAIN):
-            from . import models  # fix circ. import
-            try:
-                tenant = models.Tenant.objects.get(slug=tenant)
-            except models.Tenant.DoesNotExist:
-                log.error('Tenant %s not found' % tenant)
-                raise ValueError('Tenant does not exist: %s' % tenant)
-            else:
-                is_configured = tenant.is_configured
-                tenant = tenant.slug
-    else:
-        log.debug('No tenant found')
-        tenant = _MAIN
-        is_configured = None
-    _set(tenant)
-    # TODO this should be part of the _set function
-    if is_configured is not None:
-        if is_configured:
-            log.debug('Tenant is configured')
-        else:
-            log.debug('Tenant is not configured')
-        _current_tenant.is_configured = is_configured
+        
+@contextmanager
+def _main():
+    """Context manager to allow access to main database tables when
+    current tenant is not main.
 
-    
-def _set_for_tenant(tenant):
-    _set(tenant)
-
-
-def _table_prefix(tenant):
-    return '__%s__' % tenant
+    """
+    _table_prefix.value = _table_prefix(_MAIN)
+    yield
+    del _table_prefix.value
 
 
 def _set_default():
-    _set(_MAIN)
+    _set(_Main)
 
     
-def _set(tenant_id):
-    _current_tenant.table_prefix = _table_prefix(tenant_id)
-    log.debug('Set tenant to %s' % tenant_id)
+def _set_for_request(request):
+    _set_for_id(_get_id_from_request(request))
+
+    
+def _set_for_id(tenant_id):
+    from . import models  # fix circ. import
+    if tenant_id == _MAIN:
+        _set_default()
+    else:
+        with _main():
+            try:
+                tenant = models.Tenant.objects.get(slug=tenant_id)
+            except models.Tenant.DoesNotExist:
+                log.error('Tenant %s not found' % tenant_id)
+                raise ValueError('Tenant does not exist: %s' % tenant_id)
+            else:
+                _set(tenant)
+
+
+def _get_id_from_request(request):
+    if request.path == '/':
+        tenant_id = _MAIN
+    else:
+        parts = request.path.split('/')
+        tenant_id = parts[1]
+    return tenant_id
+                
+
+def _set(tenant):
+    _current.value = tenant
+    log.debug('Set tenant to %s' % tenant)
 
 
 def _unset():
-    del _current_tenant.table_prefix
-    if hasattr(_current_tenant, 'is_configured'):
-        del _current_tenant.is_configured
+    del _current.value
     log.debug('Unset tenant')
-
-
-def _is_main():
-    return _current_tenant.table_prefix == _table_prefix(_MAIN)
-
-
-def is_configured():
-    return _current_tenant.is_configured
 
 
 def set_configured():
@@ -104,33 +117,23 @@ def reset_configured():
 
 
 def _set_configured(is_configured):
-    from . import models  # fix circ. import
-    slug = _current_tenant.table_prefix[2:-2]  # FIXME
-    with _tenant(_MAIN):
-        tenant = models.Tenant.objects.get(
-            slug=slug
-        )
-        tenant.is_configured = is_configured
-        tenant.save()
-
-
-def _get_id():
-    return _current_tenant.table_prefix[2:-2]
+    _current.value.is_configured = is_configured
+    with _main():
+        _current.value.save()
 
 
 def _get_urls():
-    tid = _get_id()
-    # Note, need 'tuple' here otherwise url stuff blows up
-    return tuple(
-        patterns(
-            '',
-            url(r'^%s/' % tid, include('network_urls')),
-        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
+    if is_main():
+        return 'main_urls'
+    else:
+        tid = _current.value.slug
+        # Note, need 'tuple' here otherwise url stuff blows up
+        return tuple(
+            patterns(
+                '',
+                url(r'^%s/' % tid, include('network_urls')),
+            ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
+
     
-        
-# TODO think we need a version of this that *restores* the current tenant
-@contextmanager
-def _tenant(tenant_id):
-    _set_for_tenant(tenant_id)
-    yield
-    _unset()
+def _table_prefix(tenant_id):
+    return '__%s__' % tenant_id
