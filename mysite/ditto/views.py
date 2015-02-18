@@ -138,7 +138,7 @@ class PrivateChatsView(LoginRequiredMixin, NavMixin, ListView):
     model = User
     context_object_name = 'chatees'
     template_name = 'ditto/chat/private_chats.html'
-    nav = ['private_chat']
+    nav = ['messages']
     
     
 @admin_required

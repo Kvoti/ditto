@@ -40,7 +40,7 @@
         {% if request.user.is_authenticated %}
             {% if request.tenant %}
                 {% if request.tenant.is_configured %}
-                <li>
+                <li{% if "messages" in nav %} class="active"{% endif %}>
                     {% url "ditto:private_chats" as url %}
                     <a class="navicon navicon-messages" href="{{ url }}">
                         Messages
@@ -48,7 +48,7 @@
                 </li>
                 {% endif %}
                 
-                <li class="dropdown">
+                <li class="dropdown{% if 'me' in nav %} active{% endif %}">
                     {% url "users:detail" request.user.username as profile_url %}
                     <a href="#" class="navicon navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Me <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -57,8 +57,8 @@
                     </ul>
                 </li>
                 
-                <li class="{% if "settings" in nav %} active{% endif %}">
                 {% if request.tenant.is_configured and perms.users.can_admin %}
+                <li{% if "settings" in nav %} class="active"{% endif %}>
                     {% url "ditto:config" as url %}
                     <a class="navicon navicon-settings" href="{{ url }}">
                         Settings

@@ -11,6 +11,8 @@ from django.views.generic import ListView
 # Only authenticated users can access views using this.
 from braces.views import LoginRequiredMixin
 
+from ditto.views import NavMixin
+
 # Import the form from users/forms.py
 from .forms import UserForm
 
@@ -18,12 +20,12 @@ from .forms import UserForm
 from .models import User
 
 
-class UserDetailView(LoginRequiredMixin, DetailView):
+class UserDetailView(LoginRequiredMixin, NavMixin, DetailView):
     model = User
     # These next two lines tell the view to index lookups by username
     slug_field = "username"
     slug_url_kwarg = "username"
-
+    nav = ['me']
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False

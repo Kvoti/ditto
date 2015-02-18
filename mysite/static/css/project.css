@@ -171,11 +171,20 @@ body {
 .navicon-messages {
     background-image: url(../images/icons/message.png);
 }
+.active .navicon-messages {
+    background-image: url(../images/icons/message2.png);
+}
 .navicon-profile {
     background-image: url(../images/icons/monkey.png);
 }
+.active .navicon-profile {
+    background-image: url(../images/icons/monkey2.png);
+}
 .navicon-settings {
     background-image: url(../images/icons/settings.png);
+}
+.active .navicon-settings {
+    background-image: url(../images/icons/settings2.png);
 }
 .navbar-brand, .navicon {
     background-repeat: no-repeat;
