@@ -83,8 +83,8 @@
     <script>
         {% block config %}
         var DITTO = {};
-        DITTO.chat_domain = '{{ debug|yesno:"localhost,134.213.147.235" }}';
-        DITTO.chat_host = '{{ debug|yesno:"localhost,ditto.com" }}';
+        DITTO.chat_ip = '{{ debug|yesno:"localhost,134.213.147.235" }}';
+        DITTO.chat_host = '{{ request.tenant.chat_host }}';
         DITTO.chat_name = '{{ user.username }}@' + DITTO.chat_host + '/Ditto';
         {% comment %}
         no password in debug is workaround for development where mongooseim thinks it

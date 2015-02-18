@@ -21,8 +21,18 @@ def is_configured():
     return _current.value.is_configured
 
 
-def chat_domain():
-    pass
+def chat_host():
+    if settings.DEBUG:
+        domain = 'localhost'
+    else:
+        domain = 'ditto.technology'
+    # Each ditto network has their own chat vhost to keep the users
+    # isolated.  At the moment I can figure out if it's possible to
+    # configure new hosts at runtime (other than by invoking a script
+    # to update the conf file and reloading). So, for testint/demoing,
+    # I've just pre-configured a bunch of vhosts that we can map new
+    # networks to.
+    return 'network%s.%s' % (_current.value.pk, domain)
 
 
 class _Main(object):
