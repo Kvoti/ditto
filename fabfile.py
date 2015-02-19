@@ -12,6 +12,7 @@ def deploy():
         with cd('mysite'), shell_env(DJANGO_CONFIGURATION='Production'):
             sudo(' ../../bin/python manage.py collectstatic --noinput',
                  user="pydev")
+    sudo('/srv/venv/bin/pip install -U -r /srv/venv/mysite/requirements/production.txt')
     run('apachectl graceful')
 
 
