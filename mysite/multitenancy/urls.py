@@ -6,6 +6,10 @@ urlpatterns = patterns('',
         views.my_network,
         name="home"),
 
+    url(r'^create/$',  # noqa
+        views.create_my_network,
+        name="create"),
+                       
     # mondgooseim auth api endpoint
     url(
         regex=r'^get_password$',

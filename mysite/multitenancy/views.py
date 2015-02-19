@@ -22,15 +22,14 @@ def my_network(request):
     if request.user.is_anonymous():
         return render(request, 'landing.html')
     else:
-        try:
-            tenant = models.Tenant.objects.get(user=request.user)
-        except models.Tenant.DoesNotExist:
-            return _create_my_network(request)
+        tenants = models.Tenant.objects.filter(user=request.user)
+        if tenants.count():
+            return _go_to_my_network(request, tenants)
         else:
-            return _go_to_my_network(request, tenant)
+            return create_my_network(request)
 
     
-def _create_my_network(request):
+def create_my_network(request):
     if request.method == 'POST':
         form = forms.TenantForm(request.user, data=request.POST)
         if form.is_valid():
@@ -46,9 +45,9 @@ def _create_my_network(request):
     })
 
 
-def _go_to_my_network(request, tenant):
+def _go_to_my_network(request, tenants):
     return render(request, 'tenant/go.html', {
-        'tenant': tenant,
+        'tenants': tenants,
         'networks': models.Tenant.objects.all(),
     })
 

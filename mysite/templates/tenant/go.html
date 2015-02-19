@@ -1,7 +1,9 @@
 {% extends "tenant/base.html" %}
 
-{% block heading %}Go to your network!{% endblock %}
+{% block heading %}Go to your networks!{% endblock %}
 
 {% block tenant-content %}
+{% for tenant in tenants %}
 <p>Open <a href="{{ tenant.network_url }}">{{ tenant.network_name }}</a></p>
+{% endfor %}
 {% endblock %}

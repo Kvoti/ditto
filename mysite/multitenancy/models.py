@@ -19,7 +19,7 @@ tenant._patch_table_names()
 
 
 class Tenant(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     network_name = models.CharField(
         max_length=20,
         unique=True,

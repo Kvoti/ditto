@@ -10,6 +10,7 @@
     {% for network in networks %}
     <p>Go to <a href="{{ network.network_url }}">{{ network.network_name }}</a></p>
     {% endfor %}
+    <p><a href="{% url 'ditto:create' %}" class="btn btn-primary">Create another network</a></p>
     </div>
 </div>
 {% endblock %}
