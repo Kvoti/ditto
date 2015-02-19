@@ -53,6 +53,14 @@
 	    delete presence[msg.attr('from').split('/')[1]];
 	    renderPresence();
 	}
+
+        // First time we enter the chatroom for a new network the room
+        // needs to be created and configured
+        var is_new_room = msg.find('status[code=201]');
+        if (is_new_room.length) {
+            // TODO handle failure
+            connection.muc.createInstantRoom(chatroom);
+        }
 	
 	return true;
     }
