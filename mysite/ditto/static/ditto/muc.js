@@ -30,7 +30,11 @@
         var body = msg.find("body:first").text();
         var from = msg.attr("from").split('/')[1];
 
-	DITTO.chat.renderMessage(from, body);
+        if (from) {
+            // TODO always get an 'empty' message from the room
+            // itself, not sure why
+	    DITTO.chat.renderMessage(from, body);
+        }
         return true;
     }
 
