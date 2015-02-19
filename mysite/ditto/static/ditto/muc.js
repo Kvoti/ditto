@@ -14,7 +14,7 @@
 
     $(document).on('disconnected.ditto.chat', function () {
         alert('You got disconnected, maybe you opened another tab or device?');
-        window.location.href = '/';
+        window.location.href = '../';
     });
     
     DITTO.chat.sendMessage = function (msg) {
