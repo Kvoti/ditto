@@ -93,7 +93,17 @@ def get_password(request):
     if settings.DEBUG:
         return HttpResponse()
     username = request.GET['user']
-    user = get_object_or_404(User, username=username)
+    tenant_slug = _get_tenant(request.GET['server'])
+    with _tenant(tenant_slug):
+        user = get_object_or_404(User, username=username)
     signer = Signer()
     value = signer.sign(user.username)
     return HttpResponse(value)
+
+
+def _get_tenant(server):
+    chat_domain = server
+    network = chat_domain.split('.')[0]
+    tenant_pk = network.replace('network', '')
+    tenant = get_object_or_404(models.Tenant, pk=tenant_pk)
+    return tenant.slug
