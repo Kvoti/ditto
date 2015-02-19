@@ -27,11 +27,11 @@ class Local(Common):
     EMAIL_BACKEND = values.Value('django.core.mail.backends.console.EmailBackend')
     # End mail settings
 
+    INTERNAL_IPS = ('127.0.0.1', '10.0.2.2',)
+
     # django-debug-toolbar
     # MIDDLEWARE_CLASSES = Common.MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     # INSTALLED_APPS += ('debug_toolbar', 'django_nose')
-
-    # INTERNAL_IPS = ('127.0.0.1', '10.0.2.2',)
 
     # DEBUG_TOOLBAR_CONFIG = {
     #     'DISABLE_PANELS': [
