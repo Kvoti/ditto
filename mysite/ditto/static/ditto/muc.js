@@ -2,6 +2,7 @@
 // Group chat
 //
 (function () {
+    var connection;
     var chatroom = DITTO.room + '@muc.' + DITTO.chat_host;
     var presence = {};
     var presence_ui = $('#presence');
