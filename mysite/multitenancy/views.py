@@ -93,7 +93,7 @@ def get_password(request):
         return HttpResponse()
     username = request.GET['user']
     tenant_slug = _get_tenant(request.GET['server'])
-    with _tenant(tenant_slug):
+    with utils._tenant(tenant_slug):
         user = get_object_or_404(User, username=username)
     signer = Signer()
     value = signer.sign(user.username)
