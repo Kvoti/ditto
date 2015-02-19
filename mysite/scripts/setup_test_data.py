@@ -114,5 +114,5 @@ def setup_tenants():
         network_name='Digital Impacts',
         slug='di'
     )
-    if not multitenancy.tenant._is_main():
+    if not multitenancy.tenant.is_main():
         setup_site(name='Digital Impacts', subdomain='di')

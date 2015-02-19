@@ -7,7 +7,11 @@ from . import tenant
 
 
 if 'DJANGO_TENANT' in os.environ:
-    tenant._set_for_tenant(os.environ['DJANGO_TENANT'])
+    # Note here we don't (can't) check that the tenant id is valid as
+    # this is run *before* any models are loaded. However things will
+    # blow up quickly if it's not valid as django will try to access
+    # non-existent db tables.
+    tenant._set(os.environ['DJANGO_TENANT'])
 else:
     tenant._set_default()
     

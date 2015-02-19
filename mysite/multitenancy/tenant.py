@@ -14,11 +14,11 @@ _MAIN = 'main'
 
 
 def is_main():
-    return _current.value == _Main
+    return _current.value == _MAIN
 
 
 def is_configured():
-    return _current.value.is_configured
+    return _get_current().is_configured
 
 
 def chat_host():
@@ -27,25 +27,21 @@ def chat_host():
     else:
         domain = 'ditto.technology'
     # Each ditto network has their own chat vhost to keep the users
-    # isolated.  At the moment I can figure out if it's possible to
+    # isolated.  At the moment I can't figure out if it's possible to
     # configure new hosts at runtime (other than by invoking a script
-    # to update the conf file and reloading). So, for testint/demoing,
+    # to update the conf file and reloading). So, for testing/demoing,
     # I've just pre-configured a bunch of vhosts that we can map new
     # networks to.
-    return 'network%s.%s' % (_current.value.pk, domain)
+    return 'network%s.%s' % (_get_current().pk, domain)
 
 
-class _Main(object):
-    slug = _MAIN
-
-    
 class _DBTable(object):
     @property
     def _table_prefix(self):
         if hasattr(_table_prefix, 'value'):
             return _table_prefix.value
         else:
-            return _table_prefix(_current.value.slug)
+            return _table_prefix(_current.value)
         
     def __get__(self, obj, objtype):
         orig = getattr(obj, '_db_table', '')
@@ -77,26 +73,14 @@ def _main():
 
 
 def _set_default():
-    _set(_Main)
+    _set(_MAIN)
 
     
 def _set_for_request(request):
-    _set_for_id(_get_id_from_request(request))
-
-    
-def _set_for_id(tenant_id):
-    from . import models  # fix circ. import
-    if tenant_id == _MAIN:
-        _set_default()
-    else:
-        with _main():
-            try:
-                tenant = models.Tenant.objects.get(slug=tenant_id)
-            except models.Tenant.DoesNotExist:
-                log.error('Tenant %s not found' % tenant_id)
-                raise ValueError('Tenant does not exist: %s' % tenant_id)
-            else:
-                _set(tenant)
+    tenant_id = _get_id_from_request(request)
+    # When setting from the request we check the tenant exists
+    _get_for_id(tenant_id)
+    _set(tenant_id)
 
 
 def _get_id_from_request(request):
@@ -108,6 +92,25 @@ def _get_id_from_request(request):
     return tenant_id
                 
 
+def _get_current():
+    return _get_for_id(_current.value)
+
+
+def _get_for_id(tenant_id):
+    from . import models  # fix circ. import
+    if tenant_id == _MAIN:
+        return _MAIN
+    else:
+        with _main():
+            try:
+                tenant = models.Tenant.objects.get(slug=tenant_id)
+            except models.Tenant.DoesNotExist:
+                log.error('Tenant %s not found' % tenant_id)
+                raise ValueError('Tenant does not exist: %s' % tenant_id)
+            else:
+                return tenant
+
+            
 def _set(tenant):
     _current.value = tenant
     log.debug('Set tenant to %s' % tenant)
@@ -127,16 +130,17 @@ def reset_configured():
 
 
 def _set_configured(is_configured):
-    _current.value.is_configured = is_configured
+    tenant = _get_current()
+    tenant.is_configured = is_configured
     with _main():
-        _current.value.save()
+        tenant.save()
 
 
 def _get_urls():
     if is_main():
         return 'main_urls'
     else:
-        tid = _current.value.slug
+        tid = _current.value
         # Note, need 'tuple' here otherwise url stuff blows up
         return tuple(
             patterns(
