@@ -85,7 +85,6 @@ def _create_network_instance(tenant):
         site.domain = '%s.%s' % (subdomain, parent_domain)
         site.name = network_name
         site.save()
-    utils._set_default()  # TODO maybe context manager should handle this?
 
 
 # TODO restrict this to requests from chat (localhost for now)?

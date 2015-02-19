@@ -61,16 +61,23 @@ def _patch_table_names():
     _meta.db_table = _DBTable()
 
         
-@contextmanager
 def _main():
     """Context manager to allow access to main database tables when
-    current tenant is not main.
+    current tenant may not be main.
 
     """
-    _table_prefix.value = _table_prefix(_MAIN)
+    return _tenant(_MAIN)
+
+
+@contextmanager
+def _tenant(slug):
+    """Context manager to allow access to tenant database tables.
+
+    """
+    _table_prefix.value = _table_prefix(slug)
     yield
     del _table_prefix.value
-
+    
 
 def _set_default():
     _set(_MAIN)
