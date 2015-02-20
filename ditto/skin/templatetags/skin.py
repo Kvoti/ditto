@@ -4,7 +4,7 @@ from django.template.loader import get_template
 register = template.Library()
 
 
-@register.inclusion_tag("ditto/templatetags/nav_item.html", takes_context=True)
+@register.inclusion_tag("skin/nav_item.html", takes_context=True)
 def navitem(context, slug, url, text):
     return {
         'url': url,
@@ -70,18 +70,8 @@ class MarkupNode(template.Node):
         
     def render(self, context):
         output = self.nodelist.render(context)
-        file_name = "ditto/markup/%s.html" % self.component
+        file_name = "skin/%s.html" % self.component
         t = get_template(file_name)
         return t.render(template.Context({
             'content': output,
         }))
-
-
-# annoys the hell out of me that you can't do dynamic lookups in
-# django templates out of the box!
-@register.filter
-def lookup(obj, attr):
-    try:
-        return getattr(obj, attr)
-    except AttributeError:
-        return obj[attr]
