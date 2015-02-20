@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Django settings for mysite project.
+Django settings for Ditto project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/dev/topics/settings/
@@ -122,7 +122,7 @@ class Common(Configuration):
 
     # DATABASE CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-    DATABASES = values.DatabaseURLValue('mysql://localhost/mysite')
+    DATABASES = values.DatabaseURLValue('mysql://localhost/ditto')
     # END DATABASE CONFIGURATION
 
     # CACHING

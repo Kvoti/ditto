@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# mysite documentation build configuration file, created by
+# Ditto documentation build configuration file, created by
 # sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -41,7 +41,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'mysite'
+project = u'Ditto'
 copyright = u'2014, Mark Allison'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -165,7 +165,7 @@ html_static_path = ['_static']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'mysitedoc'
+htmlhelp_basename = 'dittodoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -185,8 +185,8 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
     ('index',
-     'mysite.tex',
-     u'mysite Documentation',
+     'ditto.tex',
+     u'Ditto Documentation',
      u'Mark Allison', 'manual'),
 ]
 
@@ -216,7 +216,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'mysite', u'mysite Documentation',
+    ('index', 'ditto', u'Ditto Documentation',
      [u'Mark Allison'], 1)
 ]
 
@@ -230,8 +230,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'mysite', u'mysite Documentation',
-     u'Mark Allison', 'mysite',
+    ('index', 'ditto', u'Ditto Documentation',
+     u'Mark Allison', 'ditto',
      'A short description of the project.', 'Miscellaneous'),
 ]
 

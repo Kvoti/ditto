@@ -1,5 +1,5 @@
-mysqladmin drop mysite
-mysqladmin create mysite
+mysqladmin drop ditto
+mysqladmin create ditto
 python manage.py migrate
 python manage.py runscript setup_test_data
 DJANGO_TENANT=di python manage.py migrate
