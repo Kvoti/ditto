@@ -18,7 +18,7 @@ import multitenancy.tenant
 
 from users.models import User
 
-INTERACTIONS = ["Message", "Private chat", "Group chat"]
+INTERACTIONS = ["Messaging"]
 
 
 def run():
@@ -46,10 +46,11 @@ def setup_features():
     for slug, name, perms in (
             ('blog', 'Blog', [
                 ('can_blog', 'Can Blog'),
-                ('can_comment', 'Can commenet'),
+                ('can_comment', 'Can comment'),
             ]),
             ('news', 'News', [('can_news', 'Can manage news')]),
             ('polls', 'Polls', [('can_poll', 'Can add polls')]),
+            ('chatroom', 'Chatroom', [('can_chat', 'Can chat')]),
     ):
         feature, _ = ditto.models.Feature.objects.get_or_create(
             slug=slug, name=name)
@@ -112,7 +113,8 @@ def setup_tenants():
     multitenancy.models.Tenant.objects.create(
         user=user,
         network_name='Digital Impacts',
-        slug='di'
+        slug='di',
+        is_configured=True,
     )
     if not multitenancy.tenant.is_main():
         setup_site(name='Digital Impacts', subdomain='di')

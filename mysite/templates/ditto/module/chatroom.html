@@ -1,0 +1,11 @@
+{% extends "ditto/module/base.html" %}
+
+{% block title %}Latest chat{% endblock %}
+
+{% block content %}
+<p>See the latest chat messages here.</p>
+{% endblock %}
+
+{% block footer %}
+<a href="{% url 'ditto:chatroom' %}">Enter chatroom >></a>
+{% endblock %}
