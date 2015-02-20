@@ -1,4 +1,4 @@
-"""Script to set up test data for a ditto instance.
+"""Script to set up test data for a Ditto instance.
 
 As before we tried to do this with migrations but ran into problems
 early on with custom permissions not being created.
@@ -11,8 +11,9 @@ from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-import ditto.models
-import ditto.config
+
+import configuration.models
+import core
 import multitenancy.models
 import multitenancy.tenant
 
@@ -52,9 +53,9 @@ def setup_features():
             ('polls', 'Polls', [('can_poll', 'Can add polls')]),
             ('chatroom', 'Chatroom', [('can_chat', 'Can chat')]),
     ):
-        feature, _ = ditto.models.Feature.objects.get_or_create(
+        feature, _ = configuration.models.Feature.objects.get_or_create(
             slug=slug, name=name)
-        content_type = ContentType.objects.get_for_model(ditto.models.Feature)
+        content_type = ContentType.objects.get_for_model(configuration.models.Feature)
         for codename, name in perms:
             perm, _ = Permission.objects.get_or_create(
                 codename=codename,
@@ -65,7 +66,7 @@ def setup_features():
 
 
 def setup_default_roles():
-    for group in ditto.config.DEFAULT_ROLES:
+    for group in core.DEFAULT_ROLES:
         group, _ = Group.objects.get_or_create(name=group)
         
 
@@ -76,25 +77,25 @@ def setup_admin_permission():
         content_type=content_type)
     perm.name = 'Can administer'
     perm.save()
-    Group.objects.get(name=ditto.config.ADMIN_ROLE).permissions.add(perm)
+    Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     
 
 def setup_interactions():
     for interaction in INTERACTIONS:
-        ditto.models.Interaction.objects.get_or_create(name=interaction)
+        configuration.models.Interaction.objects.get_or_create(name=interaction)
 
 
 def setup_admin_user():
-    _create_user('admin', ditto.config.ADMIN_ROLE)
+    _create_user('admin', core.ADMIN_ROLE)
 
 
 def setup_members():
     for name in ['mark', 'sarah', 'ross', 'emma']:
-        _create_user(name, ditto.config.MEMBER_ROLE)
+        _create_user(name, core.MEMBER_ROLE)
     # 'visitor' is someone who's come to the site to create their own
     # network, hence we give them the admin role so they can do all
     # the configuration necessary for a new network.
-    _create_user('visitor', ditto.config.ADMIN_ROLE)
+    _create_user('visitor', core.ADMIN_ROLE)
         
 
 def _create_user(username, group_name):

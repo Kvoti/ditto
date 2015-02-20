@@ -1,0 +1,6 @@
+{% extends "configuration/base.html" %}
+
+{% block dash-content %}
+    {% url 'ditto:permissions' as action %}
+    {% include "common/includes/forms/formset.html" with action=action %}
+{% endblock %}

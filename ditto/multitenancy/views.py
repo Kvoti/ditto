@@ -6,11 +6,11 @@ from django.contrib.sites.models import Site
 from django.core import management
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import never_cache
 
-import ditto.config
+import core
 from users.models import User
 
 from . import forms
@@ -77,7 +77,7 @@ def _create_network_instance(tenant):
                 email=email.email,
                 verified=1
             )
-        admin.groups.add(Group.objects.get(name=ditto.config.ADMIN_ROLE))
+        admin.groups.add(Group.objects.get(name=core.ADMIN_ROLE))
 
         # copy over network name
         site = Site.objects.get_current()

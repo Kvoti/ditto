@@ -11,7 +11,7 @@ from django.views.generic import ListView
 # Only authenticated users can access views using this.
 from braces.views import LoginRequiredMixin
 
-from ditto.views import NavMixin
+from core.views.mixins import NavMixin
 
 # Import the form from users/forms.py
 from .forms import UserForm

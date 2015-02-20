@@ -1,0 +1,21 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% load ditto %}
+
+{% block section %}SETTINGS{% endblock %}
+
+{% block sidenav %}
+    {% url 'ditto:config' as url %}
+    {% navitem "basicinfo" url _("Basic Information") %}
+
+    {% url 'ditto:settings' as url %}
+    {% navitem "roles" url _("Roles") %}
+
+    {% url 'ditto:permissions' as url %}
+    {% navitem "permissions" url _("Permissions") %}
+
+    {% url 'ditto:features' as url %}
+    {% navitem "features" url _("Features") %}
+{% endblock %}
+
+{% block dash-content %}{% endblock %}

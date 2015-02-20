@@ -21,6 +21,6 @@ urlpatterns = patterns('',
     url(r'^avatar/', include('avatar.urls')),
 
     # Your stuff: custom urls go here
-    url(r'', include('ditto.urls', namespace="ditto")),
+    url(r'', include('network.urls', namespace="ditto")),
 
 )

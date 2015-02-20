@@ -1,8 +1,0 @@
-{% extends "ditto/signup/base.html" %}
-
-{% block heading %}Let&rsquo;s get started.{% endblock %}
-
-{% block signup-content %}
-    {% url 'ditto:create-step2' as step2 %}
-    {% include "common/includes/forms/form.html" with save="NEXT" skip=step2 %}
-{% endblock %}

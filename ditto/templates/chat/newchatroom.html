@@ -1,0 +1,11 @@
+{% extends "chat/chatroom.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+    {% include "common/includes/forms/form.html" %}
+{% endblock %}
+
+{% block chat %}
+    <script src="{% static 'chat/js/newroom.js' %}"></script>
+{% endblock %}

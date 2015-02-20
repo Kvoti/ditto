@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% load ditto %}
+
+{% block content %}
+{% m "row" %}
+    <div class="col-sm-3 col-md-2 sidebar">
+            {% if back %}
+                <p><a href="{% url 'ditto:dash' %}">{% include "ditto/markup/icon.html" with icon="chevron-left" %} DASHBOARD</a></p>
+            {% endif %}
+            {# TODO correct way to add a title on a nav? #}
+            <p>{% block section %}DASHBOARD{% endblock %}</p>
+        {% m "sidenav" %}
+            {% block sidenav %}
+                {% navitem "tasks" "#" _("Tasks") %}
+                {% navitem "usermgmt" "#" _("User Management") %}
+                {% navitem "safeguarding" "#" _("Safeguarding") %}
+                {% navitem "evaluation" "#" _("Evaluation") %}
+                {% navitem "reports" "#" _("Reports") %}
+        
+                {% url "ditto:config" as url %}
+                {% navitem "settings" url _("Settings") %}
+            {% endblock %}
+        {% endm %}
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        {% block dash-content %}
+            {% include "dashboard/dashlet/tasks.html" %}
+            {% include "dashboard/dashlet/usermgmt.html" %}
+            {% include "dashboard/dashlet/safeguard.html" %}
+            {% include "dashboard/dashlet/evaluation.html" %}
+            {% include "dashboard/dashlet/reports.html" %}
+            {% include "dashboard/dashlet/settings.html" %}
+        {% endblock %}
+    </div>
+{% endm %}
+{% endblock %}
