@@ -27,13 +27,8 @@ urlpatterns = patterns('',
                        
     url(
         regex=r'^settings/features/$',
-        view=views.Features.as_view(),
-        name='features'
-    ),
-    url(
-        regex=r'^settings/features/(\w+)/(\w+)/$',
         view=views.feature_permissions,
-        name='feature-permissions'
+        name='features'
     ),
                        
     url(

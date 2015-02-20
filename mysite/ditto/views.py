@@ -214,37 +214,25 @@ def permissions(request, template='ditto/interactions.html', success_url=None, o
     })
 
 
-class Features(NavMixin, AdminRequiredMixin, ListView):
-    model = Group
-    template_name = 'ditto/features.html'
-    nav = ['dash', 'features']
-    back = reverse_lazy('ditto:dash')
-    
-    def get_context_data(self, **kwargs):
-        context = super(Features, self).get_context_data(**kwargs)
-        context['features'] = models.Feature.objects.all()
-        return context
-
-    
 @admin_required
 @nav(['dash', 'features'], back=reverse_lazy('ditto:dash'))
-def feature_permissions(request, role_slug, feature_slug):
-    group = get_object_or_404(Group, name__iexact=role_slug)
-    feature = get_object_or_404(models.Feature, slug=feature_slug)
-    
+def feature_permissions(request, template='ditto/permissions.html', success_url=None, on_success=None):
+    if success_url is None:
+        success_url = request.path
     if request.method == 'POST':
-        form = forms.FeaturePermissionsForm(group, feature, data=request.POST)
+        form = forms.PermissionsForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, _("Permissions saved"))
-            return HttpResponseRedirect(request.path)
+            messages.success(request, "Configuration updated")
+            if on_success:
+                on_success(request)
+            return HttpResponseRedirect(success_url)
     else:
-        form = forms.FeaturePermissionsForm(group, feature)
-        
-    return TemplateResponse(request, 'ditto/feature_permissions.html', {
+        form = forms.PermissionsForm()
+    return TemplateResponse(request, template, {
         'form': form,
-        'group': group,
-        'feature': feature,
+        'roles': Group.objects.all(),
+        'features': models.Feature.objects.all(),
     })
 
 

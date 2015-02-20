@@ -106,26 +106,31 @@ class InteractionsForm(forms.Form):
         return grid
 
             
-class FeaturePermissionsForm(forms.Form):
-    def __init__(self, group, feature, *args, **kwargs):
-        self.group = group
-        super(FeaturePermissionsForm, self).__init__(*args, **kwargs)
-        permissions = feature.permissions.all()
-        enabled_permissions = group.permissions.all()
-        for perm in permissions:
-            is_enabled = perm in enabled_permissions
-            self.fields[perm.name] = forms.BooleanField(
-                required=False,
-                initial=is_enabled,
-            )
-            self.fields[perm.name].permission = perm
+class PermissionsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(PermissionsForm, self).__init__(*args, **kwargs)
+        for role in Group.objects.all():
+            for feature in models.Feature.objects.all():
+                for permission in feature.permissions.all():
+                    is_enabled = role.permissions.filter(
+                        pk=permission.pk).exists()
+                    name = '-'.join((role.name, feature.name, permission.name))
+                    checkbox = forms.BooleanField(
+                        required=False,
+                        initial=is_enabled,
+                    )
+                    checkbox.role = role
+                    checkbox.permission = permission
+                    self.fields[name] = checkbox
 
     def save(self):
         for name, is_enabled in self.cleaned_data.items():
+            role = self.fields[name].role
+            permission = self.fields[name].permission
             if is_enabled:
-                self.group.permissions.add(self.fields[name].permission)
+                role.permissions.add(permission)
             else:
-                self.group.permissions.remove(self.fields[name].permission)
+                role.permissions.remove(permission)
 
 
 class NewChatroomForm(forms.Form):
