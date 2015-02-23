@@ -100,6 +100,15 @@ def get_password(request):
     return HttpResponse(value)
 
 
+@never_cache
+def user_exists(request):
+    username = request.GET['user']
+    tenant_slug = _get_tenant(request.GET['server'])
+    with utils._tenant(tenant_slug):
+        get_object_or_404(User, username=username)
+    return HttpResponse('true')
+
+
 def _get_tenant(server):
     chat_domain = server
     network = chat_domain.split('.')[0]

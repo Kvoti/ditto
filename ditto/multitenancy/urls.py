@@ -15,5 +15,9 @@ urlpatterns = patterns('',
         regex=r'^get_password$',
         view=views.get_password,
     ),
+    url(
+        regex=r'^user_exists$',
+        view=views.user_exists,
+    ),
 
 )
