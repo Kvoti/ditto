@@ -20,9 +20,10 @@
     DITTO.chat.addPrivateMessageCallback(function (msg) {
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
-	var from = msg.attr("from").split('@')[0];
+	var from_jid = msg.attr("from");
+        var from = from_jid.split('@')[0];
 
-	if (body) {
+	if (body && Strophe.getBareJidFromJid(from_jid) === DITTO.chatee) {
 	    this.renderMessage(from, body);
             if (this.isPageHidden()) {
                 this.notifyNewMessage();
