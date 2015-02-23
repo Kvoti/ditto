@@ -9,6 +9,98 @@ from core.views.decorators import admin_required, nav
 
 from . import forms
 from . import models
+from . import utils
+
+BASICINFO = 'basicinfo'
+ROLES = 'roles'
+PERMISSIONS = 'permissions'
+FEATURES = 'features'
+
+STEPS = [BASICINFO, ROLES, PERMISSIONS, FEATURES]
+
+FORM_CLASSES = {
+    BASICINFO: forms.BasicInfoForm,
+    PERMISSIONS: forms.InteractionsForm,
+    FEATURES: forms.PermissionsForm,
+}
+
+FORM_TEMPLATES = {
+    PERMISSIONS: 'configuration/perms_form.html',
+    FEATURES: 'configuration/feature_perms_form.html'
+}
+
+
+def edit_initial_config(request, step):
+    step = int(step)
+    section = STEPS[step - 1]
+    if not section == STEPS[-1]:
+        next = success_url = reverse('ditto:initialconfig', args=(step + 1,))
+    else:
+        next = None
+        success_url = reverse('ditto:home')
+    if step == 2:
+        from .views import roles
+        result = roles(request, success_url=success_url)
+    else:
+        result = edit_config(request, section, success_url=success_url)
+    if hasattr(result, 'context_data'):
+        result.context_data['base'] = 'configuration/walkthrough/base.html'
+        result.context_data['next'] = next
+        result.context_data['submit'] = 'NEXT' if next else 'FINISH'
+    elif not next:
+        _on_setup_finish(request)
+    return result
+
+
+def edit_config(request, section, success_url=None):
+    result = _edit_config(
+        request,
+        section,
+        form_class=FORM_CLASSES[section],
+        form_template=FORM_TEMPLATES.get(section, 'skin/forms/form.html'),
+        success_url=success_url
+    )
+    if hasattr(result, 'context_data'):
+        if section == 'permissions':
+            result.context_data['grid'] = utils.get_role_grid()
+            result.context_data['interactions'] = models.Interaction.objects.all()
+        elif section == 'features':
+            result.context_data['roles'] = Group.objects.all()
+            result.context_data['features'] = models.Feature.objects.all()
+    return result
+
+
+@admin_required
+def _edit_config(
+        request,
+        section,
+        form_class,
+        form_template,
+        base_template='configuration/base.html',
+        success_url=None,
+        on_success=None,
+):
+    if success_url is None:
+        success_url = request.path
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Configuration updated")
+            if on_success:
+                on_success(request)
+            return HttpResponseRedirect(success_url)
+    else:
+        form = form_class()
+    return TemplateResponse(request, 'configuration/edit.html', {
+        'form': form,
+        'back': reverse('ditto:dash'),
+        'nav': ['dash', section],
+        'form_template': form_template,
+        'submit': 'SAVE',
+        'base': base_template,
+        'section': section
+    })
 
 
 @admin_required
@@ -60,101 +152,6 @@ def delete_role(request, role_id):
     return TemplateResponse(request, 'configuration/delete_role_confirm.html', {
         'group': group,
     })
-    
-
-@admin_required
-@nav(['dash', 'permissions'], back=reverse_lazy('ditto:dash'))
-def permissions(request, template='configuration/interactions.html', success_url=None, on_success=None):
-    if success_url is None:
-        success_url = request.path
-    if request.method == 'POST':
-        form = forms.InteractionsForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Configuration updated")
-            if on_success:
-                on_success(request)
-            return HttpResponseRedirect(success_url)
-    else:
-        form = forms.InteractionsForm()
-    return TemplateResponse(request, template, {
-        'form': form,
-        'grid': form._get_role_grid(),
-        'interactions': models.Interaction.objects.all()
-    })
-
-
-@admin_required
-@nav(['dash', 'features'], back=reverse_lazy('ditto:dash'))
-def feature_permissions(request, template='configuration/permissions.html', success_url=None, on_success=None):
-    if success_url is None:
-        success_url = request.path
-    if request.method == 'POST':
-        form = forms.PermissionsForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Configuration updated")
-            if on_success:
-                on_success(request)
-            return HttpResponseRedirect(success_url)
-    else:
-        form = forms.PermissionsForm()
-    return TemplateResponse(request, template, {
-        'form': form,
-        'roles': Group.objects.all(),
-        'features': models.Feature.objects.all(),
-    })
-
-
-@admin_required
-@nav(['dash', 'basicinfo'], back=reverse_lazy('ditto:dash'))
-def config(request, template='configuration/config.html', success_url=None):
-    if success_url is None:
-        success_url = request.path
-    try:
-        config = models.Config.objects.all()[0]
-    except IndexError:
-        config = None
-    if request.method == 'POST':
-        form = forms.ConfigForm(data=request.POST, instance=config)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Configuration successfully updated")
-            return HttpResponseRedirect(success_url)
-    else:
-        form = forms.ConfigForm(instance=config)
-        
-    return TemplateResponse(request, template, {
-        'form': form,
-    })
-
-
-@admin_required
-def step1(request):
-    return config(
-        request,
-        template='configuration/walkthrough/step1.html',
-        success_url=reverse('ditto:create-step2')
-    )
-
-
-@admin_required
-def step2(request):
-    return roles(
-        request,
-        template='configuration/walkthrough/step2.html',
-        success_url=reverse('ditto:home'),
-    )
-
-
-@admin_required
-def step3(request):
-    return permissions(
-        request,
-        template='configuration/walkthrough/step3.html',
-        success_url=reverse('ditto:home'),
-        on_success=_on_setup_finish
-    )
 
 
 def _on_setup_finish(request):

@@ -8,9 +8,10 @@ from django.utils.translation import ugettext_lazy as _
 import core
 
 from . import models
+from . import utils
 
 
-class ConfigForm(forms.ModelForm):
+class BasicInfoForm(forms.ModelForm):
     class Meta:
         model = models.Config
         fields = (
@@ -21,7 +22,12 @@ class ConfigForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(ConfigForm, self).__init__(*args, **kwargs)
+        try:
+            config = models.Config.objects.all()[0]
+        except IndexError:
+            config = None
+        kwargs['instance'] = config
+        super(BasicInfoForm, self).__init__(*args, **kwargs)
         self.fields = collections.OrderedDict(
             [('name', forms.CharField(
                 label=_("Name"),
@@ -31,7 +37,7 @@ class ConfigForm(forms.ModelForm):
         )
 
     def save(self):
-        super(ConfigForm, self).save()
+        super(BasicInfoForm, self).save()
         site = Site.objects.all()[0]
         site.name = self.cleaned_data['name']
         site.save()
@@ -59,7 +65,7 @@ RoleFormSet = forms.models.modelformset_factory(
 class InteractionsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(InteractionsForm, self).__init__(*args, **kwargs)
-        grid = self._get_role_grid()
+        grid = utils.get_role_grid()
         for role1, others in grid:
             for role2 in others:
                 for interaction in models.Interaction.objects.all():
@@ -94,15 +100,6 @@ class InteractionsForm(forms.Form):
         else:
             interaction.deny(role1, role2)
 
-    @staticmethod
-    def _get_role_grid():
-        roles = list(Group.objects.values_list('name', flat=True))
-        grid = []
-        while roles:
-            role = roles.pop(0)
-            if roles:
-                grid.append((role, roles[::]))
-        return grid
 
             
 class PermissionsForm(forms.Form):

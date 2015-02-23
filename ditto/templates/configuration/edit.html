@@ -1,0 +1,11 @@
+{% extends base %}
+
+{% block heading %}
+    {% if section == 'basicinfo' %}
+        Basic information
+    {% endif %}
+{% endblock %}
+
+{% block config-content %}
+    {% include form_template with save=submit skip=next %}
+{% endblock %}

@@ -59,7 +59,8 @@ class Common(Configuration):
         'network',
         'chat',
         'dashboard',
-        'configuration'
+        'configuration',
+        'skin'
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -6,7 +6,7 @@
 {% m "row" %}
     <div class="col-sm-3 col-md-2 sidebar">
             {% if back %}
-                <p><a href="{% url 'ditto:dash' %}">{% include "ditto/markup/icon.html" with icon="chevron-left" %} DASHBOARD</a></p>
+                <p><a href="{% url 'ditto:dash' %}">{% include "skin/icon.html" with icon="chevron-left" %} DASHBOARD</a></p>
             {% endif %}
             {# TODO correct way to add a title on a nav? #}
             <p>{% block section %}DASHBOARD{% endblock %}</p>
@@ -18,7 +18,7 @@
                 {% navitem "evaluation" "#" _("Evaluation") %}
                 {% navitem "reports" "#" _("Reports") %}
         
-                {% url "ditto:config" as url %}
+                {% url "ditto:editconfig" "basicinfo" as url %}
                 {% navitem "settings" url _("Settings") %}
             {% endblock %}
         {% endm %}

@@ -1,9 +1,9 @@
-{% extends "common/includes/forms/form.html" %}
+{% extends "skin/forms/form.html" %}
 
 {% block form %}
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {% for role in roles %}
-            {% include "ditto/includes/permissions_panel.html" %}
+            {% include "configuration/permissions_panel.html" %}
         {% endfor %}
     </div>
 {% endblock %}

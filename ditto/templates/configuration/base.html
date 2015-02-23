@@ -5,17 +5,20 @@
 {% block section %}SETTINGS{% endblock %}
 
 {% block sidenav %}
-    {% url 'ditto:config' as url %}
+    {% url 'ditto:editconfig' 'basicinfo' as url %}
     {% navitem "basicinfo" url _("Basic Information") %}
 
     {% url 'ditto:settings' as url %}
     {% navitem "roles" url _("Roles") %}
 
-    {% url 'ditto:permissions' as url %}
+    {% url 'ditto:editconfig' 'permissions' as url %}
     {% navitem "permissions" url _("Permissions") %}
 
-    {% url 'ditto:features' as url %}
+    {% url 'ditto:editconfig' 'features' as url %}
     {% navitem "features" url _("Features") %}
 {% endblock %}
 
-{% block dash-content %}{% endblock %}
+{% block dash-content %}
+    <h1>{% block heading %}{% endblock %}</h1>
+    {% block config-content %}{% endblock %}
+{% endblock %}

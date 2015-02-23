@@ -59,7 +59,7 @@
                 
                 {% if request.tenant.is_configured and perms.users.can_admin %}
                 <li{% if "settings" in nav %} class="active"{% endif %}>
-                    {% url "ditto:config" as url %}
+                    {% url "ditto:editconfig" "basicinfo" as url %}
                     <a class="navicon navicon-settings" href="{{ url }}">
                         Settings
                     </a>

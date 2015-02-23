@@ -6,7 +6,7 @@
         {{ block.super }}
         <div class="input-group-addon">
             <button type="sumbit" class="btn btn-xs btn-danger" name="delete" value="{{ form.instance.pk }}">
-                {% include "ditto/markup/icon.html" with icon="remove" assist_text=_("Delete") %}
+                {% include "skin/icon.html" with icon="remove" assist_text=_("Delete") %}
             </a>
         </div>
     </div>

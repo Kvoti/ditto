@@ -1,12 +1,12 @@
-{% extends "configuration/base.html" %}
+{% extends base|default:"configuration/base.html" %}
 
 {% load skin %}
 
 {% block page-heading %}Roles{% endblock %}
 
-{% block dash-content %}
+{% block config-content %}
     {% m "p" %}Set the number + name of the roles in your Ditto network.{% endm %}
     {% m "p" %}'Administrator' and 'Member' roles are set as default.{% endm %}
 
-    {% include "ditto/includes/roles_form.html" with action=request.path using="floppyforms/layouts/bootstrap3-horizontal-delete.html" %}
+    {% include "configuration/roles_form.html" with action=request.path using="floppyforms/layouts/bootstrap3-horizontal-delete.html" %}
 {% endblock %}
