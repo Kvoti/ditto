@@ -121,9 +121,12 @@ $(document).ready(function () {
     getNotificationPermission();
     $('body').one("click", getNotificationPermission);  // chrome
 
-
     function resizeMessageContainer() {
         var height = $(window).height() - $('.msgbar').height() - $('.navbar').height() - parseInt($('.navbar').css('margin-bottom'), 10);
+        var page_head = $('.page-heading');
+        if (page_head.length) {
+            height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
+        }
         var msgs = $('#msgs');
         msgs.css('height', height);
         DITTO.chat.scrollMessages();
