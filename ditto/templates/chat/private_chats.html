@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
+{% load skin %}
+
 {% block content %}
-    <h1 class="page-heading">Messages</h1>
-    <ul>
+<h1 class="page-heading">Messages</h1>
+{% m "medialist" %}
     {% for chatee in chatees %}
         {% if chatee != user %}
-            <li><a href="{% url 'ditto:private_chat' chatee.username %}">{{ chatee.username }}</a></li>
+            {% m "medialistitem" %}
+                {% url 'ditto:private_chat' chatee.username as url %}
+                {% include "skin/media.html" with heading=chatee.username alt=chatee.username body="Latest message ..." link=url %}
+            {% endm %}
         {% endif %}
     {% endfor %}
-    </ul>
+{% endm %}
 {% endblock %}
