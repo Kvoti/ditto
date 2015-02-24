@@ -27,12 +27,13 @@
         {# TODO can't figure out how to centre this :( #}
         <p class="navbar-text"><big>DITTO.TECHNOLOGY</big></p>
     {% endif %}
-    
+
+
     <ul class="nav navbar-nav navbar-right">
         {% if not request.user.is_authenticated %}
             <li><a href="{% url 'account_login' %}">{% trans "Log In" %}</a></li>
         {% endif %}
-
+            
         {% if request.tenant.is_main and request.user.is_authenticated %}
             <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
         {% endif %}
@@ -68,4 +69,7 @@
             {% endif %}
         {% endif %}
     </ul>
+    {% if request.user.is_authenticated %}
+        <p class="navbar-text navbar-right">Hello {{ request.user.username }}! :)</p>
+    {% endif %}
 </div>
