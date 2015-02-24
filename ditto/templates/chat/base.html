@@ -18,46 +18,25 @@
             <button type="submit" class="btn btn-success">Say it!</button>
         </div>
         <div class="col-md-2">
-            <select id="status-show" class="form-control">
-                <option value="">Online</option>
-                <option value="away">Away</option>
-                <option value="chat">Free for chat</option>
-                <option value="dnd">Do not disturb</option>
-                <option value="xa">Away for a while</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="status-status-enabled">Custom message</label>
-                </div>
-                <div class="col-md-8">
-                    <input id="status-status-enabled" type="checkbox" class="form-control">
-                </div>
+            <div class="dropdown dropup">
+                <button class="btn btn-default dropdown-toggle" type="button" id="set-status" data-toggle="dropdown" aria-expanded="true">
+                    <span>Online</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="set-status">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="" href="#">Online</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="away" href="#">Away</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="chat" href="#">Free for chat</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="dnd" href="#">Do not disturb</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="xa" href="#">Away for a while</a></li>
+                    <li role="presentation" class="dropdown-header">Custom status</li>
+                    <li role="presentation"><a class="custom" role="menuitem" tabindex="-1"><input class="form-control" type="text"></a></li>
+                </ul>
             </div>
         </div>
     </form>
 </div>
 
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Set status</h4>
-            </div>
-            <div class="modal-body">
-                <input id="status-status" type="text" class="form-control" placeholder="Custom message ...">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
 <script id="message_template" type="text/template">
     <div class="media">
         <div class="media-left media-middle">
