@@ -213,11 +213,11 @@ $(document).ready(function () {
     }
 
     function rawInput(data) {
-	// console.log('RECV: ', data);
+	console.log('RECV: ', data);
     }
 
     function rawOutput(data) {
-	// console.log('SENT: ', data);
+	console.log('SENT: ', data);
     }
 
     connect();
