@@ -45,13 +45,12 @@ def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
 
 def setup_features():
     for slug, name, perms in (
+            ('chatroom', 'Chatroom', [('can_chat', 'Can chat')]),
+            ('news', 'News', [('can_news', 'Can manage news')]),
             ('blog', 'Blog', [
                 ('can_blog', 'Can Blog'),
                 ('can_comment', 'Can comment'),
             ]),
-            ('news', 'News', [('can_news', 'Can manage news')]),
-            ('polls', 'Polls', [('can_poll', 'Can add polls')]),
-            ('chatroom', 'Chatroom', [('can_chat', 'Can chat')]),
     ):
         feature, _ = configuration.models.Feature.objects.get_or_create(
             slug=slug, name=name)
