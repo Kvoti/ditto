@@ -1,11 +1,1 @@
-<div class="col-md-4">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">{% block title %}{{ feature.name }}{% endblock %}</h3>
-        </div>
-        <div class="panel-body">
-            {% block content %}{% endblock %}
-        </div>
-        <div class="panel-footer">{% block footer %}{% endblock %}</div>
-    </div>
-</div>
+{% extends "skin/accordion_panel.html" %}

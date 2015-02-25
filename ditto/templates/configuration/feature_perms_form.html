@@ -1,9 +1,11 @@
 {% extends "skin/forms/form.html" %}
 
 {% block form %}
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {% with id='config' %}
+    <div class="panel-group" id=id role="tablist" aria-multiselectable="true">
         {% for role in roles %}
             {% include "configuration/permissions_panel.html" %}
         {% endfor %}
     </div>
+    {% endwith %}
 {% endblock %}

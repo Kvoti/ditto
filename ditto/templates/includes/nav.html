@@ -4,16 +4,13 @@
     <ul class="nav navbar-nav">
         {% if not request.tenant.is_main %}
             {% url 'ditto:about' as url %}
-            {% navitem "about" url _("About") %}
+            {% navitem "about" url _("About this network") %}
             
             {% if request.user.is_authenticated and request.tenant.is_configured %}
                 {% if perms.users.can_admin %}
                     {% url 'ditto:dash' as url %}
                     {% navitem "dash" url _("Dashboard") %}
                 {% endif %}
-                
-                {% url 'ditto:chatroom' as url %}
-                {% navitem "chatroom" url _("Chatroom") %}
                 
                 {% if perms.users.can_admin %}
                     {% url 'ditto:new-chatroom' as url %}

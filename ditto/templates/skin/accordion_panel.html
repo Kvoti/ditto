@@ -1,7 +1,7 @@
 <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
         <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+            <a data-toggle="collapse" data-parent="#{{ accordion_id }}" href="#collapse{{ forloop.counter }}" aria-expanded="{{ forloop.first|yesno }}" aria-controls="collapse{{ forloop.counter }}">
                 {% block title %}{% endblock %}
             </a>
         </h4>
@@ -10,5 +10,8 @@
         <div class="panel-body">
             {% block body %}{% endblock %}
         </div>
+        {% if footer %}
+            <div class="panel-footer">{% block footer %}{% endblock %}</div>
+        {% endif %}
     </div>
 </div>
