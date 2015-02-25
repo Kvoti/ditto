@@ -190,3 +190,7 @@ body {
 .panel-body #msgs {
     height: 150px;
 }
+
+.whosonline .avatar {
+    padding: 10px;
+}

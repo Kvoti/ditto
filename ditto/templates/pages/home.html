@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load configuration %}
+{% load staticfiles configuration %}
 
 {% block content %}
 <div class="row">
@@ -17,8 +17,7 @@
 </div>    
 
 <div class="row">
-    <div class="col-md-8">
-        TODO presence!
+    <div class="col-md-8 whosonline" id="presence">
     </div>
     <div class="col-md-4">
         {% features as features %}
@@ -31,4 +30,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block plugins %}
+    <script src="{% static 'chat/js/whosonline.js' %}"></script>
+    {{ block.super }}
 {% endblock %}

@@ -23,15 +23,6 @@ DITTO.chat = {
         formatted_message.find('.media-body').text(msg);
 
 	// configure avatar
-	var avatar = formatted_message.find('img');
-	var avatar_theme = this.avatars[from];
-	if (!avatar_theme) {
-	    avatar_theme = this.themes[Math.floor(Math.random() * (this.themes.length - 1))];
-	    this.avatars[from] = avatar_theme;
-	}
-	// TODO check .attr with untrusted input is safe!
-	avatar.attr('data-src', 'holder.js/50x50/auto/' + avatar_theme + '/text:' + from);
-	avatar.attr('alt', from);
 	// decide whether avatar goes to the left or right
 	if (from === this.me) {
 	    formatted_message.find('.media-left').remove();
@@ -39,7 +30,8 @@ DITTO.chat = {
 	} else {
 	    formatted_message.find('.media-right').remove();
 	}
-	Holder.run({images:formatted_message.find('img')[0]});
+	var avatar = formatted_message.find('img');
+        this.getAvatar(from, avatar);
 
 	// add message to page and scroll message in to view
         // TODO remove messages once (far) out of view, don't want to append message content indefinitely?
@@ -47,8 +39,43 @@ DITTO.chat = {
         this.scrollMessages();
     },
 
+    getAvatar: function (user, img, size) {
+        if (!img) {
+            img = $('<img class="avatar">');
+        }
+        if (!size) {
+            size = 50;
+        }
+	var avatar_theme = this.avatars[user];
+	if (!avatar_theme) {
+	    avatar_theme = this.themes[Math.floor(Math.random() * (this.themes.length - 1))];
+	    this.avatars[user] = avatar_theme;
+	}
+	// TODO check .attr with untrusted input is safe!
+	img.attr('data-src', 'holder.js/' + size + 'x' + size + '/auto/' + avatar_theme + '/text:' + user);
+	img.attr('alt', user);
+	Holder.run({images:img.get(0)});
+
+        return img;
+    },
+    
+    renderPresence: function () {
+	var pres = $('<ul class="list-group"></ul>');
+	$.each(this.presence, function (key) {
+	    var item = $('<li class="list-group-item"></li>');
+	    item.text(key);
+	    pres.append(item);
+	});
+	this.presence_ui.empty();
+	this.presence_ui.append(pres);
+    },
+    
     scrollMessages: function () {
-        this.msgs.scrollTop(this.msgs[0].scrollHeight);
+        // TODO remove this hack when properly sort out if chat ui is showing
+        try {
+            this.msgs.scrollTop(this.msgs[0].scrollHeight);
+        } catch (e) {
+        }
     },
         
     addPrivateMessageCallback: function (callback) {
@@ -186,11 +213,11 @@ $(document).ready(function () {
     }
 
     function rawInput(data) {
-	console.log('RECV: ', data);
+	// console.log('RECV: ', data);
     }
 
     function rawOutput(data) {
-	console.log('SENT: ', data);
+	// console.log('SENT: ', data);
     }
 
     connect();

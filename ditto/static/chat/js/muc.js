@@ -7,6 +7,9 @@
     var presence = {};
     var presence_ui = $('#presence');
 
+    DITTO.chat.presence = presence;
+    DITTO.chat.presence_ui = presence_ui;
+    
     $(document).on('connected.ditto.chat', function (e, conn) {
         connection = conn;
 	connection.muc.init(connection);
@@ -49,13 +52,13 @@
 	var added = msg.find('item[role!=none]');
 	if (added.length) {
 	    presence[msg.attr('from').split('/')[1]] = 1;
-	    renderPresence();
+	    DITTO.chat.renderPresence();
 	}
 
 	var removed = msg.find('item[role=none]');
 	if (removed.length) {
 	    delete presence[msg.attr('from').split('/')[1]];
-	    renderPresence();
+	    DITTO.chat.renderPresence();
 	}
 
         // First time we enter the chatroom for a new network the room
@@ -67,17 +70,6 @@
         }
 	
 	return true;
-    }
-
-    function renderPresence() {
-	var pres = $('<ul class="list-group"></ul>');
-	$.each(presence, function (key) {
-	    var item = $('<li class="list-group-item"></li>');
-	    item.text(key);
-	    pres.append(item);
-	});
-	presence_ui.empty();
-	presence_ui.append(pres);
     }
 
 })();
