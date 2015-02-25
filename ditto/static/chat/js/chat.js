@@ -70,7 +70,7 @@ DITTO.chat = {
     
     renderPresence: function () {
 	var pres = $('<ul class="list-group"></ul>');
-	$.each(this.presence, function (key) {
+	$.each(this.presence, function (i, key) {
 	    var item = $('<li class="list-group-item"></li>');
 	    item.text(key);
 	    pres.append(item);

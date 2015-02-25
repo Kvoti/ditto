@@ -4,44 +4,26 @@
 (function () {
     var connection;
     var chatroom = DITTO.room + '@muc.' + DITTO.chat_host;
-    var presence = {
-        'Sophie B': 1,
-        'Priti P': 1,
-        'Dan H': 1,
-        'Kate F': 1,
-        'Sophie B': 1,
-        'Henry K': 1,
-        'Emma C': 1,
-        'Tom McW': 1,
-        'Barney D': 1,
-        'Sarah D': 1,
-        'Annie C': 1,
-        'Femi O': 1,
-        'Ellis F': 1,
-        'Rich B': 1,
-        'Paul T': 1,
-        'Kendra G': 1,
-        'Javelle S': 1,
-        'Lenny K': 1,
-        'Sophie B': 1,
-        'Priti P': 1,
-        'Dan H': 1,
-        'Kate F': 1,
-        'Sophie B': 1,
-        'Henry K': 1,
-        'Emma C': 1,
-        'Tom McW': 1,
-        'Barney D': 1,
-        'Sarah D': 1,
-        'Annie C': 1,
-        'Femi O': 1,
-        'Ellis F': 1,
-        'Rich B': 1,
-        'Paul T': 1,
-        'Kendra G': 1,
-        'Javelle S': 1,
-        'Lenny K': 1,
-    };
+    var presence = [
+        'Sophie B',
+        'Priti P',
+        'Dan H',
+        'Kate F',
+        'Sophie B',
+        'Henry K',
+        'Emma C',
+        'Tom McW',
+        'Barney D',
+        'Sarah D',
+        'Annie C',
+        'Femi O',
+        'Ellis F',
+        'Rich B',
+        'Paul T',
+        'Kendra G',
+        'Javelle S',
+        'Lenny K',
+    ];
     var presence_ui = $('#presence');
 
     DITTO.chat.presence = presence;
@@ -80,19 +62,20 @@
     function onGroupPresence(pres) {
 	var msg = $(pres);
 	var nick_taken = msg.find('conflict');
+        var from = msg.attr('from').split('/')[1];
 	if (nick_taken.length) {
 	    $('#myModal').modal('show');
 	}
 
 	var added = msg.find('item[role!=none]');
 	if (added.length) {
-	    presence[msg.attr('from').split('/')[1]] = 1;
+	    presence.splice(0, 0, from);
 	    DITTO.chat.renderPresence();
 	}
 
 	var removed = msg.find('item[role=none]');
 	if (removed.length) {
-	    delete presence[msg.attr('from').split('/')[1]];
+	    presence.splice(presence.indexOf(from), 1);
 	    DITTO.chat.renderPresence();
 	}
 

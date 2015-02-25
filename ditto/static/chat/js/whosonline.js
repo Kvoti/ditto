@@ -7,9 +7,9 @@
         var self = this;
         var panel;
         var inner = $('<div></div>');
-        var i = 0;
+        var i = 0; // TODO don't need this counter now this.presence is a list
         
-        $.each(this.presence, function (user) {
+        $.each(this.presence, function (j, user) {
             i += 1;
             if (!panel) {
                 panel = $('<div class="item"></div>');
