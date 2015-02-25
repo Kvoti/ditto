@@ -1,11 +1,9 @@
 DITTO.chat = {
     message_template: $('#message_template').text(),
+    avatar_template: $('#avatar_template').text(),
     message_input: $('#msg').find('input[type=text]'),
     msgs: $('#msgs'),
     
-    themes: ['sky', 'vine', 'lava', 'gray', 'industrial', 'social'],
-    avatars: {},
-
     privateMessageCallbacks: [],
     outgoingMessageCallbacks: [],
 
@@ -30,8 +28,9 @@ DITTO.chat = {
 	} else {
 	    formatted_message.find('.media-right').remove();
 	}
-	var avatar = formatted_message.find('img');
-        this.getAvatar(from, avatar);
+        var avatar = this.getAvatar(from);
+        avatar.addClass('media-object');
+        formatted_message.find('.media-middle').append(avatar);
 
 	// add message to page and scroll message in to view
         // TODO remove messages once (far) out of view, don't want to append message content indefinitely?
@@ -39,24 +38,35 @@ DITTO.chat = {
         this.scrollMessages();
     },
 
-    getAvatar: function (user, img, size) {
-        if (!img) {
-            img = $('<img class="avatar">');
-        }
+    getAvatar: function (user, size) {
         if (!size) {
-            size = 50;
+            size = 71;
         }
-	var avatar_theme = this.avatars[user];
-	if (!avatar_theme) {
-	    avatar_theme = this.themes[Math.floor(Math.random() * (this.themes.length - 1))];
-	    this.avatars[user] = avatar_theme;
-	}
-	// TODO check .attr with untrusted input is safe!
-	img.attr('data-src', 'holder.js/' + size + 'x' + size + '/auto/' + avatar_theme + '/text:' + user);
-	img.attr('alt', user);
-	Holder.run({images:img.get(0)});
-
-        return img;
+        // TODO big job to sort out avatars. mod_avatar/pubsub not
+        // supported by mongooseim so need custom solution.  Can maybe
+        // hack something up with avatar 'chatroom' and bot that
+        // published avatar changes. Don't think MUC scales well
+        // though for proper pubsub...
+        var avatars = {
+            'mark': 'popcorn',
+            'sarah': 'melon',
+        }
+        var url = '/static/images/avatars/';  // TODO pass in from page
+        var profile_url = '/di/users/';  // TODO pass in, fix tenant part of url
+        var avatar = $(this.avatar_template);
+        var img = avatar.find('img');
+	var avatar_pic = avatars[user];
+        if (!avatar_pic) {
+            avatar_pic = 'sunshine'
+        }
+	img.attr('src', url + avatar_pic + '.png');
+        img.attr({
+            width: size,
+            height: size,
+        });
+        avatar.find('.avatar-name').text(user);
+        avatar.find('.avatar-link').attr('href', profile_url + user);
+        return avatar;
     },
     
     renderPresence: function () {
@@ -213,11 +223,11 @@ $(document).ready(function () {
     }
 
     function rawInput(data) {
-	console.log('RECV: ', data);
+	// console.log('RECV: ', data);
     }
 
     function rawOutput(data) {
-	console.log('SENT: ', data);
+	// console.log('SENT: ', data);
     }
 
     connect();

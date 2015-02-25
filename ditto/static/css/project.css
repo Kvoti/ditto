@@ -193,7 +193,13 @@ body {
 
 .whosonline .avatar {
     padding: 10px;
-    display: inline !important;
+    float: left;
+}
+.avatar img {
+    display: block;
+}
+.avatar p {
+    text-align: center;
 }
 
 footer {

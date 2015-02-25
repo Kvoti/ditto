@@ -15,7 +15,7 @@
                 panel = $('<div class="item"></div>');
                 inner.append(panel);
             }
-	    var avatar = self.getAvatar(user, null, 100);
+	    var avatar = self.getAvatar(user, 100);
             panel.append(avatar);
             if (i && i % users_per_panel == 0) {
                 panel = undefined;
