@@ -4,7 +4,44 @@
 (function () {
     var connection;
     var chatroom = DITTO.room + '@muc.' + DITTO.chat_host;
-    var presence = {};
+    var presence = {
+        'Sophie B': 1,
+        'Priti P': 1,
+        'Dan H': 1,
+        'Kate F': 1,
+        'Sophie B': 1,
+        'Henry K': 1,
+        'Emma C': 1,
+        'Tom McW': 1,
+        'Barney D': 1,
+        'Sarah D': 1,
+        'Annie C': 1,
+        'Femi O': 1,
+        'Ellis F': 1,
+        'Rich B': 1,
+        'Paul T': 1,
+        'Kendra G': 1,
+        'Javelle S': 1,
+        'Lenny K': 1,
+        'Sophie B': 1,
+        'Priti P': 1,
+        'Dan H': 1,
+        'Kate F': 1,
+        'Sophie B': 1,
+        'Henry K': 1,
+        'Emma C': 1,
+        'Tom McW': 1,
+        'Barney D': 1,
+        'Sarah D': 1,
+        'Annie C': 1,
+        'Femi O': 1,
+        'Ellis F': 1,
+        'Rich B': 1,
+        'Paul T': 1,
+        'Kendra G': 1,
+        'Javelle S': 1,
+        'Lenny K': 1,
+    };
     var presence_ui = $('#presence');
 
     DITTO.chat.presence = presence;
@@ -28,7 +65,6 @@
     }
     
     function onGroupMessage(msg) {
-	console.log(msg);
         var msg = $(msg);
         var body = msg.find("body:first").text();
         var from = msg.attr("from").split('/')[1];
@@ -42,7 +78,6 @@
     }
 
     function onGroupPresence(pres) {
-	console.log('PRES', pres);
 	var msg = $(pres);
 	var nick_taken = msg.find('conflict');
 	if (nick_taken.length) {
