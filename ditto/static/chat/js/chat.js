@@ -165,13 +165,14 @@ $(document).ready(function () {
     }
     
     function resizeMessageContainer() {
-        var height = $(window).height() - $('.msgbar').height() - $('.navbar').height() - parseInt($('.navbar').css('margin-bottom'), 10);
+        var height = $(window).height() - $('.msgbar').height() - $('.navbar').height() - parseInt($('.navbar').css('margin-bottom'), 10) -
+            $('footer').height() - parseInt($('footer').css('margin-bottom'), 10);
         var page_head = $('.page-heading');
         if (page_head.length) {
             height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
         }
-        var msgs = $('#msgs');
-        msgs.css('height', height);
+        var chat = $('#msgs, #presence');
+        chat.css('height', height);
         DITTO.chat.scrollMessages();
     }
     if (isMainChatroom()) {
