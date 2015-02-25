@@ -1,4 +1,4 @@
-{% load staticfiles i18n skin configuration %}<!DOCTYPE html>
+{% load staticfiles i18n skin configuration chat %}<!DOCTYPE html>
 <html lang="en">
   <head>
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
@@ -120,7 +120,7 @@
         {% endcomment %}
         //DITTO.chat_pass = '{% if debug %}pass{% else %}{{ pass }}{% endif %}';
         // use line below when using http auth module locally
-        DITTO.chat_pass = '{% if debug %}{% else %}{{ pass }}{% endif %}';
+        DITTO.chat_pass = '{% if debug %}{% else %}{{ user.username|chatpass }}{% endif %}';
         DITTO.chat_nick = '{{ user.username }}';
         DITTO.room = '{{ room|default:"muc1" }}';
         {% endblock %}
