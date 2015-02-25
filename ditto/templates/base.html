@@ -125,6 +125,7 @@
         DITTO.chat_pass = '{% if debug %}{% else %}{{ user.username|chatpass }}{% endif %}';
         DITTO.chat_nick = '{{ user.username }}';
         DITTO.room = '{{ room|default:"muc1" }}';
+        DITTO.avatar_url = '{% static 'images/avatars/' %}';
         {% endblock %}
       </script>
       {% block chat %}

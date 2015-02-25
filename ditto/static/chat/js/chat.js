@@ -40,7 +40,7 @@ DITTO.chat = {
 
     getAvatar: function (user, size) {
         if (!size) {
-            size = 71;
+            size = 50;
         }
         // TODO big job to sort out avatars. mod_avatar/pubsub not
         // supported by mongooseim so need custom solution.  Can maybe
@@ -51,7 +51,6 @@ DITTO.chat = {
             'mark': 'popcorn',
             'sarah': 'melon',
         }
-        var url = '/static/images/avatars/';  // TODO pass in from page
         var profile_url = '/di/users/';  // TODO pass in, fix tenant part of url
         var avatar = $(this.avatar_template);
         var img = avatar.find('img');
@@ -59,7 +58,7 @@ DITTO.chat = {
         if (!avatar_pic) {
             avatar_pic = 'sunshine'
         }
-	img.attr('src', url + avatar_pic + '.png');
+	img.attr('src', DITTO.avatar_url + avatar_pic + '.png');
         img.attr({
             width: size,
             height: size,
