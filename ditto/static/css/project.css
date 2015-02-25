@@ -37,11 +37,6 @@
     text-transform: uppercase;
 }
 
-/* TODO remove this tmp hack: for seeing alert message text on dashboard pages */
-.alert {
-    text-indent: 250px;
-}
-
 /* stlyes below taken from bootstap's example dashboard.css */
 /*
  * Base structure
