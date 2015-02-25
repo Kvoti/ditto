@@ -186,3 +186,7 @@ body {
     background-position: center center;
     text-indent: -9999px;  /* TODO prob use .sr-only for this? */
 }
+
+.panel-body #msgs {
+    height: 150px;
+}

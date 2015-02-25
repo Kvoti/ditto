@@ -42,6 +42,7 @@ DITTO.chat = {
 	Holder.run({images:formatted_message.find('img')[0]});
 
 	// add message to page and scroll message in to view
+        // TODO remove messages once (far) out of view, don't want to append message content indefinitely?
         this.msgs.append(formatted_message);
         this.scrollMessages();
     },
@@ -121,6 +122,11 @@ $(document).ready(function () {
     getNotificationPermission();
     $('body').one("click", getNotificationPermission);  // chrome
 
+    function isMainChatroom() {
+        var msgs = $('#msgs');
+        return !msgs.parent('.panel-body').length;
+    }
+    
     function resizeMessageContainer() {
         var height = $(window).height() - $('.msgbar').height() - $('.navbar').height() - parseInt($('.navbar').css('margin-bottom'), 10);
         var page_head = $('.page-heading');
@@ -131,8 +137,10 @@ $(document).ready(function () {
         msgs.css('height', height);
         DITTO.chat.scrollMessages();
     }
-    window.onresize = resizeMessageContainer;
-    resizeMessageContainer();
+    if (isMainChatroom()) {
+        window.onresize = resizeMessageContainer;
+        resizeMessageContainer();
+    }
     
     $('#msg').submit(function (e) {
         e.preventDefault();
