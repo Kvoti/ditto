@@ -33,7 +33,7 @@
   border-color: #eed3d7;
 }
 
-.page-header {
+.navbar, .page-header {
     text-transform: uppercase;
 }
 
