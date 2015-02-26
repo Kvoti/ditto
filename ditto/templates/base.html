@@ -104,6 +104,7 @@
       <!-- place project specific Javascript in this file -->
       <script src="{% static 'js/project.js' %}"></script>
       
+      {% if not request.tenant.is_main %}
       <script src="{% static 'vendor/strophe.js' %}"></script>
       {% block strophe-plugins %}
           <script src="{% static 'vendor/strophe.muc.js' %}"></script>
@@ -134,6 +135,7 @@
             <script src="{% static 'chat/js/muc.js' %}"></script>
         {% endblock %}
       {% endblock %}
-    {% endblock javascript %}
+       {% endif %}
+     {% endblock javascript %}
   </body>
 </html>
