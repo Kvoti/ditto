@@ -66,4 +66,15 @@
 {% block javascript %}
     <script src="{% static 'vendor/notification.js' %}"></script>
     {{ block.super }}
+    <script>
+        $('.profile-chat').resizable(
+        {
+        alsoResize: '#pchat_msgs',
+        handles: 's',
+        stop: function () {
+        DITTO.chat.scrollMessages($('#pchat_msgs'));
+        }
+        }
+        );
+    </script>
 {% endblock %}
