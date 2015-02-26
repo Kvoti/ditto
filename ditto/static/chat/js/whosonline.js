@@ -2,6 +2,7 @@
     var carousel_indicators = $('.carousel-indicators');
     var carousel_inner = $('.carousel-inner');
     var users_per_panel = 9;
+    var avatar_size = 75;
     
     DITTO.chat.renderPresence = function () {
         var self = this;
@@ -15,7 +16,7 @@
                 panel = $('<div class="item"></div>');
                 inner.append(panel);
             }
-	    var avatar = self.getAvatar(user, 100);
+	    var avatar = self.getAvatar(user, avatar_size);
             panel.append(avatar);
             if (i && i % users_per_panel == 0) {
                 panel = undefined;
