@@ -37,7 +37,7 @@ DITTO.chat = {
 	} else {
 	    formatted_message.find('.media-right').remove();
 	}
-        var avatar = this.getAvatar(from);
+        var avatar = this.getAvatar(from, null, container);
         avatar.addClass('media-object');
         formatted_message.find('.media-middle').append(avatar);
 
@@ -47,7 +47,7 @@ DITTO.chat = {
         this.scrollMessages(container);
     },
 
-    getAvatar: function (user, size) {
+    getAvatar: function (user, size, container) {
         if (!size) {
             size = 50;
         }
@@ -72,7 +72,11 @@ DITTO.chat = {
             width: size,
             height: size,
         });
-        avatar.find('.avatar-name').text(user);
+        if (container == this.group_msgs) {
+            avatar.find('.avatar-name').text(user);
+        } else {
+            avatar.find('.avatar-name').remove();
+        }
         avatar.find('.avatar-link').attr('href', profile_url + user);
         return avatar;
     },
