@@ -165,16 +165,16 @@ body {
     background-image: url(../images/icons/chat-hi.png);
 }
 .navicon-profile {
-    background-image: url(../images/icons/monkey.png);
+    background-image: url(../images/icons/monkey-lo.png);
 }
 .active .navicon-profile {
-    background-image: url(../images/icons/monkey2.png);
+    background-image: url(../images/icons/monkey-hi.png);
 }
 .navicon-settings {
-    background-image: url(../images/icons/settings.png);
+    background-image: url(../images/icons/settings-lo.png);
 }
 .active .navicon-settings {
-    background-image: url(../images/icons/settings2.png);
+    background-image: url(../images/icons/settings-hi.png);
 }
 .navbar-brand, .navicon {
     background-repeat: no-repeat;
