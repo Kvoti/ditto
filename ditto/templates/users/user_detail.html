@@ -5,10 +5,14 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
+<audio src="{% static 'audio/newmessage.wav' %}" ></audio>
 <div class="row">
     <div class="col-md-9">
-        <h1>STATUS</h1>
-        <input class="form-control" type="text" placeholder="CHAT HERE...">
+        <div class="profile-chat">
+            <h1>{{ object.username }} is {% include "chat/_chat_partner_status.html" %}</h1>
+            <div id="pchat_msgs"></div>
+            {% include "chat/_chat_send_message.html" %}
+        </div>
         <div class="row">
             <div class="col-md-4 avatar-profile">
                 {% include "skin/avatar.html" with user=object size=200 %}
@@ -37,3 +41,29 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block strophe-plugins %}
+    {{ block.super }}
+    <script src="{% static 'vendor/strophe.rsm.js' %}"></script>
+    <script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
+    <script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
+    <script src="{% static 'vendor/strophe.roster.js' %}"></script>
+{% endblock %}
+
+{% block config %}
+    {{ block.super }}
+    DITTO.chatee = '{{ object.username }}@' + DITTO.chat_host;
+{% endblock %}
+
+{% block plugins %}
+    {{ block.super }}    
+    <script src="{% static 'chat/js/composing.js' %}"></script>
+    <script src="{% static 'chat/js/presence.js' %}"></script>
+    <script src="{% static 'chat/js/privatechat.js' %}"></script>
+    <script src="{% static 'chat/js/mam.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'vendor/notification.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

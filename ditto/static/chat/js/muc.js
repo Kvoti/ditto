@@ -54,7 +54,7 @@
         if (from) {
             // TODO always get an 'empty' message from the room
             // itself, not sure why
-	    DITTO.chat.renderMessage(from, body);
+	    DITTO.chat.renderGroupMessage(from, body);
         }
         return true;
     }

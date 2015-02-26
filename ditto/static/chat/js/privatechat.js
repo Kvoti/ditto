@@ -18,13 +18,13 @@
     }
     
     DITTO.chat.addPrivateMessageCallback(function (msg) {
+        console.log('pm', msg);
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
 	var from_jid = msg.attr("from");
         var from = from_jid.split('@')[0];
-
 	if (body && Strophe.getBareJidFromJid(from_jid) === DITTO.chatee) {
-	    this.renderMessage(from, body);
+	    this.renderPrivateMessage(from, body);
             if (this.isPageHidden()) {
                 this.notifyNewMessage();
             }
@@ -47,7 +47,7 @@
 
 	connection.send(payload.tree());
 
-	DITTO.chat.renderMessage(this.me, msg);
+	DITTO.chat.renderPrivateMessage(this.me, msg);
     };
     
 })();

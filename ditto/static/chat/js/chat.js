@@ -2,7 +2,8 @@ DITTO.chat = {
     message_template: $('#message_template').text(),
     avatar_template: $('#avatar_template').text(),
     message_input: $('#msg').find('input[type=text]'),
-    msgs: $('#msgs'),
+    group_msgs: $('#msgs'),
+    pchat_msgs: $('#pchat_msgs'),
     
     privateMessageCallbacks: [],
     outgoingMessageCallbacks: [],
@@ -12,8 +13,16 @@ DITTO.chat = {
     titleTogglePeriod: 1000,  // can't be any smaller for chrome/ffox
 
     beep: $('audio').get(0),
+
+    renderPrivateMessage: function (from, msg) {
+        this._renderMessage(from, msg, this.pchat_msgs);
+    },
+
+    renderGroupMessage: function (from, msg) {
+        this._renderMessage(from, msg, this.group_msgs);
+    },
     
-    renderMessage: function (from, msg) {
+    _renderMessage: function (from, msg, container) {
 	// construct skeleton message from template
 	var formatted_message = $(this.message_template);
 
@@ -34,8 +43,8 @@ DITTO.chat = {
 
 	// add message to page and scroll message in to view
         // TODO remove messages once (far) out of view, don't want to append message content indefinitely?
-        this.msgs.append(formatted_message);
-        this.scrollMessages();
+        container.append(formatted_message);
+        this.scrollMessages(container);
     },
 
     getAvatar: function (user, size) {
@@ -79,10 +88,11 @@ DITTO.chat = {
 	this.presence_ui.append(pres);
     },
     
-    scrollMessages: function () {
+    scrollMessages: function (container) {
         // TODO remove this hack when properly sort out if chat ui is showing
+        container = container || this.msgs;
         try {
-            this.msgs.scrollTop(this.msgs[0].scrollHeight);
+            container.scrollTop(container[0].scrollHeight);
         } catch (e) {
         }
     },
@@ -159,8 +169,7 @@ $(document).ready(function () {
     $('body').one("click", getNotificationPermission);  // chrome
 
     function isMainChatroom() {
-        var msgs = $('#msgs');
-        return !msgs.parent('.panel-body').length;
+        return window.location.href.indexOf('chatroom') !== -1 || window.location.href.indexOf('messages') !== -1;
     }
     
     function resizeMessageContainer() {

@@ -24,7 +24,7 @@
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
 	var from = msg.find('message').attr("from").split('@')[0];
-	DITTO.chat.renderMessage(from, body);
+	DITTO.chat.renderPrivateMessage(from, body);
 	return true;
     }
 

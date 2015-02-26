@@ -3,8 +3,8 @@
 {% load staticfiles %}
 
 {% block messages %}
-<audio src="{% static 'audio/newmessage.wav' %}" ></audio>
-<h1 class="page-heading">Chatting with {{ chatee.username }}: <span id="other-status-show"></span> <em><span id="other-status-status"></span></em></h1>
+    <audio src="{% static 'audio/newmessage.wav' %}" ></audio>
+    <h1 class="page-heading">Chatting with {{ chatee.username }}: {% include "chat/_chat_partner_status.html" %}</h1>
     {{ block.super }}
 {% endblock %}
 

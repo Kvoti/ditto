@@ -9,31 +9,5 @@
     </div>
     {% endblock %}
 </div>
-<div class="row msgbar">
-    <form id="msg" class="">
-        <div class="col-md-4">
-            <input placeholder="Type your message here..." type="text" class="form-control">
-        </div>
-        <div class="col-md-1">
-            <button type="submit" class="btn btn-success">Say it!</button>
-        </div>
-        <div class="col-md-2">
-            <div class="dropdown dropup">
-                <button class="btn btn-default dropdown-toggle" type="button" id="set-status" data-toggle="dropdown" aria-expanded="true">
-                    <span>Online</span>
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="set-status">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="" href="#">Online</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="away" href="#">Away</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="chat" href="#">Free for chat</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="dnd" href="#">Do not disturb</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" data-value="xa" href="#">Away for a while</a></li>
-                    <li role="presentation" class="dropdown-header">Custom status</li>
-                    <li role="presentation"><a class="custom" role="menuitem" tabindex="-1"><input class="form-control" type="text"></a></li>
-                </ul>
-            </div>
-        </div>
-    </form>
-</div>
+{% include "chat/_chat_send_message.html" %}
 {% endblock %}
