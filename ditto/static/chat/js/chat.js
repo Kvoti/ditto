@@ -90,7 +90,7 @@ DITTO.chat = {
     
     scrollMessages: function (container) {
         // TODO remove this hack when properly sort out if chat ui is showing
-        container = container || this.msgs;
+        container = container || this.group_msgs;
         try {
             container.scrollTop(container[0].scrollHeight);
         } catch (e) {
