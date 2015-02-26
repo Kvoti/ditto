@@ -74,10 +74,10 @@ DITTO.chat = {
             height: size,
         });
         avatar.find('p:first').append(graphic);
-        if (container == this.group_msgs) {
-            avatar.find('.avatar-name').text(user);
-        } else {
+        if (container == this.pchat_msgs) {
             avatar.find('.avatar-name').remove();
+        } else {
+            avatar.find('.avatar-name').text(user);
         }
         avatar.find('.avatar-link').attr('href', profile_url + user);
         return avatar;
