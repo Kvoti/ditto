@@ -146,11 +146,6 @@ body {
 /* end of dashboard.css */
 
 /* Mark's stuff to be fixed one day! */
-.avatar {
-  display: inline-block;
-  border-radius: 50%;
-}
-
 #msgs, #presence  {
     overflow-y: scroll;
 }
@@ -191,15 +186,15 @@ body {
     height: 150px;
 }
 
+.avatar p {
+    text-align: center;
+}
 .whosonline .avatar {
     padding: 10px;
     float: left;
 }
-.avatar img {
-    display: block;
-}
-.avatar p {
-    text-align: center;
+.avatar-profile .avatar {
+    width: 100%;
 }
 
 footer {

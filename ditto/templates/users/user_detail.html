@@ -5,31 +5,36 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
-
-  <div class="row">
-    <div class="col-sm-12">
-
-      <h2>{{ object.username }}</h2>
-    </div>
-  </div>
-
-{% if object == request.user %}
-<!-- Action buttons -->     
+{% include "_bootstrap.html" %}
 <div class="row">
-
-  <div class="col-sm-12 ">
-    <a class="btn btn-primary" href="{% url 'users:update' %}">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}">E-Mail</a>
-    <a class="btn btn-info" href="{% url 'avatar_change' %}">Avatar</a>
-    <!-- Your Stuff: Custom user template urls -->
-    <a class="btn btn-info" href="{% url 'ditto:private_chats' %}">Messages</a>
-  </div>
-
-</div>
-<!-- End Action buttons -->
-{% endif %}
-
-
+    <div class="col-md-9">
+        <h1>STATUS</h1>
+        <input class="form-control" type="text" placeholder="CHAT HERE...">
+        <div class="row">
+            <div class="col-md-4 avatar-profile">
+                {% include "skin/avatar.html" with user=object size=200 %}
+                <p><strong>Member since: </strong> {{ object.date_joined }}</p>
+            </div>
+            <div class="col-md-8">
+                <h1>{{ object.username }}</h1>
+                <h2>{{ object.groups.all.0.name }}</h2>
+                {% with accordion_id='user_content' %}
+                <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
+                    {% include "users/_bio.html" with index=0 %}
+                    {% include "users/_blog.html" with index=1 %}
+                </div>
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        {% with accordion_id='user_meta' %}
+        <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
+            {% include "users/_chats.html" with index=0 %}
+            {% include "ditto/module/chatroom.html" with index=1 %}
+            {% include "users/_activity.html" with index=2 %}
+        </div>
+        {% endwith %}
+    </div>
 </div>
 {% endblock content %}

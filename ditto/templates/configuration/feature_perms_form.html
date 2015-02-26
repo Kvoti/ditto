@@ -4,7 +4,7 @@
     {% with id='config' %}
     <div class="panel-group" id=id role="tablist" aria-multiselectable="true">
         {% for role in roles %}
-            {% include "configuration/permissions_panel.html" %}
+            {% include "configuration/permissions_panel.html" with index=forloop.counter0 %}
         {% endfor %}
     </div>
     {% endwith %}

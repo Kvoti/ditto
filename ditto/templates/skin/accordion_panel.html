@@ -1,12 +1,14 @@
+{% with strindex=index|escapejs %}{# use escapejs to convert index to string so we can concatenate it #}
+{% with panel_id=accordion_id|add:strindex %}
 <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
+    <div class="panel-heading" role="tab" id="heading{{ panel_id }}">
         <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#{{ accordion_id }}" href="#collapse{{ forloop.counter }}" aria-expanded="{{ forloop.first|yesno }}" aria-controls="collapse{{ forloop.counter }}">
+            <a data-toggle="collapse" data-parent="#{{ accordion_id }}" href="#collapse{{ panel_id }}" aria-expanded="{{ forloop.first|yesno }}" aria-controls="collapse{{ panel_id }}">
                 {% block title %}{% endblock %}
             </a>
         </h4>
     </div>
-    <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse{% if forloop.first %} in{% endif %}" role="tabpanel" aria-labelledby="heading{{ forloop.counter }}">
+    <div id="collapse{{ panel_id }}" class="panel-collapse collapse{% if index == 0 %} in{% endif %}" role="tabpanel" aria-labelledby="heading{{ panel_id }}">
         <div class="panel-body">
             {% block body %}{% endblock %}
         </div>
@@ -15,3 +17,5 @@
         {% endif %}
     </div>
 </div>
+{% endwith %}
+{% endwith %}

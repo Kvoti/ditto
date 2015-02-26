@@ -1,0 +1,9 @@
+{% load static %}
+{% with image=image|default:"rocket" size=size|default:50 %}
+<div class="avatar">
+    <a class="avatar-link" href="{% url 'users:detail' user.username %}">
+        <p><img width="{{ size }}px" height="{{ size }}px" {{class="avatar-image" alt="" src="{% static 'images/avatars/'|add:image|add:'.png' %}"></p>
+        {% if name %}<p class="avatar-name">{{ name }}</p>{% endif %}
+    </a>
+</div>
+{% endwith %}

@@ -4,7 +4,7 @@
     {% with id='config' %}
     <div class="panel-group" id=id role="tablist" aria-multiselectable="true">
         {% for role1, others in grid %}
-            {% include "configuration/interactions_panel.html" %}
+            {% include "configuration/interactions_panel.html" with index=forloop.counter0 %}
         {% endfor %}
     </div>
     {% endwith %}

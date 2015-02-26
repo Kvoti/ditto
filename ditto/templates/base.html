@@ -85,12 +85,7 @@
         </div>
     </script>
     <script id="avatar_template" type="text/template">
-        <div class="avatar">
-            <a class="avatar-link" href="#">
-                <img class="avatar-image" alt="">
-                <p a class="avatar-name"></p>
-            </a>
-        </div>
+        {% include "skin/avatar.html" with name="placeholder" %}
     </script>
 
     {% block javascript %}
