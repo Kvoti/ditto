@@ -3,7 +3,7 @@
 <div class="avatar">
     {% url 'users:detail' user.username as url %}
     <a class="avatar-link" href="{{ url }}">
-        <p><img width="{{ size }}px" height="{{ size }}px" {{class="avatar-image" alt="" src="{% static 'images/avatars/'|add:image|add:'.png' %}"></p>
+        <p></p>
         {% if name %}<p class="avatar-name">{{ name }}</p>{% endif %}
     </a>
 </div>

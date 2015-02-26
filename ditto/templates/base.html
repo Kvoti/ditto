@@ -87,6 +87,9 @@
     <script id="avatar_template" type="text/template">
         {% include "skin/avatar.html" with name="placeholder" %}
     </script>
+    <script id="avatar_svgs" type="text/template">
+        {% include "skin/avatars.html" %}
+    </script>
 
     {% block javascript %}
       <!-- Latest JQuery -->
@@ -126,6 +129,7 @@
       {% block chat %}
         <script src="{% static 'chat/js/chat.js' %}"></script>
         <script src="{% static 'chat/js/chatmodule.js' %}"></script>
+        <script src="{% static 'chat/js/avatars.js' %}"></script>
         {% block plugins %}
             <script src="{% static 'chat/js/muc.js' %}"></script>
         {% endblock %}

@@ -4,7 +4,7 @@ DITTO.chat = {
     message_input: $('#msg').find('input[type=text]'),
     group_msgs: $('#msgs'),
     pchat_msgs: $('#pchat_msgs'),
-    
+    avatars: $('#avatar_svgs').text(),
     privateMessageCallbacks: [],
     outgoingMessageCallbacks: [],
 
@@ -62,16 +62,18 @@ DITTO.chat = {
         }
         var profile_url = '/di/users/';  // TODO pass in, fix tenant part of url
         var avatar = $(this.avatar_template);
-        var img = avatar.find('img');
 	var avatar_pic = avatars[user];
         if (!avatar_pic) {
             avatar_pic = 'sunshine'
         }
-	img.attr('src', DITTO.avatar_url + avatar_pic + '.png');
-        img.attr({
+        var graphic = $(this.avatars);
+        graphic.find('>g[id!=' + avatar_pic + ']').remove();
+        graphic.find('>g').show();
+        graphic.attr({
             width: size,
             height: size,
         });
+        avatar.find('p:first').append(graphic);
         if (container == this.group_msgs) {
             avatar.find('.avatar-name').text(user);
         } else {

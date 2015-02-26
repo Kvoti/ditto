@@ -15,7 +15,7 @@
         </div>
         <div class="row">
             <div class="col-md-4 avatar-profile">
-                {% include "skin/avatar.html" with user=object size=100 %}
+                <div data-avatar="sunshine" data-name="{{ object.username }}" data-size="200"></div><!-- TODO sort out avatars.html so we can render without js too -->
                 <p><strong>Member since: </strong> {{ object.date_joined }}</p>
             </div>
             <div class="col-md-8">
