@@ -98,7 +98,7 @@
                 DITTO.chat._renderMessage(username, 'TODO last message goes here', friends);
                 friends_messages = messages.find('>div.messages-' + username);
                 if (!friends_messages.length) {
-                    messages.append('<div class="hidden messages-' + username + '"><div>');
+                    messages.append('<div class="hidden friend-messages messages-' + username + '"><div>');
                 }
             }
         });

@@ -146,7 +146,7 @@ body {
 /* end of dashboard.css */
 
 /* Mark's stuff to be fixed one day! */
-#msgs, #pchat_msgs, #presence  {
+#msgs, #pchat_msgs, #presence, .friend-messages  {
     overflow-y: scroll;
 }
 
@@ -191,7 +191,7 @@ body {
 .profile-chat #pchat_msgs {
     height: 150px;
 }
-.messages-from {
+.friend-messages {
     height: 400px;
 }
 
