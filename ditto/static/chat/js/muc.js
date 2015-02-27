@@ -4,26 +4,7 @@
 (function () {
     var connection;
     var chatroom = DITTO.room + '@muc.' + DITTO.chat_host;
-    var presence = [
-        'Sophie B',
-        'Priti P',
-        'Dan H',
-        'Kate F',
-        'Sophie B',
-        'Henry K',
-        'Emma C',
-        'Tom McW',
-        'Barney D',
-        'Sarah D',
-        'Annie C',
-        'Femi O',
-        'Ellis F',
-        'Rich B',
-        'Paul T',
-        'Kendra G',
-        'Javelle S',
-        'Lenny K',
-    ];
+    var presence = [];
     var presence_ui = $('#presence');
 
     DITTO.chat.presence = presence;
