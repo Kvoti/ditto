@@ -40,7 +40,7 @@
                 {% if request.tenant.is_configured %}
                 <li{% if "messages" in nav %} class="active"{% endif %}>
                     {% url "ditto:private_chats" as url %}
-                    <a class="navicon navicon-messages" href="{{ url }}">
+                    <a class="navicon text-hide navicon-messages" href="{{ url }}">
                         Messages
                     </a>
                 </li>
@@ -48,7 +48,7 @@
                 
                 <li class="dropdown{% if 'me' in nav %} active{% endif %}">
                     {% url "users:detail" request.user.username as profile_url %}
-                    <a href="#" class="navicon navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Me <span class="caret"></span></a>
+                    <a href="#" class="navicon text-hide navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Me <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="{{ profile_url }}">My Profile</a></li>
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
@@ -58,7 +58,7 @@
                 {% if request.tenant.is_configured and perms.users.can_admin %}
                 <li{% if "settings" in nav %} class="active"{% endif %}>
                     {% url "ditto:editconfig" "basicinfo" as url %}
-                    <a class="navicon navicon-settings" href="{{ url }}">
+                    <a class="navicon navicon-settings text-hide" href="{{ url }}">
                         Settings
                     </a>
                 </li>

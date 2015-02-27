@@ -179,7 +179,7 @@ body {
 .navbar-brand, .navicon {
     background-repeat: no-repeat;
     background-position: center center;
-    text-indent: -9999px;  /* TODO prob use .sr-only for this? */
+    width: 70px;
 }
 .active .navicon, .open .navicon {
     background-color: #210040 !important;
