@@ -32,11 +32,15 @@ DITTO.chat = {
     },
     
     _renderMessage: function (from, msg, container) {
+        var heading;
 	// construct skeleton message from template
 	var formatted_message = $(this.message_template);
 
 	// add message text
-        formatted_message.find('.media-body').text(msg);
+        heading = formatted_message.find('.media-heading');
+        heading.text(from);
+        formatted_message.find('.media-body').text(msg).prepend(heading);
+        // due to the way .text works we have to re-insert the heading
 
 	// configure avatar
 	// decide whether avatar goes to the left or right
@@ -46,7 +50,7 @@ DITTO.chat = {
 	} else {
 	    formatted_message.find('.media-right').remove();
 	}
-        var avatar = this.getAvatar(from, null, container);
+        var avatar = this.getAvatar(from, null);
         avatar.addClass('media-object');
         formatted_message.find('.media-middle').append(avatar);
 
@@ -56,7 +60,7 @@ DITTO.chat = {
         this.scrollMessages(container);
     },
 
-    getAvatar: function (user, size, container) {
+    getAvatar: function (user, size, with_name) {
         if (!size) {
             size = 50;
         }
@@ -83,10 +87,10 @@ DITTO.chat = {
             height: size,
         });
         avatar.find('p:first').append(graphic);
-        if (container && container.data('chat') === 'private') {
-            avatar.find('.avatar-name').remove();
-        } else {
+        if (with_name) {
             avatar.find('.avatar-name').text(user);
+        } else {
+            avatar.find('.avatar-name').remove();
         }
         avatar.find('.avatar-link').attr('href', profile_url + user);
         return avatar;
