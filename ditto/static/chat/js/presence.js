@@ -11,7 +11,9 @@
     var status_menu = status_button.parent().next();
     var custom_status = status_menu.find('input');
     var verbose_status = {};
-
+    var friends = $('#roster');
+    var messages = $('.messages-from');
+    
     status_menu.find('a').each(function () {
         var option = $(this);
         var status_code = $(option).data('value');
@@ -25,6 +27,7 @@
 	connection.addHandler(onPresence, null, 'presence', null,  null); 
 	connection.roster.init(connection);
 	connection.roster.registerRequestCallback(acceptFriendRequest);
+	connection.roster.registerCallback(handleRoster);
 	connection.roster.subscribe(DITTO.chatee);
 	connection.roster.get();
     });
@@ -84,6 +87,22 @@
     function acceptFriendRequest (from) {
 	connection.roster.authorize(from);
 	return true;
+    }
+
+    function handleRoster (roster, item) {
+        var avatar, username, friends_messages;
+        friends.empty();
+        $.each(roster, function (i, friend) {
+            if (friend.subscription === 'both') {
+                username = Strophe.getNodeFromJid(friend.jid);
+                DITTO.chat._renderMessage(username, 'TODO last message goes here', friends);
+                friends_messages = messages.find('>div.messages-' + username);
+                if (!friends_messages.length) {
+                    messages.append('<div class="hidden messages-' + username + '"><div>');
+                }
+            }
+        });
+        return true;  // always bloody forget this!
     }
     
 })();

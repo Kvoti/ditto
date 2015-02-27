@@ -27,6 +27,12 @@ class UserDetailView(LoginRequiredMixin, NavMixin, DetailView):
     slug_url_kwarg = "username"
     nav = ['me']
 
+    def get_context_data(self, **kwargs):
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+        context['is_me'] = self.request.user == self.object
+        return context
+
+    
 class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 

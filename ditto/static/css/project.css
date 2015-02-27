@@ -191,6 +191,9 @@ body {
 .profile-chat #pchat_msgs {
     height: 150px;
 }
+.messages-from {
+    height: 400px;
+}
 
 .avatar p {
     text-align: center;
@@ -210,4 +213,8 @@ body {
 
 footer {
     margin-top: 10px;
+}
+
+#roster>div {
+    cursor: pointer;
 }

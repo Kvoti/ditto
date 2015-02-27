@@ -55,7 +55,7 @@
 	
 	if (composing.length) {
 	    this.renderPrivateMessage(from, "is typing ...");
-	    other_is_typing_notification = this.pchat_msgs.find('>div').get(-1);	    
+	    other_is_typing_notification = this.getPchatContainer(from).find('>div').get(-1);	    
 	    return false; // to prevent further message processing
 	} else if (active.length) {
 	    other_is_typing_notification.remove();

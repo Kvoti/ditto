@@ -47,7 +47,7 @@
 
 	connection.send(payload.tree());
 
-	DITTO.chat.renderPrivateMessage(this.me, msg);
+	DITTO.chat.renderPrivateMessage(this.me, msg, Strophe.getNodeFromJid(DITTO.chatee));
     };
     
 })();

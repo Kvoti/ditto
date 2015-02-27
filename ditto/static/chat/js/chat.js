@@ -14,12 +14,21 @@ DITTO.chat = {
 
     beep: $('audio').get(0),
 
-    renderPrivateMessage: function (from, msg) {
-        this._renderMessage(from, msg, this.pchat_msgs);
+    renderPrivateMessage: function (from, msg, to) {
+        var message_pane = this.getPchatContainer(from, to);
+        this._renderMessage(from, msg, message_pane);
     },
 
     renderGroupMessage: function (from, msg) {
         this._renderMessage(from, msg, this.group_msgs);
+    },
+    
+    getPchatContainer: function (from, to) {
+        var message_pane = $('.messages-' + (to || from));
+        if (!message_pane.length) {
+            message_pane = this.pchat_msgs;
+        }
+        return message_pane;
     },
     
     _renderMessage: function (from, msg, container) {
@@ -74,7 +83,7 @@ DITTO.chat = {
             height: size,
         });
         avatar.find('p:first').append(graphic);
-        if (container == this.pchat_msgs) {
+        if (container && container.data('chat') === 'private') {
             avatar.find('.avatar-name').remove();
         } else {
             avatar.find('.avatar-name').text(user);

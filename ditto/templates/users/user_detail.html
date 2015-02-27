@@ -7,12 +7,14 @@
 {% block content %}
 <audio src="{% static 'audio/newmessage.wav' %}" ></audio>
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-9 main-content">
+        {% if not is_me %}
         <div class="profile-chat">
             <h1>{{ object.username }} is {% include "chat/_chat_partner_status.html" %}</h1>
-            <div id="pchat_msgs"></div>
+            <div id="pchat_msgs" data-chat="private"></div>
             {% include "chat/_chat_send_message.html" %}
         </div>
+        {% endif %}
         <div class="row">
             <div class="col-md-4 avatar-profile">
                 <div data-avatar="sunshine" data-name="{{ object.username }}" data-size="200"></div><!-- TODO sort out avatars.html so we can render without js too -->
@@ -31,9 +33,9 @@
         </div>
     </div>
     <div class="col-md-3 main-sidebar">
-        {% with accordion_id='user_meta' %}
+        {% with accordion_id='user_meta' footer=1 %}
         <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
-            {% include "users/_chats.html" with index=0 %}
+            {% if is_me %}{% include "users/_chats.html" with index=0 %}{% endif %}
             {% include "ditto/module/chatroom.html" with index=1 %}
             {% include "users/_activity.html" with index=2 %}
         </div>
@@ -66,15 +68,4 @@
 {% block javascript %}
     <script src="{% static 'vendor/notification.js' %}"></script>
     {{ block.super }}
-    <script>
-        $('.profile-chat').resizable(
-        {
-        alsoResize: '#pchat_msgs',
-        handles: 's',
-        stop: function () {
-        DITTO.chat.scrollMessages($('#pchat_msgs'));
-        }
-        }
-        );
-    </script>
 {% endblock %}

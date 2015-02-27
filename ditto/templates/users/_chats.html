@@ -3,3 +3,18 @@
 {% block title %}
 MY CHATS
 {% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12" id="roster">
+    </div>
+    <div class="col-md-8 hidden messages">
+        <div class="messages-from"></div>
+        {% include "chat/_chat_send_message.html" %}
+    </div>
+</div>    
+{% endblock %}
+
+{% block footer %}
+<a id="open-messages" href="#">Open messages >></a>
+{% endblock %}
