@@ -38,7 +38,7 @@ $('#open-messages').click(function (e) {
 $('#roster').on('click', '>div', function (e) {
     var friend = $(this);
     var friends = friend.parents();
-    var username = friend.find('.avatar-name').text();
+    var username = friend.find('.media-heading').text(); // TODO this stuff better as data attribute
     var messages = $('.messages-' + username);
     
     // Show current chat partner
@@ -48,7 +48,6 @@ $('#roster').on('click', '>div', function (e) {
     // Show message pane for current chat partner
     messages.siblings().addClass('hidden');
     messages.removeClass('hidden');
-    
     
     // Make sure we send messages to and display messages from the correct chat partner!
     DITTO.chatee = username + '@' + DITTO.chat_host;
