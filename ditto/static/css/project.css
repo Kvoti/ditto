@@ -194,6 +194,7 @@ body {
 
 .avatar p {
     text-align: center;
+    margin: 0;
 }
 .whosonline .avatar {
     padding: 10px;
