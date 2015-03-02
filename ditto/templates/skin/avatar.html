@@ -1,5 +1,4 @@
 {% load static %}
-{% with image=image|default:"rocket" size=size|default:50 %}
 <div class="avatar">
     {% url 'users:detail' user.username as url %}
     <a class="avatar-link" href="{{ url }}">
@@ -7,4 +6,3 @@
         {% if name %}<p class="avatar-name">{{ name }}</p>{% endif %}
     </a>
 </div>
-{% endwith %}
