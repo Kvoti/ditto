@@ -24,7 +24,8 @@
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
 	var from = msg.find('message').attr("from").split('@')[0];
-	DITTO.chat.renderPrivateMessage(from, body);
+        var when = new Date(msg.find('delay').attr('stamp'));
+	DITTO.chat.renderPrivateMessage(from, when, body);
 	return true;
     }
 

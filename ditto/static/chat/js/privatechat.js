@@ -24,7 +24,7 @@
 	var from_jid = msg.attr("from");
         var from = from_jid.split('@')[0];
 	if (body && Strophe.getBareJidFromJid(from_jid) === DITTO.chatee) {
-	    this.renderPrivateMessage(from, body);
+	    this.renderPrivateMessage(from, new Date(), body);
             if (this.isPageHidden()) {
                 this.notifyNewMessage();
             }
@@ -47,7 +47,7 @@
 
 	connection.send(payload.tree());
 
-	DITTO.chat.renderPrivateMessage(this.me, msg, Strophe.getNodeFromJid(DITTO.chatee));
+	DITTO.chat.renderPrivateMessage(this.me, new Date(), msg, Strophe.getNodeFromJid(DITTO.chatee));
     };
     
 })();

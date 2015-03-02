@@ -31,11 +31,18 @@
         var msg = $(msg);
         var body = msg.find("body:first").text();
         var from = msg.attr("from").split('/')[1];
+        var when = msg.find('delay');
+        
+        if (when.length) {
+            when = new Date(when.attr('stamp'));
+        } else {
+            when = new Date();
+        }
 
         if (from) {
             // TODO always get an 'empty' message from the room
             // itself, not sure why
-	    DITTO.chat.renderGroupMessage(from, body);
+	    DITTO.chat.renderGroupMessage(from, when, body);
         }
         return true;
     }

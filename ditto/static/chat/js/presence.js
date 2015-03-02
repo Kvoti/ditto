@@ -95,7 +95,9 @@
         $.each(roster, function (i, friend) {
             if (friend.subscription === 'both') {
                 username = Strophe.getNodeFromJid(friend.jid);
-                DITTO.chat._renderMessage(username, 'TODO last message goes here', friends);
+                DITTO.chat._renderMessage(username,
+                                          new Date(),  // TODO date of most recent message
+                                          'TODO last message goes here', friends);
                 friends_messages = messages.find('>div.messages-' + username);
                 if (!friends_messages.length) {
                     messages.append('<div class="hidden friend-messages messages-' + username + '"><div>');

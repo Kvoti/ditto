@@ -14,13 +14,13 @@ DITTO.chat = {
 
     beep: $('audio').get(0),
 
-    renderPrivateMessage: function (from, msg, to) {
+    renderPrivateMessage: function (from, when, msg, to) {
         var message_pane = this.getPchatContainer(from, to);
-        this._renderMessage(from, msg, message_pane);
+        this._renderMessage(from, when, msg, message_pane);
     },
 
-    renderGroupMessage: function (from, msg) {
-        this._renderMessage(from, msg, this.group_msgs);
+    renderGroupMessage: function (from, when, msg) {
+        this._renderMessage(from, when, msg, this.group_msgs);
     },
     
     getPchatContainer: function (from, to) {
@@ -31,16 +31,20 @@ DITTO.chat = {
         return message_pane;
     },
     
-    _renderMessage: function (from, msg, container) {
+    _renderMessage: function (from, when, msg, container) {
         var heading;
+        var timestamp;
 	// construct skeleton message from template
 	var formatted_message = $(this.message_template);
 
 	// add message text
         heading = formatted_message.find('.media-heading');
-        heading.text(from);
-        formatted_message.find('.media-body').text(msg).prepend(heading);
-        // due to the way .text works we have to re-insert the heading
+        heading.prepend(from);
+        timestamp = heading.find('time');
+        when = when.toISOString();
+        timestamp.text(when);
+        timestamp.attr('datetime', when);
+        formatted_message.find('.media-body').append(msg);
 
 	// configure avatar
 	// decide whether avatar goes to the left or right
@@ -57,6 +61,7 @@ DITTO.chat = {
 	// add message to page and scroll message in to view
         // TODO remove messages once (far) out of view, don't want to append message content indefinitely?
         container.append(formatted_message);
+        container.find('time:last').timeago();
         this.scrollMessages(container);
     },
 
