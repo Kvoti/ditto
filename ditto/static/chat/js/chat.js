@@ -97,14 +97,19 @@ DITTO.chat = {
     },
     
     renderPresence: function () {
-	var pres = $('<ul class="list-group"></ul>');
-	$.each(this.presence, function (i, key) {
-	    var item = $('<li class="list-group-item"></li>');
-	    item.text(key);
-	    pres.append(item);
+	var presence = $($('#group_presence_template').text());
+	var _item = presence.find('.presence-item').remove();
+        var item;
+        
+        var self = this;
+	$.each(this.presence, function (i, username) {
+            item = _item.clone();
+            item.find('.presence-avatar').append(self.getAvatar(username));
+            item.find('.presence-username').text(username);
+	    presence.append(item);
 	});
 	this.presence_ui.empty();
-	this.presence_ui.append(pres);
+	this.presence_ui.append(presence);
     },
     
     scrollMessages: function (container) {
