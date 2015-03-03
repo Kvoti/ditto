@@ -6,6 +6,7 @@
 // TODO figure out how to broadcast changes to the vcard as mongoose doesn't do pubsub
 (function () {
     var connection;
+    var roles = {};
     
     $(document).on('connected.ditto.chat', function (e, conn) {
         connection = conn;
@@ -32,15 +33,21 @@
     DITTO.chat.vcard = {
 
         getRole: function (user) {
-            // TODO cache the result and don't send multiple request for the same vcard
+            // TODO don't send multiple request for the same vcard
             var placeholder = $('<span></span>');
-            connection.vcard.get(
-                function (vcard) {
-                    var role = $(vcard).find('ROLE').text();
-                    placeholder.text(role);
-                },
-                user + '@' + DITTO.chat_host
-            )
+            var role = roles[user];
+            if (role) {
+                placeholder.text(role);
+            } else {
+                connection.vcard.get(
+                    function (vcard) {
+                        var role = $(vcard).find('ROLE').text();
+                        roles[user] = role;
+                        placeholder.text(role);
+                    },
+                    user + '@' + DITTO.chat_host
+                )
+            }
             return placeholder;
         }
     }
