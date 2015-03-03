@@ -4,7 +4,6 @@ DITTO.chat = {
     message_input: $('#msg').find('input[type=text]'),
     group_msgs: $('#msgs'),
     pchat_msgs: $('#pchat_msgs'),
-    avatars: $('#avatar_svgs').text(),
     privateMessageCallbacks: [],
     outgoingMessageCallbacks: [],
 
@@ -69,33 +68,14 @@ DITTO.chat = {
     },
 
     getAvatar: function (user, size, with_name) {
+	var name;
         if (!size) {
             size = 50;
         }
-        // TODO big job to sort out avatars. mod_avatar/pubsub not
-        // supported by mongooseim so need custom solution.  Can maybe
-        // hack something up with avatar 'chatroom' and bot that
-        // published avatar changes. Don't think MUC scales well
-        // though for proper pubsub...
-        var avatars = {
-            'mark': 'popcorn',
-            'sarah': 'melon',
-        }
         var profile_url = DITTO.profile_url.replace('USER', user);
         var avatar = $(this.avatar_template);
-	var avatar_pic = avatars[user];
-        if (!avatar_pic) {
-            avatar_pic = 'sunshine'
-        }
-        var graphic = $(this.avatars);
-        var name, role;
-        graphic.find('>g[id!=' + avatar_pic + ']').remove();
-        graphic.find('>g').show();
-        graphic.attr({
-            width: size,
-            height: size,
-        });
-        avatar.find('p:first').append(graphic);
+        var pic = this.vcard.getAvatarGraphic(user, size);
+        avatar.find('p:first').replaceWith(pic);
         if (with_name) {
             name = avatar.find('.avatar-name');
             name.text(user);
