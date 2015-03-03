@@ -23,9 +23,14 @@
 	var body = msg.find("body:first").text();
 	var from_jid = msg.attr("from");
         var from = from_jid.split('@')[0];
-	if (body && Strophe.getBareJidFromJid(from_jid) === DITTO.chatee) {
-	    this.renderPrivateMessage(from, new Date(), body);
-            if (this.isPageHidden()) {
+	if (body) {
+            if (isPchatPage()) {
+	        this.renderPrivateMessage(from, new Date(), body);
+                if (this.isPageHidden()) {
+                    this.notifyNewMessage();
+                }
+            } else {
+                updateNewMessageCount();
                 this.notifyNewMessage();
             }
             // return false to prevent further processing of this message
@@ -34,6 +39,21 @@
 	return true;
     });
 
+    function isPchatPage () {
+        return DITTO.chat.getPchatContainer().length;
+    }
+
+    function updateNewMessageCount () {
+        // Note, this doesn't really work properly.
+        // If you refresh the page you lose the number of 'unread' messages
+        // As far as I can see there's no concept of read/unread in xmpp
+        var counter = $('#new-message-count');
+        var count = counter.data('count') || 0;
+        count += 1;
+        counter.data('count', count);
+        counter.text(count);
+    }
+    
     DITTO.chat.sendMessage = function (msg) {
 	var payload = $msg({
 	    to: DITTO.chatee,

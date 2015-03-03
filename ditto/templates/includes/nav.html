@@ -42,6 +42,7 @@
                     {% url "ditto:private_chats" as url %}
                     <a class="navicon text-hide navicon-messages" href="{{ url }}">
                         Messages
+                        <span id="new-message-count" class="badge"></span>
                     </a>
                 </li>
                 {% endif %}

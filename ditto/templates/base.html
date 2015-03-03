@@ -70,6 +70,7 @@
             <p><img width="30px" alt="" src="{% static 'images/ditto-logo.png' %}"> Ditto: a Digital Impacts Product, © 2015.</p>
         </div>
     </footer>
+    <audio src="{% static 'audio/newmessage.wav' %}" ></audio>
     {% endblock %}
     
     <!-- Le javascript
@@ -148,6 +149,7 @@
         <script src="{% static 'chat/js/chat.js' %}"></script>
         <script src="{% static 'chat/js/chatmodule.js' %}"></script>
         <script src="{% static 'chat/js/avatars.js' %}"></script>
+        <script src="{% static 'chat/js/privatechat.js' %}"></script>
         {% block plugins %}
             <script src="{% static 'chat/js/muc.js' %}"></script>
         {% endblock %}

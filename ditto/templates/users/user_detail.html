@@ -5,7 +5,6 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<audio src="{% static 'audio/newmessage.wav' %}" ></audio>
 <div class="row">
     <div class="col-md-9 main-content">
         {% if not is_me %}
@@ -61,7 +60,6 @@
     {{ block.super }}    
     <script src="{% static 'chat/js/composing.js' %}"></script>
     <script src="{% static 'chat/js/presence.js' %}"></script>
-    <script src="{% static 'chat/js/privatechat.js' %}"></script>
     <script src="{% static 'chat/js/mam.js' %}"></script>
 {% endblock %}
 

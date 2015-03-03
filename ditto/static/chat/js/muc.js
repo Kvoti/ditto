@@ -20,12 +20,16 @@
         alert('You got disconnected, maybe you opened another tab or device?');
         window.location.href = '../';
     });
-    
-    DITTO.chat.sendMessage = function (msg) {
-	// TODO we could optimistically render the message before we receive it back
-	// (though it's pretty quick!)
-	connection.muc.groupchat(chatroom, msg);
-    }
+
+    // Urgh, hack here. Only replace the sendMessage function if we
+    // are actually on a group chat page
+    if (!DITTO.chat.getPchatContainer().length) {
+        DITTO.chat.sendMessage = function (msg) {
+	    // TODO we could optimistically render the message before we receive it back
+	    // (though it's pretty quick!)
+	    connection.muc.groupchat(chatroom, msg);
+        }
+    };
     
     function onGroupMessage(msg) {
         var msg = $(msg);
