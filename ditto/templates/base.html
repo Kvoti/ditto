@@ -124,6 +124,7 @@
       
       {% if not request.tenant.is_main %}
       <script src="{% static 'vendor/strophe.js' %}"></script>
+      <script src="{% static 'vendor/strophe.vcard.js' %}"></script>
       {% block strophe-plugins %}
           <script src="{% static 'vendor/strophe.muc.js' %}"></script>
       {% endblock %}
@@ -143,10 +144,12 @@
         DITTO.chat_nick = '{{ user.username }}';
         DITTO.room = '{{ room|default:"muc1" }}';
         DITTO.avatar_url = '{% static 'images/avatars/' %}';
+        DITTO.role = '{{ request.user.groups.all.0.name }}';
         {% endblock %}
       </script>
       {% block chat %}
         <script src="{% static 'chat/js/chat.js' %}"></script>
+        <script src="{% static 'chat/js/vcard.js' %}"></script>
         <script src="{% static 'chat/js/chatmodule.js' %}"></script>
         <script src="{% static 'chat/js/avatars.js' %}"></script>
         <script src="{% static 'chat/js/privatechat.js' %}"></script>

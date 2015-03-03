@@ -13,7 +13,7 @@ DITTO.chat = {
     titleTogglePeriod: 1000,  // can't be any smaller for chrome/ffox
 
     beep: $('audio').get(0),
-
+    
     renderPrivateMessage: function (from, when, msg, to) {
         var message_pane = this.getPchatContainer(from, to);
         this._renderMessage(from, when, msg, message_pane);
@@ -39,6 +39,9 @@ DITTO.chat = {
 
 	// add message text
         heading = formatted_message.find('.media-heading');
+        heading.prepend(')');
+        heading.prepend(this.vcard.getRole(from));
+        heading.prepend(' (');
         heading.prepend(from);
         timestamp = heading.find('time');
         when = when.toISOString();
@@ -85,6 +88,7 @@ DITTO.chat = {
             avatar_pic = 'sunshine'
         }
         var graphic = $(this.avatars);
+        var name, role;
         graphic.find('>g[id!=' + avatar_pic + ']').remove();
         graphic.find('>g').show();
         graphic.attr({
@@ -93,7 +97,11 @@ DITTO.chat = {
         });
         avatar.find('p:first').append(graphic);
         if (with_name) {
-            avatar.find('.avatar-name').text(user);
+            name = avatar.find('.avatar-name');
+            name.text(user);
+            name.append(' (');
+            name.append(this.vcard.getRole(user));
+            name.append(' )');
         } else {
             avatar.find('.avatar-name').remove();
         }
@@ -257,15 +265,16 @@ $(document).ready(function () {
 	} else if (status == Strophe.Status.CONNECTED) {
 	    console.log('Strophe is connected.');
             $(document).trigger('connected.ditto.chat', connection);
+            DITTO.chat.connection = connection;
 	}
     }
 
     function rawInput(data) {
-	console.log('RECV: ', data);
+	// console.log('RECV: ', data);
     }
 
     function rawOutput(data) {
-	console.log('SENT: ', data);
+	// console.log('SENT: ', data);
     }
 
     connect();
