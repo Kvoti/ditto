@@ -18,6 +18,16 @@
             <div class="col-md-4 avatar-profile">
                 <div data-avatar="sunshine" data-name="{{ object.username }}" data-size="200"></div><!-- TODO sort out avatars.html so we can render without js too -->
                 <p><strong>Member since: </strong> {{ object.date_joined }}</p>
+                {% if is_me %}
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Change avatar <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        {% include "skin/avatars.html" %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
             <div class="col-md-8">
                 <h1>{{ object.username }}</h1>

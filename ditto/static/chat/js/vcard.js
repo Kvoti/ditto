@@ -12,34 +12,32 @@
     
     $(document).on('connected.ditto.chat', function (e, conn) {
         connection = conn;
-
         connection.vcard.init(connection);
-        
-        // connection.vcard.get(
-	//     function (r) { console.log(r); }
-	// );
-	
-	// TODO no convenience function provided for making vcards?
-	var role = Strophe.xmlElement('ROLE');
-	role.appendChild(Strophe.xmlTextNode(DITTO.role));
-	var photo = Strophe.xmlElement('PHOTO');
-	photo.appendChild(Strophe.xmlTextNode('sunshine'));  // TODO prob make this full URI of avatar?
-        // TODO looks like strophe.vcard doesn't allow setting multiple elements?
-        // (sort of doesn't matter cos the data you set isn't validated, which is ok
-        // while we assume no other clients will connect)
-        var vcard = Strophe.xmlElement('XXX');
-        vcard.appendChild(role);
-        vcard.appendChild(photo);
-        
-        // TODO handle error
-	connection.vcard.set(
-	    function (r) { console.log('set', r); },
-	    vcard
-	);
-        
     });
 
     DITTO.chat.vcard = {
+
+	set: function (avatar_name) {
+	    // TODO no convenience function provided for making vcards?
+	    var role = Strophe.xmlElement('ROLE');
+	    role.appendChild(Strophe.xmlTextNode(DITTO.role));
+	    var photo = Strophe.xmlElement('PHOTO');
+	    photo.appendChild(Strophe.xmlTextNode(avatar_name || 'sunshine'));  // TODO prob make this full URI of avatar?
+            // TODO looks like strophe.vcard doesn't allow setting multiple elements?
+            // (sort of doesn't matter cos the data you set isn't validated, which is ok
+            // while we assume no other clients will connect)
+            var vcard = Strophe.xmlElement('XXX');
+            vcard.appendChild(role);
+            vcard.appendChild(photo);
+
+	    console.log('setting', vcard);
+	    
+            // TODO handle error
+	    connection.vcard.set(
+		function (r) { console.log('set', r); },
+		vcard
+	    );
+	},
 
         getRole: function (user) {
             // TODO don't send multiple request for the same vcard
@@ -72,6 +70,9 @@
                 connection.vcard.get(
                     function (vcard) {
                         var avatar = $(vcard).find('PHOTO').text();
+			if (!avatar) {
+			    avatar = 'sunshine';
+			}
                         avatars[user] = avatar;
                         placeholder.append(_graphic(avatar, size));
                     },
