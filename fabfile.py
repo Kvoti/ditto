@@ -8,7 +8,9 @@ env.forward_agent = True
 
 def deploy():
     with cd('/srv/venv/ditto'):
-        run('git pull')
+        run('git fetch')
+        run('git log ..origin/master --oneline')
+        run('git merge origin/master')
         with cd('ditto'), shell_env(DJANGO_CONFIGURATION='Production'):
             sudo(' ../../bin/python manage.py collectstatic --noinput',
                  user="pydev")
