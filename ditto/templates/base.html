@@ -145,6 +145,7 @@
         DITTO.room = '{{ room|default:"muc1" }}';
         DITTO.avatar_url = '{% static 'images/avatars/' %}';
         DITTO.role = '{{ request.user.groups.all.0.name }}';
+        DITTO.profile_url = '{% url 'users:detail' 'USER' %}';
         {% endblock %}
       </script>
       {% block chat %}

@@ -81,7 +81,7 @@ DITTO.chat = {
             'mark': 'popcorn',
             'sarah': 'melon',
         }
-        var profile_url = '/di/users/';  // TODO pass in, fix tenant part of url
+        var profile_url = DITTO.profile_url.replace('USER', user);
         var avatar = $(this.avatar_template);
 	var avatar_pic = avatars[user];
         if (!avatar_pic) {
@@ -105,7 +105,7 @@ DITTO.chat = {
         } else {
             avatar.find('.avatar-name').remove();
         }
-        avatar.find('.avatar-link').attr('href', profile_url + user);
+        avatar.find('.avatar-link').attr('href', profile_url);
         return avatar;
     },
     
