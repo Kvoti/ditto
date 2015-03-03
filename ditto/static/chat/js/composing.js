@@ -54,7 +54,9 @@
 	    active = msg.find('active');
 	
 	if (composing.length) {
-	    this.renderPrivateMessage(from, "is typing ...");
+	    this.renderPrivateMessage(from,
+                                      new Date(),  // TODO don't need date for 'is typing'
+                                      "is typing ...");
 	    other_is_typing_notification = this.getPchatContainer(from).find('>div').get(-1);	    
 	    return false; // to prevent further message processing
 	} else if (active.length) {
