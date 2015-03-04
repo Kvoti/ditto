@@ -72,6 +72,7 @@
 			}
                         avatars[user] = avatar;
                         placeholder.append(_graphic(avatar, size));
+                        DITTO.chat.scrollMessages();
                     },
                     user + '@' + DITTO.chat_host
                 );
