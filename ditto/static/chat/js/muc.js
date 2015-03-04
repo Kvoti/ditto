@@ -22,7 +22,7 @@
 
     // Urgh, hack here. Only replace the sendMessage function if we
     // are actually on a group chat page
-    if (!DITTO.chat.getPchatContainer().length) {
+    if (window.location.href.indexOf('chatroom') !== -1) {
         DITTO.chat.sendMessage = function (msg) {
 	    // TODO we could optimistically render the message before we receive it back
 	    // (though it's pretty quick!)

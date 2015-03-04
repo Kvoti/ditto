@@ -30,11 +30,9 @@
             vcard.appendChild(role);
             vcard.appendChild(photo);
 
-	    console.log('setting', vcard);
-	    
             // TODO handle error
 	    connection.vcard.set(
-		function (r) { console.log('set', r); },
+		function (r) { },
 		vcard
 	    );
 	},
@@ -48,7 +46,6 @@
             } else {
                 connection.vcard.get(
                     function (vcard) {
-                        console.log(vcard);
                         var role = $(vcard).find('ROLE').text();
                         roles[user] = role;
                         placeholder.text(role);

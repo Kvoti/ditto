@@ -2,7 +2,7 @@ from braces.views import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.template.response import TemplateResponse
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, DetailView
 
 
 import configuration.utils
@@ -34,16 +34,9 @@ def new_chatroom(request):
         request, 'chat/newchatroom.html', {'form': form})
 
 
-class PrivateChatsView(LoginRequiredMixin, NavMixin, ListView):
-    model = User
-    context_object_name = 'chatees'
+class PrivateChatsView(LoginRequiredMixin, NavMixin, TemplateView):
     template_name = 'chat/private_chats.html'
     nav = ['messages']
-
-    def get_queryset(self):
-        return configuration.utils.get_permitted_users_for_messaging(
-            self.request.user,
-        )
 
     
 class PrivateChatView(LoginRequiredMixin, NavMixin, DetailView):
@@ -53,11 +46,11 @@ class PrivateChatView(LoginRequiredMixin, NavMixin, DetailView):
     template_name = 'chat/private_chat.html'
     nav = ['private_chat']
 
-    def get_object(self, queryset=None):
-        obj = super(PrivateChatView, self).get_object(queryset)
-        if configuration.utils.is_user_messaging_permitted(
-                self.request.user,
-                obj
-        ):
-            return obj
-        raise Http404
+    # def get_object(self, queryset=None):
+    #     obj = super(PrivateChatView, self).get_object(queryset)
+    #     if configuration.utils.is_user_messaging_permitted(
+    #             self.request.user,
+    #             obj
+    #     ):
+    #         return obj
+    #     raise Http404

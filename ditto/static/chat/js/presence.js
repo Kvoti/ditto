@@ -11,8 +11,7 @@
     var status_menu = status_button.parent().next();
     var custom_status = status_menu.find('input');
     var verbose_status = {};
-    var friends = $('#roster');
-    var messages = $('.messages-from');
+    var friends_ui = $('#roster');
     
     status_menu.find('a').each(function () {
         var option = $(this);
@@ -90,21 +89,35 @@
     }
 
     function handleRoster (roster, item) {
-        var avatar, username, friends_messages;
-        friends.empty();
+        var friends = [];
         $.each(roster, function (i, friend) {
             if (friend.subscription === 'both') {
                 username = Strophe.getNodeFromJid(friend.jid);
-                DITTO.chat._renderMessage(username,
-                                          new Date(),  // TODO date of most recent message
-                                          'TODO last message goes here', friends);
-                friends_messages = messages.find('>div.messages-' + username);
-                if (!friends_messages.length) {
-                    messages.append('<div class="hidden friend-messages messages-' + username + '"><div>');
-                }
+                friends.push(username);
             }
         });
+        renderFriends(friends);
         return true;  // always bloody forget this!
+    }
+
+    function renderFriends (friends) {
+	var friends_list = $($('#friends_template').text());
+	var _item = friends_list.find('.friends-item').remove();
+        var item;
+        
+        var self = this;
+	$.each(friends, function (i, username) {
+            item = _item.clone();
+            item.find('.friends-avatar').append(DITTO.chat.getAvatar(username));
+            item.find('.friends-username').text(username);
+            item.attr('href', '../../messages/' + username + '/');
+            if (username === Strophe.getNodeFromJid(DITTO.chatee)) {
+                item.addClass('active');
+            }
+	    friends_list.append(item);
+	});
+	friends_ui.empty();
+	friends_ui.append(friends_list);
     }
     
 })();

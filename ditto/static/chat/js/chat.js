@@ -3,7 +3,7 @@ DITTO.chat = {
     avatar_template: $('#avatar_template').text(),
     message_input: $('#msg').find('input[type=text]'),
     group_msgs: $('#msgs'),
-    pchat_msgs: $('#pchat_msgs'),
+    pchat_msgs: $('#msgs'),
     privateMessageCallbacks: [],
     outgoingMessageCallbacks: [],
 
@@ -35,7 +35,8 @@ DITTO.chat = {
         var timestamp;
 	// construct skeleton message from template
 	var formatted_message = $(this.message_template);
-
+        formatted_message.data('from', from);
+        
 	// add message text
         heading = formatted_message.find('.media-heading');
         heading.prepend(')');
@@ -185,10 +186,6 @@ $(document).ready(function () {
     getNotificationPermission();
     $('body').one("click", getNotificationPermission);  // chrome
 
-    function isMainChatroom() {
-        return window.location.href.indexOf('chatroom') !== -1 || window.location.href.indexOf('messages') !== -1;
-    }
-    
     function resizeMessageContainer() {
         var height = $(window).height() - $('.msgbar').height() - $('.navbar').height() - parseInt($('.navbar').css('margin-bottom'), 10) -
             $('footer').height() - parseInt($('footer').css('margin-bottom'), 10);
@@ -196,14 +193,12 @@ $(document).ready(function () {
         if (page_head.length) {
             height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
         }
-        var chat = $('#msgs, #presence');
+        var chat = $('#msgs, #presence, #pchat_msgs');
         chat.css('height', height);
         DITTO.chat.scrollMessages();
     }
-    if (isMainChatroom()) {
-        window.onresize = resizeMessageContainer;
-        resizeMessageContainer();
-    }
+    window.onresize = resizeMessageContainer;
+    resizeMessageContainer();
     
     $('#msg').submit(function (e) {
         e.preventDefault();

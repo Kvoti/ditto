@@ -1,17 +1,12 @@
 {% extends "base.html" %}
 
-{% load skin %}
+{% load staticfiles %}
 
-{% block content %}
-<h1 class="page-heading">Messages</h1>
-{% m "medialist" %}
-    {% for chatee in chatees %}
-        {% if chatee != user %}
-            {% m "medialistitem" %}
-                {% url 'ditto:private_chat' chatee.username as url %}
-                {% include "skin/media.html" with heading=chatee.username alt=chatee.username body="Latest message ..." link=url %}
-            {% endm %}
-        {% endif %}
-    {% endfor %}
-{% endm %}
+{% block strophe-plugins %}
+<script src="{% static 'vendor/strophe.roster.js' %}"></script>
+{% endblock %}
+
+{% block chat %}
+<script src="{% static 'chat/js/chat.js' %}"></script>
+<script src="{% static 'chat/js/messagesredirect.js' %}"></script>
 {% endblock %}

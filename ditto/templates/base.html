@@ -23,7 +23,6 @@
     <!-- Your stuff: Third-party css libraries go here -->
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
     <!-- <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet"> -->
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css">
 
     <!-- This file store project specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
@@ -100,6 +99,19 @@
             </li>
         </ul>
     </script>
+    <script id="friends_template" type="text/template">
+        <div class="list-group">
+            <a class="list-group-item friends-item">
+                <div class="media">
+                    <div class="media-left media-middle friends-avatar">
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading friends-username"></h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </script>
     <script id="avatar_template" type="text/template">
         {% include "skin/avatar.html" with name="placeholder" %}
     </script>
@@ -110,7 +122,6 @@
     {% block javascript %}
       <!-- Latest JQuery -->
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
 
       <!-- Latest compiled and minified JavaScript -->
       <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>

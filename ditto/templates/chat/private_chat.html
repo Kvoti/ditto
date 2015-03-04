@@ -1,11 +1,19 @@
-{% extends "chat/base.html" %}
+{% extends "base.html" %}
 
 {% load staticfiles %}
 
-{% block messages %}
-    <audio src="{% static 'audio/newmessage.wav' %}" ></audio>
-    <h1 class="page-heading">Chatting with {{ chatee.username }}: {% include "chat/_chat_partner_status.html" %}</h1>
-    {{ block.super }}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div id="roster">
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h1 class="page-heading">Chatting with {{ chatee.username }}: {% include "chat/_chat_partner_status.html" %}</h1>
+        <div id="msgs"></div>
+        {% include "chat/_chat_send_message.html" %}
+    </div>
+</div>
 {% endblock %}
 
 {% block strophe-plugins %}
