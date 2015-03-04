@@ -7,17 +7,21 @@
 {% block content %}
 <div class="row">
     <div class="col-md-9 main-content">
-        {% if not is_me %}
-        <div class="profile-chat">
-            <h1>{{ object.username }} is {% include "chat/_chat_partner_status.html" %}</h1>
-            <div id="pchat_msgs" data-chat="private"></div>
-            {% include "chat/_chat_send_message.html" %}
-        </div>
-        {% endif %}
         <div class="row">
             <div class="col-md-4 avatar-profile">
-                <div data-avatar="sunshine" data-name="{{ object.username }}" data-size="200"></div><!-- TODO sort out avatars.html so we can render without js too -->
-                <p><strong>Member since: </strong> {{ object.date_joined }}</p>
+                {% if not is_me %}
+                <h1>{{ object.username }} is {% include "chat/_chat_partner_status.html" %}</h1>
+                {% endif %}
+                <div class="media">
+                    <div class="media-left media-middle">
+                        <div data-avatar="sunshine" data-name="{{ object.username }}" data-size="100"></div><!-- TODO sort out avatars.html so we can render without js too -->
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">{{ object.username }}</h4>
+                    </div>
+                </div>
+                <h2>{{ object.groups.all.0.name }}</h2>
+                <p><strong>Joined: </strong> {{ object.date_joined }}</p>
                 {% if is_me %}
                 <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -30,8 +34,14 @@
                 {% endif %}
             </div>
             <div class="col-md-8">
-                <h1>{{ object.username }}</h1>
-                <h2>{{ object.groups.all.0.name }}</h2>
+                {% if not is_me %}
+                <ul class="comms-list nav nav-pills nav-justified">
+                    {% include "users/_comm_button.html" with label="Chat" %}
+                    {% include "users/_comm_button.html" with label="Video" %}
+                    {% include "users/_comm_button.html" with label="Audio" %}
+                </ul>
+                {% endif %}
+                
                 {% with accordion_id='user_content' %}
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
                     {% include "users/_bio.html" with index=0 %}
