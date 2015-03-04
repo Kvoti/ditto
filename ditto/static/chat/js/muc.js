@@ -22,15 +22,23 @@
 
     // Urgh, hack here. Only replace the sendMessage function if we
     // are actually on a group chat page
-    if (window.location.href.indexOf('chatroom') !== -1) {
+    if (isChatroom()) {
         DITTO.chat.sendMessage = function (msg) {
 	    // TODO we could optimistically render the message before we receive it back
 	    // (though it's pretty quick!)
 	    connection.muc.groupchat(chatroom, msg);
         }
     };
+
+    function isChatroom () {
+        return window.location.href.indexOf('chatroom') !== -1;
+    }
     
     function onGroupMessage(msg) {
+        // URGH
+        if (!isChatroom()) {
+            return;
+        }
         var msg = $(msg);
         var body = msg.find("body:first").text();
         var from = msg.attr("from").split('/')[1];
