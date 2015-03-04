@@ -219,9 +219,17 @@ footer {
 
 .comms {
     height: 50px;
-    background-image: url(../images/icons/settings-hi.png);
     background-repeat: no-repeat;
     background-position: left center;
+}
+.comms-video {
+    background-image: url(../images/icons/video-50.png);
+}
+.comms-chat {
+    background-image: url(../images/icons/chat-50.png);
+}
+.comms-audio {
+    background-image: url(../images/icons/audio-50.png);
 }
 .nav-justified > li > a.comms {
     text-align: left;
