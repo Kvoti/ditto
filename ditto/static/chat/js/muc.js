@@ -17,8 +17,7 @@
     });
 
     $(document).on('disconnected.ditto.chat', function () {
-        alert('You got disconnected, maybe you opened another tab or device?');
-        window.location.href = '../';
+        $('body').text('chat connection lost, refresh to try to start again.');
     });
 
     // Urgh, hack here. Only replace the sendMessage function if we
