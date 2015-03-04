@@ -202,8 +202,15 @@ $(document).ready(function () {
         chat.css('height', height);
         DITTO.chat.scrollMessages();
     }
-    window.onresize = resizeMessageContainer;
-    resizeMessageContainer();
+    if (isChatPage()) {
+        window.onresize = resizeMessageContainer;
+        resizeMessageContainer();
+    }
+    function isChatPage () {
+        // urgh
+        var here = window.location.href;
+        return here.indexOf('messages') !== -1 || here.indexOf('chatroom') !== -1;
+    }
     
     $('#msg').submit(function (e) {
         e.preventDefault();
