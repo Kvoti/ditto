@@ -54,12 +54,13 @@ DITTO.chat = {
 	if (from === this.me) {
 	    formatted_message.find('.media-left').remove();
 	    formatted_message.find('.media-body').css('text-align', 'right');
+            formatted_message.find('>div').addClass('col-md-offset-6');
 	} else {
 	    formatted_message.find('.media-right').remove();
 	}
         var avatar = this.getAvatar(from, null);
         avatar.addClass('media-object');
-        formatted_message.find('.media-middle').append(avatar);
+        formatted_message.find('.message-avatar').append(avatar);
 
 	// add message to page and scroll message in to view
         // TODO remove messages once (far) out of view, don't want to append message content indefinitely?
