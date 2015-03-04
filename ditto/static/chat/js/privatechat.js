@@ -24,7 +24,7 @@
 	var from_jid = msg.attr("from");
         var from = from_jid.split('@')[0];
 	if (body) {
-            if (isPchatPage()) {
+            if (isPchatPage() && Strophe.getBareJidFromJid(from_jid) === DITTO.chatee) {
 	        this.renderPrivateMessage(from, new Date(), body);
                 if (this.isPageHidden()) {
                     this.notifyNewMessage();
@@ -33,14 +33,12 @@
                 updateNewMessageCount();
                 this.notifyNewMessage();
             }
-            // return false to prevent further processing of this message
-            return false;
         }
 	return true;
     });
 
     function isPchatPage () {
-        return DITTO.chat.getPchatContainer().length;
+	return window.location.href.indexOf('messages') !== -1;
     }
 
     function updateNewMessageCount () {
