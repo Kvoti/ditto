@@ -10,16 +10,13 @@
     var status_button = $('#set-status span:first');
     var status_menu = status_button.parent().next();
     var custom_status = status_menu.find('input');
-    var verbose_status = {};
+    var verbose_status = {
+        'away': 'Away',
+        'chat': 'Free for chat',
+        'dnd': 'Do not disturb',
+        'xa': 'Extended away',
+    };
     var friends_ui = $('#roster');
-    
-    status_menu.find('a').each(function () {
-        var option = $(this);
-        var status_code = $(option).data('value');
-        if (status_code) {
-            verbose_status[status_code] = option.text();
-        }
-    });
     
     $(document).on('connected.ditto.chat', function (e, conn) {
         connection = conn;
@@ -74,7 +71,7 @@
 		    $('#other-status-show').text('online');
 		}
 		if (status) {
-		    $('#other-status-status').text(status);
+		    $('#other-status-status').text('STATUS: '  + status);
 		} else {
 		    $('#other-status-status').text('');
 		}

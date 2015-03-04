@@ -7,11 +7,24 @@
 {% block content %}
 <div class="row">
     <div class="col-md-9 main-content">
+        {% if not is_me %}
+        <div class="row well">
+            <div class="col-md-4">
+                <h2>{{ object.username }} is <span id="other-status-show">offline</span> <br>
+                    <span id="other-status-status"></span>
+                </h2>
+            </div>
+            <div class="col-md-8">
+                <ul class="comms-list nav nav-pills nav-justified">
+                    {% include "users/_comm_button.html" with label="CHAT" id="chat" %}
+                    {% include "users/_comm_button.html" with label="VIDEO CHAT" id="video" %}
+                    {% include "users/_comm_button.html" with label="AUDIO CHAT" id="audio" %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
         <div class="row">
             <div class="col-md-4 avatar-profile">
-                {% if not is_me %}
-                <h1>{{ object.username }} is {% include "chat/_chat_partner_status.html" %}</h1>
-                {% endif %}
                 <div class="media">
                     <div class="media-left media-middle">
                         <div data-avatar="sunshine" data-name="{{ object.username }}" data-size="100"></div><!-- TODO sort out avatars.html so we can render without js too -->
@@ -34,14 +47,6 @@
                 {% endif %}
             </div>
             <div class="col-md-8">
-                {% if not is_me %}
-                <ul class="comms-list nav nav-pills nav-justified">
-                    {% include "users/_comm_button.html" with label="Chat" %}
-                    {% include "users/_comm_button.html" with label="Video" %}
-                    {% include "users/_comm_button.html" with label="Audio" %}
-                </ul>
-                {% endif %}
-                
                 {% with accordion_id='user_content' %}
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
                     {% include "users/_bio.html" with index=0 %}
