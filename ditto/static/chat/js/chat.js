@@ -187,8 +187,12 @@ $(document).ready(function () {
     $('body').one("click", getNotificationPermission);  // chrome
 
     function resizeMessageContainer() {
-        var height = $(window).height() - $('.msgbar').height() - $('.navbar').height() - parseInt($('.navbar').css('margin-bottom'), 10) -
-            $('footer').height() - parseInt($('footer').css('margin-bottom'), 10);
+        var height = $(window).height()
+            - $('.msgbar').height()
+            - $('.navbar').height()
+            - 2 * parseInt($('.navbar').css('margin-bottom'), 10)  // TODO the 2* here is a fluke, don't know why it works
+            - $('footer').height()
+            - parseInt($('footer').css('margin-bottom'), 10);
         var page_head = $('.page-heading');
         if (page_head.length) {
             height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
