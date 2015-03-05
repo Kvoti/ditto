@@ -23,7 +23,7 @@ def deploy():
     run('apachectl graceful')
     for line in changes.splitlines():
         print green(line)
-    # execute(email, changes)
+    execute(email, changes)
     
 
 def builddb():
