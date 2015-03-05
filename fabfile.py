@@ -14,7 +14,7 @@ env.forward_agent = True
 def deploy():
     with cd('/srv/venv/ditto'):
         run('git fetch')
-        changes = run('git log ..origin/master --oneline --no-color')
+        changes = run('git log ..origin/master --oneline --no-color --reverse > /tmp/log; cat /tmp/log')
         run('git merge origin/master')
         with cd('ditto'), shell_env(DJANGO_CONFIGURATION='Production'):
             sudo(' ../../bin/python manage.py collectstatic --noinput',
@@ -55,7 +55,7 @@ def newnetwork(name):
 @hosts('localhost')
 def email(body):
     fromaddr = 'mark@digital-impacts.com'
-    # toaddrs = ['sarah@digital-impacts.com', 'mark@digital-impacts.com']
+    toaddrs = ['sarah@digital-impacts.com', 'mark@digital-impacts.com']
     toaddrs = ['mark@digital-impacts.com']
 
     msg = MIMEText(body)
