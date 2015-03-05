@@ -189,8 +189,32 @@ var Message = React.createClass({
     render: function () {
 	return (
 	    <div>
-	    <p>{this.props.from} -> {this.props.to} (<Timestamp when={this.props.when}/>): {this.props.message}</p>
+	    <Avatar size={50} user={this.props.from}/> (<Timestamp when={this.props.when}/>): {this.props.message}
             </div>
+	);
+    }
+});
+
+var Avatar = React.createClass({
+    render: function () {
+	// TODO where to put global constant state like this?
+	var avatarSVGs = $('#avatar_svgs').text();
+
+	// TODO better way to generate svg without jquery/outerHTML, convert svg to react component?
+        var avatarSVG = $(avatarSVGs);
+	var avatarName = 'sunshine';
+        avatarSVG.find('>g[id!=' + avatarName + ']').remove();
+        avatarSVG.find('>g').show();
+        avatarSVG.attr({
+            width: this.props.size,
+            height: this.props.size
+        });
+	avatarSVG = avatarSVG.get(0).outerHTML;
+	return (
+	    <div>
+  	    <span>{this.props.user}</span>
+            <div dangerouslySetInnerHTML={{__html: avatarSVG}} />
+	    </div>
 	);
     }
 });

@@ -23,6 +23,9 @@
         <script>
             var chatConf = JSON.parse('{{ conf|escapejs }}');
         </script>
+        <script id="avatar_svgs" type="text/template">
+            {% include "skin/avatars.html" %}
+        </script>
         <script type="text/jsx;harmony=true" src="{% static 'chat/js/chat2.js' %}"></script>
     </body>
 </html>
