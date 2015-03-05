@@ -60,7 +60,7 @@ var Chat = React.createClass({
 	    
 	}
 	this.state.connectionStatus = status;
-	this.state.connection = this.connection;
+	this.state.connection = connection;
 	this.setState(this.state);
     },
     handleArchivedPrivateMessage: function (msg) {
@@ -69,7 +69,6 @@ var Chat = React.createClass({
         var from = Strophe.getNodeFromJid(msg.find('message').attr("from"));
         var to = Strophe.getNodeFromJid(msg.find('message').attr("to"));
         var when = new Date(msg.find('delay').attr('stamp'));
-	console.log(when);
 	this.addMessage(
 	    from,
 	    to,
@@ -79,7 +78,15 @@ var Chat = React.createClass({
 	return true;
     },
     handleMessageSubmit: function (message) {
+	var payload = $msg({
+	    to: this.props.other,
+	    from: this.props.me,
+	    type: 'chat'
+	}).c('body').t(message);
+	this.state.connection.send(payload.tree());
+	
 	// TODO functions have kwargs in es6?
+	// TODO handle error on message submit
 	this.addMessage(
 	    this.state.me,
 	    this.state.other,
@@ -173,7 +180,7 @@ var ComposeMessage = React.createClass({
 	if (!message) {
 	    return;
 	}
-	this.props.onMessageSubmit({message: message});
+	this.props.onMessageSubmit(message);
 	this.refs.message.getDOMNode().value = '';
 	return;
     },
