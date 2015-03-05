@@ -10,16 +10,6 @@ var Chat = React.createClass({
 		'sarah',
 	    ],
 	    messages: [
-		{
-		    'from': 'mark',
-		    'to': 'sarah',
-		    'msg': 'hey there!'
-		},
-		{
-		    'from': 'sarah',
-		    'to': 'mark',
-		    'msg': "React.js is frikkin' cool"
-		},
 	    ]
 	};
     },
@@ -34,7 +24,7 @@ var Chat = React.createClass({
 	}
 	var self = this;  // TODO better way these days?
 	connection.connect(
-	    this.props.jid,
+	    this.props.me,
 	    this.props.password,
 	    function (status) { self.onConnect(connection, status) }
 	);
@@ -55,17 +45,55 @@ var Chat = React.createClass({
 
 	} else if (status_code == Strophe.Status.CONNECTED) {
 	    status = 'connected';
+	    
+	    // TODO race condition here? we're about to set a new state, but receving archived messages will update state too
+	    connection.mam.init(connection);
+	    connection.mam.query(
+		Strophe.getBareJidFromJid(this.props.me),
+		{
+		    'with': Strophe.getBareJidFromJid(this.props.other),
+                    'before': "",
+                    'max': 20,
+		    onMessage: this.handleArchivedPrivateMessage
+		}
+	    );
+	    
 	}
 	this.state.connectionStatus = status;
 	this.state.connection = this.connection;
 	this.setState(this.state);
     },
+    handleArchivedPrivateMessage: function (msg) {
+        var msg = $(msg);
+        var body = msg.find("body:first").text();
+        var from = Strophe.getNodeFromJid(msg.find('message').attr("from"));
+        var to = Strophe.getNodeFromJid(msg.find('message').attr("to"));
+        var when = new Date(msg.find('delay').attr('stamp'));
+	console.log(when);
+	this.addMessage(
+	    from,
+	    to,
+	    when,
+	    body
+	);
+	return true;
+    },
     handleMessageSubmit: function (message) {
+	// TODO functions have kwargs in es6?
+	this.addMessage(
+	    this.state.me,
+	    this.state.other,
+	    new Date(),
+	    message
+	);
+    },
+    addMessage: function (from, to, when, message) {
 	this.state.messages.push(
 	{
-	    from: this.state.me,
-	    to: this.state.other,
-	    msg: message
+	    from: from,
+	    to: to,
+	    when: when,
+	    message: message
 	});
 	this.setState(this.state);
     },
@@ -115,7 +143,7 @@ var Messages = React.createClass({
     render: function () {
 	var messageNodes = this.props.messages.map(function(m, i) {
 	    return (
-		<Message from={m.from} to={m.to} message={m.msg} key={i} />
+		<Message from={m.from} to={m.to} message={m.message} when={m.when.toISOString()} key={i} />
 	    );
 	});
 	return (
@@ -131,7 +159,7 @@ var Message = React.createClass({
     render: function () {
 	return (
 	    <div>
-	    <p>{this.props.from} -> {this.props.to}: {this.props.message}</p>
+	    <p>{this.props.from} -> {this.props.to} ({this.props.when}): {this.props.message}</p>
             </div>
 	);
     }
@@ -160,6 +188,6 @@ var ComposeMessage = React.createClass({
 });
 
 React.render(
-    <Chat server="localhost" jid="mark@network1.localhost" password="" />,
+    <Chat server="localhost" me="mark@network1.localhost/Ditto" password="" other="sarah@network1.localhost/Ditto" />,
     document.getElementById('chat')
 );

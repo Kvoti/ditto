@@ -5,6 +5,11 @@
         <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
         <script src="{% static 'vendor/strophe.js' %}"></script>
+        <script src="{% static 'vendor/strophe.rsm.js' %}"></script>
+        <script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
+        <!-- Only using jquery for parsing the XMPP packets -->
+        <!-- TODO replace with smaller library? -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     </head>
     <body>
         <div id="chat"></div>
