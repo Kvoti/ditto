@@ -65,7 +65,7 @@
                 {% if request.tenant.is_configured %}
                 <li{% if "dashboard" in nav %} class="active"{% endif %}>
                     {% url "ditto:dashboard" as url %}
-                    <a class="" href="{{ url }}">
+                    <a class="navicon navicon-dashboard text-hide" href="{{ url }}">
                         Dashboard
                     </a>
                 </li>

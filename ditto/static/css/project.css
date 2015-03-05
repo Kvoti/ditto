@@ -176,6 +176,9 @@ body {
 .active .navicon-settings {
     background-image: url(../images/icons/settings-hi.png);
 }
+.navicon-dashboard {
+    background-image: url(../images/icons/dashboard-50.png);
+}
 .navbar-brand, .navicon {
     background-repeat: no-repeat;
     background-position: center center;
