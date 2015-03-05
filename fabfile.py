@@ -14,14 +14,15 @@ env.forward_agent = True
 def deploy():
     with cd('/srv/venv/ditto'):
         run('git fetch')
-        changes = run('git log ..origin/master --oneline')
+        changes = run('git log ..origin/master --oneline --no-color')
         run('git merge origin/master')
         with cd('ditto'), shell_env(DJANGO_CONFIGURATION='Production'):
             sudo(' ../../bin/python manage.py collectstatic --noinput',
                  user="pydev")
     sudo('/srv/venv/bin/pip install -U -r /srv/venv/ditto/requirements/production.txt')
     run('apachectl graceful')
-    print green(changes)
+    for line in changes.splitlines():
+        print green(changes)
     execute(email, changes)
     
 
