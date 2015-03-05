@@ -1,6 +1,8 @@
 var Chat = React.createClass({
     getInitialState: function () {
 	return {
+	    connectionStatus: 'connecting',
+	    connection: null,
 	    me: 'mark',
 	    other: 'sarah',
 	    friends: [
@@ -21,6 +23,43 @@ var Chat = React.createClass({
 	    ]
 	};
     },
+    componentDidMount: function() {
+	this.connectToChatServer();
+    },
+    connectToChatServer: function () {
+	connection = new Strophe.Connection('ws://' + this.props.server + ':5280/ws-xmpp');
+	if (this.props.hasOwnProperty('log')) {
+	    connection.rawInput = function (data) { console.log('RECV: ', data); }
+	    connection.rawOutput = function (data) { console.log('RECV: ', data); }
+	}
+	var self = this;  // TODO better way these days?
+	connection.connect(
+	    this.props.jid,
+	    this.props.password,
+	    function (status) { self.onConnect(connection, status) }
+	);
+    },
+    onConnect: function (connection, status_code) {
+	var status;
+	if (status_code == Strophe.Status.CONNECTING) {
+	    status = 'connecting';
+	    
+	} else if (status_code == Strophe.Status.CONNFAIL) {
+	    status = 'failed to connect';
+
+	} else if (status_code == Strophe.Status.DISCONNECTING) {
+	    status = 'disconnecting';
+
+	} else if (status_code == Strophe.Status.DISCONNECTED) {
+	    status = 'disconnected';
+
+	} else if (status_code == Strophe.Status.CONNECTED) {
+	    status = 'connected';
+	}
+	this.state.connectionStatus = status;
+	this.state.connection = this.connection;
+	this.setState(this.state);
+    },
     handleMessageSubmit: function (message) {
 	this.state.messages.push(
 	{
@@ -31,6 +70,13 @@ var Chat = React.createClass({
 	this.setState(this.state);
     },
     render: function () {
+	if (this.state.connectionStatus !== 'connected') {
+	    return (
+		<div>
+		{this.state.connectionStatus}
+		</div>
+	    );
+	}
         return (
 	    <div>
 	        <ComposeMessage onMessageSubmit={this.handleMessageSubmit} />
@@ -114,6 +160,6 @@ var ComposeMessage = React.createClass({
 });
 
 React.render(
-    <Chat />,
+    <Chat server="localhost" jid="mark@network1.localhost" password="" />,
     document.getElementById('chat')
 );
