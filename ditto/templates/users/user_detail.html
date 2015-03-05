@@ -59,9 +59,8 @@
     <div class="col-md-3 main-sidebar">
         {% with accordion_id='user_meta' footer=1 %}
         <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
-            {% if is_me %}{% include "users/_chats.html" with index=0 %}{% endif %}
-            {% include "ditto/module/chatroom.html" with index=1 %}
-            {% include "users/_activity.html" with index=2 %}
+            {% include "ditto/module/chatroom.html" with index=0 %}
+            {% include "users/_activity.html" with index=1 %}
         </div>
         {% endwith %}
     </div>
