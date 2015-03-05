@@ -4,8 +4,6 @@ var Chat = React.createClass({
 	    connectionStatus: 'connecting',
 	    connection: null,
 	    friends: [
-		'admin',
-		'sarah',
 	    ],
 	    messages: [
 	    ]
@@ -55,7 +53,13 @@ var Chat = React.createClass({
 		    onMessage: this.handleArchivedPrivateMessage
 		}
 	    );
-	    
+
+	    connection.roster.init(connection);
+	    connection.roster.registerRequestCallback(this.acceptFriendRequest);
+	    connection.roster.registerCallback(this.handleRoster);
+	    connection.roster.subscribe(Strophe.getBareJidFromJid(this.props.other));
+	    connection.roster.get();
+            
 	}
 	this.state.connectionStatus = status;
 	this.state.connection = connection;
@@ -91,6 +95,22 @@ var Chat = React.createClass({
 	    new Date(),
 	    message
 	);
+    },
+    acceptFriendRequest: function (from) {
+        connection.roster.authorize(from);
+        return true;
+    },
+    handleRoster: function (roster, item) {
+        var friends = [];
+        $.each(roster, function (i, friend) {
+            if (friend.subscription === 'both') {
+                username = Strophe.getNodeFromJid(friend.jid);
+                friends.push(username);
+            }
+        });
+        this.state.friends = friends;
+        this.setState(this.state);
+        return true;  // always bloody forget this!
     },
     addMessage: function (from, to, when, message) {
 	this.state.messages.push(
