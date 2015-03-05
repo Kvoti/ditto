@@ -158,8 +158,10 @@ var Friends = React.createClass({
 
 var Friend = React.createClass({
     render: function () {
+	// TODO switch chats without page load
+	var url = '../' + this.props.friend + '/';
 	return (
-	    <p>{this.props.friend}</p>
+	    <p><a href={url}>{this.props.friend}</a></p>
 	);
     }
 });
