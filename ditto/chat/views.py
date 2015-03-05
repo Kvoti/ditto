@@ -1,9 +1,12 @@
+import json
+
 from braces.views import LoginRequiredMixin
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.signing import Signer
 from django.http import Http404
 from django.template.response import TemplateResponse
 from django.views.generic import TemplateView, DetailView
-
 
 import configuration.utils
 from core.views.decorators import nav
@@ -56,5 +59,27 @@ class PrivateChatView(LoginRequiredMixin, NavMixin, DetailView):
     #     raise Http404
 
     
-class React(LoginRequiredMixin, TemplateView):
+class React(LoginRequiredMixin, DetailView):
+    model = User
+    slug_field = 'username'
     template_name = 'chat/react.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(React, self).get_context_data(**kwargs)
+        server = "localhost" if settings.DEBUG else "134.213.147.235"
+        if settings.DEBUG:
+            password = ""
+        else:
+            signer = Signer()
+            password = signer.sign(self.request.user.username)
+        context['conf'] = json.dumps({
+            'me': self._jid(self.request.user.username),
+            'other': self._jid(self.object.username),
+            'server': server,
+            'password': password,
+        })
+        return context
+
+    def _jid(self, username):
+        chat_host = self.request.tenant.chat_host()
+        return '%s@%s/Ditto' % (username, chat_host)

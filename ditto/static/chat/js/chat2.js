@@ -3,8 +3,6 @@ var Chat = React.createClass({
 	return {
 	    connectionStatus: 'connecting',
 	    connection: null,
-	    me: 'mark',
-	    other: 'sarah',
 	    friends: [
 		'admin',
 		'sarah',
@@ -88,8 +86,8 @@ var Chat = React.createClass({
 	// TODO functions have kwargs in es6?
 	// TODO handle error on message submit
 	this.addMessage(
-	    this.state.me,
-	    this.state.other,
+	    Strophe.getNodeFromJid(this.props.me),
+	    Strophe.getNodeFromJid(this.props.other),
 	    new Date(),
 	    message
 	);
@@ -198,6 +196,6 @@ var ComposeMessage = React.createClass({
 });
 
 React.render(
-    <Chat server="localhost" me="mark@network1.localhost/Ditto" password="" other="sarah@network1.localhost/Ditto" />,
+        <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} />,
     document.getElementById('chat')
 );

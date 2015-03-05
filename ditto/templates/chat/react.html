@@ -19,6 +19,9 @@
     </head>
     <body>
         <div id="chat"></div>
+        <script>
+            var chatConf = JSON.parse('{{ conf|escapejs }}');
+        </script>
         <script type="text/jsx;harmony=true" src="{% static 'chat/js/chat2.js' %}"></script>
     </body>
 </html>

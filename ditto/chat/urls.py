@@ -32,7 +32,7 @@ urlpatterns = patterns('',
     ),
 
     url(
-        regex=r'^react/$',
+        regex=r'^react/(?P<slug>\w+)/$',
         view=views.React.as_view(),
         name='react'
     ),
