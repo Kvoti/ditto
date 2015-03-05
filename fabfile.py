@@ -22,8 +22,8 @@ def deploy():
     sudo('/srv/venv/bin/pip install -U -r /srv/venv/ditto/requirements/production.txt')
     run('apachectl graceful')
     for line in changes.splitlines():
-        print green(changes)
-    execute(email, changes)
+        print green(line)
+    # execute(email, changes)
     
 
 def builddb():
@@ -55,7 +55,8 @@ def newnetwork(name):
 @hosts('localhost')
 def email(body):
     fromaddr = 'mark@digital-impacts.com'
-    toaddrs = ['sarah@digital-impacts.com', 'mark@digital-impacts.com']
+    # toaddrs = ['sarah@digital-impacts.com', 'mark@digital-impacts.com']
+    toaddrs = ['mark@digital-impacts.com']
 
     msg = MIMEText(body)
     msg['Subject'] = '[DITTO] deployment'
