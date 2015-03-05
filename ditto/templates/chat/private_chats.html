@@ -1,12 +1,12 @@
-{% extends "base.html" %}
-
-{% load staticfiles %}
-
-{% block strophe-plugins %}
-<script src="{% static 'vendor/strophe.roster.js' %}"></script>
-{% endblock %}
-
-{% block chat %}
-<script src="{% static 'chat/js/chat.js' %}"></script>
-<script src="{% static 'chat/js/messagesredirect.js' %}"></script>
-{% endblock %}
+{% load static %}<!DOCTYPE html>
+<html>
+    <head>
+        <title>DITTO</title>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
+    </head>
+    <body>
+        <div id="chat"></div>
+        <script type="text/jsx;harmony=true" src="{% static 'chat/js/chat2.js' %}"></script>
+    </body>
+</html>
