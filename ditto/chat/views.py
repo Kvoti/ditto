@@ -54,3 +54,7 @@ class PrivateChatView(LoginRequiredMixin, NavMixin, DetailView):
     #     ):
     #         return obj
     #     raise Http404
+
+    
+class React(LoginRequiredMixin, TemplateView):
+    template_name = 'chat/react.html'

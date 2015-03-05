@@ -1,24 +1,12 @@
-{% load static %}<!DOCTYPE html>
-<html>
-    <head>
-        <title>DITTO</title>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
-        <script src="{% static 'vendor/strophe.js' %}"></script>
-        <script src="{% static 'vendor/strophe.rsm.js' %}"></script>
-        <script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
-        <!-- Only using jquery for parsing the XMPP packets -->
-        <!-- TODO replace with smaller library? -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <style>
-            .messages {
-            height: 400px;
-            overflow-y: scroll;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="chat"></div>
-        <script type="text/jsx;harmony=true" src="{% static 'chat/js/chat2.js' %}"></script>
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block strophe-plugins %}
+<script src="{% static 'vendor/strophe.roster.js' %}"></script>
+{% endblock %}
+
+{% block chat %}
+<script src="{% static 'chat/js/chat.js' %}"></script>
+<script src="{% static 'chat/js/messagesredirect.js' %}"></script>
+{% endblock %}

@@ -30,4 +30,10 @@ urlpatterns = patterns('',
         view=views.PrivateChatView.as_view(),
         name='private_chat'
     ),
+
+    url(
+        regex=r'^react/$',
+        view=views.React.as_view(),
+        name='react'
+    ),
 )
