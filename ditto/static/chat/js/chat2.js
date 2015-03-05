@@ -147,6 +147,10 @@ var Friend = React.createClass({
 });
 
 var Messages = React.createClass({
+    componentDidUpdate: function() {
+	var node = this.getDOMNode();
+	node.scrollTop = node.scrollHeight;
+    },
     render: function () {
 	var messageNodes = this.props.messages.map(function(m, i) {
 	    return (
@@ -154,8 +158,7 @@ var Messages = React.createClass({
 	    );
 	});
 	return (
-	    <div>
-	        <p>Messages</p>
+	    <div className="messages">
                 {messageNodes}
 	    </div>
 	);
