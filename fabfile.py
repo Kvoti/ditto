@@ -1,4 +1,9 @@
-from fabric.api import env, cd, run, shell_env, sudo
+import os
+import smtplib
+from email.mime.text import MIMEText
+
+from fabric.api import env, cd, run, shell_env, sudo, hosts, execute
+from fabric.colors import green
 
 env.hosts = ['134.213.147.235']
 env.user = 'root'
@@ -9,14 +14,16 @@ env.forward_agent = True
 def deploy():
     with cd('/srv/venv/ditto'):
         run('git fetch')
-        run('git log ..origin/master --oneline')
+        changes = run('git log ..origin/master --oneline')
         run('git merge origin/master')
         with cd('ditto'), shell_env(DJANGO_CONFIGURATION='Production'):
             sudo(' ../../bin/python manage.py collectstatic --noinput',
                  user="pydev")
     sudo('/srv/venv/bin/pip install -U -r /srv/venv/ditto/requirements/production.txt')
     run('apachectl graceful')
-
+    print green(changes)
+    execute(email, changes)
+    
 
 def builddb():
     with cd('/srv/venv/ditto/ditto'):
@@ -42,3 +49,22 @@ def newnetwork(name):
                  user="pydev")
             sudo(' ../../bin/python manage.py runscript setup_test_data',
                  user="pydev")
+
+
+@hosts('localhost')
+def email(body):
+    fromaddr = 'mark@digital-impacts.com'
+    toaddr = 'sarah@digital-impacts.com'
+
+    msg = MIMEText(body)
+    msg['Subject'] = '[DITTO] deployment'
+    msg['From'] = fromaddr
+    msg['To'] = toaddr
+
+    username = 'mark@digital-impacts.com'
+    password = os.environ['FAB_EMAIL_PASS']
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.starttls()
+    server.login(username, password)
+    server.sendmail(fromaddr, [toaddr], msg.as_string())
+    server.quit()
