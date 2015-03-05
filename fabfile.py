@@ -56,7 +56,6 @@ def newnetwork(name):
 def email(body):
     fromaddr = 'mark@digital-impacts.com'
     toaddrs = ['sarah@digital-impacts.com', 'mark@digital-impacts.com']
-    toaddrs = ['mark@digital-impacts.com']
 
     msg = MIMEText(body)
     msg['Subject'] = '[DITTO] deployment'
