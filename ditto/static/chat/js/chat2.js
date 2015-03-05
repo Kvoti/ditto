@@ -6,7 +6,8 @@ var Chat = React.createClass({
 	    friends: [
 	    ],
 	    messages: [
-	    ]
+	    ],
+            userMeta: {},
 	};
     },
     componentDidMount: function() {
@@ -59,9 +60,12 @@ var Chat = React.createClass({
 	    connection.roster.registerCallback(this.handleRoster);
 	    connection.roster.subscribe(Strophe.getBareJidFromJid(this.props.other));
 	    connection.roster.get();
-            
+
+            connection.vcard.init(connection);
+	    this.getUserMeta(Strophe.getBareJidFromJid(this.props.me));
 	}
 	this.state.connectionStatus = status;
+        // TODO not sure connection is really state
 	this.state.connection = connection;
 	this.setState(this.state);
     },
@@ -102,15 +106,34 @@ var Chat = React.createClass({
     },
     handleRoster: function (roster, item) {
         var friends = [];
+	var self = this;
         $.each(roster, function (i, friend) {
             if (friend.subscription === 'both') {
                 username = Strophe.getNodeFromJid(friend.jid);
                 friends.push(username);
+		self.getUserMeta(Strophe.getBareJidFromJid(friend.jid));
             }
         });
         this.state.friends = friends;
         this.setState(this.state);
         return true;  // always bloody forget this!
+    },
+    getUserMeta: function (jid) {
+	var user = Strophe.getNodeFromJid(jid);
+        if (this.state.userMeta[user]) {
+            return;
+        }
+        var self = this;
+        this.state.connection.vcard.get(
+            function (vcard) {
+                vcard = $(vcard);
+                var role = vcard.find('ROLE').text();
+                var avatar = vcard.find('PHOTO').text();
+                self.state.userMeta[user] = {role: role, avatar: avatar};
+		self.setState(self.state);
+            },
+	    jid
+        );
     },
     addMessage: function (from, to, when, message) {
 	this.state.messages.push(
@@ -134,7 +157,7 @@ var Chat = React.createClass({
 	    <div>
 	        <ComposeMessage onMessageSubmit={this.handleMessageSubmit} />
    	        <Friends friends={this.state.friends} />
-	        <Messages messages={this.state.messages} />
+	        <Messages messages={this.state.messages} userMeta={this.state.userMeta} />
 	    </div>
         );
     }
@@ -172,9 +195,10 @@ var Messages = React.createClass({
 	node.scrollTop = node.scrollHeight;
     },
     render: function () {
+	var userMeta = this.props.userMeta;
 	var messageNodes = this.props.messages.map(function(m, i) {
 	    return (
-		<Message from={m.from} to={m.to} message={m.message} when={m.when} key={i} />
+		<Message from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
 	    );
 	});
 	return (
@@ -187,9 +211,16 @@ var Messages = React.createClass({
 
 var Message = React.createClass({
     render: function () {
+	var avatar;
+	var meta = this.props.userMeta[this.props.from];
+	if (meta) {
+	    avatar = meta.avatar;
+	} else {
+	    avatar = 'cupcake'
+	}
 	return (
 	    <div>
-	    <Avatar size={50} user={this.props.from}/> (<Timestamp when={this.props.when}/>): {this.props.message}
+	    <Avatar size={50} user={this.props.from} name={avatar} /> (<Timestamp when={this.props.when}/>): {this.props.message}
             </div>
 	);
     }
@@ -202,14 +233,18 @@ var Avatar = React.createClass({
 
 	// TODO better way to generate svg without jquery/outerHTML, convert svg to react component?
         var avatarSVG = $(avatarSVGs);
-	var avatarName = 'sunshine';
-        avatarSVG.find('>g[id!=' + avatarName + ']').remove();
-        avatarSVG.find('>g').show();
-        avatarSVG.attr({
-            width: this.props.size,
-            height: this.props.size
-        });
-	avatarSVG = avatarSVG.get(0).outerHTML;
+	var avatarName = this.props.name;
+	if (avatarName) {
+            avatarSVG.find('>g[id!=' + avatarName + ']').remove();
+            avatarSVG.find('>g').show();
+            avatarSVG.attr({
+		width: this.props.size,
+		height: this.props.size
+            });
+	    avatarSVG = avatarSVG.get(0).outerHTML;
+	} else {
+	    avatarSVG = '';
+	}
 	return (
 	    <div>
   	    <span>{this.props.user}</span>
@@ -273,6 +308,6 @@ var ComposeMessage = React.createClass({
 });
 
 React.render(
-        <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} />,
+    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} log />,
     document.getElementById('chat')
 );
