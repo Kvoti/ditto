@@ -152,7 +152,7 @@ var Messages = React.createClass({
     render: function () {
 	var messageNodes = this.props.messages.map(function(m, i) {
 	    return (
-		<Message from={m.from} to={m.to} message={m.message} when={m.when.toISOString()} key={i} />
+		<Message from={m.from} to={m.to} message={m.message} when={m.when} key={i} />
 	    );
 	});
 	return (
@@ -167,13 +167,44 @@ var Message = React.createClass({
     render: function () {
 	return (
 	    <div>
-	    <p>{this.props.from} -> {this.props.to} ({this.props.when}): {this.props.message}</p>
+	    <p>{this.props.from} -> {this.props.to} (<Timestamp when={this.props.when}/>): {this.props.message}</p>
             </div>
 	);
     }
 });
 
-
+var Timestamp = React.createClass({
+    componentDidMount: function() {
+        setInterval(this.updateDelta, 60 * 1000);
+    },
+    updateDelta: function () {
+        // TODO this doesn't feel right
+        this.setState({});
+    },
+    // TODO prob library for this
+    timeAgo: function (date) {
+        var delta = new Date() - date;
+        if (delta < 60000) {
+            return 'less than a minute ago';
+        }
+        if (delta < 3600 * 1000) {
+            var minutes = delta / (60 * 1000);
+            return Math.floor(minutes) + ' minutes ago';
+        }
+        if (delta < 2 * 3600 * 1000) {
+            return 'about an hour ago';
+        }
+        return 'ages ago';
+    },
+    render: function () {
+        when = this.props.when;
+        var delta = this.timeAgo(when);
+        return (
+                <time dateTime={when.toISOString()}>{delta}</time>
+        );
+    }
+});
+                               
 var ComposeMessage = React.createClass({
     handleSubmit: function(e) {
 	e.preventDefault();
