@@ -55,7 +55,10 @@
                 
                 <li class="dropdown{% if 'me' in nav %} active{% endif %}">
                     {% url "users:detail" request.user.username as profile_url %}
-                    <a href="#" class="navicon text-hide navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Me <span class="caret"></span></a>
+                    <div data-avatar data-name="{{ request.user.username }}" data-size="50"></div>                    
+                    <a href="#" class="text-hide navicon navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Me <span class="caret"></span>
+                    </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="{{ profile_url }}">My Profile</a></li>
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>

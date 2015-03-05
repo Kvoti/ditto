@@ -164,12 +164,6 @@ body {
 .active .navicon-messages {
     background-image: url(../images/icons/chat-hi.png);
 }
-.navicon-profile {
-    background-image: url(../images/icons/monkey-lo.png);
-}
-.active .navicon-profile {
-    background-image: url(../images/icons/monkey-hi.png);
-}
 .navicon-settings {
     background-image: url(../images/icons/settings-lo.png);
 }
@@ -185,7 +179,7 @@ body {
     width: 70px;
 }
 .active .navicon, .open .navicon {
-    background-color: #210040 !important;
+    background-color: transparent !important;
 }
 
 .panel-body #msgs {
@@ -237,4 +231,13 @@ footer {
 .nav-justified > li > a.comms {
     text-align: left;
     padding-left: 70px;
+}
+
+
+.navbar [data-avatar] {
+    /* TODO don't really know why these styles work, should probably be calculated in relation to other things */
+    /* TODO borked on mobile of course */
+    position:absolute;
+    top:25px;
+    left:10px;
 }
