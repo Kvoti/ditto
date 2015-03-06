@@ -42,6 +42,9 @@ var Chat = React.createClass({
 
 	} else if (status_code == Strophe.Status.CONNECTED) {
 	    status = 'connected';
+
+	    connection.send($pres().tree());
+	    connection.addHandler(this.handlePrivateMessage, null, 'message', 'chat',  null);
 	    
 	    // TODO race condition here? we're about to set a new state, but receving archived messages will update state too
 	    connection.mam.init(connection);
@@ -75,6 +78,20 @@ var Chat = React.createClass({
         var from = Strophe.getNodeFromJid(msg.find('message').attr("from"));
         var to = Strophe.getNodeFromJid(msg.find('message').attr("to"));
         var when = new Date(msg.find('delay').attr('stamp'));
+	this.addMessage(
+	    from,
+	    to,
+	    when,
+	    body
+	);
+	return true;
+    },
+    handlePrivateMessage: function (msg) {
+	var msg = $(msg);
+	var body = msg.find("body:first").text();
+        var from = Strophe.getNodeFromJid(msg.attr("from"));
+        var to = Strophe.getNodeFromJid(msg.attr("to"));
+	var when = new Date();
 	this.addMessage(
 	    from,
 	    to,
