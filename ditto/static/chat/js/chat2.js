@@ -46,7 +46,6 @@ var Chat = React.createClass({
 	    connection.send($pres().tree());
 	    connection.addHandler(this.handlePrivateMessage, null, 'message', 'chat',  null);
 	    
-	    // TODO race condition here? we're about to set a new state, but receving archived messages will update state too
 	    connection.mam.init(connection);
 	    connection.mam.query(
 		Strophe.getBareJidFromJid(this.props.me),
