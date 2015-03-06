@@ -379,7 +379,7 @@ var ComposeMessage = React.createClass({
 	    return;
 	}
 	this.props.onMessageSubmit(message);
-	this.refs.message.getDOMNode().value = '';
+	this.setState({value: ''});
 	return;
     },
     render: function() {
