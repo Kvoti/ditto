@@ -1,3 +1,7 @@
+// TODO add closure (or module, use es6, what version of javascript does jsx compiler support?)?
+var composedMessageChangeAt;
+var stillTypingTimeout = 5000;
+
 var Chat = React.createClass({
     getInitialState: function () {
 	return {
@@ -8,6 +12,7 @@ var Chat = React.createClass({
 	    messages: [
 	    ],
             userMeta: {},
+	    whosTyping: {},
 	};
     },
     componentDidMount: function() {
@@ -65,6 +70,9 @@ var Chat = React.createClass({
 
             connection.vcard.init(connection);
 	    this.getUserMeta(Strophe.getBareJidFromJid(this.props.me));
+
+	    connection.chatstates.init(connection);
+
 	}
 	this.state.connectionStatus = status;
         // TODO not sure connection is really state
@@ -91,12 +99,24 @@ var Chat = React.createClass({
         var from = Strophe.getNodeFromJid(msg.attr("from"));
         var to = Strophe.getNodeFromJid(msg.attr("to"));
 	var when = new Date();
-	this.addMessage(
-	    from,
-	    to,
-	    when,
-	    body
-	);
+	var composing = msg.find('composing');
+	var active = msg.find('active');
+
+	if (composing.length) {
+	    this.state.whosTyping[from] = true;
+	    this.setState(this.state);
+	} else {
+	    if (active.length) {
+		delete this.state.whosTyping[from];
+		this.setState(this.state);
+	    }
+	    this.addMessage(
+		from,
+		to,
+		when,
+		body
+	    );
+	}
 	return true;
     },
     handleMessageSubmit: function (message) {
@@ -105,6 +125,10 @@ var Chat = React.createClass({
 	    from: this.props.me,
 	    type: 'chat'
 	}).c('body').t(message);
+
+	this.state.connection.chatstates.addActive(payload);
+	composedMessageChangeAt = null;
+
 	this.state.connection.send(payload.tree());
 	
 	// TODO functions have kwargs in es6?
@@ -115,6 +139,28 @@ var Chat = React.createClass({
 	    new Date(),
 	    message
 	);
+    },
+    handleMessageChange: function () {
+	if (!composedMessageChangeAt) {
+	    this.state.connection.chatstates.sendComposing(
+		Strophe.getBareJidFromJid(this.props.other)
+	    );
+	    composedMessageChangeAt = new Date();
+	    setTimeout(this.checkImStillTyping, stillTypingTimeout);
+	}
+    },
+    checkImStillTyping: function () {
+	if (composedMessageChangeAt) {
+	    var now = new Date();
+	    if (now - composedMessageChangeAt > stillTypingTimeout) {
+		composedMessageChangeAt = undefined;
+		connection.chatstates.sendActive(
+		    Strophe.getBareJidFromJid(this.props.other)
+		);
+	    } else {
+		window.setTimeout(this.checkImStillTyping, stillTypingTimeout);
+	    }
+	}
     },
     acceptFriendRequest: function (from) {
         connection.roster.authorize(from);
@@ -171,9 +217,10 @@ var Chat = React.createClass({
 	}
         return (
 	    <div>
-	        <ComposeMessage onMessageSubmit={this.handleMessageSubmit} />
-   	        <Friends friends={this.state.friends} />
-	        <Messages messages={this.state.messages} userMeta={this.state.userMeta} />
+	    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
+   	    <Friends friends={this.state.friends} />
+	    <WhosTyping users={this.state.whosTyping} />
+	    <Messages messages={this.state.messages} userMeta={this.state.userMeta} />
 	    </div>
         );
     }
@@ -242,6 +289,20 @@ var Message = React.createClass({
     }
 });
 
+var WhosTyping = React.createClass({
+    render: function () {
+	var nodes = [];
+	for (var user in this.props.users) {
+	    nodes.push(
+		<p>{user} is typing ...</p>
+	    );
+	};
+	return (
+	    <div>{nodes}</div>
+	);
+    }
+});
+
 var Avatar = React.createClass({
     render: function () {
 	// TODO where to put global constant state like this?
@@ -303,6 +364,13 @@ var Timestamp = React.createClass({
 });
                                
 var ComposeMessage = React.createClass({
+    getInitialState: function() {
+	return {value: ''};
+    },
+    handleChange: function(event) {
+	this.setState({value: event.target.value});
+	this.props.onMessageChange();
+    },
     handleSubmit: function(e) {
 	e.preventDefault();
 	var message = this.refs.message.getDOMNode().value.trim();
@@ -316,7 +384,7 @@ var ComposeMessage = React.createClass({
     render: function() {
 	return (
 	    <form onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="Type your message here..." ref="message" />
+            <input value={this.state.value} onChange={this.handleChange} type="text" placeholder="Type your message here..." ref="message" />
             <input type="submit" value="Say it!" />
 	    </form>
 	);
