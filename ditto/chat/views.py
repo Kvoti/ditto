@@ -73,7 +73,7 @@ class React(LoginRequiredMixin, DetailView):
             signer = Signer()
             password = signer.sign(self.request.user.username)
         context['conf'] = json.dumps({
-            'me': self._jid(self.request.user.username),
+            'me': self._resource(self._jid(self.request.user.username)),
             'other': self._jid(self.object.username),
             'server': server,
             'password': password,
@@ -82,4 +82,8 @@ class React(LoginRequiredMixin, DetailView):
 
     def _jid(self, username):
         chat_host = self.request.tenant.chat_host()
-        return '%s@%s/Ditto' % (username, chat_host)
+        return '%s@%s' % (username, chat_host)
+
+    def _resource(self, jid):
+        return '%s/Ditto' % jid
+    

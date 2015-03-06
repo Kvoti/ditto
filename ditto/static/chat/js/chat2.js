@@ -7,6 +7,7 @@ var Chat = React.createClass({
 	return {
 	    connectionStatus: 'connecting',
 	    connection: null,
+	    talkingTo: this.props.other,
 	    friends: [
 	    ],
 	    messages: [
@@ -55,7 +56,8 @@ var Chat = React.createClass({
 	    connection.mam.query(
 		Strophe.getBareJidFromJid(this.props.me),
 		{
-		    'with': Strophe.getBareJidFromJid(this.props.other),
+		    // TODO load last N messages for each chat not across all chats
+		    // 'with': Strophe.getBareJidFromJid(this.state.talkingTo),
                     'before': "",
                     'max': 20,
 		    onMessage: this.handleArchivedPrivateMessage
@@ -65,7 +67,7 @@ var Chat = React.createClass({
 	    connection.roster.init(connection);
 	    connection.roster.registerRequestCallback(this.acceptFriendRequest);
 	    connection.roster.registerCallback(this.handleRoster);
-	    connection.roster.subscribe(Strophe.getBareJidFromJid(this.props.other));
+	    connection.roster.subscribe(Strophe.getBareJidFromJid(this.state.talkingTo));
 	    connection.roster.get();
 
             connection.vcard.init(connection);
@@ -79,25 +81,31 @@ var Chat = React.createClass({
 	this.state.connection = connection;
 	this.setState(this.state);
     },
+    switchChat: function (friend) {
+	this.state.talkingTo = friend;
+	this.setState(this.state);
+    },
     handleArchivedPrivateMessage: function (msg) {
         var msg = $(msg);
-        var body = msg.find("body:first").text();
-        var from = Strophe.getNodeFromJid(msg.find('message').attr("from"));
-        var to = Strophe.getNodeFromJid(msg.find('message').attr("to"));
-        var when = new Date(msg.find('delay').attr('stamp'));
-	this.addMessage(
-	    from,
-	    to,
-	    when,
-	    body
-	);
+	if (msg.find('[type=groupchat]').length === 0) {
+            var body = msg.find("body:first").text();
+            var from = msg.find('message').attr("from");
+            var to = msg.find('message').attr("to");
+            var when = new Date(msg.find('delay').attr('stamp'));
+	    this.addMessage(
+		from,
+		to,
+		when,
+		body
+	    );
+	}
 	return true;
     },
     handlePrivateMessage: function (msg) {
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
-        var from = Strophe.getNodeFromJid(msg.attr("from"));
-        var to = Strophe.getNodeFromJid(msg.attr("to"));
+        var from = msg.attr("from");
+        var to = msg.attr("to");
 	var when = new Date();
 	var composing = msg.find('composing');
 	var active = msg.find('active');
@@ -121,7 +129,7 @@ var Chat = React.createClass({
     },
     handleMessageSubmit: function (message) {
 	var payload = $msg({
-	    to: this.props.other,
+	    to: this.state.talkingTo,
 	    from: this.props.me,
 	    type: 'chat'
 	}).c('body').t(message);
@@ -134,8 +142,8 @@ var Chat = React.createClass({
 	// TODO functions have kwargs in es6?
 	// TODO handle error on message submit
 	this.addMessage(
-	    Strophe.getNodeFromJid(this.props.me),
-	    Strophe.getNodeFromJid(this.props.other),
+	    Strophe.getBareJidFromJid(this.props.me),
+	    this.state.talkingTo,
 	    new Date(),
 	    message
 	);
@@ -143,7 +151,7 @@ var Chat = React.createClass({
     handleMessageChange: function () {
 	if (!composedMessageChangeAt) {
 	    this.state.connection.chatstates.sendComposing(
-		Strophe.getBareJidFromJid(this.props.other)
+		Strophe.getBareJidFromJid(this.state.talkingTo)
 	    );
 	    composedMessageChangeAt = new Date();
 	    setTimeout(this.checkImStillTyping, stillTypingTimeout);
@@ -155,7 +163,7 @@ var Chat = React.createClass({
 	    if (now - composedMessageChangeAt > stillTypingTimeout) {
 		composedMessageChangeAt = undefined;
 		connection.chatstates.sendActive(
-		    Strophe.getBareJidFromJid(this.props.other)
+		    Strophe.getBareJidFromJid(this.state.talkingTo)
 		);
 	    } else {
 		window.setTimeout(this.checkImStillTyping, stillTypingTimeout);
@@ -171,8 +179,7 @@ var Chat = React.createClass({
 	var self = this;
         $.each(roster, function (i, friend) {
             if (friend.subscription === 'both') {
-                username = Strophe.getNodeFromJid(friend.jid);
-                friends.push(username);
+                friends.push(friend.jid);
 		self.getUserMeta(Strophe.getBareJidFromJid(friend.jid));
             }
         });
@@ -180,8 +187,7 @@ var Chat = React.createClass({
         this.setState(this.state);
         return true;  // always bloody forget this!
     },
-    getUserMeta: function (jid) {
-	var user = Strophe.getNodeFromJid(jid);
+    getUserMeta: function (user) {
         if (this.state.userMeta[user]) {
             return;
         }
@@ -194,7 +200,7 @@ var Chat = React.createClass({
                 self.state.userMeta[user] = {role: role, avatar: avatar};
 		self.setState(self.state);
             },
-	    jid
+	    user
         );
     },
     addMessage: function (from, to, when, message) {
@@ -218,9 +224,9 @@ var Chat = React.createClass({
         return (
 	    <div>
 	    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
-   	    <Friends friends={this.state.friends} />
+   	    <Friends friends={this.state.friends} current={this.state.talkingTo} switchChat={this.switchChat} />
 	    <WhosTyping users={this.state.whosTyping} />
-	    <Messages messages={this.state.messages} userMeta={this.state.userMeta} />
+	    <Messages talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
 	    </div>
         );
     }
@@ -228,9 +234,10 @@ var Chat = React.createClass({
 
 var Friends = React.createClass({
     render: function () {
+	var self = this;
 	var friendNodes = this.props.friends.map(function(friend, index) {
 	    return (
-		<Friend friend={friend} key={index} />
+		<Friend friend={friend} key={index} switchChat={self.props.switchChat} />
 	    );
 	});
 	return (
@@ -243,11 +250,13 @@ var Friends = React.createClass({
 });
 
 var Friend = React.createClass({
+    switchChat: function (e) {
+	e.preventDefault();
+	this.props.switchChat(this.props.friend);
+    },
     render: function () {
-	// TODO switch chats without page load
-	var url = '../' + this.props.friend + '/';
 	return (
-	    <p><a href={url}>{this.props.friend}</a></p>
+	    <p><a href="#" onClick={this.switchChat}>{this.props.friend}</a></p>
 	);
     }
 });
@@ -259,7 +268,13 @@ var Messages = React.createClass({
     },
     render: function () {
 	var userMeta = this.props.userMeta;
-	var messageNodes = this.props.messages.map(function(m, i) {
+	var self = this;
+	var messages = this.props.messages.filter(
+	    function (msg) {
+		return Strophe.getBareJidFromJid(msg.from) === self.props.talkingTo || Strophe.getBareJidFromJid(msg.to) === self.props.talkingTo
+	    }
+	);
+	var messageNodes = messages.map(function(m, i) {
 	    return (
 		<Message from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
 	    );
@@ -275,7 +290,7 @@ var Messages = React.createClass({
 var Message = React.createClass({
     render: function () {
 	var avatar;
-	var meta = this.props.userMeta[this.props.from];
+	var meta = this.props.userMeta[Strophe.getBareJidFromJid(this.props.from)];
 	if (meta) {
 	    avatar = meta.avatar;
 	} else {
