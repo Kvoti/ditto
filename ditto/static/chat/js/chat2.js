@@ -59,7 +59,7 @@ var Chat = React.createClass({
 		    // TODO load last N messages for each chat not across all chats
 		    // 'with': Strophe.getBareJidFromJid(this.state.talkingTo),
                     'before': "",
-                    'max': 20,
+                    'max': 50,
 		    onMessage: this.handleArchivedPrivateMessage
 		}
 	    );
