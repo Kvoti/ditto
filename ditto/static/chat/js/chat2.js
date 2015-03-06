@@ -335,6 +335,7 @@ var Timestamp = React.createClass({
     componentDidMount: function() {
         setInterval(this.updateDelta, 60 * 1000);
     },
+    // TODO clear interval on unmount
     updateDelta: function () {
         // TODO this doesn't feel right
         this.setState({});
