@@ -393,6 +393,6 @@ var ComposeMessage = React.createClass({
 });
 
 React.render(
-    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} log />,
+    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} />,
     document.getElementById('chat')
 );
