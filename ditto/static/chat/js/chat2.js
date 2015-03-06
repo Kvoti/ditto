@@ -236,8 +236,9 @@ var Friends = React.createClass({
     render: function () {
 	var self = this;
 	var friendNodes = this.props.friends.map(function(friend, index) {
+	    var is_current = self.props.current === friend;
 	    return (
-		<Friend friend={friend} key={index} switchChat={self.props.switchChat} />
+		<Friend is_current={is_current} friend={friend} key={index} switchChat={self.props.switchChat} />
 	    );
 	});
 	return (
@@ -255,8 +256,14 @@ var Friend = React.createClass({
 	this.props.switchChat(this.props.friend);
     },
     render: function () {
+	var current;
+	if (this.props.is_current) {
+	    current = (
+		<span> * </span>
+	    );
+	}
 	return (
-	    <p><a href="#" onClick={this.switchChat}>{this.props.friend}</a></p>
+	    <p>{current} <a href="#" onClick={this.switchChat}>{this.props.friend}</a></p>
 	);
     }
 });
