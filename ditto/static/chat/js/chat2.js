@@ -14,6 +14,7 @@ var Chat = React.createClass({
 	    ],
             userMeta: {},
 	    whosTyping: {},
+	    isInChatroom: false,
 	};
     },
     componentDidMount: function() {
@@ -75,6 +76,9 @@ var Chat = React.createClass({
 
 	    connection.chatstates.init(connection);
 
+	    connection.muc.init(connection);
+	    connection.muc.join(this.props.chatroom, this.props.nick, this.handleGroupMessage);
+
 	}
 	this.state.connectionStatus = status;
         // TODO not sure connection is really state
@@ -82,8 +86,17 @@ var Chat = React.createClass({
 	this.setState(this.state);
     },
     switchChat: function (friend) {
-	this.state.talkingTo = friend;
-	this.setState(this.state);
+	this.setState({
+	    isInChatroom: false,
+	    talkingTo: friend,
+	});
+    },
+    showChatroom: function (e) {
+	e.preventDefault();
+	this.setState({
+	    isInChatroom: true,
+	    talkingTo: this.props.chatroom
+	});
     },
     handleArchivedPrivateMessage: function (msg) {
         var msg = $(msg);
@@ -127,26 +140,51 @@ var Chat = React.createClass({
 	}
 	return true;
     },
+    handleGroupMessage: function (msg) {
+        var msg = $(msg);
+        var body = msg.find("body:first").text();
+        var from = msg.attr("from") ;//.split('/')[1];
+        var when = msg.find('delay');
+        if (when.length) {
+            when = new Date(when.attr('stamp'));
+        } else {
+            when = new Date();
+        }
+        if (from) {
+            // TODO always get an 'empty' message from the room
+            // itself, not sure why
+	    this.addMessage(
+		from,
+		this.props.me,
+		when,
+		body
+	    )
+        }
+        return true;
+    },
     handleMessageSubmit: function (message) {
-	var payload = $msg({
-	    to: this.state.talkingTo,
-	    from: this.props.me,
-	    type: 'chat'
-	}).c('body').t(message);
-
-	this.state.connection.chatstates.addActive(payload);
-	composedMessageChangeAt = null;
-
-	this.state.connection.send(payload.tree());
-	
-	// TODO functions have kwargs in es6?
-	// TODO handle error on message submit
-	this.addMessage(
-	    Strophe.getBareJidFromJid(this.props.me),
-	    this.state.talkingTo,
-	    new Date(),
-	    message
-	);
+	if (this.state.isInChatroom) {
+	    this.state.connection.muc.groupchat(this.props.chatroom, message);
+	} else {
+	    var payload = $msg({
+		to: this.state.talkingTo,
+		from: this.props.me,
+		type: 'chat'
+	    }).c('body').t(message);
+	    
+	    this.state.connection.chatstates.addActive(payload);
+	    composedMessageChangeAt = null;
+		    
+	    this.state.connection.send(payload.tree());
+	    // TODO functions have kwargs in es6?
+	    // TODO handle error on message submit
+	    this.addMessage(
+		Strophe.getBareJidFromJid(this.props.me),
+		this.state.talkingTo,
+		new Date(),
+		message
+	    );
+	}
     },
     handleMessageChange: function () {
 	if (!composedMessageChangeAt) {
@@ -225,6 +263,7 @@ var Chat = React.createClass({
 	    <div>
 	    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
    	    <Friends friends={this.state.friends} current={this.state.talkingTo} switchChat={this.switchChat} />
+	    <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
 	    <WhosTyping users={this.state.whosTyping} />
 	    <Messages talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
 	    </div>
@@ -243,7 +282,6 @@ var Friends = React.createClass({
 	});
 	return (
 	    <div>
-	        <p>Friends</p>
                 {friendNodes}
 	    </div>
 	);
@@ -264,6 +302,22 @@ var Friend = React.createClass({
 	}
 	return (
 	    <p>{current} <a href="#" onClick={this.switchChat}>{this.props.friend}</a></p>
+	);
+    }
+});
+
+var Chatroom = React.createClass({
+    render: function () {
+	var current;
+	if (this.props.isInside) {
+	    current = (
+		<span> * </span>
+	    );
+	}
+	return (
+	    <div>
+	    {current} <a onClick={this.props.show} href="#">Chatroom</a>
+	    </div>
 	);
     }
 });
@@ -355,9 +409,11 @@ var Avatar = React.createClass({
 
 var Timestamp = React.createClass({
     componentDidMount: function() {
-        setInterval(this.updateDelta, 60 * 1000);
+        this.interval = setInterval(this.updateDelta, 60 * 1000);
     },
-    // TODO clear interval on unmount
+    componentWillUnmount: function () {
+	clearInterval(this.interval);
+    },
     updateDelta: function () {
         // TODO this doesn't feel right
         this.setState({});
@@ -415,6 +471,6 @@ var ComposeMessage = React.createClass({
 });
 
 React.render(
-    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} />,
+    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} log />,
     document.getElementById('chat')
 );

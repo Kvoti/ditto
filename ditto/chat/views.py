@@ -75,8 +75,10 @@ class React(LoginRequiredMixin, DetailView):
         context['conf'] = json.dumps({
             'me': self._resource(self._jid(self.request.user.username)),
             'other': self._jid(self.object.username),
+            'nick': self.request.user.username,
             'server': server,
             'password': password,
+            'chatroom': 'muc1@muc.%s' % self.request.tenant.chat_host(),
         })
         return context
 
