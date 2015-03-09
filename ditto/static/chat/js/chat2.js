@@ -8,6 +8,7 @@ var chatStatus = {
     xa: 'Extended away',
 };
 var update = React.addons.update;
+var classSet = React.addons.classSet;
 
 var Chat = React.createClass({
     getInitialState: function () {
@@ -327,13 +328,21 @@ var Chat = React.createClass({
 	    );
 	}
         return (
-	    <div>
-	    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
-            <MyStatus setStatus={this.setMyStatus} />
-		<Friends friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} />
-	    <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
-	    <WhosTyping users={this.state.whosTyping} />
-	    <Messages talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
+	    <div className="row">
+	        <div className="col-md-4">
+                <div className="list-group">
+		<Friends friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.userMeta} />
+    	        <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
+                </div>
+	    </div>
+	    <div className="col-md-8">
+	        <Messages me={this.props.me} talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
+	        <WhosTyping users={this.state.whosTyping} />
+                <div className="row msgbar">
+	        <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
+                <MyStatus setStatus={this.setMyStatus} />
+                </div>
+	    </div>
 	    </div>
         );
     }
@@ -362,13 +371,19 @@ var MyStatus = React.createClass({
 	}
 	return (
 	    <form onSubmit={this.handleStatusChange}>
-	    <input value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Type your custom status message here..." ref="message" />
-	    <select ref="status">
+            <div className="col-md-2">
+	        <input className="form-control" value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Type your custom status message here..." ref="message" />
+            </div>
+           <div className="col-md-2">
+	        <select className="form-control" ref="status">
 	    <option value="">Online</option>
 	    {options}
 	    </select>
-            <input type="submit" value="Set status" />
-	    </form>
+                </div>
+           <div className="col-md-1">
+            <input className="form-control btn btn-success" type="submit" value="Set status" />
+           </div>
+                </form>
 	);
     }
 });
@@ -380,7 +395,7 @@ var Friends = React.createClass({
 	    var is_current = self.props.current === friend;
 	    var status = self.props.friendStatus[friend];
 	    return (
-		    <Friend is_current={is_current} friend={friend} status={status} key={index} switchChat={self.props.switchChat} />
+		    <Friend is_current={is_current} friend={friend} status={status} key={index} switchChat={self.props.switchChat} userMeta={self.props.userMeta} />
 	    );
 	});
 	return (
@@ -409,10 +424,15 @@ var Friend = React.createClass({
 	    status = <p>Offline</p>;
 	}
 	return (
-	    <div>
-		<p>{current} <a href="#" onClick={this.switchChat}>{this.props.friend}</a></p>
+	        <a className="list-group-item" href="#" onClick={this.switchChat}>
+                <div className="media-left media-middle friends-avatar">
+                <Avatar size={50} user={this.props.friend} userMeta={this.props.userMeta} />
+                    </div>
+                    <div className="media-body">
+                <h4 className="media-heading friends-username">{current} {this.props.friend}</h4>
 		{status}
-	    </div>
+                    </div>
+	    </a>
 	);
     }
 });
@@ -436,14 +456,41 @@ var Chatroom = React.createClass({
 	    );
 	}
 	return (
-	    <div>
-	    {current} <a onClick={this.props.show} href="#">Chatroom</a>
-	    </div>
+	    <a className="list-group-item" onClick={this.props.show} href="#">
+	    {current} Chatroom
+	    </a>
 	);
     }
 });
 
 var Messages = React.createClass({
+    getInitialState: function () {
+        return {height: ''};
+    },
+    componentDidMount: function () {
+        // TODO window.onresize cross-browser?
+        window.onresize = this.updateHeight;
+    },
+    updateHeight: function () {
+        // TODO no pure css way to do this?
+        var height = $(window).height()
+            - $('.msgbar').height()
+            - $('.navbar').height()
+            - 2 * parseInt($('.navbar').css('margin-bottom'), 10)  // TODO the 2* here is a fluke, don't know why it works
+            - $('footer').height()
+            - parseInt($('footer').css('margin-bottom'), 10);
+        var page_head = $('.page-heading');
+        if (page_head.length) {
+            height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
+        }
+        this.setState({height: height});
+    },
+    componentWillMount: function () {
+        this.updateHeight();
+    },
+    componentWillUnmount: function () {
+        // TODO window.remove event listener
+    },
     componentDidUpdate: function() {
 	var node = this.getDOMNode();
 	node.scrollTop = node.scrollHeight;
@@ -457,12 +504,14 @@ var Messages = React.createClass({
 	    }
 	);
 	var messageNodes = messages.map(function(m, i) {
+            // TODO this key should probably be unique across all messages
 	    return (
-		<Message from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
+		    <Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
 	    );
 	});
+        var style = {height: this.state.height}
 	return (
-	    <div className="messages">
+	        <div style={style} id="msgs" ref="messages">
                 {messageNodes}
 	    </div>
 	);
@@ -471,17 +520,37 @@ var Messages = React.createClass({
 
 var Message = React.createClass({
     render: function () {
-	var avatar;
-	var meta = this.props.userMeta[Strophe.getBareJidFromJid(this.props.from)];
-	if (meta) {
-	    avatar = meta.avatar;
-	} else {
-	    avatar = 'cupcake'
-	}
+        var left_avatar, right_avatar;
+        var is_from_me = this.props.from === this.props.me;
+        var mediaClass = classSet({
+            'media-left': !is_from_me,
+            'media-right': is_from_me
+        });
+        var avatar = <div className={mediaClass}>
+    	    <Avatar size={50} user={this.props.from} userMeta={this.props.userMeta} />
+            </div>;
+        var colClass = classSet({
+            'col-md-6': true,
+            'col-md-offset-6': is_from_me
+        });
+        if (is_from_me) {
+            right_avatar = avatar;
+        } else {
+            left_avatar = avatar;
+        }
 	return (
-	    <div>
-	    <Avatar size={50} user={this.props.from} name={avatar} /> (<Timestamp when={this.props.when}/>): {this.props.message}
+        <div className="row">
+                <div className={colClass}>
+                <div className="media">
+                {left_avatar}
+                    <div className="media-body">
+                <h4 className="media-heading">{this.props.from} <small><Timestamp when={this.props.when}/></small></h4>
+                {this.props.message}
             </div>
+                {right_avatar}
+                </div>
+            </div>
+        </div>
 	);
     }
 });
@@ -504,10 +573,15 @@ var Avatar = React.createClass({
     render: function () {
 	// TODO where to put global constant state like this?
 	var avatarSVGs = $('#avatar_svgs').text();
-
+	var avatarName;
+	var meta = this.props.userMeta[Strophe.getBareJidFromJid(this.props.user)];
+	if (meta) {
+	    avatarName = meta.avatar;
+	} else {
+	    avatarName = 'cupcake'
+	}
 	// TODO better way to generate svg without jquery/outerHTML, convert svg to react component?
         var avatarSVG = $(avatarSVGs);
-	var avatarName = this.props.name;
 	if (avatarName) {
             avatarSVG.find('>g[id!=' + avatarName + ']').remove();
             avatarSVG.find('>g').show();
@@ -521,7 +595,6 @@ var Avatar = React.createClass({
 	}
 	return (
 	    <div>
-  	    <span>{this.props.user}</span>
             <div dangerouslySetInnerHTML={{__html: avatarSVG}} />
 	    </div>
 	);
@@ -583,10 +656,14 @@ var ComposeMessage = React.createClass({
     },
     render: function() {
 	return (
-	    <form onSubmit={this.handleSubmit}>
-            <input value={this.state.value} onChange={this.handleChange} type="text" placeholder="Type your message here..." ref="message" />
-            <input type="submit" value="Say it!" />
-	    </form>
+	        <form onSubmit={this.handleSubmit}>
+                <div className="col-md-6">
+                <input className="form-control" value={this.state.value} onChange={this.handleChange} type="text" placeholder="Type your message here..." ref="message" />
+                </div>
+                <div className="col-md-1">
+                <input className="btn btn-success" type="submit" value="Say it!" />
+                </div>
+	        </form>
 	);
     }
 });

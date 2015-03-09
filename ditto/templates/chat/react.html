@@ -1,52 +1,48 @@
-{% load static %}<!DOCTYPE html>
-<html>
-    <head>
-        <title>DITTO</title>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
-        <script src="{% static 'vendor/notification.js' %}"></script>
-        <script src="{% static 'vendor/strophe.js' %}"></script>
-        <script>
-            Strophe.log = function (level, msg) {
-                console.log(msg);
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>
+<div id="chat"></div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+<script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
+<script src="{% static 'vendor/notification.js' %}"></script>
+<script src="{% static 'vendor/strophe.js' %}"></script>
+<script>
+    Strophe.log = function (level, msg) {
+    console.log(msg);
+    }
+</script>
+<script src="{% static 'vendor/strophe.rsm.js' %}"></script>
+<script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
+<script src="{% static 'vendor/strophe.roster.js' %}"></script>
+<script src="{% static 'vendor/strophe.vcard.js' %}"></script>
+<script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
+<script src="{% static 'vendor/strophe.muc.js' %}"></script>
+<!-- Only using jquery for parsing the XMPP packets -->
+<!-- TODO replace with smaller library? -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+    var chatConf = JSON.parse('{{ conf|escapejs }}');
+</script>
+<script>
+    (function () {
+        function getNotificationPermission () {
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission();
             }
-        </script>
-        <script src="{% static 'vendor/strophe.rsm.js' %}"></script>
-        <script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
-        <script src="{% static 'vendor/strophe.roster.js' %}"></script>
-        <script src="{% static 'vendor/strophe.vcard.js' %}"></script>
-        <script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
-        <script src="{% static 'vendor/strophe.muc.js' %}"></script>
-        <!-- Only using jquery for parsing the XMPP packets -->
-        <!-- TODO replace with smaller library? -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <style>
-            .messages {
-            height: 400px;
-            overflow-y: scroll;
-            }
-        </style>
-    </head>
-    <body>
-        <audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>
-        <div id="chat"></div>
-        <script>
-            var chatConf = JSON.parse('{{ conf|escapejs }}');
-        </script>
-        <script>
-            (function () {
-            function getNotificationPermission () {
-	    if (Notification.permission !== 'granted') {
-	    Notification.requestPermission();
-	    }
-            }
-            getNotificationPermission();
-            $('body').one("click", getNotificationPermission);  // chrome
-            })();
-        </script>
-        <script id="avatar_svgs" type="text/template">
-            {% include "skin/avatars.html" %}
-        </script>
-        <script type="text/jsx;harmony=true" src="{% static 'chat/js/chat2.js' %}"></script>
-    </body>
-</html>
+        }
+        getNotificationPermission();
+        $('body').one("click", getNotificationPermission);  // chrome
+    })();
+</script>
+<script id="avatar_svgs" type="text/template">
+    {% include "skin/avatars.html" %}
+</script>
+<script type="text/jsx;harmony=true" src="{% static 'chat/js/chat2.js' %}"></script>
+{% endblock %}
