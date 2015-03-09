@@ -10,6 +10,14 @@ var chatStatus = {
 var update = React.addons.update;
 var classSet = React.addons.classSet;
 
+var getMessages = function (messages, other) {
+    return messages.filter(
+	function (msg) {
+	    return Strophe.getBareJidFromJid(msg.from) === other || Strophe.getBareJidFromJid(msg.to) === other;
+	}
+    );
+};
+
 var Chat = React.createClass({
     getInitialState: function () {
 	return {
@@ -331,7 +339,7 @@ var Chat = React.createClass({
 	    <div className="row">
 	        <div className="col-md-4">
                 <div className="list-group">
-		<Friends friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.userMeta} />
+		<Friends messages={this.state.messages} friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.userMeta} />
     	        <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
                 </div>
 	    </div>
@@ -392,10 +400,11 @@ var Friends = React.createClass({
     render: function () {
 	var self = this;
 	var friendNodes = this.props.friends.map(function(friend, index) {
-	    var is_current = self.props.current === friend;
+	    var isCurrent = self.props.current === friend;
 	    var status = self.props.friendStatus[friend];
+            var lastMessage = getMessages(self.props.messages, friend).pop();
 	    return (
-		    <Friend is_current={is_current} friend={friend} status={status} key={index} switchChat={self.props.switchChat} userMeta={self.props.userMeta} />
+		    <Friend isCurrent={isCurrent} friend={friend} status={status} lastMessage={lastMessage} key={index} switchChat={self.props.switchChat} userMeta={self.props.userMeta} />
 	    );
 	});
 	return (
@@ -412,8 +421,8 @@ var Friend = React.createClass({
 	this.props.switchChat(this.props.friend);
     },
     render: function () {
-	var current, status = '';
-	if (this.props.is_current) {
+	var current, status = '', lastMessage;
+	if (this.props.isCurrent) {
 	    current = (
 		<span> * </span>
 	    );
@@ -431,9 +440,23 @@ var Friend = React.createClass({
                     <div className="media-body">
                 <h4 className="media-heading friends-username">{current} {this.props.friend}</h4>
 		{status}
-                    </div>
+                <LastMessage message={this.props.lastMessage} />
+            </div>
 	    </a>
 	);
+    }
+});
+
+var LastMessage = React.createClass({
+    render: function () {
+        if (this.props.message) {
+            return <div>
+                {this.props.message.message}
+                <Timestamp when={this.props.message.when} />
+            </div>;
+        } else {
+            return <div></div>;  // TODO empty component a thing?
+        }
     }
 });
 
@@ -498,11 +521,7 @@ var Messages = React.createClass({
     render: function () {
 	var userMeta = this.props.userMeta;
 	var self = this;
-	var messages = this.props.messages.filter(
-	    function (msg) {
-		return Strophe.getBareJidFromJid(msg.from) === self.props.talkingTo || Strophe.getBareJidFromJid(msg.to) === self.props.talkingTo
-	    }
-	);
+	var messages = getMessages(this.props.messages, self.props.talkingTo);
 	var messageNodes = messages.map(function(m, i) {
             // TODO this key should probably be unique across all messages
 	    return (
