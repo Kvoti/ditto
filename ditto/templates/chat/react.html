@@ -4,6 +4,7 @@
         <title>DITTO</title>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
+        <script src="{% static 'vendor/notification.js' %}"></script>
         <script src="{% static 'vendor/strophe.js' %}"></script>
         <script>
             Strophe.log = function (level, msg) {
@@ -27,9 +28,21 @@
         </style>
     </head>
     <body>
+        <audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>
         <div id="chat"></div>
         <script>
             var chatConf = JSON.parse('{{ conf|escapejs }}');
+        </script>
+        <script>
+            (function () {
+            function getNotificationPermission () {
+	    if (Notification.permission !== 'granted') {
+	    Notification.requestPermission();
+	    }
+            }
+            getNotificationPermission();
+            $('body').one("click", getNotificationPermission);  // chrome
+            })();
         </script>
         <script id="avatar_svgs" type="text/template">
             {% include "skin/avatars.html" %}

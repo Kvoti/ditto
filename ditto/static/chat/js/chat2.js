@@ -131,6 +131,9 @@ var Chat = React.createClass({
 		delete this.state.whosTyping[from];
 		this.setState(this.state);
 	    }
+            if (this.isPageHidden()) {
+                this.notifyNewMessage(body);
+            }
 	    this.addMessage(
 		from,
 		to,
@@ -139,6 +142,21 @@ var Chat = React.createClass({
 	    );
 	}
 	return true;
+    },
+    isPageHidden: function () {
+        // TODO keep this kind of things to existing polyfills (loaded with modernizr?)?
+	return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
+    },
+    notifyNewMessage: function (msg) {
+        document.getElementById('new-message-beep').play();
+	var notification = new Notification("New message", {
+	    icon : "/static/images/ditto-logo.png",
+            body: msg.slice(0, 140)
+	});
+        // TODO this is supposed to go to the right tab in chrome but doesn't seem to work
+	notification.onclick = function () {
+            window.focus();
+        };
     },
     handleGroupMessage: function (msg) {
         var msg = $(msg);
