@@ -1,6 +1,13 @@
 // TODO add closure (or module, use es6, what version of javascript does jsx compiler support?)?
 var composedMessageChangeAt;
 var stillTypingTimeout = 5000;
+var chatStatus = {
+    away: 'Away',
+    chat: 'Free for chat',
+    dnd: 'Do not disturb',
+    xa: 'Extended away',
+};
+var update = React.addons.update;
 
 var Chat = React.createClass({
     getInitialState: function () {
@@ -10,6 +17,7 @@ var Chat = React.createClass({
 	    talkingTo: this.props.other,
 	    friends: [
 	    ],
+	    friendStatus: {},
 	    messages: [
 	    ],
             userMeta: {},
@@ -52,6 +60,7 @@ var Chat = React.createClass({
 
 	    connection.send($pres().tree());
 	    connection.addHandler(this.handlePrivateMessage, null, 'message', 'chat',  null);
+ 	    connection.addHandler(this.handlePresence, null, 'presence', 'chat',  null); 
 	    
 	    connection.mam.init(connection);
 	    connection.mam.query(
@@ -97,6 +106,35 @@ var Chat = React.createClass({
 	    isInChatroom: true,
 	    talkingTo: this.props.chatroom
 	});
+    },
+    handlePresence: function (pres) {
+	var msg = $(pres);
+	var from = Strophe.getBareJidFromJid(msg.attr('from'));
+	var type = msg.attr('type');
+	var code;
+	var customMessage;
+	var newState;
+	var status;
+
+	if (type === 'unavailable') {
+	    status = {};
+	} else {
+	    code = msg.find('show').text();
+	    customMessage = msg.find('status').text();
+	    status = {
+		code: code,
+		message: customMessage
+	    };
+	}
+	var xx = {};
+	xx[from]= {$set: status };
+	this.setState(
+	    update(
+		this.state,
+		{friendStatus: xx}
+	    )
+	);
+	return true;
     },
     handleArchivedPrivateMessage: function (msg) {
         var msg = $(msg);
@@ -280,7 +318,8 @@ var Chat = React.createClass({
         return (
 	    <div>
 	    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
-   	    <Friends friends={this.state.friends} current={this.state.talkingTo} switchChat={this.switchChat} />
+            <MyStatus />
+		<Friends friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} />
 	    <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
 	    <WhosTyping users={this.state.whosTyping} />
 	    <Messages talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
@@ -289,13 +328,22 @@ var Chat = React.createClass({
     }
 });
 
+var MyStatus = React.createClass({
+    render: function () {
+	return (
+	    <div>My status goes here</div>
+	);
+    }
+});
+
 var Friends = React.createClass({
     render: function () {
 	var self = this;
 	var friendNodes = this.props.friends.map(function(friend, index) {
 	    var is_current = self.props.current === friend;
+	    var status = self.props.friendStatus[friend];
 	    return (
-		<Friend is_current={is_current} friend={friend} key={index} switchChat={self.props.switchChat} />
+		    <Friend is_current={is_current} friend={friend} status={status} key={index} switchChat={self.props.switchChat} />
 	    );
 	});
 	return (
@@ -312,17 +360,35 @@ var Friend = React.createClass({
 	this.props.switchChat(this.props.friend);
     },
     render: function () {
-	var current;
+	var current, status = '';
 	if (this.props.is_current) {
 	    current = (
 		<span> * </span>
 	    );
 	}
+	if (this.props.status && this.props.status.hasOwnProperty('code')) {
+	    status = <FriendStatus code={this.props.status.code} message={this.props.status.message} />;
+	} else {
+	    status = <p>Offline</p>;
+	}
 	return (
-	    <p>{current} <a href="#" onClick={this.switchChat}>{this.props.friend}</a></p>
+	    <div>
+		<p>{current} <a href="#" onClick={this.switchChat}>{this.props.friend}</a></p>
+		{status}
+	    </div>
 	);
     }
 });
+
+var FriendStatus = React.createClass({
+    render: function () {
+	var status = chatStatus[this.props.code] || 'Online';
+	return (
+	    <p>{status} <em>{this.props.message}</em></p>
+	);
+    }
+});
+	   
 
 var Chatroom = React.createClass({
     render: function () {
@@ -489,6 +555,6 @@ var ComposeMessage = React.createClass({
 });
 
 React.render(
-    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} log />,
+    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} />,
     document.getElementById('chat')
 );
