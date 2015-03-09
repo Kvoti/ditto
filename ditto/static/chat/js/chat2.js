@@ -60,7 +60,7 @@ var Chat = React.createClass({
 
 	    connection.send($pres().tree());
 	    connection.addHandler(this.handlePrivateMessage, null, 'message', 'chat',  null);
- 	    connection.addHandler(this.handlePresence, null, 'presence', 'chat',  null); 
+ 	    connection.addHandler(this.handlePresence, null, 'presence', null,  null); 
 	    
 	    connection.mam.init(connection);
 	    connection.mam.query(
@@ -135,6 +135,17 @@ var Chat = React.createClass({
 	    )
 	);
 	return true;
+    },
+    setMyStatus: function (code, message) {
+	console.log('setting status', code, message);
+        var pres = $pres();
+        if (code) {
+            pres.c('show').t(code).up();
+        }
+        if (message) {
+            pres.c('status').t(message);
+        }
+        this.state.connection.send(pres.tree());
     },
     handleArchivedPrivateMessage: function (msg) {
         var msg = $(msg);
@@ -318,7 +329,7 @@ var Chat = React.createClass({
         return (
 	    <div>
 	    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
-            <MyStatus />
+            <MyStatus setStatus={this.setMyStatus} />
 		<Friends friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} />
 	    <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
 	    <WhosTyping users={this.state.whosTyping} />
@@ -329,9 +340,35 @@ var Chat = React.createClass({
 });
 
 var MyStatus = React.createClass({
+    getInitialState: function() {
+    	return {
+    	    status: '',
+    	    message: '',
+    	};
+    },
+    handleMessageChange: function(event) {
+    	this.setState({message: event.target.value});
+    },
+    handleStatusChange: function (e) {
+	e.preventDefault();
+	var message = this.refs.message.getDOMNode().value.trim();
+	var code = this.refs.status.getDOMNode().value;
+	this.props.setStatus(code, message);
+    },
     render: function () {
+	var options = [];
+	for (var code in chatStatus) {
+	    options.push(<option value={code} key={code}>{chatStatus[code]}</option>);
+	}
 	return (
-	    <div>My status goes here</div>
+	    <form onSubmit={this.handleStatusChange}>
+	    <input value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Type your custom status message here..." ref="message" />
+	    <select ref="status">
+	    <option value="">Online</option>
+	    {options}
+	    </select>
+            <input type="submit" value="Set status" />
+	    </form>
 	);
     }
 });
