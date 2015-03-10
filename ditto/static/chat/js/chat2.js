@@ -1,4 +1,3 @@
-// TODO add closure (or module, use es6, what version of javascript does jsx compiler support?)?
 var composedMessageChangeAt;
 var stillTypingTimeout = 5000;
 var chatStatus = {
@@ -38,7 +37,7 @@ var Chat = React.createClass({
 	this.connectToChatServer();
     },
     connectToChatServer: function () {
-	connection = new Strophe.Connection('ws://' + this.props.server + ':5280/ws-xmpp');
+	var connection = new Strophe.Connection('ws://' + this.props.server + ':5280/ws-xmpp');
 	if (this.props.hasOwnProperty('log')) {
 	    connection.rawInput = function (data) { console.log('RECV: ', data); }
 	    connection.rawOutput = function (data) { console.log('RECV: ', data); }
@@ -647,7 +646,7 @@ var Timestamp = React.createClass({
         return 'ages ago';
     },
     render: function () {
-        when = this.props.when;
+        var when = this.props.when;
         var delta = this.timeAgo(when);
         return (
                 <time dateTime={when.toISOString()}>{delta}</time>
@@ -687,7 +686,10 @@ var ComposeMessage = React.createClass({
     }
 });
 
+var render = function () {
 React.render(
     <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} />,
     document.getElementById('chat')
 );
+}
+export default render;

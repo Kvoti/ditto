@@ -10,7 +10,7 @@
 {% block javascript %}
     {{ block.super }}
 <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
 <script src="{% static 'vendor/notification.js' %}"></script>
 <script src="{% static 'vendor/strophe.js' %}"></script>
 <script>
@@ -44,5 +44,7 @@
 <script id="avatar_svgs" type="text/template">
     {% include "skin/avatars.html" %}
 </script>
-<script type="text/jsx;harmony=true" src="{% static 'chat/js/chat2.js' %}"></script>
+<script>
+    require(["{% static 'chat/js/app.min.js' %}"]);
+</script>
 {% endblock %}
