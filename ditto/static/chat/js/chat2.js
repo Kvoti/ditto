@@ -289,6 +289,7 @@ var Chat = React.createClass({
     },
     handleRoster: function (roster, item) {
         var friends = [];
+        var newState;
 	var self = this;
         $.each(roster, function (i, friend) {
             if (friend.subscription === 'both') {
@@ -296,8 +297,11 @@ var Chat = React.createClass({
 		self.getUserMeta(Strophe.getBareJidFromJid(friend.jid));
             }
         });
-        this.state.friends = friends;
-        this.setState(this.state);
+        newState = update(this.state, {friends: {$set: friends}});
+        if (!this.state.talkingTo && friends) {
+            newState = update(newState, {talkingTo: {$set: friends[0]}});
+        }
+        this.setState(newState);
         return true;  // always bloody forget this!
     },
     getUserMeta: function (user) {

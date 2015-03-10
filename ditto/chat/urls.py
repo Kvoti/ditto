@@ -22,18 +22,12 @@ urlpatterns = patterns('',
                        
     url(
         regex=r'^messages/$',
-        view=views.PrivateChatsView.as_view(),
+        view=views.Messages.as_view(),
         name='private_chats'
     ),
     url(
         regex=r'^messages/(?P<slug>\w+)/$',
-        view=views.PrivateChatView.as_view(),
+        view=views.MessagesFrom.as_view(),
         name='private_chat'
-    ),
-
-    url(
-        regex=r'^react/(?P<slug>\w+)/$',
-        view=views.React.as_view(),
-        name='react'
     ),
 )
