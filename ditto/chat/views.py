@@ -16,11 +16,6 @@ from users.models import User
 from . import forms
 
 
-class ChatroomView(LoginRequiredMixin, NavMixin, TemplateView):
-    template_name = 'chat/chatroom.html'
-    nav = ['chatroom']
-
-    
 @login_required  # @admin_required
 @nav(['chatroom'])
 def private_chatroom(request, room):
@@ -79,4 +74,15 @@ class MessagesFrom(LoginRequiredMixin, ChatContextMixin, DetailView):
     def get_chat_conf(self):
         conf = super(MessagesFrom, self).get_chat_conf()
         conf['other'] = self._jid(self.object.username)
+        return conf
+
+    
+class ChatroomView(LoginRequiredMixin, NavMixin, ChatContextMixin, TemplateView):
+    template_name = 'chat/react.html'
+    nav = ['chatroom']
+
+    def get_chat_conf(self):
+        conf = super(ChatroomView, self).get_chat_conf()
+        conf['isChatroom'] = True
+        conf['other'] = conf['chatroom']
         return conf

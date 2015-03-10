@@ -28,9 +28,10 @@ var Chat = React.createClass({
 	    friendStatus: {},
 	    messages: [
 	    ],
-            userMeta: {},
+	    userMeta: {},
 	    whosTyping: {},
 	    isInChatroom: false,
+	    chatroomPresence: [],
 	};
     },
     componentDidMount: function() {
@@ -68,7 +69,7 @@ var Chat = React.createClass({
 
 	    connection.send($pres().tree());
 	    connection.addHandler(this.handlePrivateMessage, null, 'message', 'chat',  null);
- 	    connection.addHandler(this.handlePresence, null, 'presence', null,  null); 
+	    connection.addHandler(this.handlePresence, null, 'presence', null,  null); 
 	    
 	    connection.mam.init(connection);
 	    connection.mam.query(
@@ -76,8 +77,8 @@ var Chat = React.createClass({
 		{
 		    // TODO load last N messages for each chat not across all chats
 		    // 'with': Strophe.getBareJidFromJid(this.state.talkingTo),
-                    'before': "",
-                    'max': 50,
+		    'before': "",
+		    'max': 50,
 		    onMessage: this.handleArchivedPrivateMessage
 		}
 	    );
@@ -88,17 +89,22 @@ var Chat = React.createClass({
 	    connection.roster.subscribe(Strophe.getBareJidFromJid(this.state.talkingTo));
 	    connection.roster.get();
 
-            connection.vcard.init(connection);
+	    connection.vcard.init(connection);
 	    this.getUserMeta(Strophe.getBareJidFromJid(this.props.me));
 
 	    connection.chatstates.init(connection);
 
 	    connection.muc.init(connection);
-	    connection.muc.join(this.props.chatroom, this.props.nick, this.handleGroupMessage);
+	    connection.muc.join(
+		this.props.chatroom,
+		this.props.nick,
+		this.handleGroupMessage,
+		this.handleGroupPresence
+	    );
 
 	}
 	this.state.connectionStatus = status;
-        // TODO not sure connection is really state
+	// TODO not sure connection is really state
 	this.state.connection = connection;
 	this.setState(this.state);
     },
@@ -146,22 +152,22 @@ var Chat = React.createClass({
     },
     setMyStatus: function (code, message) {
 	console.log('setting status', code, message);
-        var pres = $pres();
-        if (code) {
-            pres.c('show').t(code).up();
-        }
-        if (message) {
-            pres.c('status').t(message);
-        }
-        this.state.connection.send(pres.tree());
+	var pres = $pres();
+	if (code) {
+	    pres.c('show').t(code).up();
+	}
+	if (message) {
+	    pres.c('status').t(message);
+	}
+	this.state.connection.send(pres.tree());
     },
     handleArchivedPrivateMessage: function (msg) {
-        var msg = $(msg);
+	var msg = $(msg);
 	if (msg.find('[type=groupchat]').length === 0) {
-            var body = msg.find("body:first").text();
-            var from = msg.find('message').attr("from");
-            var to = msg.find('message').attr("to");
-            var when = new Date(msg.find('delay').attr('stamp'));
+	    var body = msg.find("body:first").text();
+	    var from = msg.find('message').attr("from");
+	    var to = msg.find('message').attr("to");
+	    var when = new Date(msg.find('delay').attr('stamp'));
 	    this.addMessage(
 		from,
 		to,
@@ -174,8 +180,8 @@ var Chat = React.createClass({
     handlePrivateMessage: function (msg) {
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
-        var from = msg.attr("from");
-        var to = msg.attr("to");
+	var from = msg.attr("from");
+	var to = msg.attr("to");
 	var when = new Date();
 	var composing = msg.find('composing');
 	var active = msg.find('active');
@@ -188,9 +194,9 @@ var Chat = React.createClass({
 		delete this.state.whosTyping[from];
 		this.setState(this.state);
 	    }
-            if (this.isPageHidden()) {
-                this.notifyNewMessage(body);
-            }
+	    if (this.isPageHidden()) {
+		this.notifyNewMessage(body);
+	    }
 	    this.addMessage(
 		from,
 		to,
@@ -201,44 +207,70 @@ var Chat = React.createClass({
 	return true;
     },
     isPageHidden: function () {
-        // TODO keep this kind of things to existing polyfills (loaded with modernizr?)?
+	// TODO keep this kind of things to existing polyfills (loaded with modernizr?)?
 	return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
     },
     notifyNewMessage: function (msg) {
-        document.getElementById('new-message-beep').play();
+	document.getElementById('new-message-beep').play();
 	var notification = new Notification("New message", {
 	    icon : "/static/images/ditto-logo.png",
-            body: msg.slice(0, 140)
+	    body: msg.slice(0, 140)
 	});
-        // TODO this is supposed to go to the right tab in chrome but doesn't seem to work
+	// TODO this is supposed to go to the right tab in chrome but doesn't seem to work
 	notification.onclick = function () {
-            window.focus();
-        };
+	    window.focus();
+	};
     },
     handleGroupMessage: function (msg) {
-        var msg = $(msg);
-        var body = msg.find("body:first").text();
-        var from = msg.attr("from") ;//.split('/')[1];
-        var when = msg.find('delay');
-        if (when.length) {
-            when = new Date(when.attr('stamp'));
-        } else {
-            when = new Date();
-        }
-        if (from) {
-            // TODO always get an 'empty' message from the room
-            // itself, not sure why
+	var msg = $(msg);
+	var body = msg.find("body:first").text();
+	var from = msg.attr("from") ;//.split('/')[1];
+	var when = msg.find('delay');
+	if (when.length) {
+	    when = new Date(when.attr('stamp'));
+	} else {
+	    when = new Date();
+	}
+	if (from) {
+	    // TODO always get an 'empty' message from the room
+	    // itself, not sure why
 	    this.addMessage(
 		from,
 		this.props.me,
 		when,
 		body
 	    )
+	}
+	return true;
+    },
+    handleGroupPresence: function (pres) {
+	var msg = $(pres);
+	var nick_taken = msg.find('conflict');
+        var from = msg.attr('from').split('/')[1];
+	var newState;
+	if (nick_taken.length) {
+	    // TODO do something with this
+	}
+	var added = msg.find('item[role!=none]');
+	if (added.length) {
+	    newState = update(this.state, {chatroomPresence: {$splice: [[0, 0, from]]}});
+	}
+	var removed = msg.find('item[role=none]');
+	if (removed.length) {
+	    newState = update(this.state, {chatroomPresence: {$splice: [[this.state.chatroomPresence.indexOf(from), 1]]}});
+	}
+        // First time we enter the chatroom for a new network the room
+        // needs to be created and configured
+        var is_new_room = msg.find('status[code=201]');
+        if (is_new_room.length) {
+            // TODO handle failure
+            connection.muc.createInstantRoom(this.props.chatroom);
         }
-        return true;
+	this.setState(newState);
+	return true;
     },
     handleMessageSubmit: function (message) {
-	if (this.state.isInChatroom) {
+	if (this.state.isInChatroom || this.props.isChatroom) {
 	    this.state.connection.muc.groupchat(this.props.chatroom, message);
 	} else {
 	    var payload = $msg({
@@ -249,7 +281,7 @@ var Chat = React.createClass({
 	    
 	    this.state.connection.chatstates.addActive(payload);
 	    composedMessageChangeAt = null;
-		    
+	    
 	    this.state.connection.send(payload.tree());
 	    // TODO functions have kwargs in es6?
 	    // TODO handle error on message submit
@@ -275,7 +307,7 @@ var Chat = React.createClass({
 	    var now = new Date();
 	    if (now - composedMessageChangeAt > stillTypingTimeout) {
 		composedMessageChangeAt = undefined;
-		connection.chatstates.sendActive(
+		this.state.connection.chatstates.sendActive(
 		    Strophe.getBareJidFromJid(this.state.talkingTo)
 		);
 	    } else {
@@ -284,90 +316,128 @@ var Chat = React.createClass({
 	}
     },
     acceptFriendRequest: function (from) {
-        connection.roster.authorize(from);
-        return true;
+	connection.roster.authorize(from);
+	return true;
     },
     handleRoster: function (roster, item) {
-        var friends = [];
-        var newState;
+	var friends = [];
+	var newState;
 	var self = this;
-        $.each(roster, function (i, friend) {
-            if (friend.subscription === 'both') {
-                friends.push(friend.jid);
+	$.each(roster, function (i, friend) {
+	    if (friend.subscription === 'both') {
+		friends.push(friend.jid);
 		self.getUserMeta(Strophe.getBareJidFromJid(friend.jid));
-            }
-        });
-        newState = update(this.state, {friends: {$set: friends}});
-        if (!this.state.talkingTo && friends) {
-            newState = update(newState, {talkingTo: {$set: friends[0]}});
-        }
-        this.setState(newState);
-        return true;  // always bloody forget this!
+	    }
+	});
+	newState = update(this.state, {friends: {$set: friends}});
+	if (!this.state.talkingTo && friends) {
+	    newState = update(newState, {talkingTo: {$set: friends[0]}});
+	}
+	this.setState(newState);
+	return true;  // always bloody forget this!
     },
     getUserMeta: function (user) {
-        if (this.state.userMeta[user]) {
-            return;
-        }
-        var self = this;
-        this.state.connection.vcard.get(
-            function (vcard) {
-                vcard = $(vcard);
-                var role = vcard.find('ROLE').text();
-                var avatar = vcard.find('PHOTO').text();
-                self.state.userMeta[user] = {role: role, avatar: avatar};
+	if (this.state.userMeta[user]) {
+	    return;
+	}
+	var self = this;
+	this.state.connection.vcard.get(
+	    function (vcard) {
+		vcard = $(vcard);
+		var role = vcard.find('ROLE').text();
+		var avatar = vcard.find('PHOTO').text();
+		self.state.userMeta[user] = {role: role, avatar: avatar};
 		self.setState(self.state);
-            },
+	    },
 	    user
-        );
+	);
     },
     addMessage: function (from, to, when, message) {
 	this.state.messages.push(
-	{
-	    from: from,
-	    to: to,
-	    when: when,
-	    message: message
-	});
+	    {
+		from: from,
+		to: to,
+		when: when,
+		message: message
+	    });
 	this.setState(this.state);
     },
     render: function () {
 	if (this.state.connectionStatus !== 'connected') {
 	    return (
 		<div>
-		{this.state.connectionStatus}
+		    {this.state.connectionStatus}
 		</div>
 	    );
+	} else if (this.props.isChatroom) {
+	    return (
+		<div className="row">
+    		    <div className="col-md-8">
+    			<Messages me={this.props.me} talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
+			<div className="row msgbar">
+      			    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
+			</div>
+    		    </div>
+		    <div className="col-md-4">
+			<ChatroomPresence users={this.state.chatroomPresence}/>
+		    </div>
+		</div>
+	    );
+	} else {
+	    return (
+    		<div className="row">
+    		    <div className="col-md-4">
+			<div className="list-group">
+    			    <Friends messages={this.state.messages} friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.userMeta} />
+			    <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
+			</div>
+    		    </div>
+    		    <div className="col-md-8">
+    			<Messages me={this.props.me} talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
+    			<WhosTyping users={this.state.whosTyping} />
+			<div className="row msgbar">
+    			    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
+			    <MyStatus setStatus={this.setMyStatus} />
+			</div>
+    		    </div>
+    		</div>
+	    );
 	}
-        return (
-	    <div className="row">
-	        <div className="col-md-4">
-                <div className="list-group">
-		<Friends messages={this.state.messages} friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.userMeta} />
-    	        <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
-                </div>
-	    </div>
-	    <div className="col-md-8">
-	        <Messages me={this.props.me} talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
-	        <WhosTyping users={this.state.whosTyping} />
-                <div className="row msgbar">
-	        <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
-                <MyStatus setStatus={this.setMyStatus} />
-                </div>
-	    </div>
-	    </div>
-        );
     }
 });
 
+var ChatroomPresence = React.createClass({
+    render: function () {
+	var memberNodes = this.props.users.map(function (user) {
+	    return (
+		<li className="list-group-item" key={user}>
+                    <div className="media">
+			<div className="media-left media-middle">
+			</div>
+			<div className="media-body">
+                            <h4 className="media-heading">{user}</h4>
+			</div>
+		    </div>
+		</li>
+	    );
+	});
+	return (
+            <ul className="list-group">
+		{memberNodes}
+            </ul>
+	);
+    }
+});
+    
 var MyStatus = React.createClass({
     getInitialState: function() {
-    	return {
-    	    status: '',
-    	    message: '',
-    	};
+	return {
+	    status: '',
+	    message: '',
+	};
     },
     handleMessageChange: function(event) {
-    	this.setState({message: event.target.value});
+	this.setState({message: event.target.value});
     },
     handleStatusChange: function (e) {
 	e.preventDefault();
@@ -382,19 +452,19 @@ var MyStatus = React.createClass({
 	}
 	return (
 	    <form onSubmit={this.handleStatusChange}>
-            <div className="col-md-2">
-	        <input className="form-control" value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Type your custom status message here..." ref="message" />
-            </div>
-           <div className="col-md-2">
-	        <select className="form-control" ref="status">
-	    <option value="">Online</option>
-	    {options}
-	    </select>
-                </div>
-           <div className="col-md-1">
-            <input className="form-control btn btn-success" type="submit" value="Set status" />
-           </div>
-                </form>
+		<div className="col-md-2">
+		    <input className="form-control" value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Type your custom status message here..." ref="message" />
+		</div>
+		<div className="col-md-2">
+		    <select className="form-control" ref="status">
+			<option value="">Online</option>
+			{options}
+		    </select>
+		</div>
+		<div className="col-md-1">
+		    <input className="form-control btn btn-success" type="submit" value="Set status" />
+		</div>
+	    </form>
 	);
     }
 });
@@ -405,14 +475,14 @@ var Friends = React.createClass({
 	var friendNodes = this.props.friends.map(function(friend, index) {
 	    var isCurrent = self.props.current === friend;
 	    var status = self.props.friendStatus[friend];
-            var lastMessage = getMessages(self.props.messages, friend).pop();
+	    var lastMessage = getMessages(self.props.messages, friend).pop();
 	    return (
-		    <Friend isCurrent={isCurrent} friend={friend} status={status} lastMessage={lastMessage} key={index} switchChat={self.props.switchChat} userMeta={self.props.userMeta} />
+		<Friend isCurrent={isCurrent} friend={friend} status={status} lastMessage={lastMessage} key={index} switchChat={self.props.switchChat} userMeta={self.props.userMeta} />
 	    );
 	});
 	return (
 	    <div>
-                {friendNodes}
+		{friendNodes}
 	    </div>
 	);
     }
@@ -436,15 +506,15 @@ var Friend = React.createClass({
 	    status = <p>Offline</p>;
 	}
 	return (
-	        <a className="list-group-item" href="#" onClick={this.switchChat}>
-                <div className="media-left media-middle friends-avatar">
-                <Avatar size={50} user={this.props.friend} userMeta={this.props.userMeta} />
-                    </div>
-                    <div className="media-body">
-                <h4 className="media-heading friends-username">{current} {this.props.friend}</h4>
-		{status}
-                <LastMessage message={this.props.lastMessage} />
-            </div>
+	    <a className="list-group-item" href="#" onClick={this.switchChat}>
+		<div className="media-left media-middle friends-avatar">
+		    <Avatar size={50} user={this.props.friend} userMeta={this.props.userMeta} />
+		</div>
+		<div className="media-body">
+		    <h4 className="media-heading friends-username">{current} {this.props.friend}</h4>
+		    {status}
+		    <LastMessage message={this.props.lastMessage} />
+		</div>
 	    </a>
 	);
     }
@@ -452,13 +522,13 @@ var Friend = React.createClass({
 
 var LastMessage = React.createClass({
     render: function () {
-        if (this.props.message) {
-            return <div>
-                {this.props.message.message} <small><Timestamp when={this.props.message.when} /></small>
-            </div>;
-        } else {
-            return <div></div>;  // TODO empty component a thing?
-        }
+	if (this.props.message) {
+	    return <div>
+		{this.props.message.message} <small><Timestamp when={this.props.message.when} /></small>
+	    </div>;
+	} else {
+	    return <div></div>;  // TODO empty component a thing?
+	}
     }
 });
 
@@ -470,7 +540,7 @@ var FriendStatus = React.createClass({
 	);
     }
 });
-	   
+
 
 var Chatroom = React.createClass({
     render: function () {
@@ -482,7 +552,7 @@ var Chatroom = React.createClass({
 	}
 	return (
 	    <a className="list-group-item" onClick={this.props.show} href="#">
-	    {current} Chatroom
+		{current} Chatroom
 	    </a>
 	);
     }
@@ -490,31 +560,31 @@ var Chatroom = React.createClass({
 
 var Messages = React.createClass({
     getInitialState: function () {
-        return {height: ''};
+	return {height: ''};
     },
     componentDidMount: function () {
-        // TODO window.onresize cross-browser?
-        window.onresize = this.updateHeight;
+	// TODO window.onresize cross-browser?
+	window.onresize = this.updateHeight;
     },
     updateHeight: function () {
-        // TODO no pure css way to do this?
-        var height = $(window).height()
-            - $('.msgbar').height()
-            - $('.navbar').height()
-            - 2 * parseInt($('.navbar').css('margin-bottom'), 10)  // TODO the 2* here is a fluke, don't know why it works
-            - $('footer').height()
-            - parseInt($('footer').css('margin-bottom'), 10);
-        var page_head = $('.page-heading');
-        if (page_head.length) {
-            height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
-        }
-        this.setState({height: height});
+	// TODO no pure css way to do this?
+	var height = $(window).height()
+	    - $('.msgbar').height()
+	    - $('.navbar').height()
+	    - 2 * parseInt($('.navbar').css('margin-bottom'), 10)  // TODO the 2* here is a fluke, don't know why it works
+	    - $('footer').height()
+	    - parseInt($('footer').css('margin-bottom'), 10);
+	var page_head = $('.page-heading');
+	if (page_head.length) {
+	    height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
+	}
+	this.setState({height: height});
     },
     componentWillMount: function () {
-        this.updateHeight();
+	this.updateHeight();
     },
     componentWillUnmount: function () {
-        // TODO window.remove event listener
+	// TODO window.remove event listener
     },
     componentDidUpdate: function() {
 	var node = this.getDOMNode();
@@ -525,15 +595,15 @@ var Messages = React.createClass({
 	var self = this;
 	var messages = getMessages(this.props.messages, self.props.talkingTo);
 	var messageNodes = messages.map(function(m, i) {
-            // TODO this key should probably be unique across all messages
+	    // TODO this key should probably be unique across all messages
 	    return (
-		    <Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
+		<Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
 	    );
 	});
-        var style = {height: this.state.height}
+	var style = {height: this.state.height}
 	return (
-	        <div style={style} id="msgs" ref="messages">
-                {messageNodes}
+	    <div style={style} id="msgs" ref="messages">
+		{messageNodes}
 	    </div>
 	);
     }
@@ -541,37 +611,37 @@ var Messages = React.createClass({
 
 var Message = React.createClass({
     render: function () {
-        var left_avatar, right_avatar;
-        var is_from_me = this.props.from === this.props.me;
-        var mediaClass = classSet({
-            'media-left': !is_from_me,
-            'media-right': is_from_me
-        });
-        var avatar = <div className={mediaClass}>
-    	    <Avatar size={50} user={this.props.from} userMeta={this.props.userMeta} />
-            </div>;
-        var colClass = classSet({
-            'col-md-6': true,
-            'col-md-offset-6': is_from_me
-        });
-        if (is_from_me) {
-            right_avatar = avatar;
-        } else {
-            left_avatar = avatar;
-        }
+	var left_avatar, right_avatar;
+	var is_from_me = this.props.from === this.props.me;
+	var mediaClass = classSet({
+	    'media-left': !is_from_me,
+	    'media-right': is_from_me
+	});
+	var avatar = <div className={mediaClass}>
+    		<Avatar size={50} user={this.props.from} userMeta={this.props.userMeta} />
+	</div>;
+	var colClass = classSet({
+	    'col-md-6': true,
+	    'col-md-offset-6': is_from_me
+	});
+	if (is_from_me) {
+	    right_avatar = avatar;
+	} else {
+	    left_avatar = avatar;
+	}
 	return (
-        <div className="row">
-                <div className={colClass}>
-                <div className="media">
-                {left_avatar}
-                    <div className="media-body">
-                <h4 className="media-heading">{this.props.from} <small><Timestamp when={this.props.when}/></small></h4>
-                {this.props.message}
-            </div>
-                {right_avatar}
-                </div>
-            </div>
-        </div>
+	    <div className="row">
+		<div className={colClass}>
+		    <div className="media">
+			{left_avatar}
+			<div className="media-body">
+			    <h4 className="media-heading">{this.props.from} <small><Timestamp when={this.props.when}/></small></h4>
+			    {this.props.message}
+			</div>
+			{right_avatar}
+		    </div>
+		</div>
+	    </div>
 	);
     }
 });
@@ -602,21 +672,21 @@ var Avatar = React.createClass({
 	    avatarName = 'cupcake'
 	}
 	// TODO better way to generate svg without jquery/outerHTML, convert svg to react component?
-        var avatarSVG = $(avatarSVGs);
+	var avatarSVG = $(avatarSVGs);
 	if (avatarName) {
-            avatarSVG.find('>g[id!=' + avatarName + ']').remove();
-            avatarSVG.find('>g').show();
-            avatarSVG.attr({
+	    avatarSVG.find('>g[id!=' + avatarName + ']').remove();
+	    avatarSVG.find('>g').show();
+	    avatarSVG.attr({
 		width: this.props.size,
 		height: this.props.size
-            });
+	    });
 	    avatarSVG = avatarSVG.get(0).outerHTML;
 	} else {
 	    avatarSVG = '';
 	}
 	return (
 	    <div>
-            <div dangerouslySetInnerHTML={{__html: avatarSVG}} />
+		<div dangerouslySetInnerHTML={{__html: avatarSVG}} />
 	    </div>
 	);
     }
@@ -624,39 +694,39 @@ var Avatar = React.createClass({
 
 var Timestamp = React.createClass({
     componentDidMount: function() {
-        this.interval = setInterval(this.updateDelta, 60 * 1000);
+	this.interval = setInterval(this.updateDelta, 60 * 1000);
     },
     componentWillUnmount: function () {
 	clearInterval(this.interval);
     },
     updateDelta: function () {
-        // TODO this doesn't feel right
-        this.setState({});
+	// TODO this doesn't feel right
+	this.setState({});
     },
     // TODO prob library for this
     timeAgo: function (date) {
-        var delta = new Date() - date;
-        if (delta < 60000) {
-            return 'less than a minute ago';
-        }
-        if (delta < 3600 * 1000) {
-            var minutes = delta / (60 * 1000);
-            return Math.floor(minutes) + ' minutes ago';
-        }
-        if (delta < 2 * 3600 * 1000) {
-            return 'about an hour ago';
-        }
-        return 'ages ago';
+	var delta = new Date() - date;
+	if (delta < 60000) {
+	    return 'less than a minute ago';
+	}
+	if (delta < 3600 * 1000) {
+	    var minutes = delta / (60 * 1000);
+	    return Math.floor(minutes) + ' minutes ago';
+	}
+	if (delta < 2 * 3600 * 1000) {
+	    return 'about an hour ago';
+	}
+	return 'ages ago';
     },
     render: function () {
-        var when = this.props.when;
-        var delta = this.timeAgo(when);
-        return (
-                <time dateTime={when.toISOString()}>{delta}</time>
-        );
+	var when = this.props.when;
+	var delta = this.timeAgo(when);
+	return (
+	    <time dateTime={when.toISOString()}>{delta}</time>
+	);
     }
 });
-                               
+
 var ComposeMessage = React.createClass({
     getInitialState: function() {
 	return {value: ''};
@@ -677,22 +747,22 @@ var ComposeMessage = React.createClass({
     },
     render: function() {
 	return (
-	        <form onSubmit={this.handleSubmit}>
-                <div className="col-md-6">
-                <input className="form-control" value={this.state.value} onChange={this.handleChange} type="text" placeholder="Type your message here..." ref="message" />
-                </div>
-                <div className="col-md-1">
-                <input className="btn btn-success" type="submit" value="Say it!" />
-                </div>
-	        </form>
+	    <form onSubmit={this.handleSubmit}>
+		<div className="col-md-6">
+		    <input className="form-control" value={this.state.value} onChange={this.handleChange} type="text" placeholder="Type your message here..." ref="message" />
+		</div>
+		<div className="col-md-1">
+		    <input className="btn btn-success" type="submit" value="Say it!" />
+		</div>
+	    </form>
 	);
     }
 });
 
 var render = function () {
-React.render(
-    <Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} />,
-    document.getElementById('chat')
-);
+    React.render(
+	<Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} isChatroom={chatConf.isChatroom} />,
+	document.getElementById('chat')
+    );
 }
 export default render;
