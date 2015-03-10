@@ -454,8 +454,7 @@ var LastMessage = React.createClass({
     render: function () {
         if (this.props.message) {
             return <div>
-                {this.props.message.message}
-                <Timestamp when={this.props.message.when} />
+                {this.props.message.message} <small><Timestamp when={this.props.message.when} /></small>
             </div>;
         } else {
             return <div></div>;  // TODO empty component a thing?
