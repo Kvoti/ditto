@@ -16,7 +16,7 @@ var classSet = React.addons.classSet;
 var getMessages = function (messages, other) {
     return messages.filter(
 	function (msg) {
-	    return Strophe.getBareJidFromJid(msg.from) === other || Strophe.getBareJidFromJid(msg.to) === other;
+	    return msg.from === other || msg.to === other;
 	}
     );
 };
@@ -26,17 +26,23 @@ var Chat = React.createClass({
 	return {
 	    connectionStatus: 'connecting',
 	    connection: null,
-	    talkingTo: this.props.other || this.props.chatroom,
+	    talkingTo: Strophe.getNodeFromJid(this.props.other || ''),
 	    friends: [
 	    ],
 	    friendStatus: {},
 	    messages: [
 	    ],
+	    chatroomMessages: [
+
+	    ],
 	    userMeta: {},
 	    whosTyping: {},
-	    isInChatroom: false,
 	    chatroomPresence: [],
 	};
+    },
+    getBareJID: function (node) {
+	var domain = Strophe.getDomainFromJid(this.props.me);
+	return node + '@' + domain
     },
     componentDidMount: function() {
 	this.connectToChatServer();
@@ -90,11 +96,11 @@ var Chat = React.createClass({
 	    connection.roster.init(connection);
 	    connection.roster.registerRequestCallback(this.acceptFriendRequest);
 	    connection.roster.registerCallback(this.handleRoster);
-	    connection.roster.subscribe(Strophe.getBareJidFromJid(this.state.talkingTo));
+	    connection.roster.subscribe(this.getBareJID(this.state.talkingTo));
 	    connection.roster.get();
 
 	    connection.vcard.init(connection);
-	    this.getUserMeta(Strophe.getBareJidFromJid(this.props.me));
+	    this.getUserMeta(Strophe.getNodeFromJid(this.props.me));
 
 	    connection.chatstates.init(connection);
 
@@ -114,20 +120,12 @@ var Chat = React.createClass({
     },
     switchChat: function (friend) {
 	this.setState({
-	    isInChatroom: false,
 	    talkingTo: friend,
-	});
-    },
-    showChatroom: function (e) {
-	e.preventDefault();
-	this.setState({
-	    isInChatroom: true,
-	    talkingTo: this.props.chatroom
 	});
     },
     handlePresence: function (pres) {
 	var msg = $(pres);
-	var from = Strophe.getBareJidFromJid(msg.attr('from'));
+	var from = Strophe.getNodeFromJid(msg.attr('from'));
 	var type = msg.attr('type');
 	var code;
 	var customMessage;
@@ -169,8 +167,8 @@ var Chat = React.createClass({
 	var msg = $(msg);
 	if (msg.find('[type=groupchat]').length === 0) {
 	    var body = msg.find("body:first").text();
-	    var from = msg.find('message').attr("from");
-	    var to = msg.find('message').attr("to");
+	    var from = Strophe.getNodeFromJid(msg.find('message').attr("from"));
+	    var to = Strophe.getNodeFromJid(msg.find('message').attr("to"));
 	    var when = new Date(msg.find('delay').attr('stamp'));
 	    this.addMessage(
 		from,
@@ -184,8 +182,8 @@ var Chat = React.createClass({
     handlePrivateMessage: function (msg) {
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
-	var from = msg.attr("from");
-	var to = msg.attr("to");
+	var from = Strophe.getNodeFromJid(msg.attr("from"));
+	var to = Strophe.getNodeFromJid(msg.attr("to"));
 	var when = new Date();
 	var composing = msg.find('composing');
 	var active = msg.find('active');
@@ -231,7 +229,7 @@ var Chat = React.createClass({
     handleGroupMessage: function (msg) {
 	var msg = $(msg);
 	var body = msg.find("body:first").text();
-	var from = msg.attr("from") ;//.split('/')[1];
+	var from = Strophe.getResourceFromJid(msg.attr("from"));
 	var when = msg.find('delay');
 	if (when.length) {
 	    when = new Date(when.attr('stamp'));
@@ -241,9 +239,8 @@ var Chat = React.createClass({
 	if (from) {
 	    // TODO always get an 'empty' message from the room
 	    // itself, not sure why
-	    this.addMessage(
+	    this.addGroupMessage(
 		from,
-		this.props.me,
 		when,
 		body
 	    )
@@ -277,11 +274,11 @@ var Chat = React.createClass({
 	return true;
     },
     handleMessageSubmit: function (message) {
-	if (this.state.isInChatroom || this.props.page === 'chatroom') {
+	if (this.props.page === 'chatroom') {
 	    this.state.connection.muc.groupchat(this.props.chatroom, message);
 	} else {
 	    var payload = $msg({
-		to: this.state.talkingTo,
+		to: this.getBareJID(this.state.talkingTo),
 		from: this.props.me,
 		type: 'chat'
 	    }).c('body').t(message);
@@ -293,7 +290,7 @@ var Chat = React.createClass({
 	    // TODO functions have kwargs in es6?
 	    // TODO handle error on message submit
 	    this.addMessage(
-		Strophe.getBareJidFromJid(this.props.me),
+		Strophe.getNodeFromJid(this.props.me),
 		this.state.talkingTo,
 		new Date(),
 		message
@@ -331,9 +328,10 @@ var Chat = React.createClass({
 	var newState;
 	var self = this;
 	$.each(roster, function (i, friend) {
+	    var username = Strophe.getNodeFromJid(friend.jid);
 	    if (friend.subscription === 'both') {
-		friends.push(friend.jid);
-		self.getUserMeta(Strophe.getBareJidFromJid(friend.jid));
+		friends.push(username);
+		self.getUserMeta(username);
 	    }
 	});
 	newState = update(this.state, {friends: {$set: friends}});
@@ -344,6 +342,7 @@ var Chat = React.createClass({
 	return true;  // always bloody forget this!
     },
     getUserMeta: function (user) {
+	var jid = this.getBareJID(user);
 	if (this.state.userMeta[user]) {
 	    return;
 	}
@@ -356,7 +355,7 @@ var Chat = React.createClass({
 		self.state.userMeta[user] = {role: role, avatar: avatar};
 		self.setState(self.state);
 	    },
-	    user
+	    jid
 	);
     },
     addMessage: function (from, to, when, message) {
@@ -369,7 +368,17 @@ var Chat = React.createClass({
 	    });
 	this.setState(this.state);
     },
+    addGroupMessage: function (from, when, message) {
+	this.state.chatroomMessages.push(
+	    {
+		from: from,
+		when: when,
+		message: message
+	    });
+	this.setState(this.state);
+    },
     render: function () {
+	var messages;
 	if (!this.props.page) {
 	    // For now we have some pages with no chat UI elements but
 	    // we're still connected to chat so we can, for example, beep
@@ -386,7 +395,7 @@ var Chat = React.createClass({
 	    return (
 		<div className="row">
     		    <div className="col-md-8">
-    			<Messages me={this.props.me} talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
+    			<Messages me={Strophe.getNodeFromJid(this.props.me)} talkingTo={this.state.talkingTo} messages={this.state.chatroomMessages} userMeta={this.state.userMeta} />
 			<div className="row msgbar">
       			    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
 			</div>
@@ -397,16 +406,16 @@ var Chat = React.createClass({
 		</div>
 	    );
 	} else if (this.props.page === 'messages') {
+	    messages = getMessages(this.state.messages, this.state.talkingTo);
 	    return (
     		<div className="row">
     		    <div className="col-md-4">
 			<div className="list-group">
     			    <Friends messages={this.state.messages} friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.userMeta} />
-			    <Chatroom show={this.showChatroom} isInside={this.state.isInChatroom} />
 			</div>
     		    </div>
     		    <div className="col-md-8">
-    			<Messages me={this.props.me} talkingTo={this.state.talkingTo} messages={this.state.messages} userMeta={this.state.userMeta} />
+    			<Messages me={Strophe.getNodeFromJid(this.props.me)} talkingTo={this.state.talkingTo} messages={messages} userMeta={this.state.userMeta} />
     			<WhosTyping users={this.state.whosTyping} />
 			<div className="row msgbar">
     			    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
@@ -664,8 +673,7 @@ var Messages = React.createClass({
     render: function () {
 	var userMeta = this.props.userMeta;
 	var self = this;
-	var messages = getMessages(this.props.messages, self.props.talkingTo);
-	var messageNodes = messages.map(function(m, i) {
+	var messageNodes = this.props.messages.map(function(m, i) {
 	    // TODO this key should probably be unique across all messages
 	    return (
 		<Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
