@@ -26,7 +26,7 @@ var Chat = React.createClass({
 	return {
 	    connectionStatus: 'connecting',
 	    connection: null,
-	    talkingTo: this.props.other,
+	    talkingTo: this.props.other || this.props.chatroom,
 	    friends: [
 	    ],
 	    friendStatus: {},
@@ -198,7 +198,7 @@ var Chat = React.createClass({
 		delete this.state.whosTyping[from];
 		this.setState(this.state);
 	    }
-	    if (this.isPageHidden()) {
+	    if (this.props.page !== 'messages' || this.isPageHidden()) {
 		this.notifyNewMessage(body);
 	    }
 	    this.addMessage(
@@ -215,6 +215,7 @@ var Chat = React.createClass({
 	return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
     },
     notifyNewMessage: function (msg) {
+	console.log('playing beep');
 	document.getElementById('new-message-beep').play();
 	var notification = new Notification("New message", {
 	    icon : "/static/images/ditto-logo.png",
@@ -274,7 +275,7 @@ var Chat = React.createClass({
 	return true;
     },
     handleMessageSubmit: function (message) {
-	if (this.state.isInChatroom || this.props.isChatroom) {
+	if (this.state.isInChatroom || this.props.page === 'chatroom') {
 	    this.state.connection.muc.groupchat(this.props.chatroom, message);
 	} else {
 	    var payload = $msg({
@@ -367,16 +368,19 @@ var Chat = React.createClass({
 	this.setState(this.state);
     },
     render: function () {
-	return (
-	    <WhosOnline users={this.state.chatroomPresence} userMeta={this.state.userMeta} />
-	);
-	if (this.state.connectionStatus !== 'connected') {
+	if (!this.props.page) {
+	    // For now we have some pages with no chat UI elements but
+	    // we're still connected to chat so we can, for example, beep
+	    // on new messages. TODO maybe that should be separated out
+	    // from the react stuff?
+	    return <div></div>;
+	} else if (this.state.connectionStatus !== 'connected') {
 	    return (
 		<div>
 		    {this.state.connectionStatus}
 		</div>
 	    );
-	} else if (this.props.isChatroom) {
+	} else if (this.props.page === 'chatroom') {
 	    return (
 		<div className="row">
     		    <div className="col-md-8">
@@ -390,7 +394,7 @@ var Chat = React.createClass({
 		    </div>
 		</div>
 	    );
-	} else {
+	} else if (this.props.page === 'messages') {
 	    return (
     		<div className="row">
     		    <div className="col-md-4">
@@ -408,6 +412,10 @@ var Chat = React.createClass({
 			</div>
     		    </div>
     		</div>
+	    );
+	} else {
+	    return (
+		<WhosOnline users={this.state.chatroomPresence} userMeta={this.state.userMeta} />
 	    );
 	}
     }
@@ -822,8 +830,8 @@ var ComposeMessage = React.createClass({
 
 var render = function () {
     React.render(
-	<Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} isChatroom={chatConf.isChatroom} />,
-	document.getElementById('chat')
+	<Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} page={chatConf.page} />,
+	document.getElementById(chatConf.element)
     );
 }
 export default render;

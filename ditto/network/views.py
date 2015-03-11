@@ -18,6 +18,14 @@ def home(request):
 class _HomeView(NavMixin, TemplateView):
     template_name = 'pages/home.html'
     nav = ['home']
+    
+    def get_context_data(self, **kwargs):
+        context = super(_HomeView, self).get_context_data(**kwargs)
+        context['chat_conf'] = {
+            'element': 'whosonline',
+            'page': 'home',
+        }
+        return context
 _home = _HomeView.as_view()
 
 

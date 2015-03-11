@@ -30,59 +30,45 @@ def new_chatroom(request):
     form = forms.NewChatroomForm(request.user)
     return TemplateResponse(
         request, 'chat/newchatroom.html', {'form': form})
-
-    
-class ChatContextMixin(object):
-    def get_context_data(self, **kwargs):
-        context = super(ChatContextMixin, self).get_context_data(**kwargs)
-        context['conf'] = json.dumps(self.get_chat_conf())
-        return context
-
-    def get_chat_conf(self):
-        server = "localhost" if settings.DEBUG else "134.213.147.235"
-        if settings.DEBUG:
-            password = ""
-        else:
-            signer = Signer()
-            password = signer.sign(self.request.user.username)
-        return {
-            'me': self._resource(self._jid(self.request.user.username)),
-            'nick': self.request.user.username,
-            'server': server,
-            'password': password,
-            'chatroom': 'muc1@muc.%s' % self.request.tenant.chat_host(),
-        }
-        
-    def _jid(self, username):
-        chat_host = self.request.tenant.chat_host()
-        return '%s@%s' % (username, chat_host)
-
-    def _resource(self, jid):
-        return '%s/Ditto' % jid
     
 
-class Messages(LoginRequiredMixin, ChatContextMixin, TemplateView):
+class Messages(LoginRequiredMixin, TemplateView):
     template_name = 'chat/react.html'
     model = User
+    
+    def get_context_data(self, **kwargs):
+        context = super(Messages, self).get_context_data(**kwargs)
+        context['chat_conf'] = {
+            'page': 'messages',
+            'element': 'chat',
+        }
+        return context
 
     
-class MessagesFrom(LoginRequiredMixin, ChatContextMixin, DetailView):
+class MessagesFrom(LoginRequiredMixin, DetailView):
     model = User
     slug_field = 'username'
     template_name = 'chat/react.html'
     
-    def get_chat_conf(self):
-        conf = super(MessagesFrom, self).get_chat_conf()
-        conf['other'] = self._jid(self.object.username)
-        return conf
+    def get_context_data(self, **kwargs):
+        context = super(MessagesFrom, self).get_context_data(**kwargs)
+        chat_host = self.request.tenant.chat_host()
+        context['chat_conf'] = {
+            'other': '%s@%s' % (self.object.username, chat_host),
+            'page': 'messages',
+            'element': 'chat',
+        }
+        return context
 
     
-class ChatroomView(LoginRequiredMixin, NavMixin, ChatContextMixin, TemplateView):
+class ChatroomView(LoginRequiredMixin, NavMixin, TemplateView):
     template_name = 'chat/react.html'
     nav = ['chatroom']
 
-    def get_chat_conf(self):
-        conf = super(ChatroomView, self).get_chat_conf()
-        conf['isChatroom'] = True
-        conf['other'] = conf['chatroom']
-        return conf
+    def get_context_data(self, **kwargs):
+        context = super(ChatroomView, self).get_context_data(**kwargs)
+        context['chat_conf'] = {
+            'page': 'chatroom',
+            'element': 'chat',
+        }
+        return context
