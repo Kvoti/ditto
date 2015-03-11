@@ -198,15 +198,17 @@ var Chat = React.createClass({
 		delete this.state.whosTyping[from];
 		this.setState(this.state);
 	    }
-	    if (this.props.page !== 'messages' || this.isPageHidden()) {
-		this.notifyNewMessage(body);
+	    if (body) {
+		if (this.props.page !== 'messages' || this.isPageHidden()) {
+		    this.notifyNewMessage(body);
+		}
+		this.addMessage(
+		    from,
+		    to,
+		    when,
+		    body
+		);
 	    }
-	    this.addMessage(
-		from,
-		to,
-		when,
-		body
-	    );
 	}
 	return true;
     },
