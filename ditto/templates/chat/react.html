@@ -9,7 +9,6 @@
 
 {% block javascript %}
     {{ block.super }}
-<script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
 <script src="{% static 'vendor/notification.js' %}"></script>
 <script src="{% static 'vendor/strophe.js' %}"></script>
@@ -45,6 +44,18 @@
     {% include "skin/avatars.html" %}
 </script>
 <script>
-    require(["{% static 'chat/js/app.min.js' %}"]);
+    requirejs.config({
+    //By default load any module IDs from js/lib
+    baseUrl: '/static/',
+    //except, if the module ID starts with "app",
+    //load it from the js/app directory. paths
+    //config is relative to the baseUrl, and
+    //never includes a ".js" extension since
+    //the paths config could be for a directory.
+    paths: {
+    react: 'http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons',
+    }
+    });
+    require(['chat/js/app.min']);
 </script>
 {% endblock %}

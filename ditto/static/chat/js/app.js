@@ -1,3 +1,3 @@
-import render from "./chat2.min.js";
+import render from "chat/js/chat2.min";
 
 render();

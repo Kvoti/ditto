@@ -1,3 +1,7 @@
+import React from 'react';
+// TODO prob only load components we need?
+import * as Bootstrap from "vendor/react-bootstrap/index";  // TODO shouldn't this work without /index?
+
 var composedMessageChangeAt;
 var stillTypingTimeout = 5000;
 var chatStatus = {
@@ -363,6 +367,9 @@ var Chat = React.createClass({
 	this.setState(this.state);
     },
     render: function () {
+	return (
+	    <WhosOnline users={this.state.chatroomPresence} userMeta={this.state.userMeta} />
+	);
 	if (this.state.connectionStatus !== 'connected') {
 	    return (
 		<div>
@@ -403,6 +410,60 @@ var Chat = React.createClass({
     		</div>
 	    );
 	}
+    }
+});
+
+var WhosOnline = React.createClass({
+    usersPerPanel: 9,
+    groupUsers: function (users) {
+	var grouped = [];
+	var group;
+	users.forEach((user, i) => {
+	    if (i % this.usersPerPanel === 0) {
+		group = [];
+		grouped.push(group);
+	    }
+	    group.push(user);
+	});
+	return grouped;
+    },
+    render: function () {
+	var userMeta = this.props.userMeta;
+	var groupedUsers = this.groupUsers(this.props.users);
+	var items = groupedUsers.map((group, i) => {
+	    return (
+		<Bootstrap.CarouselItem key={i}>
+		    <WhosOnlineItem users={group} userMeta={this.props.userMeta} key={i} />
+		</Bootstrap.CarouselItem>
+	    );
+	});
+	return (
+	    <div className="row">
+		<div className="col-md-4 whosonline">
+		    <Bootstrap.Carousel interval={false}>
+			{items}
+		    </Bootstrap.Carousel>
+		</div>
+	    </div>
+	);
+    }
+});
+
+var WhosOnlineItem = React.createClass({
+    render: function () {
+	var users = this.props.users.map((user, i) => {
+	    return (
+		<div className="avatar" key={i}>
+		    <Avatar size={100} user={user} userMeta={this.props.userMeta} />
+		    <p>{user}</p>
+		</div>
+	    );
+	});
+	return (
+	    <div>
+		{users}
+	    </div>
+	);
     }
 });
 
