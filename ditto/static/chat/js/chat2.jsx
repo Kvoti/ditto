@@ -36,7 +36,7 @@ var Chat = React.createClass({
 
 	    ],
 	    userMeta: {},
-	    whosTyping: {},
+	    whosTyping: [],
 	    chatroomPresence: [],
 	};
     },
@@ -113,8 +113,7 @@ var Chat = React.createClass({
 	    );
 
 	}
-	this.state.connectionStatus = status;
-	this.setState(this.state);
+	this.setState({connectionStatus: status});
     },
     switchChat: function (friend) {
 	this.setState({
@@ -129,6 +128,7 @@ var Chat = React.createClass({
 	var customMessage;
 	var newState;
 	var status;
+	var friendStatus = {};
 
 	if (type === 'unavailable') {
 	    status = {};
@@ -140,12 +140,11 @@ var Chat = React.createClass({
 		message: customMessage
 	    };
 	}
-	var xx = {};
-	xx[from]= {$set: status };
+	friendStatus[from] = {$set: status};
 	this.setState(
 	    update(
 		this.state,
-		{friendStatus: xx}
+		{friendStatus: friendStatus}
 	    )
 	);
 	return true;
@@ -185,14 +184,15 @@ var Chat = React.createClass({
 	var when = new Date();
 	var composing = msg.find('composing');
 	var active = msg.find('active');
-
+	var newState;
+	
 	if (composing.length) {
-	    this.state.whosTyping[from] = true;
-	    this.setState(this.state);
+	    newState = update(this.state, {whosTyping: {$push: [from]}});
+	    this.setState(newState);
 	} else {
 	    if (active.length) {
-		delete this.state.whosTyping[from];
-		this.setState(this.state);
+		newState = update(this.state, {whosTyping: {$splice: [[this.state.whosTyping.indexOf(from), 1]]}});
+		this.setState(newState);
 	    }
 	    if (body) {
 		if (this.props.page !== 'messages' || this.isPageHidden()) {
@@ -344,36 +344,46 @@ var Chat = React.createClass({
 	if (this.state.userMeta[user]) {
 	    return;
 	}
-	var self = this;
 	connection.vcard.get(
-	    function (vcard) {
+	    vcard => {
 		vcard = $(vcard);
+		var setUserMeta = {};
+		var newState;
 		var role = vcard.find('ROLE').text();
 		var avatar = vcard.find('PHOTO').text();
-		self.state.userMeta[user] = {role: role, avatar: avatar};
-		self.setState(self.state);
+		setUserMeta[user] = {$set: {role: role, avatar: avatar}};
+		newState = update(this.state, {userMeta: setUserMeta})
+		this.setState(newState);
 	    },
 	    jid
 	);
     },
     addMessage: function (from, to, when, message) {
-	this.state.messages.push(
-	    {
-		from: from,
-		to: to,
-		when: when,
-		message: message
-	    });
-	this.setState(this.state);
+	var newState;
+	newState = update(this.state,
+	    {messages: {
+		$push: [{
+			from: from,
+			to: to,
+			when: when,
+			message: message
+		}]
+	    }}
+	);
+	this.setState(newState);
     },
     addGroupMessage: function (from, when, message) {
-	this.state.chatroomMessages.push(
-	    {
-		from: from,
-		when: when,
-		message: message
-	    });
-	this.setState(this.state);
+	var newState;
+	newState = update(this.state,
+	    {chatroomMessages: {
+		$push: [{
+		    from: from,
+		    when: when,
+		    message: message
+		}]
+	    }}
+	);
+	this.setState(newState);
     },
     render: function () {
 	var messages;
@@ -725,12 +735,9 @@ var Message = React.createClass({
 
 var WhosTyping = React.createClass({
     render: function () {
-	var nodes = [];
-	for (var user in this.props.users) {
-	    nodes.push(
-		<p>{user} is typing ...</p>
-	    );
-	};
+	var nodes = this.props.users.map((user, i) =>
+	    <p key={i}>{user} is typing ...</p>
+	);
 	return (
 	    <div>{nodes}</div>
 	);
