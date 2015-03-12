@@ -2,6 +2,7 @@ import React from 'react';
 // TODO prob only load components we need?
 import * as Bootstrap from "vendor/react-bootstrap/index";  // TODO shouldn't this work without /index?
 
+var connection;
 var composedMessageChangeAt;
 var stillTypingTimeout = 5000;
 var chatStatus = {
@@ -25,7 +26,6 @@ var Chat = React.createClass({
     getInitialState: function () {
 	return {
 	    connectionStatus: 'connecting',
-	    connection: null,
 	    talkingTo: Strophe.getNodeFromJid(this.props.other || ''),
 	    friends: [
 	    ],
@@ -48,7 +48,7 @@ var Chat = React.createClass({
 	this.connectToChatServer();
     },
     connectToChatServer: function () {
-	var connection = new Strophe.Connection('ws://' + this.props.server + ':5280/ws-xmpp');
+	connection = new Strophe.Connection('ws://' + this.props.server + ':5280/ws-xmpp');
 	if (this.props.hasOwnProperty('log')) {
 	    connection.rawInput = function (data) { console.log('RECV: ', data); }
 	    connection.rawOutput = function (data) { console.log('RECV: ', data); }
@@ -114,8 +114,6 @@ var Chat = React.createClass({
 
 	}
 	this.state.connectionStatus = status;
-	// TODO not sure connection is really state
-	this.state.connection = connection;
 	this.setState(this.state);
     },
     switchChat: function (friend) {
@@ -161,7 +159,7 @@ var Chat = React.createClass({
 	if (message) {
 	    pres.c('status').t(message);
 	}
-	this.state.connection.send(pres.tree());
+	connection.send(pres.tree());
     },
     handleArchivedPrivateMessage: function (msg) {
 	var msg = $(msg);
@@ -275,7 +273,7 @@ var Chat = React.createClass({
     },
     handleMessageSubmit: function (message) {
 	if (this.props.page === 'chatroom') {
-	    this.state.connection.muc.groupchat(this.props.chatroom, message);
+	    connection.muc.groupchat(this.props.chatroom, message);
 	} else {
 	    var payload = $msg({
 		to: this.getBareJID(this.state.talkingTo),
@@ -283,10 +281,10 @@ var Chat = React.createClass({
 		type: 'chat'
 	    }).c('body').t(message);
 	    
-	    this.state.connection.chatstates.addActive(payload);
+	    connection.chatstates.addActive(payload);
 	    composedMessageChangeAt = null;
 	    
-	    this.state.connection.send(payload.tree());
+	    connection.send(payload.tree());
 	    // TODO functions have kwargs in es6?
 	    // TODO handle error on message submit
 	    this.addMessage(
@@ -299,7 +297,7 @@ var Chat = React.createClass({
     },
     handleMessageChange: function () {
 	if (!composedMessageChangeAt) {
-	    this.state.connection.chatstates.sendComposing(
+	    connection.chatstates.sendComposing(
 		Strophe.getBareJidFromJid(this.state.talkingTo)
 	    );
 	    composedMessageChangeAt = new Date();
@@ -311,7 +309,7 @@ var Chat = React.createClass({
 	    var now = new Date();
 	    if (now - composedMessageChangeAt > stillTypingTimeout) {
 		composedMessageChangeAt = undefined;
-		this.state.connection.chatstates.sendActive(
+		connection.chatstates.sendActive(
 		    Strophe.getBareJidFromJid(this.state.talkingTo)
 		);
 	    } else {
@@ -347,7 +345,7 @@ var Chat = React.createClass({
 	    return;
 	}
 	var self = this;
-	this.state.connection.vcard.get(
+	connection.vcard.get(
 	    function (vcard) {
 		vcard = $(vcard);
 		var role = vcard.find('ROLE').text();
