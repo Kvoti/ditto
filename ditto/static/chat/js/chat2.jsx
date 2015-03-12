@@ -13,6 +13,7 @@ var chatStatus = {
 };
 var update = React.addons.update;
 var classSet = React.addons.classSet;
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var getMessages = function (messages, other) {
     return messages.filter(
@@ -682,15 +683,17 @@ var Messages = React.createClass({
 	var userMeta = this.props.userMeta;
 	var self = this;
 	var messageNodes = this.props.messages.map(function(m, i) {
-	    // TODO this key should probably be unique across all messages
+	    // TODO this key should be unique across all messages, how do I do that?
 	    return (
-		<Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
+		<Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={m.when} />
 	    );
 	});
 	var style = {height: this.state.height}
 	return (
 	    <div style={style} id="msgs" ref="messages">
+	    <ReactCSSTransitionGroup transitionName="example">
 		{messageNodes}
+	    </ReactCSSTransitionGroup>
 	    </div>
 	);
     }
@@ -769,7 +772,7 @@ var Avatar = React.createClass({
 	    avatarSVG = '';
 	}
 	return (
-	    <div>
+	    <div className="avatar">
 		<div dangerouslySetInnerHTML={{__html: avatarSVG}} />
 	    </div>
 	);

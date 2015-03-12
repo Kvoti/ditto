@@ -265,3 +265,22 @@ footer {
     top:25px;
     left:10px;
 }
+
+/* playing with React animation support
+-------------------------------------------------- */
+.example-enter .avatar {
+    transition: transform .5s ease-in;
+}
+.example-enter.example-enter-active .avatar {
+    transform: rotate(360deg);
+    transform-origin: 50% 50%;
+}
+.example-leave .avatar {
+    opacity: 1;
+    transition: opacity .5s ease-in;
+}
+.example-leave.example-leave-active .avatar {
+    opacity: 0.01;
+}
+/*
+-------------------------------------------------- */
