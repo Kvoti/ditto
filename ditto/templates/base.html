@@ -154,6 +154,8 @@
       <!-- Only using jquery for parsing the XMPP packets -->
       <!-- TODO replace with smaller library? -->
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+      {% if not request.tenant.is_main %}
       {% chat_config extra=chat_conf %}
       <script>
           (function () {
@@ -178,6 +180,7 @@
           });
           require(['chat/js/app.min']);
       </script>
+      {% endif %}
     {% endblock javascript %}
   </body>
 </html>
