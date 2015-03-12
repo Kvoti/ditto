@@ -17,9 +17,6 @@
                 {% navitem "safeguarding" "#" _("Safeguarding") %}
                 {% navitem "evaluation" "#" _("Evaluation") %}
                 {% navitem "reports" "#" _("Reports") %}
-        
-                {% url "ditto:editconfig" "basicinfo" as url %}
-                {% navitem "settings" url _("Settings") %}
             {% endblock %}
         {% endm %}
     </div>
@@ -30,7 +27,6 @@
             {% include "dashboard/dashlet/safeguard.html" %}
             {% include "dashboard/dashlet/evaluation.html" %}
             {% include "dashboard/dashlet/reports.html" %}
-            {% include "dashboard/dashlet/settings.html" %}
         {% endblock %}
     </div>
 {% endm %}
