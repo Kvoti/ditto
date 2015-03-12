@@ -51,7 +51,10 @@ module.exports = function (grunt) {
         },
       },
         babel: {
-            files: ['<%= paths.app %>/static/chat/js/chat2.jsx'],
+            files: [
+                '<%= paths.app %>/static/chat/js/chat2.jsx',
+                '<%= paths.app %>/static/chat/js/chat.js'
+            ],
             tasks: ['babel:dist'],
         }
     },
@@ -97,7 +100,8 @@ module.exports = function (grunt) {
           dist: {
               files: [
                   {src: "ditto/static/chat/js/chat2.jsx", dest: "ditto/static/chat/js/chat2.min.js"},
-                  {src: "ditto/static/chat/js/app.js", dest: "ditto/static/chat/js/app.min.js"}
+                  {src: "ditto/static/chat/js/app.js", dest: "ditto/static/chat/js/app.min.js"},
+                  {src: "ditto/static/chat/js/chat.js", dest: "ditto/static/chat/js/chat.min.js"}
               ]
           }
       }

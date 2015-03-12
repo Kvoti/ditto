@@ -1,6 +1,7 @@
 import React from 'react';
 // TODO prob only load components we need?
-import * as Bootstrap from "vendor/react-bootstrap/index";  // TODO shouldn't this work without /index?
+import * as Bootstrap from "vendor/react-bootstrap/index";  // TODO shouldn't this work without /index
+import * as Chat from 'chat/js/chat.min';
 
 var connection;
 var composedMessageChangeAt;
@@ -23,98 +24,28 @@ var getMessages = function (messages, other) {
     );
 };
 
-var Chat = React.createClass({
-    getInitialState: function () {
-	return {
-	    connectionStatus: 'connecting',
-	    talkingTo: Strophe.getNodeFromJid(this.props.other || ''),
-	    friends: [
-	    ],
-	    friendStatus: {},
-	    messages: [
-	    ],
-	    chatroomMessages: [
+Chat.connect(
+    chatConf.server,
+    chatConf.me,
+    chatConf.password
+);
 
-	    ],
-	    userMeta: {},
-	    whosTyping: [],
-	    chatroomPresence: [],
-	};
+var ChatApp = React.createClass({
+    getInitialState: function () {
+	return Chat.getState();
+    },
+    componentDidMount: function() {
+	Chat.addChangeListener(this._onChange);
+    },
+    componentWillUnmount: function() {
+	Chat.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+	this.setState(Chat.getState());
     },
     getBareJID: function (node) {
 	var domain = Strophe.getDomainFromJid(this.props.me);
 	return node + '@' + domain
-    },
-    componentDidMount: function() {
-	this.connectToChatServer();
-    },
-    connectToChatServer: function () {
-	connection = new Strophe.Connection('ws://' + this.props.server + ':5280/ws-xmpp');
-	if (this.props.hasOwnProperty('log')) {
-	    connection.rawInput = function (data) { console.log('RECV: ', data); }
-	    connection.rawOutput = function (data) { console.log('RECV: ', data); }
-	}
-	var self = this;  // TODO better way these days?
-	connection.connect(
-	    this.props.me,
-	    this.props.password,
-	    function (status) { self.onConnect(connection, status) }
-	);
-    },
-    onConnect: function (connection, status_code) {
-	var status;
-	if (status_code == Strophe.Status.CONNECTING) {
-	    status = 'connecting';
-	    
-	} else if (status_code == Strophe.Status.CONNFAIL) {
-	    status = 'failed to connect';
-
-	} else if (status_code == Strophe.Status.DISCONNECTING) {
-	    status = 'disconnecting';
-
-	} else if (status_code == Strophe.Status.DISCONNECTED) {
-	    status = 'disconnected';
-
-	} else if (status_code == Strophe.Status.CONNECTED) {
-	    status = 'connected';
-
-	    connection.send($pres().tree());
-	    connection.addHandler(this.handlePrivateMessage, null, 'message', 'chat',  null);
-	    connection.addHandler(this.handlePresence, null, 'presence', null,  null); 
-	    
-	    connection.mam.init(connection);
-	    connection.mam.query(
-		Strophe.getBareJidFromJid(this.props.me),
-		{
-		    // TODO load last N messages for each chat not across all chats
-		    // 'with': Strophe.getBareJidFromJid(this.state.talkingTo),
-		    'before': "",
-		    'max': 50,
-		    onMessage: this.handleArchivedPrivateMessage
-		}
-	    );
-
-	    connection.roster.init(connection);
-	    connection.roster.registerRequestCallback(this.acceptFriendRequest);
-	    connection.roster.registerCallback(this.handleRoster);
-	    connection.roster.subscribe(this.getBareJID(this.state.talkingTo));
-	    connection.roster.get();
-
-	    connection.vcard.init(connection);
-	    this.getUserMeta(Strophe.getNodeFromJid(this.props.me));
-
-	    connection.chatstates.init(connection);
-
-	    connection.muc.init(connection);
-	    connection.muc.join(
-		this.props.chatroom,
-		this.props.nick,
-		this.handleGroupMessage,
-		this.handleGroupPresence
-	    );
-
-	}
-	this.setState({connectionStatus: status});
     },
     switchChat: function (friend) {
 	this.setState({
@@ -659,7 +590,6 @@ var Messages = React.createClass({
 	// TODO no pure css way to do this?
 	// Note, tried to calculate the height from other dom elements but it's easier just to hardcode this vaule and change it when the css changes
 	var height = $(window).height() - 160;
-	debugger;
 	this.setState({height: height});
     },
     componentWillMount: function () {
@@ -841,7 +771,7 @@ var ComposeMessage = React.createClass({
 
 var render = function () {
     React.render(
-	<Chat server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} page={chatConf.page} />,
+	<ChatApp server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} page={chatConf.page} />,
 	document.getElementById(chatConf.element)
     );
 }
