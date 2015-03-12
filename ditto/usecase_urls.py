@@ -39,6 +39,7 @@ class UseCaseView(TemplateView):
         context = super(UseCaseView, self).get_context_data(**kwargs)
         context['cases'] = self.use_cases
         context['meta'] = self.use_cases[self.kwargs['case']]
+        context['nav'] = ['usecases']
         return context
     
     
