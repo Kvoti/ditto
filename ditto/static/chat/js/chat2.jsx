@@ -298,7 +298,7 @@ var Chat = React.createClass({
     handleMessageChange: function () {
 	if (!composedMessageChangeAt) {
 	    connection.chatstates.sendComposing(
-		Strophe.getBareJidFromJid(this.state.talkingTo)
+		this.getBareJID(this.state.talkingTo)
 	    );
 	    composedMessageChangeAt = new Date();
 	    setTimeout(this.checkImStillTyping, stillTypingTimeout);
@@ -310,7 +310,7 @@ var Chat = React.createClass({
 	    if (now - composedMessageChangeAt > stillTypingTimeout) {
 		composedMessageChangeAt = undefined;
 		connection.chatstates.sendActive(
-		    Strophe.getBareJidFromJid(this.state.talkingTo)
+		    this.getBareJID(this.state.talkingTo)
 		);
 	    } else {
 		window.setTimeout(this.checkImStillTyping, stillTypingTimeout);
