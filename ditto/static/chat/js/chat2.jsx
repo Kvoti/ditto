@@ -657,16 +657,9 @@ var Messages = React.createClass({
     },
     updateHeight: function () {
 	// TODO no pure css way to do this?
-	var height = $(window).height()
-	    - $('.msgbar').height()
-	    - $('.navbar').height()
-	    - 2 * parseInt($('.navbar').css('margin-bottom'), 10)  // TODO the 2* here is a fluke, don't know why it works
-	    - $('footer').height()
-	    - parseInt($('footer').css('margin-bottom'), 10);
-	var page_head = $('.page-heading');
-	if (page_head.length) {
-	    height -= page_head.height() + parseInt(page_head.css('margin-bottom'));
-	}
+	// Note, tried to calculate the height from other dom elements but it's easier just to hardcode this vaule and change it when the css changes
+	var height = $(window).height() - 160;
+	debugger;
 	this.setState({height: height});
     },
     componentWillMount: function () {

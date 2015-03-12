@@ -173,7 +173,13 @@ body {
 #msgs, #pchat_msgs, #presence, .friend-messages  {
     overflow-y: scroll;
 }
-
+#msgs .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+#msgs {
+    margin: -15px;
+}
 .navbar-inverse big {
     color: #fff;
 }
