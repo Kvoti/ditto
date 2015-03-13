@@ -178,7 +178,8 @@ body {
     margin-right: 0;
 }
 .col-md-8>#msgs {
-    margin: -15px;
+    margin-left: -15px;
+    margin-right: -15px;
 }
 
 .navbar-inverse big {

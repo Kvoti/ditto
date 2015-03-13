@@ -337,7 +337,7 @@ var Messages = React.createClass({
     updateHeight: function () {
 	// TODO no pure css way to do this?
 	// Note, tried to calculate the height from other dom elements but it's easier just to hardcode this vaule and change it when the css changes
-	var height = $(window).height() - 160;
+	var height = $(window).height() - 190;
 	this.setState({height: height});
     },
     componentWillMount: function () {
