@@ -104,13 +104,9 @@ function sendIsTyping (to) {
 }
 
 function setAvatar (avatar) {
-    // TODO add role back. vcard spec lets you update parts of the
-    // vcard but doesn't look like the strophe plugin lets you
-    // updated, only get and set
-
     // TODO no convenience function provided for making vcards?
     var role = Strophe.xmlElement('ROLE');
-    // role.appendChild(Strophe.xmlTextNode(DITTO.role));
+    role.appendChild(Strophe.xmlTextNode(chatConf.role));
 
     var photo = Strophe.xmlElement('PHOTO');
     photo.appendChild(Strophe.xmlTextNode(avatar));  // TODO prob make this full URI of avatar?
@@ -118,7 +114,7 @@ function setAvatar (avatar) {
     // (sort of doesn't matter cos the data you set isn't validated, which is ok
     // while we assume no other clients will connect)
     var vcard = Strophe.xmlElement('XXX');
-    // vcard.appendChild(role);
+    vcard.appendChild(role);
     vcard.appendChild(photo);
 
     // TODO handle error

@@ -179,7 +179,7 @@ var WhosOnlineItem = React.createClass({
 	    return (
 		<div className="avatar" key={i}>
 		    <Avatar size={100} user={user} />
-		    <p>{user}</p>
+		    <p>{user} (<Role user={user} />)</p>
 		</div>
 	    );
 	});
@@ -400,7 +400,7 @@ var Message = React.createClass({
 		    <div className="media">
 			{left_avatar}
 			<div className="media-body">
-			    <h4 className="media-heading">{this.props.from} <small><Timestamp when={this.props.when}/></small></h4>
+			    <h4 className="media-heading">{this.props.from} (<Role user={this.props.from} />) <small><Timestamp when={this.props.when}/></small></h4>
 			    {this.props.message}
 			</div>
 			{right_avatar}
@@ -590,7 +590,29 @@ var ChatroomModule = React.createClass({
 	);
     }
 });
-    
+
+
+var Role = React.createClass({
+    getInitialState: function () {
+	return Chat.getUserProfiles();
+    },
+    componentDidMount: function() {
+	Chat.addChangeListener(this._onChange);
+    },
+    componentWillUnmount: function() {
+	Chat.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+	this.setState(Chat.getUserProfiles());
+    },
+    render: function () {
+	var meta = this.state.profiles[this.props.user];
+	var role = meta ? meta.role : '-';
+	return <span>{role}</span>;
+    }
+});
+
+
 var render = function () {
     var whosonline = document.getElementById('whosonline');
     var chat = document.getElementById('chat');

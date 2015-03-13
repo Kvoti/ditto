@@ -20,6 +20,7 @@ def chat_config(context, other=None, extra=None):
     me = '%s@%s' % (user.username, chat_host)
     conf = {
         'me': _resource(me),
+        'role': user.groups.all()[0].name,
         'nick': user.username,
         'server': server,
         'password': password,
