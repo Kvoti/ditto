@@ -60,7 +60,7 @@
                 
                 <li class="dropdown{% if 'me' in nav %} active{% endif %}">
                     {% url "users:detail" request.user.username as profile_url %}
-                    <div data-avatar data-name="{{ request.user.username }}" data-size="50"></div>                    
+                    <div data-avatar id="nav-avatar"></div>                    
                     <a href="#" class="text-hide navicon navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         Me <span class="caret"></span>
                     </a>

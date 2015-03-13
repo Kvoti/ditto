@@ -556,5 +556,8 @@ var render = function () {
 	    <ChatApp me={chatConf.me} other={chatConf.other} page={chatConf.page} />, chat
 	);
     }
+    React.render(
+	<Avatar user="mark" size={50} />, document.getElementById('nav-avatar')
+    );
 }
 export default render;
