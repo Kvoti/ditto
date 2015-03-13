@@ -324,23 +324,6 @@ var FriendStatus = React.createClass({
     }
 });
 
-
-var Chatroom = React.createClass({
-    render: function () {
-	var current;
-	if (this.props.isInside) {
-	    current = (
-		<span> * </span>
-	    );
-	}
-	return (
-	    <a className="list-group-item" onClick={this.props.show} href="#">
-		{current} Chatroom
-	    </a>
-	);
-    }
-});
-
 var Messages = React.createClass({
     getInitialState: function () {
 	return {height: ''};
