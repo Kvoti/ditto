@@ -44,7 +44,7 @@ var ChatApp = React.createClass({
 	Chat.removeChangeListener(this._onChange);
     },
     _onChange: function() {
-	this.setState(Chat.getState());
+	this.setState({chat: Chat.getState()});
     },
     switchChat: function (friend) {
 	this.setState({
@@ -545,15 +545,42 @@ var ComposeMessage = React.createClass({
     }
 });
 
+var ChatroomModule = React.createClass({
+    getInitialState: function () {
+	return Chat.getState();
+    },
+    componentDidMount: function() {
+	Chat.addChangeListener(this._onChange);
+    },
+    componentWillUnmount: function() {
+	Chat.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+	this.setState(Chat.getState());
+    },
+    render: function () {
+	var messages = this.state.chatroomMessages.slice(-5);
+	return (
+	    <Messages messages={messages} />
+	);
+    }
+});
+    
 var render = function () {
     var whosonline = document.getElementById('whosonline');
     var chat = document.getElementById('chat');
+    var chatroomModule = document.getElementById('chat-module');
     if (whosonline) {
 	React.render(<WhosOnline />, whosonline);
     };
     if (chat) {
 	React.render(
 	    <ChatApp me={chatConf.me} other={chatConf.other} page={chatConf.page} />, chat
+	);
+    }
+    if (chatroomModule) {
+	React.render(
+	    <ChatroomModule />, chatroomModule
 	);
     }
     React.render(

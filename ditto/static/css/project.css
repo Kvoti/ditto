@@ -212,9 +212,11 @@ body {
     background-color: transparent !important;
 }
 
-.panel-body #msgs {
+#chat-module {
     height: 150px;
+    overflow-y: scroll;
 }
+
 .profile-chat #pchat_msgs {
     height: 150px;
 }
