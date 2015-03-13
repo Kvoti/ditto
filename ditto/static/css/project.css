@@ -173,13 +173,14 @@ body {
 #msgs, #pchat_msgs, #presence, .friend-messages  {
     overflow-y: scroll;
 }
-#msgs .row {
+#msgs .row, #chat-module .row {
     margin-left: 0;
     margin-right: 0;
 }
-#msgs {
+.col-md-8>#msgs {
     margin: -15px;
 }
+
 .navbar-inverse big {
     color: #fff;
 }
@@ -212,7 +213,7 @@ body {
     background-color: transparent !important;
 }
 
-#chat-module {
+#chat-module #msgs {
     height: 150px;
     overflow-y: scroll;
 }
