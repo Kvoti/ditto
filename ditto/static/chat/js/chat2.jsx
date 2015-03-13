@@ -5,7 +5,6 @@ import * as Chat from 'chat/js/chat.min';
 
 var update = React.addons.update;
 var classSet = React.addons.classSet;
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var getMessages = function (messages, other) {
     return messages.filter(
@@ -378,9 +377,7 @@ var Messages = React.createClass({
 	var style = {height: this.state.height}
 	return (
 	    <div style={style} id="msgs" ref="messages">
-	    <ReactCSSTransitionGroup transitionName="example">
 		{messageNodes}
-	    </ReactCSSTransitionGroup>
 	    </div>
 	);
     }
