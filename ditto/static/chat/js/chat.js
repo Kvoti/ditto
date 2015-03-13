@@ -162,8 +162,6 @@ function configureFriends () {
     connection.roster.init(connection);
     connection.roster.registerRequestCallback(acceptFriendRequest);
     connection.roster.registerCallback(handleRoster);
-    // TODO fix sending friend request
-    // connection.roster.subscribe(this.getBareJID(this.state.talkingTo));
     connection.roster.get();
 };
 
@@ -199,6 +197,10 @@ function setConnectionStatus (status_code) {
     emitChange();
 };
 
+function addFriend (friend) {
+    connection.roster.subscribe(getBareJID(jid));
+};
+
 var handlePresence = function (pres) {
     var msg = $(pres);
     var from = Strophe.getNodeFromJid(msg.attr('from'));
@@ -219,7 +221,7 @@ var handlePresence = function (pres) {
 	    message: customMessage
 	};
     }
-    state.friendStatus[from] = {status};
+    state.friendStatus[from] = status;
     emitChange();
     return true;
 };
@@ -356,13 +358,15 @@ function acceptFriendRequest (from) {
 }
 
 function handleRoster (roster, item) {
+    var friends = [];
     roster.forEach((friend, i) => {
 	var username = Strophe.getNodeFromJid(friend.jid);
 	if (friend.subscription === 'both') {
-	    state.friends.push(username);
+	    friends.push(username);
 	    getUserMeta(username);
 	}
     });
+    state.friends = friends;
     emitChange();
     return true;
 }
@@ -402,7 +406,9 @@ function getUserMeta (user) {
 };
 
 export {
-    getState, addChangeListener, removeChangeListener, connect,
+    connect, getState, addChangeListener, removeChangeListener,
     whosOnline, getUserProfiles,
+    chatStatus, setStatus,
+    addFriend,
     sendPrivateMessage, sendGroupMessage, sendIsTyping,
 };

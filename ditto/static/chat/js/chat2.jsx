@@ -32,12 +32,14 @@ Chat.connect(
 var ChatApp = React.createClass({
     getInitialState: function () {
 	return {
-	    talkingTo: this.props.other,
+	    talkingTo: Strophe.getNodeFromJid(this.props.other || ''),
 	    chat: Chat.getState()
 	}
     },
     componentDidMount: function() {
 	Chat.addChangeListener(this._onChange);
+	// TODO need to get this working for chatting to someone for the first time
+//	Chat.addFriend(this.state.talkingTo);
     },
     componentWillUnmount: function() {
 	Chat.removeChangeListener(this._onChange);
@@ -112,10 +114,10 @@ var ChatApp = React.createClass({
     		    </div>
     		    <div className="col-md-8">
     			<Messages me={Strophe.getNodeFromJid(this.props.me)} talkingTo={this.state.talkingTo} messages={messages} userMeta={this.state.chat.userMeta} />
-    			<WhosTyping users={this.state.whosTyping} />
+    			<WhosTyping users={this.state.chat.whosTyping} />
 			<div className="row msgbar">
     			    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
-			    <MyStatus setStatus={this.setMyStatus} />
+			    <MyStatus setStatus={Chat.setStatus} />
 			</div>
     		    </div>
     		</div>
@@ -230,8 +232,8 @@ var MyStatus = React.createClass({
     },
     render: function () {
 	var options = [];
-	for (var code in chatStatus) {
-	    options.push(<option value={code} key={code}>{chatStatus[code]}</option>);
+	for (var code in Chat.chatStatus) {
+	    options.push(<option value={code} key={code}>{Chat.chatStatus[code]}</option>);
 	}
 	return (
 	    <form onSubmit={this.handleStatusChange}>
@@ -317,7 +319,7 @@ var LastMessage = React.createClass({
 
 var FriendStatus = React.createClass({
     render: function () {
-	var status = chatStatus[this.props.code] || 'Online';
+	var status = Chat.chatStatus[this.props.code] || 'Online';
 	return (
 	    <p>{status} <em>{this.props.message}</em></p>
 	);
