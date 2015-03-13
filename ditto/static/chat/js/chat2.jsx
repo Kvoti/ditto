@@ -3,15 +3,6 @@ import React from 'react';
 import * as Bootstrap from "vendor/react-bootstrap/index";  // TODO shouldn't this work without /index
 import * as Chat from 'chat/js/chat.min';
 
-var connection;
-var composedMessageChangeAt;
-var stillTypingTimeout = 5000;
-var chatStatus = {
-    away: 'Away',
-    chat: 'Free for chat',
-    dnd: 'Do not disturb',
-    xa: 'Extended away',
-};
 var update = React.addons.update;
 var classSet = React.addons.classSet;
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -24,15 +15,27 @@ var getMessages = function (messages, other) {
     );
 };
 
+// util functions
+function isPageHidden () {
+    // TODO keep this kind of things to existing polyfills (loaded with modernizr?)?
+    return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
+};
+// ------
+
 Chat.connect(
     chatConf.server,
     chatConf.me,
-    chatConf.password
+    chatConf.password,
+    chatConf.chatroom, // TODO this will need to be multiple rooms
+    chatConf.nick
 );
 
 var ChatApp = React.createClass({
     getInitialState: function () {
-	return Chat.getState();
+	return {
+	    talkingTo: this.props.other,
+	    chat: Chat.getState()
+	}
     },
     componentDidMount: function() {
 	Chat.addChangeListener(this._onChange);
@@ -43,279 +46,33 @@ var ChatApp = React.createClass({
     _onChange: function() {
 	this.setState(Chat.getState());
     },
-    getBareJID: function (node) {
-	var domain = Strophe.getDomainFromJid(this.props.me);
-	return node + '@' + domain
-    },
     switchChat: function (friend) {
 	this.setState({
 	    talkingTo: friend,
 	});
     },
-    handlePresence: function (pres) {
-	var msg = $(pres);
-	var from = Strophe.getNodeFromJid(msg.attr('from'));
-	var type = msg.attr('type');
-	var code;
-	var customMessage;
-	var newState;
-	var status;
-	var friendStatus = {};
-
-	if (type === 'unavailable') {
-	    status = {};
-	} else {
-	    code = msg.find('show').text();
-	    customMessage = msg.find('status').text();
-	    status = {
-		code: code,
-		message: customMessage
-	    };
-	}
-	friendStatus[from] = {$set: status};
-	this.setState(
-	    update(
-		this.state,
-		{friendStatus: friendStatus}
-	    )
-	);
-	return true;
-    },
-    setMyStatus: function (code, message) {
-	console.log('setting status', code, message);
-	var pres = $pres();
-	if (code) {
-	    pres.c('show').t(code).up();
-	}
-	if (message) {
-	    pres.c('status').t(message);
-	}
-	connection.send(pres.tree());
-    },
-    handleArchivedPrivateMessage: function (msg) {
-	var msg = $(msg);
-	if (msg.find('[type=groupchat]').length === 0) {
-	    var body = msg.find("body:first").text();
-	    var from = Strophe.getNodeFromJid(msg.find('message').attr("from"));
-	    var to = Strophe.getNodeFromJid(msg.find('message').attr("to"));
-	    var when = new Date(msg.find('delay').attr('stamp'));
-	    this.addMessage(
-		from,
-		to,
-		when,
-		body
-	    );
-	}
-	return true;
-    },
-    handlePrivateMessage: function (msg) {
-	var msg = $(msg);
-	var body = msg.find("body:first").text();
-	var from = Strophe.getNodeFromJid(msg.attr("from"));
-	var to = Strophe.getNodeFromJid(msg.attr("to"));
-	var when = new Date();
-	var composing = msg.find('composing');
-	var active = msg.find('active');
-	var newState;
-	
-	if (composing.length) {
-	    newState = update(this.state, {whosTyping: {$push: [from]}});
-	    this.setState(newState);
-	} else {
-	    if (active.length) {
-		newState = update(this.state, {whosTyping: {$splice: [[this.state.whosTyping.indexOf(from), 1]]}});
-		this.setState(newState);
-	    }
-	    if (body) {
-		if (this.props.page !== 'messages' || this.isPageHidden()) {
-		    this.notifyNewMessage(body);
-		}
-		this.addMessage(
-		    from,
-		    to,
-		    when,
-		    body
-		);
-	    }
-	}
-	return true;
-    },
-    isPageHidden: function () {
-	// TODO keep this kind of things to existing polyfills (loaded with modernizr?)?
-	return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
-    },
-    notifyNewMessage: function (msg) {
-	console.log('playing beep');
-	document.getElementById('new-message-beep').play();
-	var notification = new Notification("New message", {
-	    icon : "/static/images/ditto-logo.png",
-	    body: msg.slice(0, 140)
-	});
-	// TODO this is supposed to go to the right tab in chrome but doesn't seem to work
-	notification.onclick = function () {
-	    window.focus();
-	};
-    },
-    handleGroupMessage: function (msg) {
-	var msg = $(msg);
-	var body = msg.find("body:first").text();
-	var from = Strophe.getResourceFromJid(msg.attr("from"));
-	var when = msg.find('delay');
-	if (when.length) {
-	    when = new Date(when.attr('stamp'));
-	} else {
-	    when = new Date();
-	}
-	if (from) {
-	    // TODO always get an 'empty' message from the room
-	    // itself, not sure why
-	    this.addGroupMessage(
-		from,
-		when,
-		body
-	    )
-	}
-	return true;
-    },
-    handleGroupPresence: function (pres) {
-	var msg = $(pres);
-	var nick_taken = msg.find('conflict');
-        var from = msg.attr('from').split('/')[1];
-	var newState;
-	if (nick_taken.length) {
-	    // TODO do something with this
-	}
-	var added = msg.find('item[role!=none]');
-	if (added.length) {
-	    newState = update(this.state, {chatroomPresence: {$splice: [[0, 0, from]]}});
-	}
-	var removed = msg.find('item[role=none]');
-	if (removed.length) {
-	    newState = update(this.state, {chatroomPresence: {$splice: [[this.state.chatroomPresence.indexOf(from), 1]]}});
-	}
-        // First time we enter the chatroom for a new network the room
-        // needs to be created and configured
-        var is_new_room = msg.find('status[code=201]');
-        if (is_new_room.length) {
-            // TODO handle failure
-            connection.muc.createInstantRoom(this.props.chatroom);
-        }
-	this.setState(newState);
-	return true;
-    },
+    // TODO not sure how to do this now
+//    notifyNewMessage: function (msg) {
+//	console.log('playing beep');
+//	document.getElementById('new-message-beep').play();
+//	var notification = new Notification("New message", {
+//	    icon : "/static/images/ditto-logo.png",
+//	    body: msg.slice(0, 140)
+//	});
+//	// TODO this is supposed to go to the right tab in chrome but doesn't seem to work
+//	notification.onclick = function () {
+//	    window.focus();
+//	};
+//    },
     handleMessageSubmit: function (message) {
 	if (this.props.page === 'chatroom') {
-	    connection.muc.groupchat(this.props.chatroom, message);
+	    Chat.sendGroupMessage(message);
 	} else {
-	    var payload = $msg({
-		to: this.getBareJID(this.state.talkingTo),
-		from: this.props.me,
-		type: 'chat'
-	    }).c('body').t(message);
-	    
-	    connection.chatstates.addActive(payload);
-	    composedMessageChangeAt = null;
-	    
-	    connection.send(payload.tree());
-	    // TODO functions have kwargs in es6?
-	    // TODO handle error on message submit
-	    this.addMessage(
-		Strophe.getNodeFromJid(this.props.me),
-		this.state.talkingTo,
-		new Date(),
-		message
-	    );
+	    Chat.sendPrivateMessage(this.state.talkingTo, message);
 	}
     },
     handleMessageChange: function () {
-	if (!composedMessageChangeAt) {
-	    connection.chatstates.sendComposing(
-		this.getBareJID(this.state.talkingTo)
-	    );
-	    composedMessageChangeAt = new Date();
-	    setTimeout(this.checkImStillTyping, stillTypingTimeout);
-	}
-    },
-    checkImStillTyping: function () {
-	if (composedMessageChangeAt) {
-	    var now = new Date();
-	    if (now - composedMessageChangeAt > stillTypingTimeout) {
-		composedMessageChangeAt = undefined;
-		connection.chatstates.sendActive(
-		    this.getBareJID(this.state.talkingTo)
-		);
-	    } else {
-		window.setTimeout(this.checkImStillTyping, stillTypingTimeout);
-	    }
-	}
-    },
-    acceptFriendRequest: function (from) {
-	connection.roster.authorize(from);
-	return true;
-    },
-    handleRoster: function (roster, item) {
-	var friends = [];
-	var newState;
-	var self = this;
-	$.each(roster, function (i, friend) {
-	    var username = Strophe.getNodeFromJid(friend.jid);
-	    if (friend.subscription === 'both') {
-		friends.push(username);
-		self.getUserMeta(username);
-	    }
-	});
-	newState = update(this.state, {friends: {$set: friends}});
-	if (!this.state.talkingTo && friends) {
-	    newState = update(newState, {talkingTo: {$set: friends[0]}});
-	}
-	this.setState(newState);
-	return true;  // always bloody forget this!
-    },
-    getUserMeta: function (user) {
-	var jid = this.getBareJID(user);
-	if (this.state.userMeta[user]) {
-	    return;
-	}
-	connection.vcard.get(
-	    vcard => {
-		vcard = $(vcard);
-		var setUserMeta = {};
-		var newState;
-		var role = vcard.find('ROLE').text();
-		var avatar = vcard.find('PHOTO').text();
-		setUserMeta[user] = {$set: {role: role, avatar: avatar}};
-		newState = update(this.state, {userMeta: setUserMeta})
-		this.setState(newState);
-	    },
-	    jid
-	);
-    },
-    addMessage: function (from, to, when, message) {
-	var newState;
-	newState = update(this.state,
-	    {messages: {
-		$push: [{
-			from: from,
-			to: to,
-			when: when,
-			message: message
-		}]
-	    }}
-	);
-	this.setState(newState);
-    },
-    addGroupMessage: function (from, when, message) {
-	var newState;
-	newState = update(this.state,
-	    {chatroomMessages: {
-		$push: [{
-		    from: from,
-		    when: when,
-		    message: message
-		}]
-	    }}
-	);
-	this.setState(newState);
+	Chat.sendIsTyping();
     },
     render: function () {
 	var messages;
@@ -325,37 +82,37 @@ var ChatApp = React.createClass({
 	    // on new messages. TODO maybe that should be separated out
 	    // from the react stuff?
 	    return <div></div>;
-	} else if (this.state.connectionStatus !== 'connected') {
+	} else if (this.state.chat.connectionStatus !== 'connected') {
 	    return (
 		<div>
-		    {this.state.connectionStatus}
+		    {this.state.chat.connectionStatus}
 		</div>
 	    );
 	} else if (this.props.page === 'chatroom') {
 	    return (
 		<div className="row">
     		    <div className="col-md-8">
-    			<Messages me={Strophe.getNodeFromJid(this.props.me)} talkingTo={this.state.talkingTo} messages={this.state.chatroomMessages} userMeta={this.state.userMeta} />
+    			<Messages me={Strophe.getNodeFromJid(this.props.me)} talkingTo={this.state.talkingTo} messages={this.state.chat.chatroomMessages} userMeta={this.state.chat.userMeta} />
 			<div className="row msgbar">
       			    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
 			</div>
     		    </div>
 		    <div className="col-md-4">
-			<ChatroomPresence users={this.state.chatroomPresence}/>
+			<ChatroomPresence users={this.state.chat.chatroomPresence}/>
 		    </div>
 		</div>
 	    );
 	} else if (this.props.page === 'messages') {
-	    messages = getMessages(this.state.messages, this.state.talkingTo);
+	    messages = getMessages(this.state.chat.messages, this.state.talkingTo);
 	    return (
     		<div className="row">
     		    <div className="col-md-4">
 			<div className="list-group">
-    			    <Friends messages={this.state.messages} friends={this.state.friends} friendStatus={this.state.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.userMeta} />
+    			    <Friends messages={this.state.chat.messages} friends={this.state.chat.friends} friendStatus={this.state.chat.friendStatus} current={this.state.talkingTo} switchChat={this.switchChat} userMeta={this.state.chat.userMeta} />
 			</div>
     		    </div>
     		    <div className="col-md-8">
-    			<Messages me={Strophe.getNodeFromJid(this.props.me)} talkingTo={this.state.talkingTo} messages={messages} userMeta={this.state.userMeta} />
+    			<Messages me={Strophe.getNodeFromJid(this.props.me)} talkingTo={this.state.talkingTo} messages={messages} userMeta={this.state.chat.userMeta} />
     			<WhosTyping users={this.state.whosTyping} />
 			<div className="row msgbar">
     			    <ComposeMessage onMessageSubmit={this.handleMessageSubmit} onMessageChange={this.handleMessageChange} />
@@ -364,16 +121,24 @@ var ChatApp = React.createClass({
     		    </div>
     		</div>
 	    );
-	} else {
-	    return (
-		<WhosOnline users={this.state.chatroomPresence} userMeta={this.state.userMeta} />
-	    );
 	}
     }
 });
 
 var WhosOnline = React.createClass({
-    usersPerPanel: 9,
+    usersPerPanel: 9, // TODO could be props
+    getInitialState: function () {
+	return Chat.whosOnline();
+    },
+    componentDidMount: function() {
+	Chat.addChangeListener(this._onChange);
+    },
+    componentWillUnmount: function() {
+	Chat.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+	this.setState(Chat.whosOnline());
+    },
     groupUsers: function (users) {
 	var grouped = [];
 	var group;
@@ -387,12 +152,11 @@ var WhosOnline = React.createClass({
 	return grouped;
     },
     render: function () {
-	var userMeta = this.props.userMeta;
-	var groupedUsers = this.groupUsers(this.props.users);
+	var groupedUsers = this.groupUsers(this.state.online);
 	var items = groupedUsers.map((group, i) => {
 	    return (
 		<Bootstrap.CarouselItem key={i}>
-		    <WhosOnlineItem users={group} userMeta={this.props.userMeta} key={i} />
+		    <WhosOnlineItem users={group} key={i} />
 		</Bootstrap.CarouselItem>
 	    );
 	});
@@ -413,7 +177,7 @@ var WhosOnlineItem = React.createClass({
 	var users = this.props.users.map((user, i) => {
 	    return (
 		<div className="avatar" key={i}>
-		    <Avatar size={100} user={user} userMeta={this.props.userMeta} />
+		    <Avatar size={100} user={user} />
 		    <p>{user}</p>
 		</div>
 	    );
@@ -528,7 +292,7 @@ var Friend = React.createClass({
 	return (
 	    <a className="list-group-item" href="#" onClick={this.switchChat}>
 		<div className="media-left media-middle friends-avatar">
-		    <Avatar size={50} user={this.props.friend} userMeta={this.props.userMeta} />
+		    <Avatar size={50} user={this.props.friend} />
 		</div>
 		<div className="media-body">
 		    <h4 className="media-heading friends-username">{current} {this.props.friend}</h4>
@@ -631,7 +395,7 @@ var Message = React.createClass({
 	    'media-right': is_from_me
 	});
 	var avatar = <div className={mediaClass}>
-    		<Avatar size={50} user={this.props.from} userMeta={this.props.userMeta} />
+    		<Avatar size={50} user={this.props.from} />
 	</div>;
 	var colClass = classSet({
 	    'col-md-6': true,
@@ -671,13 +435,25 @@ var WhosTyping = React.createClass({
 });
 
 var Avatar = React.createClass({
+    getInitialState: function () {
+	return Chat.getUserProfiles();
+    },
+    componentDidMount: function() {
+	Chat.addChangeListener(this._onChange);
+    },
+    componentWillUnmount: function() {
+	Chat.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+	this.setState(Chat.getUserProfiles());
+    },
     render: function () {
 	// TODO where to put global constant state like this?
 	var avatarSVGs = $('#avatar_svgs').text();
 	var avatarName;
-	var meta = this.props.userMeta[Strophe.getBareJidFromJid(this.props.user)];
-	if (meta) {
-	    avatarName = meta.avatar;
+	var profile = this.state.profiles[this.props.user];
+	if (profile) {
+	    avatarName = profile.avatar;
 	} else {
 	    avatarName = 'cupcake'
 	}
@@ -770,9 +546,15 @@ var ComposeMessage = React.createClass({
 });
 
 var render = function () {
-    React.render(
-	<ChatApp server={chatConf.server} me={chatConf.me} password={chatConf.password} other={chatConf.other} chatroom={chatConf.chatroom} nick={chatConf.nick} page={chatConf.page} />,
-	document.getElementById(chatConf.element)
-    );
+    var whosonline = document.getElementById('whosonline');
+    var chat = document.getElementById('chat');
+    if (whosonline) {
+	React.render(<WhosOnline />, whosonline);
+    };
+    if (chat) {
+	React.render(
+	    <ChatApp me={chatConf.me} other={chatConf.other} page={chatConf.page} />, chat
+	);
+    }
 }
 export default render;
