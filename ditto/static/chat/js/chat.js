@@ -102,6 +102,37 @@ function sendIsTyping (to) {
 	setTimeout(() => {checkImStillTyping(to)}, stillTypingTimeout);
     }
 }
+
+function setAvatar (avatar) {
+    // TODO add role back. vcard spec lets you update parts of the
+    // vcard but doesn't look like the strophe plugin lets you
+    // updated, only get and set
+
+    // TODO no convenience function provided for making vcards?
+    var role = Strophe.xmlElement('ROLE');
+    // role.appendChild(Strophe.xmlTextNode(DITTO.role));
+
+    var photo = Strophe.xmlElement('PHOTO');
+    photo.appendChild(Strophe.xmlTextNode(avatar));  // TODO prob make this full URI of avatar?
+    // TODO looks like strophe.vcard doesn't allow setting multiple elements?
+    // (sort of doesn't matter cos the data you set isn't validated, which is ok
+    // while we assume no other clients will connect)
+    var vcard = Strophe.xmlElement('XXX');
+    // vcard.appendChild(role);
+    vcard.appendChild(photo);
+
+    // TODO handle error
+    connection.vcard.set(
+	function (r) { },  // TODO handle something here?
+	vcard
+    );
+
+    // Mongooseim doesn't do pubsub so sadly the avatar change is not broadcast.
+    // Here we update userMeta so, at least, the current client updates
+    // Not yet sure what the pubsub workaround is. Custom message in chatroom perhaps?
+    state.userMeta[Strophe.getNodeFromJid(jid)].avatar = avatar;
+    emitChange();
+}
 // --------------------------------------------------
 
 // TODO flux example does a lot more complicated things with callbacks
@@ -410,5 +441,6 @@ export {
     whosOnline, getUserProfiles,
     chatStatus, setStatus,
     addFriend,
+    setAvatar,
     sendPrivateMessage, sendGroupMessage, sendIsTyping,
 };

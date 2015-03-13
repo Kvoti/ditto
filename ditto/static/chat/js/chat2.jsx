@@ -466,6 +466,43 @@ var Avatar = React.createClass({
     }
 });
 
+var ChangeAvatar = React.createClass({
+    getAvatars: function () {
+	// TODO tidy up avatar/svg handling
+	var avatarSVGs = $($('#avatar_svgs').text());
+	var avatars = [];
+        avatarSVGs.find('g').show();
+        avatarSVGs.find('>g[id!=guides]').each(function () {
+            var svg_clone = avatarSVGs.clone();
+            svg_clone.find('>g').remove();
+            svg_clone.append($(this));
+	    avatars.push([$(this).attr('id'), svg_clone.get(0).outerHTML]);
+        });
+	return avatars;
+    },
+    render: function () {
+	var avatars = this.getAvatars().map(avatar => {
+	    var avatarName = avatar[0];
+	    var changeAvatar = function () {
+		Chat.setAvatar(avatarName);
+	    }
+	    return (
+		<li key={avatarName}><a onClick={changeAvatar} dangerouslySetInnerHTML={{__html: avatar[1] }} href="#"></a></li>
+	    );
+	});
+	return (
+	    <div className="btn-group">
+                <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    Change avatar <span className="caret"></span>
+                </button>
+                <ul className="dropdown-menu" role="menu">
+		    {avatars}
+                </ul>
+            </div>
+	);
+    }
+});
+
 var Timestamp = React.createClass({
     componentDidMount: function() {
 	this.interval = setInterval(this.updateDelta, 60 * 1000);
@@ -558,6 +595,8 @@ var render = function () {
     var whosonline = document.getElementById('whosonline');
     var chat = document.getElementById('chat');
     var chatroomModule = document.getElementById('chat-module');
+    var profileAvatar = document.getElementById('profile-avatar');
+    
     if (whosonline) {
 	React.render(<WhosOnline />, whosonline);
     };
@@ -571,8 +610,18 @@ var render = function () {
 	    <ChatroomModule />, chatroomModule
 	);
     }
+    if (profileAvatar) {
+	var name = profileAvatar.dataset['name'];
+	React.render(
+	    <Avatar user={name} size={100} />, profileAvatar
+	);
+	React.render(
+	    <ChangeAvatar user={name} />, document.getElementById('change-avatar')
+	);
+    }
     React.render(
 	<Avatar user={Strophe.getNodeFromJid(chatConf.me)} size={50} />, document.getElementById('nav-avatar')
     );
 }
+
 export default render;
