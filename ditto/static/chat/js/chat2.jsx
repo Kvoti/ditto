@@ -572,7 +572,7 @@ var render = function () {
 	);
     }
     React.render(
-	<Avatar user="mark" size={50} />, document.getElementById('nav-avatar')
+	<Avatar user={Strophe.getNodeFromJid(chatConf.me)} size={50} />, document.getElementById('nav-avatar')
     );
 }
 export default render;
