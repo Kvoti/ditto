@@ -367,6 +367,7 @@ var Messages = React.createClass({
     },
     render: function () {
 	var userMeta = this.props.userMeta;
+	var style;
 	var self = this;
 	var messageNodes = this.props.messages.map(function(m, i) {
 	    // TODO this key should be unique across all messages, how do I do that?
@@ -374,7 +375,12 @@ var Messages = React.createClass({
 		<Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={m.when} />
 	    );
 	});
-	var style = {height: this.state.height}
+	if (this.props.fixedHeight) {
+	    // TODO fix this to only compute height if this is a full height chat message container
+	    style = {};
+	} else {
+	    style = {height: this.state.height};
+	}
 	return (
 	    <div style={style} id="msgs" ref="messages">
 		{messageNodes}
@@ -558,7 +564,7 @@ var ChatroomModule = React.createClass({
     render: function () {
 	var messages = this.state.chatroomMessages.slice(-5);
 	return (
-	    <Messages messages={messages} />
+	    <Messages fixedHeight={true} messages={messages} />
 	);
     }
 });
