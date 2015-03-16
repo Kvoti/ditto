@@ -9,6 +9,10 @@ urlpatterns = patterns('',
     url(r'^create/$',  # noqa
         views.create_my_network,
         name="create"),
+
+    url(r'^delete/(\d+)/$',  # noqa
+        views.delete_network,
+        name="delete"),
                        
     # mondgooseim auth api endpoint
     url(

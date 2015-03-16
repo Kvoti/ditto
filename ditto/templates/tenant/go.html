@@ -4,6 +4,17 @@
 
 {% block tenant-content %}
 {% for tenant in tenants %}
-<p>Open <a href="{{ tenant.network_url }}">{{ tenant.network_name }}</a></p>
+<p>
+    <form style="display:inline" method="post" action="{% url 'ditto:delete' tenant.pk %}">
+        {% csrf_token %}
+        Open <a href="{{ tenant.network_url }}">{{ tenant.network_name }}</a>
+
+        <button class="btn btn-danger" type="submit">
+            Delete
+        </button>
+    </form>
+<p>
+
+</p>
 {% endfor %}
 {% endblock %}

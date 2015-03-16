@@ -6,9 +6,10 @@ from django.contrib.sites.models import Site
 from django.core import management
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST
 
 import core
 from users.models import User
@@ -85,6 +86,16 @@ def _create_network_instance(tenant):
         site.name = network_name
         site.save()
 
+        
+@require_POST
+def delete_network(request, tenant_id):
+    tenant = get_object_or_404(models.Tenant, pk=tenant_id)
+    if not tenant.user == request.user:
+        raise Http404
+    tenant.delete()
+    messages.success(request, "Deleted '%s' network." % tenant.network_name)
+    return HttpResponseRedirect(reverse('ditto:home'))
+    
 
 # TODO restrict this to requests from chat (localhost for now)?
 @never_cache
