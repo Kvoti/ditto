@@ -1,10 +1,8 @@
-// This is me attempting flux from a quick reading of the todomvc
-// example.  We abstract out the chat state into another object that
-// has methods for getting/setting the state, and the ability to
-// register handlers to call when the state changes. Like this,
-// independant react classes can repsond to the same chat state.  The
-// flux example uses proper Store, Action, Dispatcher objects. I'll
-// get there eventually...
+// This is the abstract chat application that's unrelated to the
+// details of the UI. It handles the chat connection and
+// sending/receiving messages etc. To adopt the Flux architecture we'd
+// need to split this out in to Store, Action and Dispatcher
+// components.
 
 var connection, jid, chatroom, nick;
 var change_callbacks = [];
@@ -91,6 +89,13 @@ function sendPrivateMessage (to, message) {
 	new Date(),
 	message
     );
+};
+
+function markMessagesRead (messageIds) {
+    messageIds.forEach(id => {
+	state.messages[id].isRead = true;
+    });
+    emitChange();
 };
 
 function sendIsTyping (to) {
@@ -271,10 +276,6 @@ var handlePrivateMessage = function (msg) {
 	    state.whosTyping.splice(state.whosTyping.indexOf(from), 1);
 	}
 	if (body) {
-            // TODO don't know where this belongs now
-	    // if (this.props.page !== 'messages' || this.isPageHidden()) {
-	    //     this.notifyNewMessage(body);
-	    // }
 	    addMessage(
 		from,
 		to,
@@ -298,7 +299,8 @@ var handleArchivedPrivateMessage = function (msg) {
 	    from,
 	    to,
 	    when,
-	    body
+	    body,
+	    true  // isRead  TODO can't pass args by name?
 	);
     }
     return true;
@@ -358,12 +360,17 @@ function getBareJID (node) {
     return node + '@' + domain;
 };
 
-var addMessage = function (from, to, when, message) {
+var addMessage = function (from, to, when, message, isRead=false) {
     state.messages.push({
 	from: from,
 	to: to,
 	when: when,
-	message: message
+	message: message,
+	isRead: isRead,
+	// TODO of course this should be a globally unique id, but
+	// this'll do for now until I figure out how/if xmpp can
+	// handle the read state of messages
+	id: state.messages.length
     });
     emitChange();
 };
@@ -439,4 +446,5 @@ export {
     addFriend,
     setAvatar,
     sendPrivateMessage, sendGroupMessage, sendIsTyping,
+    markMessagesRead,
 };

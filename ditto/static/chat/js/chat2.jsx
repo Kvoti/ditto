@@ -15,10 +15,17 @@ var getMessages = function (messages, other) {
 };
 
 // util functions
-function isPageHidden () {
-    // TODO keep this kind of things to existing polyfills (loaded with modernizr?)?
-    return document.hidden || document.webkitHidden || document.mozHidden || document.msHidden;
-};
+function notifyNewMessage (msg) {
+    document.getElementById('new-message-beep').play();
+    var notification = new Notification("New message from " + msg.from, {
+	icon : "/static/images/ditto-logo.png",
+	body: msg.message.slice(0, 140)
+    });
+    // TODO this is supposed to go to the right tab in chrome but doesn't seem to work
+    notification.onclick = function () {
+	window.focus();
+    };
+}
 // ------
 
 Chat.connect(
@@ -29,42 +36,57 @@ Chat.connect(
     chatConf.nick
 );
 
+
+// TODO not sure if this is state of the ChatApp or not
+var notified = [];
+
 var ChatApp = React.createClass({
     getInitialState: function () {
 	return {
 	    talkingTo: Strophe.getNodeFromJid(this.props.other || ''),
-	    chat: Chat.getState()
+	    chat: Chat.getState(),
+	    isHidden: Visibility.hidden(),
 	}
     },
     componentDidMount: function() {
 	Chat.addChangeListener(this._onChange);
 	// TODO need to get this working for chatting to someone for the first time
-//	Chat.addFriend(this.state.talkingTo);
+	//	Chat.addFriend(this.state.talkingTo);
+	this.listener = Visibility.change((e, state) => {
+	    var messages = getMessages(this.state.chat.messages, this.state.talkingTo);
+	    this.markMessagesRead(messages);
+	    this.setState({isHidden: Visibility.hidden()});
+	});
     },
     componentWillUnmount: function() {
 	Chat.removeChangeListener(this._onChange);
+	Visibility.unbind(this.listener);
     },
     _onChange: function() {
-	this.setState({chat: Chat.getState()});
+	var newState = Chat.getState();
+	if (this.state.isHidden) {
+	    this.setState({chat: newState});
+	} else {
+	    var messages = getMessages(newState.messages, this.state.talkingTo);
+	    this.markMessagesRead(messages);
+	    this.setState({chat: Chat.getState()});
+	}
+    },
+    markMessagesRead: function (messages) {
+	var unread = messages
+	    .filter(m => { return !m.isRead; })
+	    .map(m => { return m.id; });
+	if (unread.length) {
+	    Chat.markMessagesRead(unread)
+	};
     },
     switchChat: function (friend) {
+	var messages = getMessages(this.state.chat.messages, friend);
+	this.markMessagesRead(messages);
 	this.setState({
 	    talkingTo: friend,
 	});
     },
-    // TODO not sure how to do this now
-//    notifyNewMessage: function (msg) {
-//	console.log('playing beep');
-//	document.getElementById('new-message-beep').play();
-//	var notification = new Notification("New message", {
-//	    icon : "/static/images/ditto-logo.png",
-//	    body: msg.slice(0, 140)
-//	});
-//	// TODO this is supposed to go to the right tab in chrome but doesn't seem to work
-//	notification.onclick = function () {
-//	    window.focus();
-//	};
-//    },
     handleMessageSubmit: function (message) {
 	if (this.props.page === 'chatroom') {
 	    Chat.sendGroupMessage(message);
@@ -77,12 +99,26 @@ var ChatApp = React.createClass({
     },
     render: function () {
 	var messages;
+
+	// TODO does this belong in another component really, or not in a component at all (as a beep and desktop notification are not really part of the UI)?
+	if (this.state.isHidden || this.props.page !== 'messages') {
+	    this.state.chat.messages.forEach(message => {
+		if (message.from !== Strophe.getNodeFromJid(chatConf.me) &&
+		    !message.isRead &&
+		    notified.indexOf(message.id) === -1
+		) {
+		    notifyNewMessage(message);
+		    notified.push(message.id);
+		}
+	    });
+	};
+		
 	if (!this.props.page) {
 	    // For now we have some pages with no chat UI elements but
 	    // we're still connected to chat so we can, for example, beep
 	    // on new messages. TODO maybe that should be separated out
 	    // from the react stuff?
-	    return <div></div>;
+	    return false;
 	} else if (this.state.chat.connectionStatus !== 'connected') {
 	    return (
 		<div>
@@ -332,7 +368,7 @@ var Messages = React.createClass({
     },
     componentDidMount: function () {
 	// TODO window.onresize cross-browser?
-	window.onresize = this.updateHeight;
+	$(window).on('resize', this.updateHeight);
     },
     updateHeight: function () {
 	// TODO no pure css way to do this?
@@ -344,7 +380,7 @@ var Messages = React.createClass({
 	this.updateHeight();
     },
     componentWillUnmount: function () {
-	// TODO window.remove event listener
+	$(window).off('resize', this.updateHeight);
     },
     componentDidUpdate: function() {
 	var node = this.getDOMNode();
@@ -357,7 +393,7 @@ var Messages = React.createClass({
 	var messageNodes = this.props.messages.map(function(m, i) {
 	    // TODO this key should be unique across all messages, how do I do that?
 	    return (
-		<Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={m.when} />
+		<Message me={self.props.me} from={m.from} to={m.to} message={m.message} when={m.when} userMeta={userMeta} key={i} />
 	    );
 	});
 	if (this.props.fixedHeight) {
@@ -612,6 +648,30 @@ var Role = React.createClass({
     }
 });
 
+var NewMessageCount = React.createClass({
+    getInitialState: function () {
+	return Chat.getState();
+    },
+    componentDidMount: function() {
+	Chat.addChangeListener(this._onChange);
+    },
+    componentWillUnmount: function() {
+	Chat.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+	this.setState(Chat.getState());
+    },
+    render: function () {
+	var unread = this.state.messages.filter(m => {
+	    return !m.isRead;
+	}).length;
+	if (unread) {
+	    return <b>{unread}</b>;
+	} else {
+	    return false;
+	}
+    }
+});
 
 var render = function () {
     var whosonline = document.getElementById('whosonline');
@@ -619,14 +679,15 @@ var render = function () {
     var chatroomModule = document.getElementById('chat-module');
     var profileAvatar = document.getElementById('profile-avatar');
     
+    React.render(
+	<ChatApp me={chatConf.me} other={chatConf.other} page={chatConf.page} />, chat || document.getElementById('emptychat')
+    );
+    React.render(
+	<NewMessageCount />, document.getElementById('new-message-count')
+    );
     if (whosonline) {
 	React.render(<WhosOnline />, whosonline);
     };
-    if (chat) {
-	React.render(
-	    <ChatApp me={chatConf.me} other={chatConf.other} page={chatConf.page} />, chat
-	);
-    }
     if (chatroomModule) {
 	React.render(
 	    <ChatroomModule />, chatroomModule
