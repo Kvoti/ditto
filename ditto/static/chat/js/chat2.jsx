@@ -113,13 +113,7 @@ var ChatApp = React.createClass({
 	    });
 	};
 		
-	if (!this.props.page) {
-	    // For now we have some pages with no chat UI elements but
-	    // we're still connected to chat so we can, for example, beep
-	    // on new messages. TODO maybe that should be separated out
-	    // from the react stuff?
-	    return false;
-	} else if (this.state.chat.connectionStatus !== 'connected') {
+	if (this.state.chat.connectionStatus !== 'connected') {
 	    return (
 		<div>
 		    {this.state.chat.connectionStatus}
@@ -158,6 +152,11 @@ var ChatApp = React.createClass({
     		    </div>
     		</div>
 	    );
+	} else {
+	    // For now we have some pages with no chat UI elements but
+	    // we're still connected to chat so we can, for example, beep
+	    // on new messages.
+	    return false;
 	}
     }
 });
