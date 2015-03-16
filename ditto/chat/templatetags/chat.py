@@ -18,9 +18,13 @@ def chat_config(context, other=None, extra=None):
         signer = Signer()
         password = signer.sign(user.username)
     me = '%s@%s' % (user.username, chat_host)
+    try:
+        role = user.groups.all()[0].name
+    except IndexError:
+        role = '-'
     conf = {
         'me': _resource(me),
-        'role': user.groups.all()[0].name,
+        'role': role,
         'nick': user.username,
         'server': server,
         'password': password,
