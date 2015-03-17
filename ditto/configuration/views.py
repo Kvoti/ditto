@@ -94,8 +94,8 @@ def _edit_config(
         form = form_class()
     return TemplateResponse(request, 'configuration/edit.html', {
         'form': form,
-        'back': reverse('ditto:dash'),
-        'nav': ['dash', 'settings', section],
+        'back': reverse('ditto:editconfig', args=('basicinfo',)),
+        'nav': ['settings', section],
         'form_template': form_template,
         'submit': 'SAVE',
         'base': base_template,
@@ -104,7 +104,7 @@ def _edit_config(
 
 
 @admin_required
-@nav(['dash', 'settings', 'roles'], back=reverse_lazy('ditto:dash'))
+@nav(['settings', 'roles'], back=reverse_lazy('ditto:editconfig', args=('basicinfo',)))
 def roles(request, template='configuration/roles.html', success_url=None):
     if success_url is None:
         success_url = request.path
@@ -141,7 +141,7 @@ def roles(request, template='configuration/roles.html', success_url=None):
 
 
 @admin_required
-@nav(['dash', 'settings', 'roles'])
+@nav(['settings', 'roles'])
 def delete_role(request, role_id):
     group = get_object_or_404(Group, pk=role_id)
     if request.method == 'POST':

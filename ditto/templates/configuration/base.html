@@ -1,24 +1,27 @@
-{% extends "dashboard/dashboard.html" %}
+{% extends "base.html" %}
 
 {% load skin %}
 
-{% block section %}SETTINGS{% endblock %}
+{% block content %}
+    <div class="row">
+	<div class="col-md-4">
+	    <ul class="nav nav-pills nav-stacked">
+		{% url 'ditto:editconfig' 'basicinfo' as url %}
+		{% navitem "basicinfo" url _("Basic Information") %}
 
-{% block sidenav %}
-    {% url 'ditto:editconfig' 'basicinfo' as url %}
-    {% navitem "basicinfo" url _("Basic Information") %}
+		{% url 'ditto:settings' as url %}
+		{% navitem "roles" url _("Roles") %}
 
-    {% url 'ditto:settings' as url %}
-    {% navitem "roles" url _("Roles") %}
+		{% url 'ditto:editconfig' 'permissions' as url %}
+		{% navitem "permissions" url _("Permissions") %}
 
-    {% url 'ditto:editconfig' 'permissions' as url %}
-    {% navitem "permissions" url _("Permissions") %}
-
-    {% url 'ditto:editconfig' 'features' as url %}
-    {% navitem "features" url _("Features") %}
-{% endblock %}
-
-{% block dash-content %}
-    <h1>{% block heading %}{% endblock %}</h1>
-    {% block config-content %}{% endblock %}
+		{% url 'ditto:editconfig' 'features' as url %}
+		{% navitem "features" url _("Features") %}
+	    </ul>
+	</div>
+	<div class="col-md-8">
+	    <h1>{% block heading %}{% endblock %}</h1>
+	    {% block config-content %}{% endblock %}
+	</div>
+    </div>
 {% endblock %}
