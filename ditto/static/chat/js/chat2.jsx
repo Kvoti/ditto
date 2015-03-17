@@ -64,12 +64,19 @@ var ChatApp = React.createClass({
     },
     _onChange: function() {
 	var newState = Chat.getState();
+	var talkingTo = this.state.talkingTo || newState.friends[0];
 	if (this.state.isHidden) {
-	    this.setState({chat: newState});
+	    this.setState({
+		chat: newState,
+		talkingTo: talkingTo
+	    });
 	} else {
-	    var messages = getMessages(newState.messages, this.state.talkingTo);
+	    var messages = getMessages(newState.messages, talkingTo);
 	    this.markMessagesRead(messages);
-	    this.setState({chat: Chat.getState()});
+	    this.setState({
+		chat: Chat.getState(),
+		talkingTo: talkingTo,
+	    });
 	}
     },
     markMessagesRead: function (messages) {
