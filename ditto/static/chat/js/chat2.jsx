@@ -665,7 +665,7 @@ var NewMessageCount = React.createClass({
 	    return !m.isRead;
 	}).length;
 	if (unread) {
-	    return <b>{unread}</b>;
+	    return <span className="badge">{unread}</span>;
 	} else {
 	    return false;
 	}
