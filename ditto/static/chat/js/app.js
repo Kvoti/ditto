@@ -1,3 +1,2 @@
-import render from "chat/js/chat2.min";
-
+var render = require('./chat2.jsx');
 render();

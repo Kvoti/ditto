@@ -1,10 +1,20 @@
-import React from 'react';
-// TODO prob only load components we need?
-import * as Bootstrap from "vendor/react-bootstrap/index";  // TODO shouldn't this work without /index
-import * as Chat from 'chat/js/chat.min';
+var React = require('react/addons');
+var Bootstrap = require('react-bootstrap');
+var Visibility = require('visibilityjs');
+
+var Chat = require('./chat.js');
 
 var update = React.addons.update;
 var classSet = React.addons.classSet;
+
+
+function getNotificationPermission () {
+    if (Notification.permission !== 'granted') {
+        Notification.requestPermission();
+    }
+}
+getNotificationPermission();
+$('body').one("click", getNotificationPermission);  // chrome
 
 var getMessages = function (messages, other) {
     return messages.filter(

@@ -4,6 +4,18 @@
 // need to split this out in to Store, Action and Dispatcher
 // components.
 
+require('strophe');
+require('strophe-plugins/rsm');
+require('strophe-plugins/mam');
+require('strophe-plugins/roster');
+require('strophe-plugins/vcard');
+require('strophe-plugins/chatstates');
+require('strophe-plugins/muc');
+
+// Strophe.log = function (level, msg) {
+//     console.log(msg);
+// }
+
 var connection, jid, chatroom, nick;
 var change_callbacks = [];
 var chatStatus = {
@@ -439,12 +451,24 @@ function getUserMeta (user) {
     );
 };
 
-export {
-    connect, getState, addChangeListener, removeChangeListener,
-    whosOnline, getUserProfiles,
-    chatStatus, setStatus,
-    addFriend,
-    setAvatar,
-    sendPrivateMessage, sendGroupMessage, sendIsTyping,
-    markMessagesRead,
+module.exports = {
+    connect: connect,
+
+    getState: getState,
+    addChangeListener: addChangeListener,
+    removeChangeListener: removeChangeListener,
+    
+    whosOnline: whosOnline,
+    getUserProfiles: getUserProfiles,
+    
+    chatStatus: chatStatus,
+    setStatus: setStatus,
+    
+    addFriend: addFriend,
+    setAvatar: setAvatar,
+    
+    sendPrivateMessage: sendPrivateMessage,
+    sendGroupMessage: sendGroupMessage,
+    sendIsTyping: sendIsTyping,
+    markMessagesRead: markMessagesRead
 };

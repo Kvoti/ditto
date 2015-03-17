@@ -136,50 +136,13 @@
       
       <!-- place project specific Javascript in this file -->
       <script src="{% static 'js/project.js' %}"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
       <script src="{% static 'vendor/notification.js' %}"></script>
-      <script src="{% static 'vendor/visibility-1.2.1.min.js' %}"></script>
-      <script src="{% static 'vendor/strophe.js' %}"></script>
-      <script>
-          Strophe.log = function (level, msg) {
-          console.log(msg);
-          }
-      </script>
-      <script src="{% static 'vendor/strophe.rsm.js' %}"></script>
-      <script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
-      <script src="{% static 'vendor/strophe.roster.js' %}"></script>
-      <script src="{% static 'vendor/strophe.vcard.js' %}"></script>
-      <script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
-      <script src="{% static 'vendor/strophe.muc.js' %}"></script>
-      <!-- Only using jquery for parsing the XMPP packets -->
-      <!-- TODO replace with smaller library? -->
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
       {% if not request.tenant.is_main %}
       {% chat_config extra=chat_conf %}
-      <script>
-          (function () {
-              function getNotificationPermission () {
-                  if (Notification.permission !== 'granted') {
-                      Notification.requestPermission();
-                  }
-              }
-              getNotificationPermission();
-              $('body').one("click", getNotificationPermission);  // chrome
-          })();
-      </script>
       <script id="avatar_svgs" type="text/template">
           {% include "skin/avatars.html" %}
       </script>
-      <script>
-          requirejs.config({
-          baseUrl: '/static/',
-          paths: {
-          react: 'http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react-with-addons',
-          }
-          });
-          require(['chat/js/app.min']);
-      </script>
+      <script src="{% static 'bundle.js' %}"></script>
       {% endif %}
     {% endblock javascript %}
   </body>

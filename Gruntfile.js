@@ -50,13 +50,6 @@ module.exports = function (grunt) {
           livereload: true,
         },
       },
-        babel: {
-            files: [
-                '<%= paths.app %>/static/chat/js/chat2.jsx',
-                '<%= paths.app %>/static/chat/js/chat.js'
-            ],
-            tasks: ['babel:dist'],
-        }
     },
 
     // see: https://github.com/gruntjs/grunt-contrib-compass
@@ -91,20 +84,6 @@ module.exports = function (grunt) {
         cmd: 'python <%= paths.manageScript %> runserver'
       }
     },
-
-      "babel": {
-          options: {
-              sourceMap: true,
-              modules: 'amd',
-          },
-          dist: {
-              files: [
-                  {src: "ditto/static/chat/js/chat2.jsx", dest: "ditto/static/chat/js/chat2.min.js"},
-                  {src: "ditto/static/chat/js/app.js", dest: "ditto/static/chat/js/app.min.js"},
-                  {src: "ditto/static/chat/js/chat.js", dest: "ditto/static/chat/js/chat.min.js"}
-              ]
-          }
-      }
   });
 
   grunt.registerTask('serve', [

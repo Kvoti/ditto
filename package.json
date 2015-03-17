@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "dependencies": {
     "react": "^0.12.2",
-    "react-bootstrap": "^0.16.1"
+    "react-bootstrap": "^0.16.1",
+    "strophe": "^1.2.0",
+    "strophe-plugins": "^0.1.2",
+    "visibilityjs": "^1.2.1"
   },
   "devDependencies": {
+    "babelify": "^5.0.4",
     "connect-livereload": "~0.3.2",
     "grunt": "~0.4.1",
     "grunt-babel": "^4.0.0",
