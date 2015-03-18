@@ -1,14 +1,7 @@
-require('strophe');
-// require('strophe-plugins/rsm');
-// require('strophe-plugins/mam');
-// require('strophe-plugins/roster');
-// require('strophe-plugins/vcard');
-// require('strophe-plugins/chatstates');
-// require('strophe-plugins/muc');
 var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
-var Parse = require('./XMPPParser.js');
+var XMPP = require('./xmpp.js');
 
-var _connection, _jid, _chatroom, _nick;
+var _connection, _domain, _me, _myJID, _chatroom, _nick;
 
 Strophe.log = function (level, msg) {
     console.log(msg);
@@ -18,7 +11,7 @@ function onConnect (status_code) {
     if (status_code == Strophe.Status.CONNECTED) {
         sendInitialPresence();
 	addPrivateChatHandlers();
-	// loadPrivateChatHistory();
+	loadPrivateChatHistory();
         // configureFriends();
         // configureUserMeta();
         // connection.chatstates.init(connection);
@@ -36,35 +29,72 @@ function addPrivateChatHandlers () {
     // _connection.addHandler(handlePresence, null, 'presence', null,  null); 
 }
 
+function loadPrivateChatHistory () {
+    _connection.mam.init(_connection);
+    _connection.mam.query(
+        Strophe.getBareJidFromJid(_myJID),
+        {
+            // TODO load last N messages for each chat not across all chats
+            // 'with': Strophe.getBareJidFromJid(this.state.talkingTo),
+            'before': "",
+            'max': 50,
+            onMessage: receiveArchivedPrivateMessage
+        }
+    );
+}
+
 function receivePrivateMessage (msg) {
-    var message = Parse.privateMessage(msg);
+    var message = XMPP.parse.privateMessage(msg);
     if (message.composing.length) {
         // state.whosTyping.push(from);
     } else {
 	if (message.active.length) {
 	    // state.whosTyping.splice(state.whosTyping.indexOf(from), 1);
 	}
-	if (message.body) {
-	    message.threadID = `${message.from}:${message.to}`;
-	    message.threadName = `${message.from} and ${message.to}`;
-	    message.authorName = message.from;
+	if (message.text) {
+	    setThreadFields(message);
             ChatServerActionCreators.receivePrivateMessage(message);
 	}
     }
     return true;
 }
 
+var receiveArchivedPrivateMessage = function (msg) {
+    var message = XMPP.parse.archivedPrivateMessage(msg);
+    if (message) { // TODO don't need if when not querying group messages
+	setThreadFields(message);
+        ChatServerActionCreators.receivePrivateMessage(message);
+    }
+    return true;
+};
+
+// TODO possibly this should live in the XMPP.parse module
+function setThreadFields(message) {
+    var thread = [message.from, message.to];
+    thread.sort();
+    message.threadID = thread.join(':');
+    message.threadName = thread.join(' and ');
+    message.authorName = message.from;
+}    
+
 function setupLogging () {
     _connection.rawInput = function (data) { console.log('RECV: ', data); };
     _connection.rawOutput = function (data) { console.log('SENT: ', data); };
 }
 
+function getBareJIDForNode (node) {
+    return node + '@' + _domain;
+};
+
 module.exports = {
 
     connect: function (server, jid, password, chatroom, nick, log=false) {
-	_jid = jid;
+	_myJID = jid;
         _chatroom = _chatroom;
         _nick = _nick;
+	_domain = Strophe.getDomainFromJid(jid);
+	_me = Strophe.getNodeFromJid(jid);
+	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
         if (log) {
             setupLogging();
@@ -84,27 +114,17 @@ module.exports = {
         ChatServerActionCreators.receiveAll(rawMessages);
     },
 
-    createMessage: function(message, threadName) {
-        // simulate writing to a database
-        var rawMessages = JSON.parse(localStorage.getItem('messages'));
-        var timestamp = Date.now();
-        var id = 'm_' + timestamp;
-        var threadID = message.threadID || ('t_' + Date.now());
-        var createdMessage = {
-            id: id,
-            threadID: threadID,
-            threadName: threadName,
-            authorName: message.authorName,
-            text: message.text,
-            timestamp: timestamp
-        };
-        rawMessages.push(createdMessage);
-        localStorage.setItem('messages', JSON.stringify(rawMessages));
-
-        // simulate success callback
-        setTimeout(function() {
-            ChatServerActionCreators.receiveCreatedMessage(createdMessage);
-        }, 0);
+    createMessage: function(message, threadID) {
+	// yuk
+	var participants = message.threadID.split(':');
+	var to = participants[0] === _me ? participants[1] : participants[0];
+	var payload = XMPP.create.privateMessage(
+	    message.text,
+	    _myJID,
+	    getBareJIDForNode(to)
+	);
+	// connection.chatstates.addActive(payload);
+	// delete composedMessageChangeAt[to];
+	_connection.send(payload.tree()); // TODO handle error on message submit
     }
-
 };

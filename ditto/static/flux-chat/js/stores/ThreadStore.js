@@ -118,7 +118,7 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
       break;
 
     case ActionTypes.RECEIVE_RAW_PRIVATE_MESSAGE:
-      ThreadStore.init(action.rawMessage);
+      ThreadStore.init([action.rawMessage]);
       ThreadStore.emitChange();
       break;
       
