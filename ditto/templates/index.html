@@ -1,0 +1,14 @@
+{% load static chat %}<!doctype html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+	<title>Flux • Chat</title>
+	<link href="http://fonts.googleapis.com/css?family=Muli" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="{% static 'flux-chat/css/chatapp.css' %}">
+    </head>
+    <body>
+	<section id="react"></section>
+	{% chat_config %}
+	<script src="{% static 'flux-chat/js/bundle.js' %}"></script>
+    </body>
+</html>

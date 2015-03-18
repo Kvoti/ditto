@@ -10,6 +10,14 @@ urlpatterns = patterns('',
     ),
                        
     url(
+        regex=r'^flux/$',
+        view=views.TemplateView.as_view(
+            template_name="index.html"
+        ),
+        name='chatroom'
+    ),
+                       
+    url(
         regex=r'^chatroom/new/$',
         view=views.new_chatroom,
         name='new-chatroom'
