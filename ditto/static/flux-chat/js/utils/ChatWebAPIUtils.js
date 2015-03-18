@@ -2,17 +2,18 @@ var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
 
 var _connection, _domain, _me, _myJID, _chatroom, _nick;
+var historyLoadedFor = [];
 
-Strophe.log = function (level, msg) {
-    console.log(msg);
-};
+// Strophe.log = function (level, msg) {
+//     console.log(msg);
+// };
 
 function onConnect (status_code) {
     if (status_code == Strophe.Status.CONNECTED) {
         sendInitialPresence();
 	addPrivateChatHandlers();
-	loadPrivateChatHistory();
-        // configureFriends();
+        _connection.mam.init(_connection);
+        getContacts();
         // configureUserMeta();
         // connection.chatstates.init(connection);
         // joinChatroom();
@@ -29,18 +30,39 @@ function addPrivateChatHandlers () {
     // _connection.addHandler(handlePresence, null, 'presence', null,  null); 
 }
 
-function loadPrivateChatHistory () {
-    _connection.mam.init(_connection);
-    _connection.mam.query(
-        Strophe.getBareJidFromJid(_myJID),
-        {
-            // TODO load last N messages for each chat not across all chats
-            // 'with': Strophe.getBareJidFromJid(this.state.talkingTo),
-            'before': "",
-            'max': 50,
-            onMessage: receiveArchivedPrivateMessage
-        }
-    );
+function getContacts () {
+    _connection.roster.init(_connection);
+    // _connection.roster.registerRequestCallback(acceptFriendRequest);
+    _connection.roster.registerCallback(handleContacts);
+    _connection.roster.get();
+}
+
+function handleContacts (roster, item) {
+    // var friends = [];
+    roster.forEach((friend, i) => {
+	// var username = Strophe.getNodeFromJid(friend.jid);
+	if (friend.subscription === 'both') {
+            loadPrivateChatHistory(friend.jid);
+	    //     friends.push(username);
+	    //     getUserMeta(username);
+	}
+    });
+    return true;
+}
+
+function loadPrivateChatHistory (contact) {
+    if (historyLoadedFor.indexOf(contact) === -1) {
+        historyLoadedFor.push(contact);
+        _connection.mam.query(
+            Strophe.getBareJidFromJid(_myJID),
+            {
+                'with': contact,
+                'before': "",
+                'max': 50,
+                onMessage: receiveArchivedPrivateMessage
+            }
+        );
+    }
 }
 
 function receivePrivateMessage (msg) {
