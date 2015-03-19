@@ -7,7 +7,7 @@ module.exports = {
             authorName: rawMessage.authorName,
             date: new Date(rawMessage.timestamp),
             text: rawMessage.text,
-            isRead: rawMessage.threadID === currentThreadID
+            isRead: rawMessage.isRead || rawMessage.threadID === currentThreadID
         };
     },
 

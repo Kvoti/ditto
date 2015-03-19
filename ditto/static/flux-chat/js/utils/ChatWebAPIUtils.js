@@ -106,6 +106,7 @@ var receiveArchivedPrivateMessage = function (msg) {
     var message = XMPP.parse.archivedPrivateMessage(msg);
     if (message) { // TODO don't need if when not querying group messages
 	setThreadFields(message);
+	message.isRead = true;
         ChatServerActionCreators.receivePrivateMessage(message);
     }
     return true;

@@ -68,6 +68,11 @@ UnreadThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     case ActionTypes.RECEIVE_RAW_MESSAGES:
       UnreadThreadStore.emitChange();
       break;
+      
+    case ActionTypes.RECEIVE_RAW_PRIVATE_MESSAGE:
+      ChatAppDispatcher.waitFor([ThreadStore.dispatchToken]);
+      UnreadThreadStore.emitChange();
+      break;
 
     default:
       // do nothing
