@@ -8,7 +8,8 @@ module.exports = {
         CREATE_MESSAGE: null,
         RECEIVE_RAW_CREATED_MESSAGE: null,
         RECEIVE_RAW_PRIVATE_MESSAGE: null,
-        RECEIVE_RAW_MESSAGES: null
+        RECEIVE_RAW_MESSAGES: null,
+        RECEIVE_USER_PROFILE: null,
     })
 
 };

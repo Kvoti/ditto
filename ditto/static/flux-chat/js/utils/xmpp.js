@@ -40,6 +40,12 @@ module.exports = {
 	        timestamp: new Date(msg.find('delay').attr('stamp')),
 
             }
+        },
+        vCard: function (vcard) {
+	    vcard = $(vcard);
+	    var role = vcard.find('ROLE').text();
+	    var avatar = vcard.find('PHOTO').text();
+	    return {role: role, avatar: avatar};
         }
     }
 }

@@ -31,6 +31,13 @@ module.exports = {
             type: ActionTypes.RECEIVE_RAW_CREATED_MESSAGE,
             rawMessage: createdMessage
         });
-    }
+    },
 
+    receiveUserProfile: function(userProfile) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_USER_PROFILE,
+            userProfile: userProfile
+        });
+    }
+    
 };

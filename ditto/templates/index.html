@@ -14,6 +14,10 @@
 	<script src="{% static 'vendor/strophe.rsm.js' %}"></script>
 	<script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
 	<script src="{% static 'vendor/strophe.roster.js' %}"></script>
+	<script src="{% static 'vendor/strophe.vcard.js' %}"></script>
+	<script id="avatar_svgs" type="text/template">
+            {% include "skin/avatars.html" %}
+	</script>
 	{# jQuery *only* used to parse XMPP packets, can we use a smaller library? #}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="{% static 'flux-chat/js/bundle.js' %}"></script>

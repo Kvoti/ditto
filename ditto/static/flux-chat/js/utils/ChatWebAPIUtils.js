@@ -2,11 +2,16 @@ var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
 
 var _connection, _domain, _me, _myJID, _chatroom, _nick;
-var historyLoadedFor = [];
 
-// Strophe.log = function (level, msg) {
-//     console.log(msg);
-// };
+// TODO I think this state is maybe in the wrong place
+// E.g. if we have a ContactStore, it would request history and profile
+// to be fetched when a contact is first added?
+var historyLoadedFor = [];
+var userProfileLoadedFor = [];
+
+Strophe.log = function (level, msg) {
+    console.log(msg);
+};
 
 function onConnect (status_code) {
     if (status_code == Strophe.Status.CONNECTED) {
@@ -14,7 +19,8 @@ function onConnect (status_code) {
 	addPrivateChatHandlers();
         _connection.mam.init(_connection);
         getContacts();
-        // configureUserMeta();
+        _connection.vcard.init(_connection);
+        loadUserProfile(Strophe.getNodeFromJid(_myJID));
         // connection.chatstates.init(connection);
         // joinChatroom();
         ChatServerActionCreators.connect(_connection);
@@ -40,11 +46,11 @@ function getContacts () {
 function handleContacts (roster, item) {
     // var friends = [];
     roster.forEach((friend, i) => {
-	// var username = Strophe.getNodeFromJid(friend.jid);
+	var username = Strophe.getNodeFromJid(friend.jid);
 	if (friend.subscription === 'both') {
             loadPrivateChatHistory(friend.jid);
 	    //     friends.push(username);
-	    //     getUserMeta(username);
+	    loadUserProfile(username);
 	}
     });
     return true;
@@ -58,9 +64,24 @@ function loadPrivateChatHistory (contact) {
             {
                 'with': contact,
                 'before': "",
-                'max': 50,
+                'max': 10,
                 onMessage: receiveArchivedPrivateMessage
             }
+        );
+    }
+}
+
+function loadUserProfile (user) {
+    var jid = getBareJIDForNode(user);
+    if (userProfileLoadedFor.indexOf(user) === -1) {
+	userProfileLoadedFor.push(user);
+        _connection.vcard.get(
+	    vcard => {
+                var userProfile = XMPP.parse.vCard(vcard);
+                userProfile.user = user;
+                ChatServerActionCreators.receiveUserProfile(userProfile);
+	    },
+	    jid
         );
     }
 }
