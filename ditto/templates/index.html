@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="{% static 'flux-chat/css/chatapp.css' %}">
     </head>
     <body>
+	<audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>
 	<section id="react"></section>
 	{% chat_config %}
 	{# Note we can't 'require' strophe and its plugins as the npm version is not compatible with mongooseim #}

@@ -11,7 +11,6 @@ module.exports = {
     },
     parse: {
         privateMessage: function (msg) {
-            console.log('new', msg);
             var msg = $(msg);
             return {
 		id: msg.find('archived').attr('id'),
