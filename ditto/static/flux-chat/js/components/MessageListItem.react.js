@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactPropTypes = React.PropTypes;
 var Avatar = require('./Avatar.react');
+var Role = require('./Role.react');
 
 var MessageListItem = React.createClass({
 
@@ -14,7 +15,7 @@ var MessageListItem = React.createClass({
             <li className="message-list-item">
             <h5 className="message-author-name">
             <Avatar user={message.authorName} size={25} />
-            {message.authorName}
+            {message.authorName} (<Role user={message.authorName} />)
             </h5>
             <div className="message-time">
             {message.date.toLocaleTimeString()}

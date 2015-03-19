@@ -48,11 +48,7 @@ var Avatar = React.createClass({
 	} else {
 	    avatarSVG = '';
 	}
-	return (
-	    <div className="avatar">
-		<div dangerouslySetInnerHTML={{__html: avatarSVG}} />
-	    </div>
-	);
+	return <div className="avatar" dangerouslySetInnerHTML={{__html: avatarSVG}} />;
     },
 
     _onChange: function() {
