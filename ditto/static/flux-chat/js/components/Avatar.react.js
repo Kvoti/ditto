@@ -12,9 +12,11 @@ var Avatar = React.createClass({
     propTypes: {
         size: React.PropTypes.number
     },
+
     getDefaultProps: function () {
         return {size: 50}
     },
+
     getInitialState: function () {
         return getStateFromStores();
     },

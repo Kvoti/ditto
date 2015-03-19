@@ -9,6 +9,7 @@
     "react-bootstrap": "^0.16.1",
     "strophe": "^1.2.0",
     "strophe-plugins": "^0.1.2",
+    "timeago": "^0.2.0",
     "visibilityjs": "^1.2.1"
   },
   "devDependencies": {
