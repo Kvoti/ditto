@@ -2,7 +2,6 @@ var MessageSection = require('./MessageSection.react');
 var React = require('react');
 var ThreadSection = require('./ThreadSection.react');
 var ConnectionStore = require('../stores/ConnectionStore');
-var ChatWebAPIUtils = require('../utils/ChatWebAPIUtils');
 var SetMyStatus = require('./SetMyStatus.react.js');
 
 function getStateFromStores() {
