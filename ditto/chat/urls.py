@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, url
+from django.contrib.auth.decorators import login_required
 
 from . import views
 
@@ -11,8 +12,10 @@ urlpatterns = patterns('',
                        
     url(
         regex=r'^flux/$',
-        view=views.TemplateView.as_view(
-            template_name="index.html"
+        view=login_required(
+            views.TemplateView.as_view(
+                template_name="index.html"
+            ),
         ),
         name='chatroom'
     ),
