@@ -117,7 +117,6 @@ function receivePresence (pres) {
     return true;
 };
 
-
 // TODO possibly this should live in the XMPP.parse module
 function setThreadFields(message) {
     var thread = [message.from, message.to];
@@ -176,5 +175,16 @@ module.exports = {
 	// connection.chatstates.addActive(payload);
 	// delete composedMessageChangeAt[to];
 	_connection.send(payload.tree()); // TODO handle error on message submit
+    },
+
+    setStatus: function (code, message) {
+	var pres = $pres();
+	if (code) {
+	    pres.c('show').t(code).up();
+	}
+	if (message) {
+	    pres.c('status').t(message);
+	}
+	_connection.send(pres.tree());
     }
 };
