@@ -33,7 +33,7 @@ function sendInitialPresence () {
 
 function addPrivateChatHandlers () {
     _connection.addHandler(receivePrivateMessage, null, 'message', 'chat',  null);
-    // _connection.addHandler(handlePresence, null, 'presence', null,  null); 
+    _connection.addHandler(receivePresence, null, 'presence', null,  null); 
 }
 
 function getContacts () {
@@ -110,6 +110,13 @@ var receiveArchivedPrivateMessage = function (msg) {
     }
     return true;
 };
+
+function receivePresence (pres) {
+    var status = XMPP.parse.presence(pres);
+    ChatServerActionCreators.receiveChatStatus(status);
+    return true;
+};
+
 
 // TODO possibly this should live in the XMPP.parse module
 function setThreadFields(message) {

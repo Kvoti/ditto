@@ -54,7 +54,7 @@ var Avatar = React.createClass({
     },
 
     _onChange: function() {
-	this.setState(Chat.getUserProfiles());
+	this.setState(getStateFromStores());
     },
 });
 

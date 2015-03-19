@@ -46,6 +46,28 @@ module.exports = {
 	    var role = vcard.find('ROLE').text();
 	    var avatar = vcard.find('PHOTO').text();
 	    return {role: role, avatar: avatar};
+        },
+        presence: function (pres) {
+            var msg = $(pres);
+            var from = Strophe.getNodeFromJid(msg.attr('from'));
+            var type = msg.attr('type');
+            var code;
+            var customMessage;
+            var status;
+            if (type === 'unavailable') {
+	        status = {
+                    user: from,
+                };
+            } else {
+	        code = msg.find('show').text();
+	        customMessage = msg.find('status').text();
+	        status = {
+                    user: from,
+	            code: code,
+	            message: customMessage
+	        };
+            }
+            return status;
         }
     }
 }

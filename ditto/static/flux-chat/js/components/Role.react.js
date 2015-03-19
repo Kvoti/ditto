@@ -32,7 +32,7 @@ var Role = React.createClass({
     },
 
     _onChange: function() {
-	this.setState(Chat.getUserProfiles());
+	this.setState(getStateFromStores());
     },
 });
 

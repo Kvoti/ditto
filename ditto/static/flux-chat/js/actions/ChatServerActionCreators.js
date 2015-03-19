@@ -38,6 +38,13 @@ module.exports = {
             type: ActionTypes.RECEIVE_USER_PROFILE,
             userProfile: userProfile
         });
+    },
+    
+    receiveChatStatus: function(status) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_CHAT_STATUS,
+            status: status
+        });
     }
     
 };

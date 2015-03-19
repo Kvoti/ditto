@@ -21,6 +21,15 @@ module.exports = {
             text: text,
             isRead: true
         };
-    }
+    },
 
+    getMessageOther: function (message) {
+        // TODO yuk
+        var me = Strophe.getNodeFromJid(chatConf.me);
+        // TODO repeated in webutils
+	var participants = message.threadID.split(':');
+	var other = participants[0] === me ? participants[1] : participants[0];
+        return other;
+    }
+      
 };
