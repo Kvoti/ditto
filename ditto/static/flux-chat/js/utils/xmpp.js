@@ -67,6 +67,22 @@ module.exports = {
 	        };
             }
             return status;
+        },
+        groupPresence: function (pres) {
+            var msg = $(pres);
+            var added, removed, presence;
+            // TODO var nick_taken = msg.find('conflict');
+            var from = Strophe.getResourceFromJid(msg.attr('from'));
+            presence = {user: from}
+            added = msg.find('item[role!=none]');
+            if (added.length) {
+                presence.added = true;
+            }
+            removed = msg.find('item[role=none]');
+            if (removed.length) {
+                presence.removed = true;
+            }
+            return presence;
         }
     }
 }

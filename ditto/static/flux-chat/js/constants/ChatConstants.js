@@ -17,6 +17,9 @@ module.exports = {
         RECEIVE_USER_PROFILE: null,
         RECEIVE_START_TYPING: null,
         RECEIVE_STOP_TYPING: null,
+
+        RECEIVE_ONLINE: null,
+        RECEIVE_OFFLINE: null,
     }),
 
     chatStatus: {

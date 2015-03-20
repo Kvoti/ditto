@@ -62,5 +62,18 @@ module.exports = {
             threadID: threadID
         });
     },
-    
+
+    receiveOnline: function(user) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_ONLINE,
+            user: user,
+        });
+    },
+
+    receiveOffline: function(user) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_OFFLINE,
+            user: user,
+        });
+    },
 };

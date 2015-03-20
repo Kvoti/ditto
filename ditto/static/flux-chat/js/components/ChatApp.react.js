@@ -2,7 +2,8 @@ var MessageSection = require('./MessageSection.react');
 var React = require('react');
 var ThreadSection = require('./ThreadSection.react');
 var ConnectionStore = require('../stores/ConnectionStore');
-var SetMyStatus = require('./SetMyStatus.react.js');
+var SetMyStatus = require('./SetMyStatus.react');
+var WhosOnline = require('./WhosOnline.react');
 
 function getStateFromStores() {
     return {
@@ -28,9 +29,12 @@ var ChatApp = React.createClass({
         if (this.state.connection) {
             return (
                     <div className="chatapp">
+                    <WhosOnline />
+                    <div style={{clear:'both'}}>                    
                     <ThreadSection />
                     <MessageSection />
                     <SetMyStatus />
+                    </div>
                     </div>
             );
         } else {

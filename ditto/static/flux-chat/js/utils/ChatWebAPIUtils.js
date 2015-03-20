@@ -12,9 +12,9 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
-// Strophe.log = function (level, msg) {
-//     console.log(msg);
-// };
+Strophe.log = function (level, msg) {
+    console.log(msg);
+};
 
 function onConnect (status_code) {
     if (status_code == Strophe.Status.CONNECTED) {
@@ -25,13 +25,40 @@ function onConnect (status_code) {
         _connection.vcard.init(_connection);
         loadUserProfile(Strophe.getNodeFromJid(_myJID));
         _connection.chatstates.init(_connection);
-        // joinChatroom();
+        joinMainChatroom();
         ChatServerActionCreators.connect(_connection);
     }
 };
 
 function sendInitialPresence () {
     _connection.send($pres().tree());
+}
+
+function joinMainChatroom () {
+    _connection.muc.init(_connection);
+    _connection.muc.join(
+        _chatroom,
+        _nick,
+	function () {},
+	receiveGroupPresence
+    );
+};
+
+function receiveGroupPresence (pres) {
+    var presence = XMPP.parse.groupPresence(pres);
+    if (presence.added) {
+        ChatServerActionCreators.receiveOnline(presence.user);
+    } else if (presence.removed) {
+        ChatServerActionCreators.receiveOffline(presence.user);
+    }
+    // First time we enter the chatroom for a new network the room
+    // needs to be created and configured
+    // var isNewRoom = msg.find('status[code=201]');
+    // if (isNewRoom.length) {
+    //     // TODO handle failure
+    //     connection.muc.createInstantRoom(chatroom);
+    // }
+    return true;
 }
 
 function addPrivateChatHandlers () {
@@ -143,8 +170,8 @@ module.exports = {
 
     connect: function (server, jid, password, chatroom, nick, log=false) {
 	_myJID = jid;
-        _chatroom = _chatroom;
-        _nick = _nick;
+        _chatroom = chatroom;
+        _nick = nick;
 	_domain = Strophe.getDomainFromJid(jid);
 	_me = Strophe.getNodeFromJid(jid);
 	
