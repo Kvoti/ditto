@@ -27,6 +27,8 @@ function onConnect (status_code) {
         _connection.chatstates.init(_connection);
         joinMainChatroom();
         ChatServerActionCreators.connect(_connection);
+    } else if (status_code == Strophe.Status.DISCONNECTED) {
+        ChatServerActionCreators.disconnect();
     }
 };
 

@@ -6,7 +6,7 @@ var assign = require('object-assign');
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
-var _connection;
+var _status;
 
 var ConnectionStore = assign({}, EventEmitter.prototype, {
 
@@ -22,10 +22,10 @@ var ConnectionStore = assign({}, EventEmitter.prototype, {
         this.removeListener(CHANGE_EVENT, callback);
     },
 
-    get: function(id) {
-        return _connection;
-    },
-
+    get: function () {
+        return _status;
+    }
+    
 });
 
 ConnectionStore.dispatchToken = ChatAppDispatcher.register(function(action) {
@@ -33,8 +33,12 @@ ConnectionStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     switch(action.type) {
 
     case ActionTypes.CONNECT:
-        // TODO anything to wait for here?
-        _connection = action.connection;
+        _status = ChatConstants.connected;
+        ConnectionStore.emitChange();
+        break;
+        
+    case ActionTypes.DISCONNECT:
+        _status = ChatConstants.disconnected;
         ConnectionStore.emitChange();
         break;
 

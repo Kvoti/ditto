@@ -11,6 +11,12 @@ module.exports = {
             connection: connection
         });
     },
+
+    disconnect: function() {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.DISCONNECT,
+        });
+    },
     
     // receiveAll: function(rawMessages) {
     //   ChatAppDispatcher.dispatch({

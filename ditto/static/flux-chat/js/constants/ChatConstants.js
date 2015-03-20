@@ -4,6 +4,7 @@ module.exports = {
 
     ActionTypes: keyMirror({
         CONNECT: null,
+        DISCONNECT: null,
 
         CLICK_THREAD: null,
         
@@ -30,4 +31,8 @@ module.exports = {
     },
 
     stillTypingTimeout: 3000,
+
+    connected: 'connected',
+
+    disconnected: 'disconnected'
 };
