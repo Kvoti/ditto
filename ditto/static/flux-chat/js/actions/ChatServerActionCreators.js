@@ -45,6 +45,22 @@ module.exports = {
             type: ActionTypes.RECEIVE_CHAT_STATUS,
             status: status
         });
-    }
+    },
+
+    receiveStartTyping: function(user, threadID) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_START_TYPING,
+            user: user,
+            threadID: threadID
+        });
+    },
+
+    receiveStopTyping: function(user, threadID) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_STOP_TYPING,
+            user: user,
+            threadID: threadID
+        });
+    },
     
 };

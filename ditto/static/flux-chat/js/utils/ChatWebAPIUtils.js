@@ -8,10 +8,13 @@ var _connection, _domain, _me, _myJID, _chatroom, _nick;
 // to be fetched when a contact is first added?
 var historyLoadedFor = [];
 var userProfileLoadedFor = [];
+//
 
-Strophe.log = function (level, msg) {
-    console.log(msg);
-};
+var sentIsTyping = {};
+
+// Strophe.log = function (level, msg) {
+//     console.log(msg);
+// };
 
 function onConnect (status_code) {
     if (status_code == Strophe.Status.CONNECTED) {
@@ -21,7 +24,7 @@ function onConnect (status_code) {
         getContacts();
         _connection.vcard.init(_connection);
         loadUserProfile(Strophe.getNodeFromJid(_myJID));
-        // connection.chatstates.init(connection);
+        _connection.chatstates.init(_connection);
         // joinChatroom();
         ChatServerActionCreators.connect(_connection);
     }
@@ -64,7 +67,7 @@ function loadPrivateChatHistory (contact) {
             {
                 'with': contact,
                 'before': "",
-                'max': 10,
+                'max': 3,
                 onMessage: receiveArchivedPrivateMessage
             }
         );
@@ -88,14 +91,14 @@ function loadUserProfile (user) {
 
 function receivePrivateMessage (msg) {
     var message = XMPP.parse.privateMessage(msg);
+    setThreadFields(message);
     if (message.composing.length) {
-        // state.whosTyping.push(from);
+	ChatServerActionCreators.receiveStartTyping(message.from, message.threadID);
     } else {
 	if (message.active.length) {
-	    // state.whosTyping.splice(state.whosTyping.indexOf(from), 1);
+	    ChatServerActionCreators.receiveStopTyping(message.from, message.threadID);
 	}
 	if (message.text) {
-	    setThreadFields(message);
             ChatServerActionCreators.receivePrivateMessage(message);
 	}
     }
@@ -173,8 +176,8 @@ module.exports = {
 	    _myJID,
 	    getBareJIDForNode(to)
 	);
-	// connection.chatstates.addActive(payload);
-	// delete composedMessageChangeAt[to];
+	_connection.chatstates.addActive(payload);
+	delete sentIsTyping[threadID];
 	_connection.send(payload.tree()); // TODO handle error on message submit
     },
 
@@ -187,5 +190,31 @@ module.exports = {
 	    pres.c('status').t(message);
 	}
 	_connection.send(pres.tree());
+    },
+
+    // TODO only send this if other person is online? what's spec say?
+    startTyping: function (threadID) {
+	// yuk
+	var participants = threadID.split(':');
+	var to = participants[0] === _me ? participants[1] : participants[0];
+	//
+	if (!sentIsTyping[threadID]) {
+	    sentIsTyping[threadID] = true;
+	    _connection.chatstates.sendComposing(
+		getBareJIDForNode(to)
+	    );
+	}
+    },
+
+    stopTyping: function (threadID) {
+	// yuk
+	var participants = threadID.split(':');
+	var to = participants[0] === _me ? participants[1] : participants[0];
+	//
+	delete sentIsTyping[threadID];
+	_connection.chatstates.sendActive(
+	    getBareJIDForNode(to)
+	);
     }
+    
 };

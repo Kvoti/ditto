@@ -1,15 +1,3 @@
-/**
- * This file is provided by Facebook for testing and evaluation purposes
- * only. Facebook reserves all rights not expressly granted.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * FACEBOOK BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
- * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 var ChatAppDispatcher = require('../dispatcher/ChatAppDispatcher');
 var ChatConstants = require('../constants/ChatConstants');
 var ChatWebAPIUtils = require('../utils/ChatWebAPIUtils');
@@ -19,14 +7,36 @@ var ActionTypes = ChatConstants.ActionTypes;
 
 module.exports = {
 
-  createMessage: function(text, currentThreadID) {
-    ChatAppDispatcher.dispatch({
-      type: ActionTypes.CREATE_MESSAGE,
-      text: text,
-      currentThreadID: currentThreadID
-    });
-    var message = ChatMessageUtils.getCreatedMessageData(text, currentThreadID);
-    ChatWebAPIUtils.createMessage(message);
-  }
+    createMessage: function(text, currentThreadID) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.CREATE_MESSAGE,
+            text: text,
+            currentThreadID: currentThreadID
+        });
+        var message = ChatMessageUtils.getCreatedMessageData(text, currentThreadID);
+        ChatWebAPIUtils.createMessage(message);
+    },
 
+    startTyping: function(currentThreadID) {
+        // TODO this state of who I am should live somewhere proper and shared
+        var me = Strophe.getNodeFromJid(chatConf.me);
+        //
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.START_TYPING,
+            currentThreadID: currentThreadID
+        });
+        ChatWebAPIUtils.startTyping(currentThreadID);
+    },
+
+    stopTyping: function(currentThreadID) {
+        // TODO this state of who I am should live somewhere proper and shared
+        var me = Strophe.getNodeFromJid(chatConf.me);
+        //
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.STOP_TYPING,
+            currentThreadID: currentThreadID
+        });
+        ChatWebAPIUtils.stopTyping(currentThreadID);
+    }
+    
 };

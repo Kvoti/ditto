@@ -1,13 +1,16 @@
 var MessageComposer = require('./MessageComposer.react');
 var MessageListItem = require('./MessageListItem.react');
+var WhosTyping = require('./WhosTyping.react');
 var MessageStore = require('../stores/MessageStore');
 var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
+var WhosTypingStore = require('../stores/WhosTypingStore');
 
 function getStateFromStores() {
     return {
         messages: MessageStore.getAllForCurrentThread(),
-        thread: ThreadStore.getCurrent()
+        thread: ThreadStore.getCurrent(),
+        whosTyping: WhosTypingStore.getForCurrentThread()
     };
 }
 
@@ -30,11 +33,13 @@ var MessageSection = React.createClass({
         this._scrollToBottom();
         MessageStore.addChangeListener(this._onChange);
         ThreadStore.addChangeListener(this._onChange);
+        WhosTypingStore.addChangeListener(this._onChange);
     },
 
     componentWillUnmount: function() {
         MessageStore.removeChangeListener(this._onChange);
         ThreadStore.removeChangeListener(this._onChange);
+        WhosTypingStore.removeChangeListener(this._onChange);
     },
 
     render: function() {
@@ -50,6 +55,7 @@ var MessageSection = React.createClass({
             <ul className="message-list" ref="messageList">
             {messageListItems}
             </ul>
+                <WhosTyping users={this.state.whosTyping} />
             <MessageComposer threadID={this.state.thread.id}/>
             </div>
         );
