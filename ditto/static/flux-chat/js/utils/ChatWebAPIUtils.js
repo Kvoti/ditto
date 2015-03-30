@@ -41,9 +41,22 @@ function joinMainChatroom () {
     _connection.muc.join(
         _chatroom,
         _nick,
-	function () {},
+        receiveGroupMessage,
 	receiveGroupPresence
     );
+};
+
+function receiveGroupMessage (msg) {
+    var message = XMPP.parse.groupMessage(msg);
+    // TODO not sure about treating a group message as just another message. Makes some sense, as it's just another thread
+    message.threadID = message.to;
+    message.authorName = message.from;
+    if (message.from) {
+	// TODO always get an 'empty' message from the room
+	// itself, not sure why
+        ChatServerActionCreators.receivePrivateMessage(message);
+    }
+    return true;
 };
 
 function receiveGroupPresence (pres) {
@@ -53,13 +66,12 @@ function receiveGroupPresence (pres) {
     } else if (presence.removed) {
         ChatServerActionCreators.receiveOffline(presence.user);
     }
-    // First time we enter the chatroom for a new network the room
-    // needs to be created and configured
-    // var isNewRoom = msg.find('status[code=201]');
-    // if (isNewRoom.length) {
-    //     // TODO handle failure
-    //     connection.muc.createInstantRoom(chatroom);
-    // }
+    if (presence.isNewRoom) {
+        // TODO handle failure
+        _connection.muc.createInstantRoom(
+            chatConf.chatroom  // TODO support multiple group chats
+        );
+    }
     return true;
 }
 

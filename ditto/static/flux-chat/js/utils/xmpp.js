@@ -73,7 +73,13 @@ module.exports = {
             var added, removed, presence;
             // TODO var nick_taken = msg.find('conflict');
             var from = Strophe.getResourceFromJid(msg.attr('from'));
-            presence = {user: from}
+            // First time we enter the chatroom for a new network the room
+            // needs to be created and configured
+            var isNewRoom = msg.find('status[code=201]').length;
+            presence = {
+                user: from,
+                isNewRoom: isNewRoom
+            }
             added = msg.find('item[role!=none]');
             if (added.length) {
                 presence.added = true;
@@ -83,6 +89,25 @@ module.exports = {
                 presence.removed = true;
             }
             return presence;
+        },
+        groupMessage: function (msg) {
+            var msg = $(msg);
+            var body = msg.find("body:first").text();
+            var from = Strophe.getResourceFromJid(msg.attr("from"));
+            var to = Strophe.getNodeFromJid(msg.attr("from"));
+            var when = msg.find('delay');
+            if (when.length) {
+	        when = new Date(when.attr('stamp'));
+            } else {
+	        when = new Date();
+            }
+            return {
+                id: 'todo',
+                from: from,
+                to: to,
+                text: body,
+                timestamp: when
+            }
         }
     }
 }

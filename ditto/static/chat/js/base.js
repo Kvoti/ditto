@@ -1,6 +1,7 @@
 var ChatWebAPIUtils = require('../../flux-chat/js/utils/ChatWebAPIUtils');
 var Avatar = require('../../flux-chat/js/components/Avatar.react.js');
 var AvatarPicker = require('../../js/components/AvatarPicker.jsx');
+var ChatModule = require('../../js/components/ChatModule.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
@@ -29,8 +30,14 @@ if (changeAvatar) {
     );
 }
 
-var profileAvatar = document.getElementById('profile-avatar')
+var profileAvatar = document.getElementById('profile-avatar');
 React.render(
     <Avatar user={user} size={150} />,
     profileAvatar
+);
+
+var chatModule = document.getElementById('chat-module');
+React.render(
+    <ChatModule />,
+    chatModule
 );
