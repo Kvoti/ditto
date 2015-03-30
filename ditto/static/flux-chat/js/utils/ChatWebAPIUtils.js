@@ -209,17 +209,24 @@ module.exports = {
     },
 
     createMessage: function(message, threadID) {
-	// yuk
-	var participants = message.threadID.split(':');
-	var to = participants[0] === _me ? participants[1] : participants[0];
-	var payload = XMPP.create.privateMessage(
-	    message.text,
-	    _myJID,
-	    getBareJIDForNode(to)
-	);
-	_connection.chatstates.addActive(payload);
-	delete sentIsTyping[threadID];
-	_connection.send(payload.tree()); // TODO handle error on message submit
+        if (message.threadID.indexOf(':') === -1) {
+            _connection.muc.groupchat(
+                _chatroom,  // TODO get from message or threadID
+                message.text
+            )
+        } else {
+	    // yuk
+	    var participants = message.threadID.split(':');
+	    var to = participants[0] === _me ? participants[1] : participants[0];
+	    var payload = XMPP.create.privateMessage(
+	        message.text,
+	        _myJID,
+	        getBareJIDForNode(to)
+	    );
+	    _connection.chatstates.addActive(payload);
+	    delete sentIsTyping[threadID];
+	    _connection.send(payload.tree()); // TODO handle error on message submit
+        }
     },
 
     setStatus: function (code, message) {
@@ -242,7 +249,7 @@ module.exports = {
 	if (!sentIsTyping[threadID]) {
 	    sentIsTyping[threadID] = true;
 	    _connection.chatstates.sendComposing(
-		getBareJIDForNode(to)
+	        getBareJIDForNode(to)
 	    );
 	}
     },

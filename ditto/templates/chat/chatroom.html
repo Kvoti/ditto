@@ -6,17 +6,3 @@
     {{ block.super }}
     <div id="presence" class="col-md-4"></div>
 {% endblock %}
-
-{% block strophe-plugins %}
-    <script src="{% static 'vendor/strophe.muc.js' %}"></script>
-{% endblock %}
-
-{% block config %}
-    {{ block.super }}
-    DITTO.chat_nick = '{{ user.username }}';
-    DITTO.room = '{{ room|default:"muc1" }}';
-{% endblock %}
-
-{% block plugins %}
-    <script src="{% static 'chat/js/muc.js' %}"></script>
-{% endblock %}

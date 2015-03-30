@@ -102,7 +102,7 @@ module.exports = {
 	        when = new Date();
             }
             return {
-                id: 'todo',
+                id: msg.find('archived').attr('id'),
                 from: from,
                 to: to,
                 text: body,

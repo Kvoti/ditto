@@ -62,13 +62,5 @@ class MessagesFrom(LoginRequiredMixin, DetailView):
 
     
 class ChatroomView(LoginRequiredMixin, NavMixin, TemplateView):
-    template_name = 'chat/react.html'
+    template_name = 'chat/chatroom.html'
     nav = ['chatroom']
-
-    def get_context_data(self, **kwargs):
-        context = super(ChatroomView, self).get_context_data(**kwargs)
-        context['chat_conf'] = {
-            'page': 'chatroom',
-            'element': 'chat',
-        }
-        return context

@@ -24,25 +24,35 @@ var ChatModule = React.createClass({
         return getStateFromStores();
     },
 
+    componentWillMount: function () {
+	this._updateHeight();
+    },
+    
     componentDidMount: function() {
         this._scrollToBottom();
         MessageStore.addChangeListener(this._onChange);
+	$(window).on('resize', this._updateHeight);
     },
 
     componentWillUnmount: function() {
         MessageStore.removeChangeListener(this._onChange);
+	$(window).off('resize', this._updateHeight);
     },
 
     render: function() {
+	var style;
         var messageListItems = this.state.messages.map(getMessageListItem);
         if (!this.state.messages.length) {
             return (
                     <div ref="messageList">Loading ...</div>
             );
         }
+	if (this.props.fluidHeight) {
+	    style = {height: this.state.height};
+	}
         return (
             <div className="message-section">
-		<ul className="message-list" ref="messageList">
+		<ul style={style} className="message-list" ref="messageList">
 		    {messageListItems}
 		</ul>
             </div>
@@ -56,6 +66,13 @@ var ChatModule = React.createClass({
     _scrollToBottom: function() {
         var ul = this.refs.messageList.getDOMNode();
         ul.scrollTop = ul.scrollHeight;
+    },
+    
+    _updateHeight: function () {
+	// TODO no pure css way to do this?
+	// Note, tried to calculate the height from other dom elements but it's easier just to hardcode this vaule and change it when the css changes
+	var height = $(window).height() - 220;
+	this.setState({height: height});
     },
 
     /**
