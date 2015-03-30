@@ -13,16 +13,18 @@ var MessageListItem = React.createClass({
     render: function() {
         var message = this.props.message;
         return (
-            <li className="message-list-item">
-            <h5 className="message-author-name">
-            <Avatar user={message.authorName} size={25} />
-            {message.authorName} (<Role user={message.authorName} />)
-            </h5>
-            <div className="message-time">
-            <TimeAgo when={message.date} />
+                <div className="media">
+                <div className="media-left">
+                <Avatar user={message.authorName} size={25} />
+                </div>
+                <div className="media-body">
+                <h4 className="media-heading">
+                {message.authorName} (<Role user={message.authorName} />)
+                <small> <TimeAgo when={message.date} /></small>
+            </h4>
+                {message.text}
             </div>
-            <div className="message-text">{message.text}</div>
-            </li>
+            </div>
         );
     }
     
