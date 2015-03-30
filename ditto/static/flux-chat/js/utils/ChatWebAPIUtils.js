@@ -244,6 +244,27 @@ module.exports = {
 	_connection.chatstates.sendActive(
 	    getBareJIDForNode(to)
 	);
+    },
+
+    changeAvatar: function (avatarName) {
+        // TODO no convenience function provided for making vcards?
+        var role = Strophe.xmlElement('ROLE');
+        role.appendChild(Strophe.xmlTextNode(chatConf.role));
+
+        var photo = Strophe.xmlElement('PHOTO');
+        photo.appendChild(Strophe.xmlTextNode(avatarName));  // TODO prob make this full URI of avatar?
+        // TODO looks like strophe.vcard doesn't allow setting multiple elements?
+        // (sort of doesn't matter cos the data you set isn't validated, which is ok
+        // while we assume no other clients will connect)
+        var vcard = Strophe.xmlElement('XXX');
+        vcard.appendChild(role);
+        vcard.appendChild(photo);
+
+        // TODO handle error
+        _connection.vcard.set(
+	    function (r) { },  // TODO handle something here?
+	    vcard
+        );
     }
     
 };

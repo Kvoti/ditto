@@ -1,160 +1,126 @@
 {% load staticfiles i18n skin configuration chat %}<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-    <meta charset="utf-8">
-    <title>{% block title %}{{ request.site.name }}{% endblock title %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <head>
+	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+	<meta charset="utf-8">
+	<title>{% block title %}{{ request.site.name }}{% endblock title %}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 
-    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+	<link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 
-    {% block css %}
-    {% theme as theme %}
-    <!-- Latest compiled and minified CSS -->
-    <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css"> -->
-    
-    <!-- Your stuff: Third-party css libraries go here -->
-    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-    <!-- <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet"> -->
+	{% block css %}
+	    {% theme as theme %}
+	    <!-- Latest compiled and minified CSS -->
+	    <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css"> -->
+	    
+	    <!-- Your stuff: Third-party css libraries go here -->
+	    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+	    <!-- <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet"> -->
 
-    <!-- This file store project specific CSS -->
-    <link href="{% static 'css/project.css' %}" rel="stylesheet">
-    {% endblock %}
+	    <!-- This file store project specific CSS -->
+	    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+	{% endblock %}
 
-    {% if not debug %}
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-        
-        ga('create', 'UA-60830355-1', 'auto');
-        ga('send', 'pageview');
-    </script>
-    {% endif %}
-  </head>
+	{% if not debug %}
+	    <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            
+            ga('create', 'UA-60830355-1', 'auto');
+            ga('send', 'pageview');
+	    </script>
+	{% endif %}
+    </head>
 
-  <body>
-      <div id="emptychat">{# empty container so chat still renders #}</div>
-    <nav class="header navbar navbar-default navbar-fixed-top navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand text-hide" href="{% url 'ditto:home' %}">
-                {{ request.site.name }}                
-            </a>
-        </div>
-        {% include "includes/nav.html" %}
-      </div>
-    </nav>
-    {% block main %}
-    <div class="container-fluid">
-        
-      {% if messages %}
-          {% for message in messages %}
-              <div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
-          {% endfor %}
-      {% endif %}
+    <body>
+	<div id="emptychat">{# empty container so chat still renders #}</div>
+	<nav class="header navbar navbar-default navbar-fixed-top navbar-inverse">
+	    <div class="container-fluid">
+		<div class="navbar-header">
+		    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		    </button>
+		    <a class="navbar-brand text-hide" href="{% url 'ditto:home' %}">
+			{{ request.site.name }}                
+		    </a>
+		</div>
+		{% include "includes/nav.html" %}
+	    </div>
+	</nav>
+	{% block main %}
+	    <div class="container-fluid">
+		
+		{% if messages %}
+		    {% for message in messages %}
+			<div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+		    {% endfor %}
+		{% endif %}
 
-      {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
-      {% endblock content %}
+		{% block content %}
+		    <p>Use this document as a way to quick start any new project.</p>
+		{% endblock content %}
 
-    </div> <!-- /container -->
-    
-    {% block modal %}{% endblock modal %}
-    <footer class="footer">
-        <div class="container-fluid">
-            <p><img width="30px" alt="" src="{% static 'images/ditto-logo.png' %}"> Ditto: a Digital Impacts Product, © 2015.</p>
-        </div>
-    </footer>
-    <audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>
-    {% endblock %}
-    
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script id="message_template" type="text/template">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="media">
-                    <div class="media-left message-avatar">
-                    </div>
-                    <div class="media-body">
-                        <h4 class="media-heading"> <small><time></time></small></h4>
-                    </div>
-                    <div class="media-right message-avatar">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </script>
-    </script>
-    <script id="group_presence_template" type="text/template">
-        <ul class="list-group">
-            <li class="list-group-item presence-item">
-                <div class="media">
-                    <div class="media-left media-middle presence-avatar">
-                    </div>
-                    <div class="media-body">
-                        <h4 class="media-heading presence-username"></h4>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </script>
-    <script id="friends_template" type="text/template">
-        <div class="list-group">
-            <a class="list-group-item friends-item">
-                <div class="media">
-                    <div class="media-left media-middle friends-avatar">
-                    </div>
-                    <div class="media-body">
-                        <h4 class="media-heading friends-username"></h4>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </script>
-    <script id="avatar_template" type="text/template">
-        {% include "skin/avatar.html" with name="placeholder" %}
-    </script>
-    <script id="avatar_svgs" type="text/template">
-        {% include "skin/avatars.html" %}
-    </script>
+	    </div> <!-- /container -->
+	    
+	    {% block modal %}{% endblock modal %}
+	    <footer class="footer">
+		<div class="container-fluid">
+		    <p><img width="30px" alt="" src="{% static 'images/ditto-logo.png' %}"> Ditto: a Digital Impacts Product, © 2015.</p>
+		</div>
+	    </footer>
+	    <audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>
+	{% endblock %}
+	
+	<!-- Le javascript
+	================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script id="avatar_svgs" type="text/template">
+            {% include "skin/avatars.html" %}
+	</script>
 
-    {% block javascript %}
-      <!-- Latest JQuery -->
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	{% block javascript %}
+	    <!-- Latest JQuery -->
+	    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-      <!-- Latest compiled and minified JavaScript -->
-      <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	    <!-- Latest compiled and minified JavaScript -->
+	    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-      <!-- Your stuff: Third-party javascript libraries go here -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.4.1/holder.js"></script>
-      
-      <!-- place project specific Javascript in this file -->
-      <script src="{% static 'js/project.js' %}"></script>
-      <script src="{% static 'vendor/notification.js' %}"></script>
-      {% if not request.tenant.is_main %}
-      {% chat_config extra=chat_conf %}
-      <script id="avatar_svgs" type="text/template">
-          {% include "skin/avatars.html" %}
-      </script>
-      <script src="{% static 'bundle.js' %}"></script>
-      {% endif %}
-    {% endblock javascript %}
-  </body>
+	    <!-- Your stuff: Third-party javascript libraries go here -->
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.4.1/holder.js"></script>
+	    
+	    <!-- place project specific Javascript in this file -->
+	    <script src="{% static 'js/project.js' %}"></script>
+
+	    {% if not request.tenant.is_main %}
+		<script id="avatar_svgs" type="text/template">
+		    {% include "skin/avatars.html" %}
+		</script>
+
+		{# Note we can't 'require' strophe and its plugins as the npm version is not compatible with mongooseim #}
+		<script src="{% static 'vendor/strophe.js' %}"></script>
+		<script src="{% static 'vendor/strophe.rsm.js' %}"></script>
+		<script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
+		<script src="{% static 'vendor/strophe.roster.js' %}"></script>
+		<script src="{% static 'vendor/strophe.vcard.js' %}"></script>
+		<script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
+		<script src="{% static 'vendor/strophe.muc.js' %}"></script>
+		{# Note this Notification shim is not available via npm either #}
+		<script src="{% static 'vendor/notification.js' %}"></script>
+		{% chat_config extra=chat_conf %}
+		<script src="{% static 'chat/js/base-bundle.js' %}"></script>
+	    {% endif %}
+	{% endblock javascript %}
+    </body>
 </html>

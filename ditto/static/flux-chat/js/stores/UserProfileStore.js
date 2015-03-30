@@ -38,6 +38,14 @@ UserProfileStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         UserProfileStore.emitChange();
         break;
 
+    // mongooseim doesn't support pubsub so avatar changes are not
+    // broadcast yet so we have to listen for this action so at least
+    // the user sees their own avatar change immediately
+    case ActionTypes.CHANGE_AVATAR:
+        _userProfiles[action.user].avatar = action.avatarName;
+        UserProfileStore.emitChange();
+        break;
+        
     default:
         // do nothing
     }

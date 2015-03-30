@@ -21,6 +21,8 @@ module.exports = {
 
         RECEIVE_ONLINE: null,
         RECEIVE_OFFLINE: null,
+
+        CHANGE_AVATAR: null
     }),
 
     chatStatus: {
