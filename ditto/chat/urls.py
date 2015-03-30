@@ -11,13 +11,13 @@ urlpatterns = patterns('',
     ),
                        
     url(
-        regex=r'^flux/$',
+        regex=r'^messages/$',
         view=login_required(
             views.TemplateView.as_view(
                 template_name="index.html"
             ),
         ),
-        name='chatroom'
+        name='private_chats'
     ),
                        
     url(
@@ -31,14 +31,14 @@ urlpatterns = patterns('',
         name='private-chatroom'
     ),
                        
-    url(
-        regex=r'^messages/$',
-        view=views.Messages.as_view(),
-        name='private_chats'
-    ),
-    url(
-        regex=r'^messages/(?P<slug>\w+)/$',
-        view=views.MessagesFrom.as_view(),
-        name='private_chat'
-    ),
+    # url(
+    #     regex=r'^messages/$',
+    #     view=views.Messages.as_view(),
+    #     name='private_chats'
+    # ),
+    # url(
+    #     regex=r'^messages/(?P<slug>\w+)/$',
+    #     view=views.MessagesFrom.as_view(),
+    #     name='private_chat'
+    # ),
 )
