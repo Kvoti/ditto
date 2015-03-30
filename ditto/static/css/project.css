@@ -214,7 +214,7 @@ body {
     background-color: transparent !important;
 }
 
-#chat-module #msgs {
+#chat-module .message-list {
     height: 150px;
     overflow-y: scroll;
 }

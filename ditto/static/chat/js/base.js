@@ -1,3 +1,4 @@
+var ChatApp = require('../../flux-chat/js/components/ChatApp.react');
 var ChatWebAPIUtils = require('../../flux-chat/js/utils/ChatWebAPIUtils');
 var Avatar = require('../../flux-chat/js/components/Avatar.react.js');
 var AvatarPicker = require('../../js/components/AvatarPicker.jsx');
@@ -40,12 +41,12 @@ if (profileAvatar) {
     );
 }
     
-var chatModule = document.getElementById('chat-module') ||
-    document.getElementById('msgs');
-if (chatModule) {
+var chatModule = document.getElementById('chat-module');
+var chatroom = document.getElementById('msgs');
+if (chatModule || chatroom) {
     React.render(
-            <ChatModule fluidHeight={true} />,
-        chatModule
+        <ChatModule fluidHeight={!!chatroom} />,
+        chatModule || chatroom
     );
 }
 
@@ -62,5 +63,13 @@ if (compose) {
     React.render(
             <MessageComposer threadID={Strophe.getNodeFromJid(chatConf.chatroom)}/>,
         compose
+    );
+}
+
+var chatApp = document.getElementById('react');
+if (chatApp) {
+    React.render(
+        <ChatApp />,
+        chatApp
     );
 }

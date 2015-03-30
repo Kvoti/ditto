@@ -29,10 +29,11 @@ var ChatApp = React.createClass({
     render: function() {
         if (this.state.connection == ChatConstants.connected) {
             return (
-                    <div className="chatapp">
-                    <WhosOnline />
-                    <div style={{clear:'both'}}>                    
+                    <div className="row">
+                    <div className="col-md-4">                    
                     <ThreadSection />
+                    </div>
+                    <div className="col-md-8">
                     <MessageSection />
                     <SetMyStatus />
                     </div>

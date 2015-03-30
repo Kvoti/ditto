@@ -2,6 +2,7 @@ var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
 var React = require('react');
 var cx = require('react/lib/cx');
 var TimeAgo = require('./TimeAgo.react');
+var Avatar = require('./Avatar.react');
 var Status = require('./Status.react');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
 
@@ -21,17 +22,20 @@ var ThreadListItem = React.createClass({
     return (
       <li
         className={cx({
-          'thread-list-item': true,
+          'list-group-item': true,
           'active': thread.id === this.props.currentThreadID
         })}
         onClick={this._onClick}>
-        <h5 className="thread-name">{thread.name}</h5>
-        <div className="thread-time">
-            <TimeAgo when={lastMessage.date} />
-            </div>
+            <div className="media">
+            <div className="media-left">
+            <Avatar user={contact} />
+        </div>
+            <div className="media-body">
+            <h4 className="media-heading">{thread.name}</h4>
+            <p><TimeAgo when={lastMessage.date} /></p>
             <Status user={contact} />
-        <div className="thread-last-message">
-          {lastMessage.text}
+            {lastMessage.text}
+        </div>
         </div>
       </li>
     );
