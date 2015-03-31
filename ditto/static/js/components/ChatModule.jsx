@@ -1,6 +1,7 @@
 // TODO this is very similar to MessageSection, just with a fixed threadID. Could prob refactor both
 var MessageListItem = require('../../flux-chat/js/components/MessageListItem.react');
 var MessageStore = require('../../flux-chat/js/stores/MessageStore');
+var FluidHeightMixin = require('../mixins/FluidHeightMixin.jsx');
 var React = require('react');
 
 function getStateFromStores() {
@@ -20,23 +21,19 @@ function getMessageListItem(message) {
 
 var ChatModule = React.createClass({
 
+    mixins: [FluidHeightMixin],
+    
     getInitialState: function() {
         return getStateFromStores();
     },
 
-    componentWillMount: function () {
-	this._updateHeight();
-    },
-    
     componentDidMount: function() {
         this._scrollToBottom();
         MessageStore.addChangeListener(this._onChange);
-	$(window).on('resize', this._updateHeight);
     },
 
     componentWillUnmount: function() {
         MessageStore.removeChangeListener(this._onChange);
-	$(window).off('resize', this._updateHeight);
     },
 
     render: function() {
@@ -47,6 +44,7 @@ var ChatModule = React.createClass({
                     <div ref="messageList">Loading ...</div>
             );
         }
+	// TODO can we move the height stuff here to a mixin somehow?
 	if (this.props.fluidHeight) {
 	    style = {height: this.state.height};
 	}
@@ -68,13 +66,6 @@ var ChatModule = React.createClass({
         ul.scrollTop = ul.scrollHeight;
     },
     
-    _updateHeight: function () {
-	// TODO no pure css way to do this?
-	// Note, tried to calculate the height from other dom elements but it's easier just to hardcode this vaule and change it when the css changes
-	var height = $(window).height() - 220;
-	this.setState({height: height});
-    },
-
     /**
      * Event handler for 'change' events coming from the MessageStore
      */

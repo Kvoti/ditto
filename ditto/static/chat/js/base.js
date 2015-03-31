@@ -45,7 +45,7 @@ var chatModule = document.getElementById('chat-module');
 var chatroom = document.getElementById('msgs');
 if (chatModule || chatroom) {
     React.render(
-        <ChatModule fluidHeight={!!chatroom} />,
+        <ChatModule fluidHeight={!!chatroom} heightOffset={220} />,
         chatModule || chatroom
     );
 }

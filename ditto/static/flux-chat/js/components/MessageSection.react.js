@@ -5,6 +5,7 @@ var MessageStore = require('../stores/MessageStore');
 var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
 var WhosTypingStore = require('../stores/WhosTypingStore');
+var FluidHeightMixin = require('../../../js/mixins/FluidHeightMixin.jsx');
 
 function getStateFromStores() {
     return {
@@ -24,7 +25,8 @@ function getMessageListItem(message) {
 }
 
 var MessageSection = React.createClass({
-
+    mixins: [FluidHeightMixin],
+    
     getInitialState: function() {
         return getStateFromStores();
     },
@@ -43,16 +45,18 @@ var MessageSection = React.createClass({
     },
 
     render: function() {
+        var style;
         var messageListItems = this.state.messages.map(getMessageListItem);
         if (!this.state.thread) {
             return (
                     <div ref="messageList">Loading ...</div>
             );
         }
+	// TODO can we move the height stuff here to a mixin somehow?
+	style = {height: this.state.height};
         return (
             <div className="message-section">
-            <h3 className="message-thread-heading">{this.state.thread.name}</h3>
-            <ul className="message-list" ref="messageList">
+            <ul style={style} className="message-list" ref="messageList">
             {messageListItems}
             </ul>
                 <WhosTyping users={this.state.whosTyping} />
