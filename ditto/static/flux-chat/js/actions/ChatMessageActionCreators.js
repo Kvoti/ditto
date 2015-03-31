@@ -18,9 +18,6 @@ module.exports = {
     },
 
     startTyping: function(currentThreadID) {
-        // TODO this state of who I am should live somewhere proper and shared
-        var me = Strophe.getNodeFromJid(chatConf.me);
-        //
         ChatAppDispatcher.dispatch({
             type: ActionTypes.START_TYPING,
             currentThreadID: currentThreadID
@@ -29,9 +26,6 @@ module.exports = {
     },
 
     stopTyping: function(currentThreadID) {
-        // TODO this state of who I am should live somewhere proper and shared
-        var me = Strophe.getNodeFromJid(chatConf.me);
-        //
         ChatAppDispatcher.dispatch({
             type: ActionTypes.STOP_TYPING,
             currentThreadID: currentThreadID
