@@ -3,6 +3,7 @@ var MessageStore = require('../stores/MessageStore');
 var ThreadListItem = require('../components/ThreadListItem.react');
 var ThreadStore = require('../stores/ThreadStore');
 var UnreadThreadStore = require('../stores/UnreadThreadStore');
+var FluidHeightMixin = require('../../../js/mixins/FluidHeightMixin.jsx');
 
 function getStateFromStores() {
     return {
@@ -17,6 +18,7 @@ function notifyUnreadThreads() {
 }
 
 var ThreadSection = React.createClass({
+    mixins: [FluidHeightMixin],
 
     getInitialState: function() {
         return getStateFromStores();
@@ -33,6 +35,7 @@ var ThreadSection = React.createClass({
     },
 
     render: function() {
+	var style = {height: this.state.height};
         var threadListItems = this.state.threads.map(function(thread) {
             return (
                     <ThreadListItem
@@ -50,7 +53,7 @@ var ThreadSection = React.createClass({
             notifyUnreadThreads();
         }
         return (
-                <div className="thread-section">
+                <div className="thread-section" style={style}>
                 <div className="thread-count">
                 {unread}
             </div>
