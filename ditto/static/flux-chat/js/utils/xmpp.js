@@ -6,7 +6,7 @@ module.exports = {
 	        from: from,
 	        to: to,
 	        type: 'chat'
-	    }).c('body').t(text);
+	    }).c('body').t(text).up();
         }
     },
     parse: {
