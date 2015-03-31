@@ -31,14 +31,4 @@ urlpatterns = patterns('',
         name='private-chatroom'
     ),
                        
-    # url(
-    #     regex=r'^messages/$',
-    #     view=views.Messages.as_view(),
-    #     name='private_chats'
-    # ),
-    # url(
-    #     regex=r'^messages/(?P<slug>\w+)/$',
-    #     view=views.MessagesFrom.as_view(),
-    #     name='private_chat'
-    # ),
 )
