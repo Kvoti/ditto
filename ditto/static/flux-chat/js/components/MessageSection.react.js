@@ -6,6 +6,7 @@ var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
 var WhosTypingStore = require('../stores/WhosTypingStore');
 var FluidHeightMixin = require('../../../js/mixins/FluidHeightMixin.jsx');
+var ThreadCreator = require('../../../js/components/ThreadCreator.jsx');
 
 function getStateFromStores() {
     return {
@@ -60,6 +61,7 @@ var MessageSection = React.createClass({
             {messageListItems}
             </ul>
                 <WhosTyping users={this.state.whosTyping} />
+            <ThreadCreator threadID={this.state.thread.id}/>
             <MessageComposer threadID={this.state.thread.id}/>
             </div>
         );

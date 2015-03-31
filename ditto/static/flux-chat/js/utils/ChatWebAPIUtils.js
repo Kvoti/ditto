@@ -132,7 +132,6 @@ function loadUserProfile (user) {
 
 function receivePrivateMessage (msg) {
     var message = XMPP.parse.privateMessage(msg);
-    setThreadFields(message);
     if (message.composing.length) {
 	ChatServerActionCreators.receiveStartTyping(message.from, message.threadID);
     } else {
@@ -149,7 +148,6 @@ function receivePrivateMessage (msg) {
 var receiveArchivedPrivateMessage = function (msg) {
     var message = XMPP.parse.archivedPrivateMessage(msg);
     if (message) { // TODO don't need if when not querying group messages
-	setThreadFields(message);
 	message.isRead = true;
         ChatServerActionCreators.receivePrivateMessage(message);
     }
@@ -161,15 +159,6 @@ function receivePresence (pres) {
     ChatServerActionCreators.receiveChatStatus(status);
     return true;
 };
-
-// TODO possibly this should live in the XMPP.parse module
-function setThreadFields(message) {
-    var thread = [message.from, message.to];
-    thread.sort();
-    message.threadID = thread.join(':');
-    message.threadName = thread.join(' and ');
-    message.authorName = message.from;
-}    
 
 function setupLogging () {
     _connection.rawInput = function (data) { console.log('RECV: ', data); };
@@ -190,7 +179,7 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log) {
+        if (log || true) {
             setupLogging();
         }
         _connection.connect(
@@ -224,6 +213,9 @@ module.exports = {
 	        getBareJIDForNode(to)
 	    );
 	    _connection.chatstates.addActive(payload);
+
+            payload.c('thread').t(message.threadID);
+            
 	    delete sentIsTyping[threadID];
 	    _connection.send(payload.tree()); // TODO handle error on message submit
         }

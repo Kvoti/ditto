@@ -44,7 +44,7 @@ var UnreadThreadStore = assign({}, EventEmitter.prototype, {
     var threads = ThreadStore.getAll();
     var unreadCount = 0;
     for (var id in threads) {
-      if (!threads[id].lastMessage.isRead) {
+      if (threads[id].lastMessage && !threads[id].lastMessage.isRead) {
         unreadCount++;
       }
     }

@@ -39,20 +39,22 @@ WhosTypingStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
     switch(action.type) {
 
-    case ActionTypes.RECEIVE_START_TYPING:
-        var whosTyping = _whosTyping[action.threadID];
-        if (!whosTyping) {
-            whosTyping = [];
-	    _whosTyping[action.threadID] = whosTyping;
-        }
-        whosTyping.push(action.user);
-        WhosTypingStore.emitChange();
-        break;
+        // TODO need to make this work with threading
 
-    case ActionTypes.RECEIVE_STOP_TYPING:
-        _removeAuthor(action.threadID, action.user);
-        WhosTypingStore.emitChange();
-        break;
+    // case ActionTypes.RECEIVE_START_TYPING:
+    //     var whosTyping = _whosTyping[action.threadID];
+    //     if (!whosTyping) {
+    //         whosTyping = [];
+    //         _whosTyping[action.threadID] = whosTyping;
+    //     }
+    //     whosTyping.push(action.user);
+    //     WhosTypingStore.emitChange();
+    //     break;
+
+    // case ActionTypes.RECEIVE_STOP_TYPING:
+    //     _removeAuthor(action.threadID, action.user);
+    //     WhosTypingStore.emitChange();
+    //     break;
 
     default:
         // do nothing

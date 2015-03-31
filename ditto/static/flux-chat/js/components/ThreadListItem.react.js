@@ -18,7 +18,7 @@ var ThreadListItem = React.createClass({
   render: function() {
     var thread = this.props.thread;
       var lastMessage = thread.lastMessage;
-      var contact = ChatMessageUtils.getMessageOther(thread.lastMessage);
+      var contact = ChatMessageUtils.getMessageOther(this.props.thread.id);
     return (
       <li
         className={cx({
@@ -32,9 +32,9 @@ var ThreadListItem = React.createClass({
         </div>
             <div className="media-body">
             <h4 className="media-heading">{thread.name}</h4>
-            <p><TimeAgo when={lastMessage.date} /></p>
+            <p><TimeAgo when={lastMessage ? lastMessage.date : new Date()} /></p>
             <Status user={contact} />
-            {lastMessage.text}
+            {lastMessage && lastMessage.text}
         </div>
         </div>
       </li>

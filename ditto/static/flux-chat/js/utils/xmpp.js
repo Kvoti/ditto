@@ -1,4 +1,16 @@
 // TODO alternative to using jquery here to parse the XMPP packets?
+
+function setThreadFields(message) {
+    var thread = [message.from, message.to];
+    thread.sort();
+    if (!message.threadID) {
+        message.threadID = thread.join(':');
+    }
+    message.threadName = message.threadID ? message.threadID : thread.join(' and ');
+    message.authorName = message.from;
+}    
+
+
 module.exports = {
     create: {
         privateMessage: function (text, from, to) {
@@ -11,18 +23,23 @@ module.exports = {
     },
     parse: {
         privateMessage: function (msg) {
+            console.log('pm', msg);
             var msg = $(msg);
-            return {
+            var message = {
 		id: msg.find('archived').attr('id'),
                 text: msg.find("body:first").text(),
                 from: Strophe.getNodeFromJid(msg.attr("from")),
                 to: Strophe.getNodeFromJid(msg.attr("to")),
                 timestamp: new Date(),
                 composing: msg.find('composing'),
-                active: msg.find('active')
+                active: msg.find('active'),
+                threadID: msg.find('thread').text()
             };
+            setThreadFields(message);
+            return message;
         },
         archivedPrivateMessage: function (msg) {
+            console.log('arch pm', msg);
             var msg = $(msg);
             // TODO need this group chat hack for now as we're querying
             // the archive for all messages. Really we want to load the
@@ -31,14 +48,16 @@ module.exports = {
             if (isGroupChat) {
                 return;
             };
-            return {
+            var message = {
                 id: msg.find('result').attr('id'),
 	        text: msg.find("body:first").text(),
 	        from: Strophe.getNodeFromJid(msg.find('message').attr("from")),
 	        to: Strophe.getNodeFromJid(msg.find('message').attr("to")),
 	        timestamp: new Date(msg.find('delay').attr('stamp')),
-
+                threadID: msg.find('thread').text()
             }
+            setThreadFields(message);
+            return message;
         },
         vCard: function (vcard) {
 	    vcard = $(vcard);
