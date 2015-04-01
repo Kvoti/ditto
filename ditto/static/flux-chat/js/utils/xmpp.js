@@ -23,7 +23,6 @@ module.exports = {
     },
     parse: {
         privateMessage: function (msg) {
-            console.log('pm', msg);
             var msg = $(msg);
             var message = {
 		id: msg.find('archived').attr('id'),
@@ -39,7 +38,6 @@ module.exports = {
             return message;
         },
         archivedPrivateMessage: function (msg) {
-            console.log('arch pm', msg);
             var msg = $(msg);
             // TODO need this group chat hack for now as we're querying
             // the archive for all messages. Really we want to load the
