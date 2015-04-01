@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="row">
-	<div class="col-md-4">
+	<div class="col-md-2">
 	    <ul class="nav nav-pills nav-stacked">
 		{% url 'ditto:editconfig' 'basicinfo' as url %}
 		{% navitem "basicinfo" url _("Basic Information") %}
@@ -17,9 +17,12 @@
 
 		{% url 'ditto:editconfig' 'features' as url %}
 		{% navitem "features" url _("Features") %}
+		
+		{% url 'ditto:evaluation' as url %}
+		{% navitem "evaluation" url _("Evaluation") %}
 	    </ul>
 	</div>
-	<div class="col-md-8">
+	<div class="col-md-10">
 	    <h1>{% block heading %}{% endblock %}</h1>
 	    {% block config-content %}{% endblock %}
 	</div>

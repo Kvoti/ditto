@@ -161,3 +161,10 @@ def _on_setup_finish(request):
 def start_again(request):
     request.tenant.reset_configured()
     return HttpResponseRedirect(reverse('ditto:home'))
+
+
+@admin_required
+def evaluation(request):
+    return TemplateResponse(request, 'configuration/evaluation.html', {
+        'nav': ['evaluation'],
+    })

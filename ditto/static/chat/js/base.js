@@ -5,6 +5,7 @@ var AvatarPicker = require('../../js/components/AvatarPicker.jsx');
 var WhosOnline = require('../../flux-chat/js/components/WhosOnline.react');
 var MessageComposer = require('../../flux-chat/js/components/MessageComposer.react');
 var ChatModule = require('../../js/components/ChatModule.jsx');
+var EvaluationSettings = require('../../configuration/js/components/EvaluationSettings.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
@@ -73,3 +74,12 @@ if (chatApp) {
         chatApp
     );
 }
+
+var evaluationSettings = document.getElementById('evaluation');
+if (evaluationSettings) {
+    React.render(
+            <EvaluationSettings />,
+        evaluationSettings
+    );
+}
+   
