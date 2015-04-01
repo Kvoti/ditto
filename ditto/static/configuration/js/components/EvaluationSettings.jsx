@@ -4,71 +4,47 @@ var Panel = require('react-bootstrap/lib/Panel');
 var EvaluationItem = require('./Placeholder.jsx');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
-var CaseNotes = require('./CaseNotes.jsx');
+var RoleStore = require('../stores/RoleStore');
+var ItemStore = require('../stores/ItemStore');
+var SettingsActionCreators = require('../actions/SettingsActionCreators');
 
-var ITEMS = [
-    {
-	name: 'Registration',
-	edit: 'Edit Registration form',
-    },
-    {
-	name: 'Case Notes',
-	edit: 'Edit Case Note form',
-	component: CaseNotes,
-    },
-    {
-	name: 'Post-session feedback',
-	edit: 'Edit Post-session feedback form',
-    },
-    {
-	name: 'Impact Footprint',
-	edit: 'Edit Impact Footprint',
-    },
-    {
-	name: 'Impact Scales',
-	edit: 'Edit Impact Scales',
-    },
-    {
-	name: 'Longitudinal surveys',
-	edit: 'Edit Longitudinal surveys',
-    },
-    {
-	name: 'Triage Events',
-	edit: 'Edit Triage events',
-    }
-];
-
-function getSettingsComponent (item) {
-    for (var i = 0; i < ITEMS.length; i += 1) {
-	if (ITEMS[i].name === item) {
-	    return ITEMS[i].component;
-	}
+function getStateFromStores () {
+    return {
+	roles: RoleStore.getAll(),
+	currentRole: RoleStore.getCurrent(),
+	items: ItemStore.getAll(),
+	currentItem: ItemStore.getCurrent(),
     }
 }
 
 var EvaluationSettings = React.createClass({
     getInitialState: function () {
-	return {
-	    roles: ['Administrator', 'Counsellor', 'Member'],  // TODO get from props
-	    activeKey: 0	    
-	}
+	return getStateFromStores();
     },
 
+    componentDidMount: function() {
+        RoleStore.addChangeListener(this._onChange);
+        ItemStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount: function() {
+        RoleStore.removeChangeListener(this._onChange);
+        ItemStore.removeChangeListener(this._onChange);
+    },
+    
     handleItemClick: function (item) {
-	this.setState({currentSettingsItem: item});
+	SettingsActionCreators.clickItem(item);
     },
 
     handleSelect: function (activeKey) {
-	this.setState({
-	    activeKey: activeKey,
-	    currentSettingsItem: null,
-	});
+	var role = this.state.roles[activeKey];
+	SettingsActionCreators.clickRole(role);
     },
     
     render: function () {
-	var currentRole = this.state.roles[this.state.activeKey];
+	var activeKey = this.state.roles.indexOf(this.state.currentRole);
 	var panels = this.state.roles.map((role, i) => {
-	    var items = ITEMS.map((item, j) => {
+	    var items = this.state.items.map((item, j) => {
 		return <EvaluationItem key={j} item={item.name} desc={item.edit} handleClick={this.handleItemClick} />
 	    });
 	    return (
@@ -78,26 +54,31 @@ var EvaluationSettings = React.createClass({
 	    );
 	});
 	var settingsComponent;
-	if (this.state.currentSettingsItem) {
-	    settingsComponent = getSettingsComponent(this.state.currentSettingsItem);
+	if (this.state.currentItem) {
+	    settingsComponent = ItemStore.getComponentForCurrent();
 	    if (settingsComponent) {
 		settingsComponent = React.createElement(
 		    settingsComponent,
-		    {role: currentRole}
+		    {role: this.state.currentRole}
 		)
 	    }
 	}
 	return (
 	    <Row>
 		<Col md={6}>
-		<Accordion activeKey={this.state.activeKey} onSelect={this.handleSelect}>{panels}</Accordion>
+		<Accordion activeKey={activeKey} onSelect={this.handleSelect}>{panels}</Accordion>
 	    </Col>
 	    <Col md={6}>
     	    {settingsComponent}
 		</Col>
 	    </Row>
 	);
+    },
+
+    _onChange: function() {
+        this.setState(getStateFromStores());
     }
+    
 });
 
 module.exports = EvaluationSettings;

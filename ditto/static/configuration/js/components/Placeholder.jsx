@@ -4,11 +4,6 @@ var Col = require('react-bootstrap/lib/Col');
 
 var Placeholder = React.createClass({
 
-    handleClick: function (e) {
-	e.preventDefault();
-	this.props.handleClick(this.props.item);
-    },
-    
     render: function () {
 	return (
 	    <Row>
@@ -19,7 +14,7 @@ var Placeholder = React.createClass({
 		<input type="checkbox" checked />
 		</Col>
 		<Col md={6}>
-		<a href="#" onClick={this.handleClick}>{this.props.desc}</a>
+		<em><a href="#" onClick={this.props.handleClick.bind(null, this.props.item)}>{this.props.desc}</a></em>
 		</Col>
 	    </Row>
 	);
