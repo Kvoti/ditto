@@ -32,6 +32,12 @@ var ImpactFootprint = React.createClass({
     render: function () {
 	var header = `Editing ‘${this.state.role}’ Impact Footprint`;
 	var items = this.state.settings.map((item, i) => {
+	    var contentToggle;
+	    if (item.on) {
+		contentToggle = <input type="checkbox" checked={item.showContent} onChange={this._toggleItemContent.bind(this, item)} />;
+	    } else {
+		contentToggle = <input type="checkbox" checked={item.showContent} readOnly />;
+	    }
 	    return (
 		<div key={i}>
 		    <Col md={3}>
@@ -44,7 +50,7 @@ var ImpactFootprint = React.createClass({
 		    <em>Show content?</em>
 		    </Col>
 		    <Col md={3}>
-		    <input type="checkbox" checked={item.showContent} onChange={this._toggleItemContent.bind(this, item)} />
+		    {contentToggle}
 		    </Col>
 		</div>		
 	    );

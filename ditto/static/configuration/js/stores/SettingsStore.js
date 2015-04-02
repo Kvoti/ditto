@@ -127,6 +127,7 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
     case ActionTypes.DISABLE_IMPACT_FOOTPRINT_ITEM:
         var item = getImpactFootprintItem(action.role, action.itemName);
         item.on = false;
+        item.showContent = false;
         SettingsStore.emitChange();
         break;
 
