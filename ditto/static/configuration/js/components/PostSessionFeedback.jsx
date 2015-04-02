@@ -52,7 +52,7 @@ var PostSessionFeedback = React.createClass({
 	    textFields[fieldName] = field;
 	});
 	return (
-	    <Panel header={header}>
+	    <Panel header={header} bsStyle="primary">
 		<div className="panel panel-default">
 		    <div className="panel-heading" onDoubleClick={this._onDoubleClick.bind(this, 'title')}>
 			{textFields.title}

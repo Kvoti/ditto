@@ -56,7 +56,7 @@ var ImpactFootprint = React.createClass({
 	    );
 	});
 	return (
-	    <Panel header={header}>
+	    <Panel header={header} bsStyle="primary">
 		<p>
 		<em>
 		    Turn on/off the events you wish to track for ‘{this.state.role}’. The detail or content of the

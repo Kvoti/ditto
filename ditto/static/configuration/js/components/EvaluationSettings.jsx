@@ -48,7 +48,7 @@ var EvaluationSettings = React.createClass({
 		return <EvaluationItem key={j} item={item.name} desc={item.edit} handleClick={this.handleItemClick} />
 	    });
 	    return (
-		<Panel key={i} header={role} eventKey={i}>
+		<Panel key={i} header={role} eventKey={i} bsStyle={activeKey === i ? "primary" : "default"}>
 		    {items}
 		</Panel>
 	    );
