@@ -3,7 +3,8 @@ var Panel = require('react-bootstrap/lib/Panel');
 var RoleStore = require('../stores/RoleStore');
 var SettingsStore = require('../stores/SettingsStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
-var TextInput = require('../components/TextInput.jsx');
+var Row = require('react-bootstrap/lib/Row');
+var Col = require('react-bootstrap/lib/Col');
 
 function getStateFromStores () {
     return {
@@ -30,10 +31,37 @@ var ImpactFootprint = React.createClass({
     
     render: function () {
 	var header = `Editing ‘${this.state.role}’ Impact Footprint`;
+	var items = this.state.settings.map((item, i) => {
+	    return (
+		<div key={i}>
+		    <Col md={3}>
+		    {item.name}
+                </Col>
+		<Col md={3}>
+		<input type="checkbox" checked={item.on} onChange={this._toggleItem.bind(this, item)} />
+		    </Col>
+		    <Col md={3}>
+		    <em>Show content?</em>
+		    </Col>
+		    <Col md={3}>
+		    <input type="checkbox" checked={item.showContent} onChange={this._toggleItemContent.bind(this, item)} />
+		    </Col>
+		</div>		
+	    );
+	});
 	return (
 	    <Panel header={header}>
-		<em>Case notes appear on a person’s profile page. You can call them something else, and professionals can share them with other roles.</em>
-		<p onDoubleClick={this._onDoubleClick}>{title}</p>
+		<p>
+		<em>
+		    Turn on/off the events you wish to track for ‘{this.state.role}’. The detail or content of the
+		    event can also be displayed below the timeline.
+		</em>
+		</p>
+		<Panel header="IMPACT FOOTPRINT">
+		    <Row>
+			{items}
+		    </Row>
+		</Panel>
 	    </Panel>
 	);
     },
@@ -42,15 +70,13 @@ var ImpactFootprint = React.createClass({
         this.setState(getStateFromStores());
     },
     
-    _onDoubleClick: function() {
-	this.setState({isEditing: true});
+    _toggleItem: function (item) {
+	SettingsActionCreators.toggleImpactFootprintItem(this.state.role, item);
     },
     
-    _onSave: function(text) {
-	SettingsActionCreators.updateImpactFootprintTitle(this.state.role, text);
-	this.setState({isEditing: false});
+    _toggleItemContent: function (item) {
+	SettingsActionCreators.toggleImpactFootprintItemContent(this.state.role, item);
     },
-    
 });
 
 module.exports = ImpactFootprint;

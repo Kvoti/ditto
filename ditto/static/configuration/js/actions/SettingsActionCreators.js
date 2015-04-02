@@ -46,5 +46,36 @@ module.exports = {
         });
     },
 
+    toggleImpactFootprintItem: function (role, item) {
+        if (item.on) {
+            SettingsAppDispatcher.dispatch({
+                type: ActionTypes.DISABLE_IMPACT_FOOTPRINT_ITEM,
+                role: role,
+                itemName: item.name
+            });
+        } else {
+            SettingsAppDispatcher.dispatch({
+                type: ActionTypes.ENABLE_IMPACT_FOOTPRINT_ITEM,
+                role: role,
+                itemName: item.name
+            });
+        }
+    },
 
+    toggleImpactFootprintItemContent: function (role, item) {
+        if (item.showContent) {
+            SettingsAppDispatcher.dispatch({
+                type: ActionTypes.DISABLE_IMPACT_FOOTPRINT_ITEM_CONTENT,
+                role: role,
+                itemName: item.name
+            });
+        } else {
+            SettingsAppDispatcher.dispatch({
+                type: ActionTypes.ENABLE_IMPACT_FOOTPRINT_ITEM_CONTENT,
+                role: role,
+                itemName: item.name
+            });
+        }
+    },
+    
 };

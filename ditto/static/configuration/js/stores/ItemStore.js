@@ -5,6 +5,7 @@ var assign = require('object-assign');
 var ActionTypes = SettingsConstants.ActionTypes;
 var CaseNotes = require('../components/CaseNotes.jsx');
 var PostSessionFeedback = require('../components/PostSessionFeedback.jsx');
+var ImpactFootprint = require('../components/ImpactFootprint.jsx');
 
 var CHANGE_EVENT = 'change';
 
@@ -26,6 +27,7 @@ var _items = [
     {
 	name: 'Impact Footprint',
 	edit: 'Edit Impact Footprint',
+        component: ImpactFootprint,
     },
     {
 	name: 'Impact Scales',

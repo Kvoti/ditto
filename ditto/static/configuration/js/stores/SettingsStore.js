@@ -18,38 +18,55 @@ RoleStore.getAll().map(role => {
             title: 'POST-SESSION FEEDBACK',
             question: 'How useful did you find the support given to you today?',
         },
-        impactFootprint: {
-            Conversations: {
+        impactFootprint: [
+            {
+                name: 'Conversations',
                 on: true,
                 showContent: true,
             },
-            Sessions: {
+            {
+                name: 'Sessions',
                 on: true,
                 showContent: true,
             },
-            Feedback: {
+            {
+                name: 'Feedback',
                 on: true,
                 showContent: true,
             },
-            Blogs: {
+            {
+                name: 'Blogs',
                 on: true,
                 showContent: true,
             },
-            Comments: {
+            {
+                name: 'Comments',
                 on: true,
                 showContent: true,
             },
-            Triage: {
+            {
+                name: 'Triage',
                 on: true,
                 showContent: true,
             },
-            'Case note': {
+            {
+                name: 'Case note',
                 on: true,
                 showContent: true,
             },
-        }
+        ]
     }
 });
+
+function getImpactFootprintItem (role, name) {
+    var settings = _settings[role].impactFootprint;
+    // TODO could do with a utils for pulling items from a list by some object property
+    for (var i = 0; i < settings.length; i += 1) {
+        if (settings[i].name === name) {
+            return settings[i];
+        }
+    }
+}
 
 var SettingsStore = assign({}, EventEmitter.prototype, {
 
@@ -77,7 +94,7 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
     
     getImpactFootprintSettingsForCurrentRole: function () {
         var role = RoleStore.getCurrent();
-        return _settings[role].postSessionFeedback;
+        return _settings[role].impactFootprint;
     },
     
 });
@@ -98,6 +115,30 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         
     case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_QUESTION:
         _settings[action.role].postSessionFeedback.question = action.text;
+        SettingsStore.emitChange();
+        break;
+
+    case ActionTypes.ENABLE_IMPACT_FOOTPRINT_ITEM:
+        var item = getImpactFootprintItem(action.role, action.itemName);
+        item.on = true;
+        SettingsStore.emitChange();
+        break;
+        
+    case ActionTypes.DISABLE_IMPACT_FOOTPRINT_ITEM:
+        var item = getImpactFootprintItem(action.role, action.itemName);
+        item.on = false;
+        SettingsStore.emitChange();
+        break;
+
+    case ActionTypes.ENABLE_IMPACT_FOOTPRINT_ITEM_CONTENT:
+        var item = getImpactFootprintItem(action.role, action.itemName);
+        item.showContent = true;
+        SettingsStore.emitChange();
+        break;
+        
+    case ActionTypes.DISABLE_IMPACT_FOOTPRINT_ITEM_CONTENT:
+        var item = getImpactFootprintItem(action.role, action.itemName);
+        item.showContent = false;
         SettingsStore.emitChange();
         break;
         

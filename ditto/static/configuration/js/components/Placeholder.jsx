@@ -11,7 +11,7 @@ var Placeholder = React.createClass({
 		{this.props.item}
 		</Col>
 		<Col md={2}>
-		<input type="checkbox" checked />
+		<input type="checkbox" defaultChecked />
 		</Col>
 		<Col md={6}>
 		<em><a href="#" onClick={this.props.handleClick.bind(null, this.props.item)}>{this.props.desc}</a></em>
