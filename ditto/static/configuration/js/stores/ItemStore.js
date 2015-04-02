@@ -4,6 +4,7 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var ActionTypes = SettingsConstants.ActionTypes;
 var CaseNotes = require('../components/CaseNotes.jsx');
+var PostSessionFeedback = require('../components/PostSessionFeedback.jsx');
 
 var CHANGE_EVENT = 'change';
 
@@ -20,6 +21,7 @@ var _items = [
     {
 	name: 'Post-session feedback',
 	edit: 'Edit Post-session feedback form',
+        component: PostSessionFeedback,
     },
     {
 	name: 'Impact Footprint',

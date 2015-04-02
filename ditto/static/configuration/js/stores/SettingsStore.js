@@ -1,3 +1,4 @@
+// TODO not sure whether to split out settings into different stores and actions
 var SettingsAppDispatcher = require('../../../flux-chat/js/dispatcher/ChatAppDispatcher');
 var SettingsConstants = require('../constants/SettingsConstants');
 var EventEmitter = require('events').EventEmitter;
@@ -12,6 +13,10 @@ RoleStore.getAll().map(role => {
     _settings[role] = {
         caseNotes: {
             title: 'CASE NOTES'
+        },
+        postSessionFeedback: {
+            title: 'POST-SESSION FEEDBACK',
+            question: 'How useful did you find the support given to you today?',
         }
     }
 });
@@ -34,6 +39,11 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
         var role = RoleStore.getCurrent();
         return _settings[role].caseNotes;
     },
+
+    getPostSessionFeedbackSettingsForCurrentRole: function () {
+        var role = RoleStore.getCurrent();
+        return _settings[role].postSessionFeedback;
+    },
     
 });
 
@@ -43,6 +53,16 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
 
     case ActionTypes.UPDATE_CASE_NOTES_TITLE:
         _settings[action.role].caseNotes.title = action.text;
+        SettingsStore.emitChange();
+        break;
+        
+    case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_TITLE:
+        _settings[action.role].postSessionFeedback.title = action.text;
+        SettingsStore.emitChange();
+        break;
+        
+    case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_QUESTION:
+        _settings[action.role].postSessionFeedback.question = action.text;
         SettingsStore.emitChange();
         break;
         

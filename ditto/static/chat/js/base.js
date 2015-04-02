@@ -1,3 +1,4 @@
+require("babel/polyfill");
 var ChatApp = require('../../flux-chat/js/components/ChatApp.react');
 var ChatWebAPIUtils = require('../../flux-chat/js/utils/ChatWebAPIUtils');
 var Avatar = require('../../flux-chat/js/components/Avatar.react.js');
