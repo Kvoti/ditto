@@ -17,6 +17,36 @@ RoleStore.getAll().map(role => {
         postSessionFeedback: {
             title: 'POST-SESSION FEEDBACK',
             question: 'How useful did you find the support given to you today?',
+        },
+        impactFootprint: {
+            Conversations: {
+                on: true,
+                showContent: true,
+            },
+            Sessions: {
+                on: true,
+                showContent: true,
+            },
+            Feedback: {
+                on: true,
+                showContent: true,
+            },
+            Blogs: {
+                on: true,
+                showContent: true,
+            },
+            Comments: {
+                on: true,
+                showContent: true,
+            },
+            Triage: {
+                on: true,
+                showContent: true,
+            },
+            'Case note': {
+                on: true,
+                showContent: true,
+            },
         }
     }
 });
@@ -41,6 +71,11 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
     },
 
     getPostSessionFeedbackSettingsForCurrentRole: function () {
+        var role = RoleStore.getCurrent();
+        return _settings[role].postSessionFeedback;
+    },
+    
+    getImpactFootprintSettingsForCurrentRole: function () {
         var role = RoleStore.getCurrent();
         return _settings[role].postSessionFeedback;
     },

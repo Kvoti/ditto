@@ -58,8 +58,14 @@ var PostSessionFeedback = React.createClass({
 			{textFields.title}
 		    </div>
 		    <div className="panel-body" onDoubleClick={this._onDoubleClick.bind(this, 'question')}>
-			{textFields.question}
-			<p><big>:'-( :-O :-| B-) :-))</big></p>
+			<p>{textFields.question}</p>
+			<p>
+			    <img alt="1" src="/static/images/ratings/1-rainy.png" />
+			    <img alt="2" src="/static/images/ratings/2-cloudy.png" />
+			    <img alt="3" src="/static/images/ratings/3-peeping.png" />
+			    <img alt="4" src="/static/images/ratings/4-sunny.png" />
+			    <img alt="5" src="/static/images/ratings/5-bright.png" />
+			</p>
 		    </div>
 		</div>
 	    </Panel>
