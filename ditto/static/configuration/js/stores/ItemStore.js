@@ -6,6 +6,7 @@ var ActionTypes = SettingsConstants.ActionTypes;
 var CaseNotes = require('../components/CaseNotes.jsx');
 var PostSessionFeedback = require('../components/PostSessionFeedback.jsx');
 var ImpactFootprint = require('../components/ImpactFootprint.jsx');
+var RegForm = require('../components/RegForm.jsx');
 
 var CHANGE_EVENT = 'change';
 
@@ -13,6 +14,7 @@ var _items = [
     {
 	name: 'Registration',
 	edit: 'Edit Registration form',
+        component: RegForm,
     },
     {
 	name: 'Case Notes',

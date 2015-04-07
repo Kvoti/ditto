@@ -16,5 +16,8 @@ module.exports = {
         ENABLE_IMPACT_FOOTPRINT_ITEM: null,
         DISABLE_IMPACT_FOOTPRINT_ITEM_CONTENT: null,
         ENABLE_IMPACT_FOOTPRINT_ITEM_CONTENT: null,
+
+        ENABLE_REG_FIELD: null,
+        DISABLE_REG_FIELD: null,
     }),
 };
