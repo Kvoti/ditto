@@ -1,4 +1,6 @@
 var React = require('react');
+var RouterMixin = require('react-mini-router').RouterMixin;
+var navigate = require('react-mini-router').navigate;
 var Accordion = require('react-bootstrap/lib/Accordion');
 var Panel = require('react-bootstrap/lib/Panel');
 var EvaluationItem = require('./Placeholder.jsx');
@@ -18,6 +20,14 @@ function getStateFromStores () {
 }
 
 var EvaluationSettings = React.createClass({
+    mixins: [RouterMixin],
+
+    routes: {
+	//'/': 'home',
+        //'/di/config/evaluation/': 'home',
+        '/di/config/evaluation/#:role': 'role'
+    },
+    
     getInitialState: function () {
 	return getStateFromStores();
     },
@@ -31,6 +41,11 @@ var EvaluationSettings = React.createClass({
         RoleStore.removeChangeListener(this._onChange);
         ItemStore.removeChangeListener(this._onChange);
     },
+
+    componentWillUpdate: function (nextProps, nextState) {
+	console.log(this.state.currentRole, nextState.currentRole);
+	navigate('/di/config/evaluation/' + nextState.currentRole, true);
+    },
     
     handleItemClick: function (item) {
 	SettingsActionCreators.clickItem(item);
@@ -40,15 +55,25 @@ var EvaluationSettings = React.createClass({
 	var role = this.state.roles[activeKey];
 	SettingsActionCreators.clickRole(role);
     },
-    
+
     render: function () {
+	//return this.role();
+	console.log('rendering', this.state.currentRole);
+	return this.renderCurrentRoute();
+    },
+
+    home: function () {
+	return this.role();
+    },
+    
+    role: function (role) {
 	var activeKey = this.state.roles.indexOf(this.state.currentRole);
 	var panels = this.state.roles.map((role, i) => {
 	    var items = this.state.items.map((item, j) => {
 		return <EvaluationItem key={j} item={item.name} desc={item.edit} handleClick={this.handleItemClick} />
 	    });
 	    return (
-		<Panel key={i} header={role} eventKey={i} bsStyle={activeKey === i ? "primary" : "default"}>
+		<Panel id={role} key={i} header={role} eventKey={i} bsStyle={activeKey === i ? "primary" : "default"}>
 		    {items}
 		</Panel>
 	    );
@@ -76,6 +101,7 @@ var EvaluationSettings = React.createClass({
     },
 
     _onChange: function() {
+	console.log('changed');
         this.setState(getStateFromStores());
     }
     

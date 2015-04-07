@@ -79,7 +79,7 @@ if (chatApp) {
 var evaluationSettings = document.getElementById('evaluation');
 if (evaluationSettings) {
     React.render(
-            <EvaluationSettings />,
+            <EvaluationSettings history={true} useHistory={true} />,
         evaluationSettings
     );
 }

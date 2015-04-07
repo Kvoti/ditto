@@ -28,7 +28,7 @@ urlpatterns = patterns('',
         name='delete-role'
     ),
     url(
-        regex=r'^evaluation/$',
+        regex=r'^evaluation/.*$',
         view=views.evaluation,
         name='evaluation'
     ),
