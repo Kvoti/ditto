@@ -31,72 +31,6 @@ var RegForm = React.createClass({
     
     render: function () {
 	var header = `Editing ‘${this.state.role}’ Registration Form`;
-	var fieldsToAdd = [];
-	var fields = this.state.settings.map((field, i) => {
-	    var fieldComponent, fieldRemove, options;
-	    if (field.on || field.required) {
-		if (field.options) {
-		    options = field.options.map(option => {
-			return <option>{option}</option>;
-		    });
-		    fieldComponent = (
-			<div className="col-md-8">
-			    <select className="form-control">
-				<option>Select {field.name}</option>
-				{options}
-			    </select>
-			</div>
-		    );
-		} else if (field.hasOwnProperty('fields')) {
-		    var required = field.required;
-		    fieldComponent = field.fields.map((field, i) => {
-			return (
-			    <div className="col-md-4" key={i}>
-				<input className="form-control" type="text" placeholder={field.name} style={{backgroundColor: required ? '#f5f5f5' : '#fa8072'}} />
-			    </div>
-			);
-		    });
-		} else {
-		    fieldComponent = (
-			<div className="col-md-8">
-			    <input className="form-control" type="text" placeholder={field.name} style={{backgroundColor: field.required ? '#f5f5f5' : '#fa8072'}} />
-			</div>
-		    );
-		}
-		if (!field.required) {
-		    fieldRemove = (
-			<button className="btn btn-primary" onClick={this._removeField.bind(this, field)}>
-			    <span ariaHidden={true} className="glyphicon glyphicon-minus" />
-			    <span className="sr-only">remove</span>
-			</button>
-		    );
-		}
-	    } else {
-		if (!field.required) {
-		    fieldsToAdd.push(
-			<option key={i} value={field.name}>{field.name}</option>
-		    );
-		}
-		return null;
-	    }
-	    return (
-		<div className="row" key={i}>
-		    {fieldComponent} {fieldRemove}
-		</div>		
-	    );
-	});
-	if (fieldsToAdd.length) {
-	    fieldsToAdd = (
-		<div className="row">
-		    <div className="col-md-8">
-			<select className="form-control" onChange={this._addField}>
-			    <option>Select field to add</option>
-			    {fieldsToAdd}
-			</select>
-		    </div>
-		</div>
-	    );
-	}
 	return (
 	    <Panel header={header} bsStyle="primary">
 		<p>
@@ -104,12 +38,108 @@ var RegForm = React.createClass({
 		    Fields in grey are mandatory
 		</em>
 		</p>
-		{fields}
-		{fieldsToAdd}
+		{this._renderFields()}
+		{this._renderAddableFields()}
 	    </Panel>
 	);
     },
+
+    _renderFields: function () {
+	var visibleSections = this.state.settings.filter(section => {
+	    return section.on || section.required;
+	});
+	return visibleSections.map(section => {
+	    var inputs, removeSection;
+	    if (section.hasOwnProperty('fields')) {
+		inputs = this._renderFieldGroup(section);
+	    } else {
+		inputs = (
+		    <div className="col-md-8">
+			{this._renderField(section)}
+		    </div>
+		);
+	    }
+	    if (!section.required) {
+		removeSection = this._renderRemoveButton(section);
+	    }
+	    return (
+		<div className="row" key={section.name}>
+		    {inputs} {removeSection}
+		</div>		
+	    );
+	});
+
+    },
+
+    _renderAddableFields: function () {
+	var addableFields = this.state.settings.filter(section => {
+	    return !section.on && !section.required;
+	});
+	var options = addableFields.map(section => {
+	    return <option key={section.name} value={section.name}>{section.name}</option>;
+	});
+	if (!options.length) {
+	    return null;
+	}
+	return (
+	    <div className="row">
+		<div className="col-md-8">
+		    <select className="form-control" onChange={this._addField}>
+			<option>Select field to add</option>
+			{options}
+		    </select>
+		</div>
+	    </div>
+	);
+    },
+
+    _renderFieldGroup: function (sectionSpec) {
+	var required = sectionSpec.required;
+	var rendered = sectionSpec.fields.map(fieldSpec => {
+	    return (
+		<div className="col-md-4" key={fieldSpec.name}>
+		    {this._renderField(fieldSpec, required)}
+		</div>
+	    );
+	});
+	return rendered;
+    },
     
+    _renderField: function (fieldSpec, required) {
+	if (fieldSpec.options) {
+	    return this._renderChoiceField(fieldSpec);
+	} else {
+	    return this._renderTextField(fieldSpec, required);
+	};
+    },
+
+    _renderChoiceField: function (fieldSpec) {
+	var options = fieldSpec.options.map(option => {
+	    return <option key={option}>{option}</option>;
+	});
+	return (
+	    <div className="col-md-8">
+		<select className="form-control">
+		    <option>Select {fieldSpec.name}</option>
+		    {options}
+		</select>
+	    </div>
+	);
+    },
+
+    _renderTextField: function (fieldSpec, required) {
+	return <input className="form-control" type="text" placeholder={fieldSpec.name} style={{backgroundColor: fieldSpec.required || required ? '#f5f5f5' : '#fa8072'}} />
+    },
+
+    _renderRemoveButton: function (section) {
+	return (
+	    <button className="btn btn-primary" onClick={this._removeField.bind(this, section)}>
+		<span ariaHidden={true} className="glyphicon glyphicon-minus" />
+		<span className="sr-only">remove</span>
+	    </button>
+	);
+    },
+
     _onChange: function() {
         this.setState(getStateFromStores());
     },
