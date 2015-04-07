@@ -57,12 +57,16 @@ RoleStore.getAll().map(role => {
         ],
         regForm: [
             {
-                name: 'First name',
+                name: 'Name',
                 on: true,
-            },
-            {
-                name: 'Last name',
-                on: true,
+                fields: [
+                    {
+                        name: 'First name',
+                    },
+                    {
+                        name: 'Last name',
+                    },
+                ]
             },
             {
                 name: 'Username',
@@ -75,10 +79,14 @@ RoleStore.getAll().map(role => {
             {
                 name: 'Password',
                 required: true,
-            },
-            {
-                name: 'Verify password',
-                required: true,
+                fields: [
+                    {
+                        name: 'Password',
+                    },
+                    {
+                        name: 'Verify password',
+                    },
+                ]
             },
             {
                 name: 'Gender',

@@ -41,9 +41,15 @@ var RegForm = React.createClass({
 		    });
 		    fieldComponent = (
 			<select>
+			    <option>Select {field.name}</option>
 			    {options}
 			</select>
 		    );
+		} else if (field.hasOwnProperty('fields')) {
+		    var required = field.required;
+		    fieldComponent = field.fields.map(field => {
+			return <input type="text" placeholder={field.name} style={{backgroundColor: required ? 'grey' : 'orange'}} />;
+		    });
 		} else {
 		    fieldComponent = <input type="text" placeholder={field.name} style={{backgroundColor: field.required ? 'grey' : 'orange'}} />;
 		}
