@@ -40,21 +40,36 @@ var RegForm = React.createClass({
 			return <option>{option}</option>;
 		    });
 		    fieldComponent = (
-			<select>
-			    <option>Select {field.name}</option>
-			    {options}
-			</select>
+			<div className="col-md-8">
+			    <select className="form-control">
+				<option>Select {field.name}</option>
+				{options}
+			    </select>
+			</div>
 		    );
 		} else if (field.hasOwnProperty('fields')) {
 		    var required = field.required;
-		    fieldComponent = field.fields.map(field => {
-			return <input type="text" placeholder={field.name} style={{backgroundColor: required ? 'grey' : 'orange'}} />;
+		    fieldComponent = field.fields.map((field, i) => {
+			return (
+			    <div className="col-md-4" key={i}>
+				<input className="form-control" type="text" placeholder={field.name} style={{backgroundColor: required ? '#f5f5f5' : '#fa8072'}} />
+			    </div>
+			);
 		    });
 		} else {
-		    fieldComponent = <input type="text" placeholder={field.name} style={{backgroundColor: field.required ? 'grey' : 'orange'}} />;
+		    fieldComponent = (
+			<div className="col-md-8">
+			    <input className="form-control" type="text" placeholder={field.name} style={{backgroundColor: field.required ? '#f5f5f5' : '#fa8072'}} />
+			</div>
+		    );
 		}
 		if (!field.required) {
-		    fieldRemove = <button onClick={this._removeField.bind(this, field)}>remove</button>;
+		    fieldRemove = (
+			<button className="btn btn-primary" onClick={this._removeField.bind(this, field)}>
+			    <span ariaHidden={true} className="glyphicon glyphicon-minus" />
+			    <span className="sr-only">remove</span>
+			</button>
+		    );
 		}
 	    } else {
 		if (!field.required) {
@@ -65,17 +80,21 @@ var RegForm = React.createClass({
 		return null;
 	    }
 	    return (
-		<div key={i}>
+		<div className="row" key={i}>
 		    {fieldComponent} {fieldRemove}
 		</div>		
 	    );
 	});
 	if (fieldsToAdd.length) {
 	    fieldsToAdd = (
-		<select onChange={this._addField}>
-		    <option>Select field to add</option>
-		    {fieldsToAdd}
-		</select>
+		<div className="row">
+		    <div className="col-md-8">
+			<select className="form-control" onChange={this._addField}>
+			    <option>Select field to add</option>
+			    {fieldsToAdd}
+			</select>
+		    </div>
+		</div>
 	    );
 	}
 	return (
@@ -85,10 +104,8 @@ var RegForm = React.createClass({
 		    Fields in grey are mandatory
 		</em>
 		</p>
-		<Row>
-		    {fields}
-		    {fieldsToAdd}
-		</Row>
+		{fields}
+		{fieldsToAdd}
 	    </Panel>
 	);
     },
