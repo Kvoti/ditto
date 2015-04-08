@@ -54,12 +54,73 @@ RoleStore.getAll().map(role => {
                 on: true,
                 showContent: true,
             },
-        ]
+        ],
+        regForm: [
+            {
+                name: 'Name',
+                on: true,
+                fields: [
+                    {
+                        name: 'First name',
+                    },
+                    {
+                        name: 'Last name',
+                    },
+                ]
+            },
+            {
+                name: 'Username',
+                required: true,
+            },
+            {
+                name: 'Email address',
+                required: true,
+            },
+            {
+                name: 'Password',
+                required: true,
+                fields: [
+                    {
+                        name: 'Password',
+                    },
+                    {
+                        name: 'Verify password',
+                    },
+                ]
+            },
+            {
+                name: 'Gender',
+                on: true,
+                options: [
+                    'Male',
+                    'Female',
+                    'Other'
+                ]
+            },
+            {
+                name: 'Ethnicity',
+                on: true,
+                options: [
+                    'White British',
+                    'Other'
+                ]
+            }
+        ],
     }
 });
 
 function getImpactFootprintItem (role, name) {
     var settings = _settings[role].impactFootprint;
+    // TODO could do with a utils for pulling items from a list by some object property
+    for (var i = 0; i < settings.length; i += 1) {
+        if (settings[i].name === name) {
+            return settings[i];
+        }
+    }
+}
+
+function getRegField (role, name) {
+    var settings = _settings[role].regForm;
     // TODO could do with a utils for pulling items from a list by some object property
     for (var i = 0; i < settings.length; i += 1) {
         if (settings[i].name === name) {
@@ -95,6 +156,11 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
     getImpactFootprintSettingsForCurrentRole: function () {
         var role = RoleStore.getCurrent();
         return _settings[role].impactFootprint;
+    },
+    
+    getRegFormSettingsForCurrentRole: function () {
+        var role = RoleStore.getCurrent();
+        return _settings[role].regForm;
     },
     
 });
@@ -140,6 +206,18 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
     case ActionTypes.DISABLE_IMPACT_FOOTPRINT_ITEM_CONTENT:
         var item = getImpactFootprintItem(action.role, action.itemName);
         item.showContent = false;
+        SettingsStore.emitChange();
+        break;
+        
+    case ActionTypes.ENABLE_REG_FIELD:
+        var field = getRegField(action.role, action.fieldName);
+        field.on = true;
+        SettingsStore.emitChange();
+        break;
+
+    case ActionTypes.DISABLE_REG_FIELD:
+        var field = getRegField(action.role, action.fieldName);
+        field.on = false;
         SettingsStore.emitChange();
         break;
         

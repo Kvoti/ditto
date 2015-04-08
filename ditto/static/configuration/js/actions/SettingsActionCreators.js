@@ -77,5 +77,21 @@ module.exports = {
             });
         }
     },
+
+    addRegField: function (role, fieldName) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.ENABLE_REG_FIELD,
+            role: role,
+            fieldName: fieldName
+        });
+    },
     
+    removeRegField: function (role, fieldName) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.DISABLE_REG_FIELD,
+            role: role,
+            fieldName: fieldName
+        });
+    },
+
 };
