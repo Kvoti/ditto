@@ -67,15 +67,23 @@ var ItemStore = assign({}, EventEmitter.prototype, {
     getCurrent: function () {
         return _currentItem;
     },
-
-    getComponentForCurrent: function () {
+    
+    getComponentForItem: function (item) {
         for (var i = 0; i < _items.length; i += 1) {
-	    if (_items[i].name === _currentItem) {
+	    if (_items[i].name === item) {
 	        return _items[i].component;
 	    }
         }
     }
 
+//    getComponentForCurrent: function () {
+//        for (var i = 0; i < _items.length; i += 1) {
+//	    if (_items[i].name === _currentItem) {
+//	        return _items[i].component;
+//	    }
+//        }
+//    }
+//
 });
 
 ItemStore.dispatchToken = SettingsAppDispatcher.register(function(action) {

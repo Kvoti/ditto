@@ -8,6 +8,7 @@ var MessageComposer = require('../../flux-chat/js/components/MessageComposer.rea
 var ChatModule = require('../../js/components/ChatModule.jsx');
 var EvaluationSettings = require('../../configuration/js/components/EvaluationSettings.jsx');
 var React = require('react');
+var urllite = require('urllite/lib/core');
 window.React = React; // export for http://fb.me/react-devtools
 
 ChatWebAPIUtils.connect(
@@ -78,8 +79,10 @@ if (chatApp) {
 
 var evaluationSettings = document.getElementById('evaluation');
 if (evaluationSettings) {
+    // TODO some path logic here because mini-router getInitialPath is a bit broken
+    var initialPath = urllite(window.location.href);
     React.render(
-            <EvaluationSettings history={true} useHistory={true} />,
+            <EvaluationSettings history={true} path={initialPath.pathname} />,
         evaluationSettings
     );
 }

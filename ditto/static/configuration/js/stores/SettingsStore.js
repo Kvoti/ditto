@@ -143,8 +143,7 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
         this.removeListener(CHANGE_EVENT, callback);
     },
 
-    getCaseNotesSettingsForCurrentRole: function () {
-        var role = RoleStore.getCurrent();
+    getCaseNotesSettingsForRole: function (role) {
         return _settings[role].caseNotes;
     },
 

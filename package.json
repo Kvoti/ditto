@@ -12,6 +12,7 @@
     "strophe": "^1.2.0",
     "strophe-plugins": "^0.1.2",
     "timeago": "^0.2.0",
+    "urllite": "^0.5.0",
     "visibilityjs": "^1.2.1"
   },
   "devDependencies": {

@@ -1,6 +1,5 @@
 var React = require('react');
 var Panel = require('react-bootstrap/lib/Panel');
-var RoleStore = require('../stores/RoleStore');
 var SettingsStore = require('../stores/SettingsStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var Row = require('react-bootstrap/lib/Row');
@@ -8,7 +7,6 @@ var Col = require('react-bootstrap/lib/Col');
 
 function getStateFromStores () {
     return {
-	role: RoleStore.getCurrent(),
 	settings: SettingsStore.getRegFormSettingsForCurrentRole(),
     }
 }
@@ -20,17 +18,15 @@ var RegForm = React.createClass({
     },
     
     componentDidMount: function() {
-	RoleStore.addChangeListener(this._onChange);
 	SettingsStore.addChangeListener(this._onChange);
     },
     
     componentWillUnmount: function() {
-	RoleStore.removeChangeListener(this._onChange);
 	SettingsStore.removeChangeListener(this._onChange);
     },
     
     render: function () {
-	var header = `Editing ‘${this.state.role}’ Registration Form`;
+	var header = `Editing ‘${this.props.role}’ Registration Form`;
 	return (
 	    <Panel header={header} bsStyle="primary">
 		<p>
@@ -146,11 +142,11 @@ var RegForm = React.createClass({
     
     _addField: function (e) {
 	var fieldName = e.target.value;
-	SettingsActionCreators.addRegField(this.state.role, fieldName);
+	SettingsActionCreators.addRegField(this.props.role, fieldName);
     },
 
     _removeField: function (field) {
-	SettingsActionCreators.removeRegField(this.state.role, field.name);
+	SettingsActionCreators.removeRegField(this.props.role, field.name);
     }
 });
 

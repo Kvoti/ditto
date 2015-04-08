@@ -13,9 +13,7 @@ var SettingsActionCreators = require('../actions/SettingsActionCreators');
 function getStateFromStores () {
     return {
 	roles: RoleStore.getAll(),
-	currentRole: RoleStore.getCurrent(),
 	items: ItemStore.getAll(),
-	currentItem: ItemStore.getCurrent(),
     }
 }
 
@@ -23,9 +21,8 @@ var EvaluationSettings = React.createClass({
     mixins: [RouterMixin],
 
     routes: {
-	//'/': 'home',
-        //'/di/config/evaluation/': 'home',
-        '/di/config/evaluation/#:role': 'role'
+        '/di/config/evaluation/:role': '_render',
+        '/di/config/evaluation/:role/:item': '_render'
     },
     
     getInitialState: function () {
@@ -42,32 +39,31 @@ var EvaluationSettings = React.createClass({
         ItemStore.removeChangeListener(this._onChange);
     },
 
-    componentWillUpdate: function (nextProps, nextState) {
-	console.log(this.state.currentRole, nextState.currentRole);
-	navigate('/di/config/evaluation/' + nextState.currentRole, true);
-    },
-    
-    handleItemClick: function (item) {
-	SettingsActionCreators.clickItem(item);
+    handleItemClick: function (item, e) {
+	e.preventDefault();
+	// TODO fix this ugly path stuff
+	// TODO if fix handleClick in mini-router don't need this
+	var role;
+	var parts = this.state.path.split('/');
+	if (parts.length == 6) {
+	    role = parts.slice(-2)[0];
+	} else {
+	    role = parts.slice(-1)[0];
+	}
+	navigate('/di/config/evaluation/' + role + '/' + item);
     },
 
     handleSelect: function (activeKey) {
 	var role = this.state.roles[activeKey];
-	SettingsActionCreators.clickRole(role);
+	navigate('/di/config/evaluation/' + role);
     },
 
     render: function () {
-	//return this.role();
-	console.log('rendering', this.state.currentRole);
 	return this.renderCurrentRoute();
     },
 
-    home: function () {
-	return this.role();
-    },
-    
-    role: function (role) {
-	var activeKey = this.state.roles.indexOf(this.state.currentRole);
+    _render: function (role, item) {
+	var activeKey = this.state.roles.indexOf(role);
 	var panels = this.state.roles.map((role, i) => {
 	    var items = this.state.items.map((item, j) => {
 		return <EvaluationItem key={j} item={item.name} desc={item.edit} handleClick={this.handleItemClick} />
@@ -79,12 +75,15 @@ var EvaluationSettings = React.createClass({
 	    );
 	});
 	var settingsComponent;
-	if (this.state.currentItem) {
-	    settingsComponent = ItemStore.getComponentForCurrent();
+	if (typeof item === "string") {
+	    // TODO remove url encoding hack!
+	    // surely mini-router, or whichever lib it uses, should handle urlencoded characters?
+	    item = item.replace('%20', ' ');
+	    settingsComponent = ItemStore.getComponentForItem(item);
 	    if (settingsComponent) {
 		settingsComponent = React.createElement(
 		    settingsComponent,
-		    {role: this.state.currentRole}
+		    {role: role}
 		)
 	    }
 	}
@@ -101,7 +100,6 @@ var EvaluationSettings = React.createClass({
     },
 
     _onChange: function() {
-	console.log('changed');
         this.setState(getStateFromStores());
     }
     

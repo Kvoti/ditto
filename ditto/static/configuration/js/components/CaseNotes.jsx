@@ -1,37 +1,33 @@
 var React = require('react');
 var Panel = require('react-bootstrap/lib/Panel');
-var RoleStore = require('../stores/RoleStore');
 var SettingsStore = require('../stores/SettingsStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var TextInput = require('../components/TextInput.jsx');
 
-function getStateFromStores () {
-    return {
-	role: RoleStore.getCurrent(),
-	settings: SettingsStore.getCaseNotesSettingsForCurrentRole(),
-    }
-}
-
 var CaseNotes = React.createClass({
     
+    getStateFromStores: function () {
+	return {
+	    settings: SettingsStore.getCaseNotesSettingsForRole(this.props.role),
+	}
+    },
+
     getInitialState: function () {
-	var state = getStateFromStores();
+	var state = this.getStateFromStores();
 	state.isEditing = false;
 	return state
     },
     
     componentDidMount: function() {
-	RoleStore.addChangeListener(this._onChange);
 	SettingsStore.addChangeListener(this._onChange);
     },
     
     componentWillUnmount: function() {
-	RoleStore.removeChangeListener(this._onChange);
 	SettingsStore.removeChangeListener(this._onChange);
     },
     
     render: function () {
-	var header = `Editing ‘${this.state.role}’ Case Notes`;
+	var header = `Editing ‘${this.props.role}’ Case Notes`;
 	var title;
 	if (this.state.isEditing) {
 	    title =
@@ -59,7 +55,7 @@ var CaseNotes = React.createClass({
     },
     
     _onChange: function() {
-        this.setState(getStateFromStores());
+        this.setState(this.getStateFromStores());
     },
     
     _onDoubleClick: function() {
@@ -67,7 +63,7 @@ var CaseNotes = React.createClass({
     },
     
     _onSave: function(text) {
-	SettingsActionCreators.updateCaseNotesTitle(this.state.role, text);
+	SettingsActionCreators.updateCaseNotesTitle(this.props.role, text);
 	this.setState({isEditing: false});
     },
     

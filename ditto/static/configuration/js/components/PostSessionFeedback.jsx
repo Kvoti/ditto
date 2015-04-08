@@ -1,14 +1,12 @@
 // TODO factor out common stuff with CaseNotes (and other panels)
 var React = require('react');
 var Panel = require('react-bootstrap/lib/Panel');
-var RoleStore = require('../stores/RoleStore');
 var SettingsStore = require('../stores/SettingsStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var TextInput = require('../components/TextInput.jsx');
 
 function getStateFromStores () {
     return {
-	role: RoleStore.getCurrent(),
 	settings: SettingsStore.getPostSessionFeedbackSettingsForCurrentRole(),
     }
 }
@@ -25,17 +23,15 @@ var PostSessionFeedback = React.createClass({
     },
     
     componentDidMount: function() {
-	RoleStore.addChangeListener(this._onChange);
 	SettingsStore.addChangeListener(this._onChange);
     },
     
     componentWillUnmount: function() {
-	RoleStore.removeChangeListener(this._onChange);
 	SettingsStore.removeChangeListener(this._onChange);
     },
     
     render: function () {
-	var header = `Editing ‘${this.state.role}’ Post-session feedback`;
+	var header = `Editing ‘${this.props.role}’ Post-session feedback`;
 	var textFields = {};
 	['title', 'question'].forEach(fieldName => {
 	    var updateMethod = 'updatePostSessionFeedback' + fieldName.charAt(0).toUpperCase() + fieldName.slice(1);  // TODO capFirst util method?
@@ -83,7 +79,7 @@ var PostSessionFeedback = React.createClass({
     },
     
     _onSave: function(field, updateMethod, text) {
-	SettingsActionCreators[updateMethod](this.state.role, text);
+	SettingsActionCreators[updateMethod](this.props.role, text);
 	// TODO want to use React.update here but it doesn't support set operations
 	// Use list push and splice instead (as with chat presence, who's typing etc.?)
 	var isEditing = this.state.isEditing;
