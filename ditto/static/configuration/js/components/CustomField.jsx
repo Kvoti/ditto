@@ -6,8 +6,10 @@ var CustomChoiceField = require('./CustomChoiceField.jsx');
 
 var CustomField = React.createClass({
     addTextField: function (questionText) {
-	SettingsActionCreators.addTextField(this.props.role, questionText);
-	this.setState({adding: null});
+	if (questionText) {
+	    SettingsActionCreators.addTextField(this.props.role, questionText);
+	    this.setState({adding: null});
+	}
     },
 
     addChoiceField: function (questionText, choices) {
