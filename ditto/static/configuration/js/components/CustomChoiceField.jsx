@@ -27,7 +27,7 @@ var CustomChoiceField = React.createClass({
 		</div>
 	    );
 	});
-	if (this.state.questionText && this.state.choices.filter(i => i !== '').length) {
+	if (this.state.questionText && this._areChoicesValid()) {
 	    done = <button onClick={this._save}>Done</button>;
 	}
 	return (
@@ -64,6 +64,28 @@ var CustomChoiceField = React.createClass({
 	this.setState(update(this.state, {choices: {$splice: [[i, 1]]}}));
     },
 
+    _areChoicesValid: function () {
+	return this._hasAtLeastTwoChoices() && !this._hasBlankChoiceInTheMiddle();
+    },
+
+    _hasAtLeastTwoChoices: function () {
+	return this.state.choices.filter(i => i !== '').length > 1;
+    },
+
+    _hasBlankChoiceInTheMiddle: function () {
+	var blank = false;
+	var choices = this.state.choices;
+	for (var i = 0; i < choices.length; i += 1) {
+	    if (blank && choices[i]) {
+		return true;
+	    }
+	    if (!choices[i]) {
+		blank = true;
+	    }
+	}
+	return false;
+    },
+    
     _save: function () {
 	this.props.onSave(this.state.questionText, this.state.choices);
 	this.setState(this.getInitialState());
