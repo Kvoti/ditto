@@ -6,6 +6,7 @@ var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
 var CustomField = require('./CustomField.jsx');
+var CustomChoiceField = require('./CustomChoiceField.jsx');
 
 function getStateFromStores () {
     return {
@@ -115,19 +116,45 @@ var RegForm = React.createClass({
 	};
     },
 
+    // TODO probably makes sense to make Field components that know how to render
+    // themselves in display and edit mode
     _renderChoiceField: function (fieldSpec) {
+	if (this.state.isEditing && this.state.isEditing.name === fieldSpec.name) {
+	    return React.createElement(
+		CustomChoiceField,
+		{
+		    questionText: fieldSpec.name,
+		    choices: fieldSpec.options,
+		    onSave: this._updateChoiceField.bind(this, fieldSpec.name),
+		}
+	    );
+	}
 	var type = fieldSpec.multiple ? 'checkbox' : 'radio';
 	var options = fieldSpec.options.map(option => {
 	    return <div key={option}><label><input type={type} name={fieldSpec.name} /> {option} </label></div>;
 	});
 	return (
 	    <div className="col-md-8">
-		<p>{fieldSpec.name}</p>
+		<p onDoubleClick={this._editField.bind(this, fieldSpec)}>{fieldSpec.name}</p>
 		{options}
 	    </div>
 	);
     },
 
+    _editField: function (fieldSpec) {
+	this.setState({isEditing: fieldSpec});
+    },
+
+    _updateChoiceField: function (oldName, questionText, choices) {
+	SettingsActionCreators.updateChoiceField(
+	    this.state.role,
+	    oldName,
+	    questionText,
+	    choices
+	);
+	this.setState({isEditing: null});
+    },
+    
     _renderTextField: function (fieldSpec, required) {
 	return <input className="form-control" type="text" placeholder={fieldSpec.name} style={{backgroundColor: fieldSpec.required || required ? '#f5f5f5' : '#fa8072'}} />
     },

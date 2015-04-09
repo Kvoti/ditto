@@ -8,8 +8,8 @@ var CustomChoiceField = React.createClass({
 
     getInitialState: function () {
 	return {
-	    choices: ['', '', ''],
-	    questionText: '',
+	    choices: this.props.choices || ['', '', ''],
+	    questionText: this.props.questionText || '',
 	};
     },
 
@@ -63,7 +63,7 @@ var CustomChoiceField = React.createClass({
 	}
 	return (
 	    <div className="well">
-		<p>Add choice field</p>
+		<p>{this.props.questionText ? 'Edit': 'Add'} choice field</p>
 		<input
 			type='text'
 			value={this.state.questionText}

@@ -250,6 +250,14 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         });
         SettingsStore.emitChange();
         break;
+
+    case ActionTypes.UPDATE_CHOICE_FIELD:
+        var field = getRegField(action.role, action.currentFieldName);
+        field.name = action.questionText
+        field.options = action.choices
+        // TODO required etc
+        SettingsStore.emitChange();
+        break;
         
     default:
         // do nothing

@@ -22,5 +22,7 @@ module.exports = {
 
         ADD_TEXT_FIELD: null,
         ADD_CHOICE_FIELD: null,
+
+        UPDATE_CHOICE_FIELD: null,
     }),
 };

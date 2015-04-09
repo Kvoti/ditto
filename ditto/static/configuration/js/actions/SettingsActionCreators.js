@@ -120,5 +120,15 @@ module.exports = {
             multiple: true
         });
     },
+
+    updateChoiceField: function (role, oldName, questionText, choices) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_CHOICE_FIELD,
+            role: role,
+            currentFieldName: oldName,
+            questionText: questionText,
+            choices: choices
+        });
+    },
     
 };
