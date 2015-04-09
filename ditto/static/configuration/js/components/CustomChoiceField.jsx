@@ -16,7 +16,6 @@ var CustomChoiceField = React.createClass({
     render: function () {
 	var done;
 	var choices = this.state.choices.map((choice, i) => {
-	    // key={i} ok here *I think*
 	    var moveUp, moveDown;
 	    if (i > 0) {
 		moveUp = (
@@ -38,6 +37,8 @@ var CustomChoiceField = React.createClass({
 		    </button>
 		);
 	    }
+	    // TODO this key={i} isn't right here, after re-order same item will
+	    // have *different* key, defeating the point
 	    return (
 		<div key={i}>
 		    <input
