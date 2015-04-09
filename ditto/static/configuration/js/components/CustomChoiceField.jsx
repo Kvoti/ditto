@@ -1,6 +1,8 @@
 var React = require('react/addons');
 var TextInput = require('../components/TextInput.jsx');
 var update = React.addons.update;
+var Button = require('react-bootstrap/lib/Button');
+var Icon = require('react-bootstrap/lib/Glyphicon');
 
 var CustomChoiceField = React.createClass({
 
@@ -15,6 +17,27 @@ var CustomChoiceField = React.createClass({
 	var done;
 	var choices = this.state.choices.map((choice, i) => {
 	    // key={i} ok here *I think*
+	    var moveUp, moveDown;
+	    if (i > 0) {
+		moveUp = (
+ 		    <button onClick={this._moveUp.bind(this, i)}
+			    className='btn btn-primary'
+			    ariaLabel='Move up'
+			    >
+			<Icon glyph="arrow-up" />
+		    </button>
+		);
+	    }
+	    if (i < this.state.choices.length - 1) {
+		moveDown = (
+ 		    <button onClick={this._moveDown.bind(this, i)}
+			    className='btn btn-primary'
+			    ariaLabel='Move down'
+			    >
+			<Icon glyph="arrow-down" />
+		    </button>
+		);
+	    }
 	    return (
 		<div key={i}>
 		    <input
@@ -23,13 +46,14 @@ var CustomChoiceField = React.createClass({
 			    onChange={this._updateChoice.bind(this, i)}
 			    placeholder={'Choice ' + (i + 1)}
 			    />
-		    <button onClick={this._removeChoice.bind(this, i)}
-			    type='button'
-			    className='btn btn-danger'
+		    <Button onClick={this._removeChoice.bind(this, i)}
+			    bsStyle='danger'
 			    ariaLabel='Remove choice'
 			    >
-			<span className="glyphicon glyphicon-remove" />
-		    </button>
+			<Icon glyph="remove" />
+		    </Button>
+		    {moveUp}
+		    {moveDown}
 		</div>
 	    );
 	});
@@ -46,13 +70,12 @@ var CustomChoiceField = React.createClass({
 			placeholder='Enter question text'
 	        />
 		{choices}
-	        <button onClick={this._addChoice}
-			type='button'
-			className='btn btn-success'
-			ariaLable='Add choice'
+	        <Button onClick={this._addChoice}
+			bsStyle='success'
+			ariaLabel='Add choice'
 			>
-		    <span className="glyphicon glyphicon-plus" />
-		</button>
+		    <Icon glyph="plus" />
+		</Button>
 		{done}
 	    </div>
 	);
@@ -72,6 +95,26 @@ var CustomChoiceField = React.createClass({
 	this.setState(update(this.state, {choices: {$push: ['']}}));
     },
 
+    _moveUp: function (i) {
+	var before = this.state.choices.slice(0, i - 1);
+	var item = this.state.choices[i];
+	var prev = this.state.choices[i - 1];
+	var after = this.state.choices.slice(i + 1, this.state.choices.length);
+	var shuffled = before.concat([item, prev]);
+	shuffled = shuffled.concat(after);
+	this.setState({choices: shuffled});
+    },
+    // [1,2,3] i = 1
+    _moveDown: function (i) {
+	var before = this.state.choices.slice(0, i);
+	var item = this.state.choices[i];
+	var next = this.state.choices[i + 1];
+	var after = this.state.choices.slice(i + 2, this.state.choices.length);
+	var shuffled = before.concat([next, item]);
+	shuffled = shuffled.concat(after);
+	this.setState({choices: shuffled});
+    },
+    
     _removeChoice: function (i) {
 	this.setState(update(this.state, {choices: {$splice: [[i, 1]]}}));
     },
