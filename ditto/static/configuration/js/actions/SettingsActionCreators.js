@@ -101,5 +101,14 @@ module.exports = {
             questionText: questionText
         });
     },
+
+    addChoiceField: function (role, questionText, choices) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.ADD_CHOICE_FIELD,
+            role: role,
+            questionText: questionText,
+            choices: choices
+        });
+    },
     
 };

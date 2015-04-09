@@ -2,11 +2,16 @@
 var React = require('react');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var CustomTextField = require('./CustomTextField.jsx');
-
+var CustomChoiceField = require('./CustomChoiceField.jsx');
 
 var CustomField = React.createClass({
     addTextField: function (questionText) {
 	SettingsActionCreators.addTextField(this.props.role, questionText);
+	this.setState({adding: null});
+    },
+
+    addChoiceField: function (questionText, choices) {
+	SettingsActionCreators.addChoiceField(this.props.role, questionText, choices);
 	this.setState({adding: null});
     },
 
@@ -20,6 +25,8 @@ var CustomField = React.createClass({
 	{
 	    
 	    name: 'Single choice',
+	    widget: CustomChoiceField,
+	    creator: 'addChoiceField',
 	}
 	//'Multiple choice',
     ],

@@ -21,5 +21,6 @@ module.exports = {
         DISABLE_REG_FIELD: null,
 
         ADD_TEXT_FIELD: null,
+        ADD_CHOICE_FIELD: null,
     }),
 };
