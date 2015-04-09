@@ -70,7 +70,7 @@ var ItemStore = assign({}, EventEmitter.prototype, {
 
     getComponentForCurrent: function () {
         for (var i = 0; i < _items.length; i += 1) {
-	    if (_items[i].name === _currentItem) {
+	    if (_items[i].name === 'Registration') {
 	        return _items[i].component;
 	    }
         }
