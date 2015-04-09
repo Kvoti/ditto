@@ -23,7 +23,13 @@ var CustomChoiceField = React.createClass({
 			    onChange={this._updateChoice.bind(this, i)}
 			    placeholder={'Choice ' + (i + 1)}
 			    />
-		    <button onClick={this._removeChoice.bind(this, i)}>Remove choice</button>
+		    <button onClick={this._removeChoice.bind(this, i)}
+			    type='button'
+			    className='btn btn-danger'
+			    ariaLabel='Remove choice'
+			    >
+			<span className="glyphicon glyphicon-remove" />
+		    </button>
 		</div>
 	    );
 	});
@@ -40,7 +46,13 @@ var CustomChoiceField = React.createClass({
 			placeholder='Enter question text'
 	        />
 		{choices}
-	        <button onClick={this._addChoice}>Add choice</button>
+	        <button onClick={this._addChoice}
+			type='button'
+			className='btn btn-success'
+			ariaLable='Add choice'
+			>
+		    <span className="glyphicon glyphicon-plus" />
+		</button>
 		{done}
 	    </div>
 	);
