@@ -57,14 +57,14 @@ var CustomField = React.createClass({
     },
     
     render: function () {
-	var addNewField, newFieldWidget, fieldType;
+	var addNewField, newFieldWidget, fieldType, cancelButton;
 	var fieldChoices = this.FIELD_TYPES.map(field => {
 	    var fieldType = field.name;
 	    return <option key={fieldType} value={fieldType}>{fieldType}</option>;
 	});
 	if (!this.state.adding) {
 	    addNewField = (
-		<select onChange={this.startNewField} className="form-control">
+		<select onChange={this._addField} className="form-control">
 		    <option>Add new custom field</option>
 		    {fieldChoices}
 		</select>
@@ -75,21 +75,26 @@ var CustomField = React.createClass({
 		fieldType.widget,
 		{onSave: this[fieldType.creator]}
 	    )
+		cancelButton = <button onClick={this._cancelAddField} className="btn btn-primary">Cancel</button>
 	}	  
 	return (
 	    <div>
 		{addNewField}
 		{newFieldWidget}
+		{cancelButton}
 	    </div>
 	);
     },
 
-    startNewField: function (e) {
+    _addField: function (e) {
 	var fieldType = e.target.value;
 	this.setState({adding: fieldType});
+    },
+
+    _cancelAddField: function () {
+	this.setState({adding: null});
     }
 
-    
 });
 
 module.exports = CustomField;
