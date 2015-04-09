@@ -104,6 +104,16 @@ RoleStore.getAll().map(role => {
                     'White British',
                     'Other'
                 ]
+            },
+            {
+                name: 'How did you hear about us?',
+                on: true,
+                multiple: true,
+                options: [
+                    'Internet search',
+                    'Magazine',
+                    'Other',
+                ]
             }
         ],
     }
@@ -236,6 +246,7 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
             options: action.choices,
             //required: true
             on: true,
+            multiple: action.multiple
         });
         SettingsStore.emitChange();
         break;

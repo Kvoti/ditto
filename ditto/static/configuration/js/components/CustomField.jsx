@@ -14,6 +14,11 @@ var CustomField = React.createClass({
 	SettingsActionCreators.addChoiceField(this.props.role, questionText, choices);
 	this.setState({adding: null});
     },
+    
+    addMultipleChoiceField: function (questionText, choices) {
+	SettingsActionCreators.addMultipleChoiceField(this.props.role, questionText, choices);
+	this.setState({adding: null});
+    },
 
     FIELD_TYPES: [
 	{
@@ -27,8 +32,13 @@ var CustomField = React.createClass({
 	    name: 'Single choice',
 	    widget: CustomChoiceField,
 	    creator: 'addChoiceField',
+	},
+	{
+	    
+	    name: 'Multiple choice',
+	    widget: CustomChoiceField,
+	    creator: 'addMultipleChoiceField',
 	}
-	//'Multiple choice',
     ],
 
     // TODO urgh, this again, want an ordered dict or something

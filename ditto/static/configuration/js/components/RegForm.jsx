@@ -116,8 +116,9 @@ var RegForm = React.createClass({
     },
 
     _renderChoiceField: function (fieldSpec) {
+	var type = fieldSpec.multiple ? 'checkbox' : 'radio';
 	var options = fieldSpec.options.map(option => {
-	    return <label><input type='radio' name={fieldSpec.name} /> {option} </label>;
+	    return <div key={option}><label><input type={type} name={fieldSpec.name} /> {option} </label></div>;
 	});
 	return (
 	    <div className="col-md-8">
