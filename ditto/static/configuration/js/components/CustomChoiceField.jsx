@@ -21,8 +21,9 @@ var CustomChoiceField = React.createClass({
 			    type='text'
 			    value={choice}
 			    onChange={this._updateChoice.bind(this, i)}
+			    placeholder={'Choice ' + (i + 1)}
 			    />
-		    <button onClick={this._removeChoice.bind(this, i)}>remove</button>
+		    <button onClick={this._removeChoice.bind(this, i)}>Remove choice</button>
 		</div>
 	    );
 	});
@@ -30,14 +31,16 @@ var CustomChoiceField = React.createClass({
 	    done = <button onClick={this._save}>Done</button>;
 	}
 	return (
-	    <div>
+	    <div className="well">
+		<p>Add choice field</p>
 		<input
 			type='text'
 			value={this.state.questionText}
 	                onChange={this._updateQuestionText}
+			placeholder='Enter question text'
 	        />
 		{choices}
-	        <button onClick={this._addChoice}>Add</button>
+	        <button onClick={this._addChoice}>Add choice</button>
 		{done}
 	    </div>
 	);

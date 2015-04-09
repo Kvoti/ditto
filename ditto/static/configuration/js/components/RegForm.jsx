@@ -117,14 +117,12 @@ var RegForm = React.createClass({
 
     _renderChoiceField: function (fieldSpec) {
 	var options = fieldSpec.options.map(option => {
-	    return <option key={option}>{option}</option>;
+	    return <label><input type='radio' name={fieldSpec.name} /> {option} </label>;
 	});
 	return (
 	    <div className="col-md-8">
-		<select className="form-control">
-		    <option>Select {fieldSpec.name}</option>
-		    {options}
-		</select>
+		<p>{fieldSpec.name}</p>
+		{options}
 	    </div>
 	);
     },
