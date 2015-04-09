@@ -5,6 +5,7 @@ var SettingsStore = require('../stores/SettingsStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var Row = require('react-bootstrap/lib/Row');
 var Col = require('react-bootstrap/lib/Col');
+var CustomField = require('./CustomField.jsx');
 
 function getStateFromStores () {
     return {
@@ -40,6 +41,7 @@ var RegForm = React.createClass({
 		</p>
 		{this._renderFields()}
 		{this._renderAddableFields()}
+		<CustomField role={this.state.role} />
 	    </Panel>
 	);
     },

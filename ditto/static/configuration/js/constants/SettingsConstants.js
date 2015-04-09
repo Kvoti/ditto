@@ -19,5 +19,7 @@ module.exports = {
 
         ENABLE_REG_FIELD: null,
         DISABLE_REG_FIELD: null,
+
+        ADD_TEXT_FIELD: null,
     }),
 };

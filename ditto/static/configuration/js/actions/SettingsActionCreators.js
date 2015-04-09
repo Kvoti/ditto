@@ -94,4 +94,12 @@ module.exports = {
         });
     },
 
+    addTextField: function (role, questionText) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.ADD_TEXT_FIELD,
+            role: role,
+            questionText: questionText
+        });
+    },
+    
 };

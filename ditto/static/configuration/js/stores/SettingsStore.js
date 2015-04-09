@@ -220,6 +220,15 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         field.on = false;
         SettingsStore.emitChange();
         break;
+
+    case ActionTypes.ADD_TEXT_FIELD:
+        _settings[action.role].regForm.push({
+            name: action.questionText,
+            //required: true
+            on: true,
+        });
+        SettingsStore.emitChange();
+        break;
         
     default:
         // do nothing
