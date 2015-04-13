@@ -55,67 +55,6 @@ RoleStore.getAll().map(role => {
                 showContent: true,
             },
         ],
-        regForm: [
-            {
-                name: 'Name',
-                on: true,
-                fields: [
-                    {
-                        name: 'First name',
-                    },
-                    {
-                        name: 'Last name',
-                    },
-                ]
-            },
-            {
-                name: 'Username',
-                required: true,
-            },
-            {
-                name: 'Email address',
-                required: true,
-            },
-            {
-                name: 'Password',
-                required: true,
-                fields: [
-                    {
-                        name: 'Password',
-                    },
-                    {
-                        name: 'Verify password',
-                    },
-                ]
-            },
-            {
-                name: 'Gender',
-                on: true,
-                options: [
-                    'Male',
-                    'Female',
-                    'Other'
-                ]
-            },
-            {
-                name: 'Ethnicity',
-                on: true,
-                options: [
-                    'White British',
-                    'Other'
-                ]
-            },
-            {
-                name: 'How did you hear about us?',
-                on: true,
-                multiple: true,
-                options: [
-                    'Internet search',
-                    'Magazine',
-                    'Other',
-                ]
-            }
-        ],
     }
 });
 
@@ -256,6 +195,11 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         field.name = action.questionText
         field.options = action.choices
         // TODO required etc
+        SettingsStore.emitChange();
+        break;
+
+    case ActionTypes.RECEIVE_REG_FORM_SETTINGS:
+        _settings[action.role].regForm = action.settings;
         SettingsStore.emitChange();
         break;
         

@@ -1,7 +1,16 @@
 var SettingsAppDispatcher = require('../../../flux-chat/js/dispatcher/ChatAppDispatcher');
 var SettingsConstants = require('../constants/SettingsConstants');
+var RoleStore = require('../stores/RoleStore');
+var SettingsStore = require('../stores/SettingsStore');
 
 var ActionTypes = SettingsConstants.ActionTypes;
+
+function saveRegSettings () {
+    API.updateRegFormSettings(
+        RoleStore.getCurrent(),
+        SettingsStore.getRegFormSettingsForCurrentRole()
+    );
+}
 
 module.exports = {
 
@@ -17,6 +26,7 @@ module.exports = {
             type: ActionTypes.CLICK_ITEM,
             item: item
         });
+        API.getRegFormSettings(RoleStore.getCurrent());
     },
 
     updateCaseNotesTitle: function (role, text) {
@@ -84,6 +94,10 @@ module.exports = {
             role: role,
             fieldName: fieldName
         });
+        // TODO what should we do here? Wait for ajax request to complete? If we update
+        // the ui optimistically how do we roll back on server error?
+        // Also, if we save stuff to the db should we request it back from the db?
+        saveRegSettings();
     },
     
     removeRegField: function (role, fieldName) {
@@ -92,6 +106,7 @@ module.exports = {
             role: role,
             fieldName: fieldName
         });
+        saveRegSettings();
     },
 
     addTextField: function (role, questionText) {
@@ -100,6 +115,7 @@ module.exports = {
             role: role,
             questionText: questionText
         });
+        saveRegSettings();
     },
 
     addChoiceField: function (role, questionText, choices) {
@@ -109,6 +125,7 @@ module.exports = {
             questionText: questionText,
             choices: choices
         });
+        saveRegSettings();
     },
 
     addMultipleChoiceField: function (role, questionText, choices) {
@@ -119,6 +136,7 @@ module.exports = {
             choices: choices,
             multiple: true
         });
+        saveRegSettings();
     },
 
     updateChoiceField: function (role, oldName, questionText, choices) {
@@ -129,6 +147,17 @@ module.exports = {
             questionText: questionText,
             choices: choices
         });
+        saveRegSettings();
     },
     
+    receiveRegFormSettings: function (role, settings) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_REG_FORM_SETTINGS,
+            role: role,
+            settings: settings,
+        });
+    },
+
 };
+// TODO fix circ. dependency between api and this
+var API = require('../api/api');

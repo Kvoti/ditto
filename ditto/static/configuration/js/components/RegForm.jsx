@@ -33,12 +33,18 @@ var RegForm = React.createClass({
     
     render: function () {
 	var header = `Editing ‘${this.state.role}’ Registration Form`;
+	if (!this.state.settings) {
+	    // TODO have a feeling RegForm should get config from props passed in
+	    return (
+		<Panel header={header} bsStyle="primary">
+		    Loading...
+		</Panel>
+	    );
+	}
 	return (
 	    <Panel header={header} bsStyle="primary">
 		<p>
-		<em>
-		    Fields in grey are mandatory
-		</em>
+		<em>Fields in grey are mandatory</em> <a target="_blank" href="/di/forms/reg/">View form</a>
 		</p>
 		{this._renderFields()}
 		{this._renderAddableFields()}

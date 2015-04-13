@@ -14,12 +14,16 @@ from django.contrib.sites.models import Site
 
 import configuration.models
 import core
+import dittoforms.models
 import multitenancy.models
 import multitenancy.tenant
 
 from users.models import User
 
 INTERACTIONS = ["Messaging"]
+
+
+REG_FORM_SPEC = '[{"name":"Name","on":true,"fields":[{"name":"First name"},{"name":"Last name"}]},{"name":"Username","required":true},{"name":"Email address","required":true},{"name":"Password","required":true,"fields":[{"name":"Password"},{"name":"Verify password"}]},{"name":"Gender","on":true,"options":["Male","Female","Other"]},{"name":"Ethnicity","on":true,"options":["White British","Other"]},{"name":"How did you hear about us?","on":true,"multiple":true,"options":["Internet search","Magazine","Other"]}]'
 
 
 def run():
@@ -31,7 +35,8 @@ def run():
     setup_admin_user()
     setup_members()
     setup_tenants()
-
+    setup_reg_form()
+    
 
 def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
     site = Site.objects.get_current()
@@ -118,3 +123,10 @@ def setup_tenants():
     )
     if not multitenancy.tenant.is_main():
         setup_site(name='Digital Impacts', subdomain='di')
+
+
+def setup_reg_form():
+    dittoforms.models.FormSpec.objects.create(
+        slug='reg',
+        spec=REG_FORM_SPEC
+    )

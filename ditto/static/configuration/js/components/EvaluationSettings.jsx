@@ -54,7 +54,7 @@ var EvaluationSettings = React.createClass({
 	    );
 	});
 	var settingsComponent;
-	if (this.state.currentItem || true) {
+	if (this.state.currentItem) {
 	    settingsComponent = ItemStore.getComponentForCurrent();
 	    if (settingsComponent) {
 		settingsComponent = React.createElement(

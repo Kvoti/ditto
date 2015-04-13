@@ -60,7 +60,8 @@ class Common(Configuration):
         'chat',
         'dashboard',
         'configuration',
-        'skin'
+        'skin',
+        'dittoforms',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

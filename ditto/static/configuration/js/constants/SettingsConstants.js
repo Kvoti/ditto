@@ -24,5 +24,7 @@ module.exports = {
         ADD_CHOICE_FIELD: null,
 
         UPDATE_CHOICE_FIELD: null,
+
+        RECEIVE_REG_FORM_SETTINGS: null,
     }),
 };

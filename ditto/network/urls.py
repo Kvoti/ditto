@@ -14,5 +14,6 @@ urlpatterns = patterns('',
     url(r'^config/', include('configuration.urls')),
     url(r'', include('chat.urls')),
     url(r'', include('dashboard.urls')),
+    url(r'^forms/', include('dittoforms.urls')),
 
 )
