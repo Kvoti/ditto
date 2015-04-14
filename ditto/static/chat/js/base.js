@@ -7,6 +7,8 @@ var WhosOnline = require('../../flux-chat/js/components/WhosOnline.react');
 var MessageComposer = require('../../flux-chat/js/components/MessageComposer.react');
 var ChatModule = require('../../js/components/ChatModule.jsx');
 var EvaluationSettings = require('../../configuration/js/components/EvaluationSettings.jsx');
+var FormBuilder = require('../../formbuilder/js/components/FormBuilder.jsx');
+
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
@@ -81,6 +83,14 @@ if (evaluationSettings) {
     React.render(
             <EvaluationSettings />,
         evaluationSettings
+    );
+}
+   
+var formBuilder = document.getElementById('formbuilder');
+if (formBuilder) {
+    React.render(
+            <FormBuilder />,
+        formBuilder
     );
 }
    
