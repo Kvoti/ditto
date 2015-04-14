@@ -1,6 +1,8 @@
+var assign = require("object-assign");
 var React = require('react/addons');
 var update = React.addons.update;
 var Sortable = require('react-components/Sortable');
+var Text = require('./Text.jsx');
 
 var FIELD_TYPES = [
     'Text',
@@ -14,6 +16,21 @@ var FIELD_TYPES = [
 // Use an incrementing integer to give each field a unique ID
 var _fieldID = 2;  // TODO start at 0, starting at 2 for testing for now!
 
+
+function getFieldDisplayer(type) {
+    return _getFieldComponents(type).Displayer;
+}
+
+function getFieldEditor(type) {
+    return _getFieldComponents(type).Editor;
+}
+
+function _getFieldComponents(type) {
+    if (type === 'Text' || true) {
+	return Text;
+    }
+}
+
 var FormBuilder = React.createClass({
 
     getInitialState: function () {
@@ -24,10 +41,19 @@ var FormBuilder = React.createClass({
 		f0: {  // TODO this ID should probably come from the user (as part of the field editing widget)
 		    type: 'Text',
 		    order: 0,
+		    props: {
+			isRequired: false,
+			questionText: "Who's the daddy?"
+		    },
 		},
 		f1: {
 		    type: 'Single choice',
 		    order: 1,
+		    props: {
+			isRequired: false,
+			questionText: "Favourite rainbow character?",
+			choices: ["rod", "jane", "freddy"]
+		    },
 		},
 	    }
 	}
@@ -39,7 +65,6 @@ var FormBuilder = React.createClass({
 	// we're going to do the layout part yet...
 	var fields = [];
 	for (var id in this.state.form) {
-	    console.log(id, typeof(id));
 	    fields.push({
 		id: id,
 		field: this.state.form[id]
@@ -70,13 +95,28 @@ var FormBuilder = React.createClass({
     },
 
     _renderField: function (field, index) {
-	console.log(field.id, this.state.isEditing, typeof(field.id), typeof(this.state.isEditing));
+	var component, editButton;
+	var isEditing = this.state.isEditing === field.id;
+	if (isEditing) {
+	    // TODO don't like this field.field stuff but not sure how
+	    // to better handle sorting fields (prob just pass the field
+	    // instead of fieldID to div props?)
+	    component = getFieldEditor(field.field.type);
+	} else {
+	    component = getFieldDisplayer(field.field.type);
+	    editButton = <button onClick={this._editField.bind(this, field.id)}>Edit</button>;
+	}
+	var props = assign({}, field.field.props, {
+	    onSave: this._saveField.bind(this, field.id)
+	});
+	component = React.createElement(component, props);
 	return (
-	    <div fieldID={field.id} draggable={this.state.isEditing === null} key={field.id} className={this.state.isEditing === field.id ? 'well' : ''}>
-		{field.field.label || field.field.type}
-	        <p>
-		    <button onClick={this._removeField.bind(this, field.id)}>Remove</button>
-		</p>
+	    <div fieldID={field.id} draggable={this.state.isEditing === null} key={field.id}>
+		<div className={ isEditing ? 'well' : ''}>
+		    {component}
+		</div>
+	        {editButton}
+		<button onClick={this._removeField.bind(this, field.id)}>Remove</button>
 	    </div>
 	);
     },
@@ -127,6 +167,19 @@ var FormBuilder = React.createClass({
 	if (fieldID === this.state.isEditing) {
 	    changes.isEditing = {$set: null}
 	}
+	this.setState(update(this.state, changes));
+    },
+
+    _editField: function (fieldID) {
+	this.setState({isEditing: fieldID});
+    },
+
+    _saveField: function (fieldID, newProps) {
+	var changes = {
+	    form: {},
+	    isEditing: {$set: null}
+	};
+	changes.form[fieldID] = {props: {$set: newProps}};
 	this.setState(update(this.state, changes));
     },
 
