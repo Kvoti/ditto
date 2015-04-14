@@ -3,6 +3,7 @@ var React = require('react/addons');
 var update = React.addons.update;
 var Sortable = require('react-components/Sortable');
 var Text = require('./Text.jsx');
+var Choice = require('./Choice.jsx');
 
 var FIELD_TYPES = [
     'Text',
@@ -26,8 +27,10 @@ function getFieldEditor(type) {
 }
 
 function _getFieldComponents(type) {
-    if (type === 'Text' || true) {
+    if (type === 'Text') {
 	return Text;
+    } else if (type === 'Single choice' || true) {
+	return Choice;
     }
 }
 
@@ -51,6 +54,7 @@ var FormBuilder = React.createClass({
 		    order: 1,
 		    props: {
 			isRequired: false,
+			isMultiple: false,
 			questionText: "Favourite rainbow character?",
 			choices: ["rod", "jane", "freddy"]
 		    },
@@ -104,6 +108,8 @@ var FormBuilder = React.createClass({
 	    component = getFieldEditor(field.field.type);
 	} else {
 	    component = getFieldDisplayer(field.field.type);
+	}
+	if (!this.state.isEditing) {
 	    editButton = <button onClick={this._editField.bind(this, field.id)}>Edit</button>;
 	}
 	var props = assign({}, field.field.props, {
