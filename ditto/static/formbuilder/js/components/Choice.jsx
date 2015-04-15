@@ -44,7 +44,7 @@ Choice.Editor = React.createClass({
 	SortableMixin
     ],
 
-    orderedStateKey: 'choices',
+    sortableItemsKey: 'choices',
     
     propTypes: {
 	isMultiple: React.PropTypes.bool,
@@ -107,7 +107,7 @@ Choice.Editor = React.createClass({
 	);
     },
 
-    renderSortableThing: function (choiceID) {
+    getSortableItemComponent: function (choiceID) {
 	var choice = this.state.choices[choiceID];
 	return (
 	    <div>
@@ -141,7 +141,7 @@ Choice.Editor = React.createClass({
     },
 
     _removeChoice: function (choiceID) {
-	this.setState(update(this.state, this.removeItem(choiceID)));
+	this.setState({choices: this.removeItem(choiceID)});
     },
 
     _areChoicesValid: function () {
@@ -149,17 +149,20 @@ Choice.Editor = React.createClass({
     },
 
     _hasAtLeastTwoChoices: function () {
-	return this.getOrderedThings().filter(i => i.text !== '').length > 1;
+	return this.getSortedItemIDs().filter(id => this.state.choices[id].text !== '').length > 1;
     },
 
     _hasBlankChoiceInTheMiddle: function () {
 	var blank = false;
-	var choices = this.getOrderedThings();
-	for (var i = 0; i < choices.length; i += 1) {
-	    if (blank && choices[i].text) {
+	var choices = this.state.choices;
+	var choiceIDs = this.getSortedItemIDs();
+	var choice;
+	for (var i = 0; i < choiceIDs.length; i += 1) {
+	    choice = choices[choiceIDs[i]];
+	    if (blank && choice.text) {
 		return true;
 	    }
-	    if (!choices[i].text) {
+	    if (!choice.text) {
 		blank = true;
 	    }
 	}
@@ -167,7 +170,7 @@ Choice.Editor = React.createClass({
     },
     
     _onSave: function () {
-	var orderedChoiceIDs = this.getOrderedThings();
+	var orderedChoiceIDs = this.getSortedItemIDs();
 	// TODO filter placeholder blanks off the end
 	var choices = orderedChoiceIDs.map(id => this.state.choices[id].text);
 	this.props.onSave({

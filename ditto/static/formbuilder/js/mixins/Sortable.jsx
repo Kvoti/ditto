@@ -1,49 +1,105 @@
+/* Wrapper for Khan's Sortable component.
+
+To enable items to be sorted you have to store them as top-level state. E.g.
+
+state = {
+    <sortableItemsKey>: {
+        <itemId1>: {
+            order: <order1>
+            <anyOtherProps1>
+        },
+        <itemId2>: {
+            order: <order2>
+            <anyOtherProps2>
+        },
+   }
+}
+
+All that's required is that each item has an 'order' property.
+
+For the mixin to work your class needs to supply 'sortableItemsKey' and a method
+which returns a component for a given itemID.
+
+var MyClass = React.createClass({
+    mixins = [Sortable],
+
+    sortableItemsKey: <sortableItemsKey>
+
+    getSortableItemComponent: function (itemID) {
+        ...
+    }
+    ...
+})
+
+The main method exported is
+
+    getSortableComponent
+
+which you use in your render method to render your items with sorting enabled, eg.
+
+render: function () {
+    var sortable  = this.getSortableComponent();
+    return (
+        <div>
+            Drag and drop items below to re-order
+            {sortable}
+        </div>
+    }
+}
+
+There is also
+
+    getSortedItemIDS
+
+Some helper methods are exposed for adding and deleting items from the
+sorted collection
+
+    getMaxOrder
+    removeItem
+
+*/
+var assign = require("object-assign");
 var React = require('react/addons');
 var update = React.addons.update;
 var BaseSortable = require('react-components/Sortable');
 
-/*
-
-Wrap Khan's sortable component to handle keeping component state
-in sync with re-order operations
-
-TODO maybe don't need this, is it ok to store components *as* state??
-
-*/
-
-// thing wrapper around a sortable item
-// so we can store the thingID as a prop
-var Thing = React.createClass({
-    render: function () {
-	return (
-	    <div draggable={true}>
-		{this.props.children}
-	    </div>
-	);
-    }
-});
-    
 var Sortable = {
     
-    getOrderedThings: function () {
-	var orderedThings = [];
-	var things = this.state[this.orderedStateKey];
-	for (var id in things) {
-	    orderedThings.push({
+    getSortableComponent: function () {
+	var components = this.getSortedItemIDs().map(itemID => {
+	    return (
+		<Item key={itemID} itemID={itemID}>
+		    {this.getSortableItemComponent(itemID)}
+		</Item>
+	    );
+	});
+	return (
+	    <BaseSortable components={components}
+		    onReorder={this._reorderItems}
+		    verify={() => true}
+		    />
+	);
+    },
+
+    getSortedItemIDs: function () {
+	var itemIDs = [];
+	var items = this._getItems();
+	for (var id in items) {
+	    itemIDs.push({
 		id: id,
-		order: things[id].order
+		order: items[id].order
 	    });
 	}
-	orderedThings.sort((a, b) => a.order - b.order);
-	return orderedThings.map(t => t.id);
+	itemIDs.sort((a, b) => a.order - b.order);
+	return itemIDs.map(item => item.id);
     },
 
     getMaxOrder: function () {
 	var maxOrder;
-	var orderedItemIDs = this.getOrderedThings();
-	if (orderedItemIDs.length) {
-	    var lastID = orderedItemIDs.slice(-1)[0];
-	    var lastItem = this.state[this.orderedStateKey][lastID];
+	var sortedItemIDs = this.getSortedItemIDs();
+	if (sortedItemIDs.length) {
+	    var lastID = sortedItemIDs.slice(-1)[0];
+	    var lastItem = this._getItems()[lastID];
 	    maxOrder = lastItem.order;
 	} else {
 	    maxOrder = -1;
@@ -55,54 +111,41 @@ var Sortable = {
 	// React.addons.update has no operation to remove an object key so here
 	// we rebuild the sortable object, dropping the item that has been
 	// deleted.
-	//
-	// Note this funciton doesn't call setState but returns a change object
-	// to call with 'update'. This lets the caller add more state changes
-	// before calling setState.
-	var newItems = {};
-	var items = this.state[this.orderedStateKey];
-	for (var id in items) {
-	    var item = items[id];
-	    if (id !== itemID) {
-		newItems[id] = item
-	    }
-	};
-	var changes = {};
-	changes[this.orderedStateKey] = {$set: newItems};
-	return changes;
+	var newItems = assign({}, this._getItems());
+	delete newItems[itemID];
+	return newItems;
     },
     
-    getSortableComponent: function () {
-	var things = this.getOrderedThings().map(thingID => {
-	    var things = this.state[this.orderedStateKey];
-	    return (
-		<Thing key={thingID} thingID={thingID}>
-		    {this.renderSortableThing(thingID)}
-		</Thing>
-	    );
-	});
-	return (
-	    <BaseSortable components={things}
-		    onReorder={this._reorderThings}
-		    verify={() => true}
-		    />
-	);
+    _getItems: function () {
+	return this.state[this.sortableItemsKey];
     },
 
-    _reorderThings: function (components) {
-	// The Sortable compenent takes a list of *components* (as opposed to js objects) that can be reordered
-	// and calls this callback with the reordered components. Here we use that to
-	// reorder the thing descriptions in this.state
+    _reorderItems: function (components) {
+	// The Sortable compenent takes a list of *components* (as opposed to js objects) that can be resorted
+	// and calls this callback with the resorted components. Here we use that to
+	// reorder the item descriptions in this.state
 	var updates = {};
 	components.forEach((c, i) => {
-	    var thingID = c.props.thingID;
-	    updates[thingID] = {order: {$set: i}};
+	    var itemID = c.props.itemID;
+	    updates[itemID] = {order: {$set: i}};
 	});
 	var changes = {};
-	changes[this.orderedStateKey] = updates;
+	changes[this.sortableItemsKey] = updates;
 	this.setState(update(this.state, changes));
     }
     
 }
+
+// Thin wrapper around a sortable item
+// so we can store the itemID as a prop
+var Item = React.createClass({
+    render: function () {
+	return (
+	    <div draggable={true}>
+		{this.props.children}
+	    </div>
+	);
+    }
+});
 
 module.exports = Sortable;	    
