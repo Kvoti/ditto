@@ -4,17 +4,18 @@ var update = React.addons.update;
 var Sortable = require('../mixins/Sortable.jsx');
 var Text = require('./Text.jsx');
 var Choice = require('./Choice.jsx');
+var Paragraph = require('./Paragraph.jsx');
 
 var FIELD_TYPES = [
     'Text',
-//    'Paragraph',
+    'Paragraph',
 //    'Yes, no',
 //    'Yes, no, maybe',
     'Choice',
 ];
 
 // Use an incrementing integer to give each field a unique ID
-var _fieldID = 2;  // TODO start at 0, starting at 2 for testing for now!
+var _fieldID = 3;  // TODO start at 0, starting at 2 for testing for now!
 
 var FormBuilder = React.createClass({
     mixins: [Sortable],
@@ -23,7 +24,7 @@ var FormBuilder = React.createClass({
     
     getInitialState: function () {
 	return {
-	    isEditing: 'f1',
+	    isEditing: null,
 	    form: this.props.form || {
 		// dummy fields for now for testing
 		f0: {  // TODO this ID should probably come from the user (as part of the field editing widget)
@@ -35,7 +36,7 @@ var FormBuilder = React.createClass({
 		    },
 		},
 		f1: {
-		    type: 'Single choice',
+		    type: 'Choice',
 		    order: 1,
 		    props: {
 			isRequired: false,
@@ -46,6 +47,13 @@ var FormBuilder = React.createClass({
 			otherText: "Other"
 		    },
 		},
+		f2: {
+		    type: 'Paragraph',
+		    order: 2,
+		    props: {
+			questionText: 'Please enter your life story'
+		    }
+		}
 	    }
 	}
     },
@@ -166,8 +174,10 @@ function getFieldEditor(type) {
 function _getFieldComponents(type) {
     if (type === 'Text') {
 	return Text;
-    } else if (type === 'Single choice' || true) {
+    } else if (type === 'Choice') {
 	return Choice;
+    }else if (type === 'Paragraph' || true) {
+	return Paragraph;
     }
 }
 
