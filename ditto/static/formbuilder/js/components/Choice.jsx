@@ -80,7 +80,7 @@ Choice.Editor = React.createClass({
 	    questionText: this.props.questionText || '',
 	    choices: this._setInitialChoices(this.props.choices || ['', '', '']),
 	    isRequired: this.props.isRequired || false,
-	    isMultiple: this.props.isRequired || false,
+	    isMultiple: this.props.isMultiple || false,
 	    hasOther: this.props.hasOther || false,
 	    otherText: this.props.otherText || 'Other',
 	};
@@ -123,6 +123,12 @@ Choice.Editor = React.createClass({
 		    <label>
 			{'Required? '}
 			<input type="checkbox" checkedLink={this.linkState('isRequired')} />
+		    </label>
+		</p>
+		<p>
+		    <label>
+			{'Multiple? '}
+			<input type="checkbox" checkedLink={this.linkState('isMultiple')} />
 		    </label>
 		</p>
 		<label>

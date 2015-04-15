@@ -10,8 +10,7 @@ var FIELD_TYPES = [
 //    'Paragraph',
 //    'Yes, no',
 //    'Yes, no, maybe',
-    'Single choice',
-//    'Multiple choice',
+    'Choice',
 ];
 
 // Use an incrementing integer to give each field a unique ID
@@ -40,8 +39,8 @@ var FormBuilder = React.createClass({
 		    order: 1,
 		    props: {
 			isRequired: false,
-			isMultiple: false,
-			questionText: "Favourite Rainbow character?",
+			isMultiple: true,
+			questionText: "Favourite Rainbow characters?",
 			choices: ["rod", "jane", "freddy"],
 			hasOther: true,
 			otherText: "Other"
