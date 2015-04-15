@@ -2,6 +2,7 @@ var React = require('react/addons');
 var update = React.addons.update;
 var Button = require('react-bootstrap/lib/Button');
 var Icon = require('react-bootstrap/lib/Glyphicon');
+var SortableMixin = require('../mixins/Sortable.jsx');
 
 var Choice = React.createClass({render: function () {}});
 
@@ -29,9 +30,22 @@ Choice.Displayer = React.createClass({
     }
 });
 
-Choice.Editor = React.createClass({
-    mixins: [React.addons.LinkedStateMixin],
+var _choiceID = 0;
 
+function _getChoiceID () {
+    var id = 'c' + _choiceID;
+    _choiceID += 1;
+    return id;
+}
+
+Choice.Editor = React.createClass({
+    mixins: [
+	React.addons.LinkedStateMixin,
+	SortableMixin
+    ],
+
+    orderedStateKey: 'choices',
+    
     propTypes: {
 	isMultiple: React.PropTypes.bool,
 	isRequired: React.PropTypes.bool,
@@ -42,35 +56,26 @@ Choice.Editor = React.createClass({
     getInitialState: function () {
 	return {
 	    questionText: this.props.questionText || '',
-	    choices: this.props.choices || ['', '', ''],
+	    choices: this._setInitialChoices(this.props.choices || ['', '', '']),
 	    isRequired: this.props.isRequired || false,
 	    isMultiple: this.props.isRequired || false,
 	};
     },
 
+    _setInitialChoices: function (choices) {
+	var sortableChoices = {}
+	choices.forEach((text, i) => {
+	    sortableChoices[_getChoiceID()] = {
+		order: i,
+		text: text
+	    }
+	});
+	return sortableChoices;
+    },
+	
     render: function () {
 	var done;
-	var choices = this.state.choices.map((choice, i) => {
-	    // TODO this key={i} isn't right here, after re-order same item will
-	    // have *different* key, defeating the point
-	    return (
-		<div key={i}>
-		    <input
-			    onChange={this._updateChoice.bind(this, i)}
-			    value={choice}
-			    type='text'
-			    placeholder={'Choice ' + (i + 1)}
-			    />
-		    <Button onClick={this._removeChoice.bind(this, i)}
-			    bsStyle='danger'
-			    ariaLabel='Remove choice'
-			    title='Remove choice'
-			    >
-			<Icon glyph="remove" />
-		    </Button>
-		</div>
-	    );
-	});
+	var choices = this.getSortableComponent();
 	if (this.state.questionText && this._areChoicesValid()) {
 	    done = <button onClick={this._onSave}>Done</button>;
 	}
@@ -102,18 +107,41 @@ Choice.Editor = React.createClass({
 	);
     },
 
-    _updateChoice: function (i, e) {
-	var change = {};
-	change[i] = {$set: e.target.value};
-	this.setState(update(this.state, {choices: change}));
+    renderSortableThing: function (choiceID) {
+	var choice = this.state.choices[choiceID];
+	return (
+	    <div>
+		<input
+			onChange={this._updateChoice.bind(this, choiceID)}
+			value={choice.text}
+			type='text'
+			/>
+		<Button onClick={this._removeChoice.bind(this, choiceID)}
+			bsStyle='danger'
+			ariaLabel='Remove choice'
+			title='Remove choice'
+			>
+		    <Icon glyph="remove" />
+		</Button>
+	    </div>
+	);
+    },
+    
+    _updateChoice: function (choiceID, e) {
+	var changes = {choices: {}};
+	changes.choices[choiceID] = {text: {$set: e.target.value}};
+	this.setState(update(this.state, changes));
     },
 
     _addChoice: function () {
-	this.setState(update(this.state, {choices: {$push: ['']}}));
+	var changes = {choices: {}};
+	var choiceID = _getChoiceID();
+	changes.choices[choiceID] = {$set: {order: this.getMaxOrder() + 1, text: ''}};
+	this.setState(update(this.state, changes));
     },
 
-    _removeChoice: function (i) {
-	this.setState(update(this.state, {choices: {$splice: [[i, 1]]}}));
+    _removeChoice: function (choiceID) {
+	this.setState(update(this.state, this.removeItem(choiceID)));
     },
 
     _areChoicesValid: function () {
@@ -121,17 +149,17 @@ Choice.Editor = React.createClass({
     },
 
     _hasAtLeastTwoChoices: function () {
-	return this.state.choices.filter(i => i !== '').length > 1;
+	return this.getOrderedThings().filter(i => i.text !== '').length > 1;
     },
 
     _hasBlankChoiceInTheMiddle: function () {
 	var blank = false;
-	var choices = this.state.choices;
+	var choices = this.getOrderedThings();
 	for (var i = 0; i < choices.length; i += 1) {
-	    if (blank && choices[i]) {
+	    if (blank && choices[i].text) {
 		return true;
 	    }
-	    if (!choices[i]) {
+	    if (!choices[i].text) {
 		blank = true;
 	    }
 	}
@@ -139,11 +167,14 @@ Choice.Editor = React.createClass({
     },
     
     _onSave: function () {
+	var orderedChoiceIDs = this.getOrderedThings();
+	// TODO filter placeholder blanks off the end
+	var choices = orderedChoiceIDs.map(id => this.state.choices[id].text);
 	this.props.onSave({
 	    questionText: this.state.questionText,
 	    isMultiple: this.state.isMultiple,
 	    isRequired: this.state.isRequired,
-	    choices: this.state.choices  // TODO filter blanks
+	    choices: choices
 	});
     }
 });
