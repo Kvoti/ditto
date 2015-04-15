@@ -1,7 +1,7 @@
 var assign = require("object-assign");
 var React = require('react/addons');
 var update = React.addons.update;
-var Sortable = require('react-components/Sortable');
+var Sortable = require('../mixins/Sortable.jsx');
 var Text = require('./Text.jsx');
 var Choice = require('./Choice.jsx');
 
@@ -17,25 +17,11 @@ var FIELD_TYPES = [
 // Use an incrementing integer to give each field a unique ID
 var _fieldID = 2;  // TODO start at 0, starting at 2 for testing for now!
 
-
-function getFieldDisplayer(type) {
-    return _getFieldComponents(type).Displayer;
-}
-
-function getFieldEditor(type) {
-    return _getFieldComponents(type).Editor;
-}
-
-function _getFieldComponents(type) {
-    if (type === 'Text') {
-	return Text;
-    } else if (type === 'Single choice' || true) {
-	return Choice;
-    }
-}
-
 var FormBuilder = React.createClass({
+    mixins: [Sortable],
 
+    sortableItemsKey: 'form',
+    
     getInitialState: function () {
 	return {
 	    isEditing: null,
@@ -62,33 +48,15 @@ var FormBuilder = React.createClass({
 	    }
 	}
     },
-
-    getOrderedFields: function () {
-	// For now fields are a flat list but this will probably need
-	// to change to support more complex layouts. Not sure how
-	// we're going to do the layout part yet...
-	var fields = [];
-	for (var id in this.state.form) {
-	    fields.push({
-		id: id,
-		field: this.state.form[id]
-	    });
-	}
-	fields.sort((a, b) => a.field.order - b.field.order);
-	return fields;
-    },
     
     render: function () {
-	var fields = this.getOrderedFields().map(this._renderField);
+	var fields;
 	if (!this.state.isEditing) {
 	    // Keep things simple and only allow re-ordering when not editing
 	    // any fields
-	    fields = (
-		<Sortable components={fields}
-			onReorder={this._reorderFields}
-			verify={() => true}
-			/>
-	    );
+	    fields = this.getSortableComponent();
+	} else {
+	    fields = this.getSortedItemIDs().map(this.getSortableItemComponent);
 	}
 	return (
 	    <div>
@@ -98,31 +66,29 @@ var FormBuilder = React.createClass({
 	);
     },
 
-    _renderField: function (field, index) {
+    getSortableItemComponent: function (fieldID) {
 	var component, editButton;
-	var isEditing = this.state.isEditing === field.id;
-	if (isEditing) {
-	    // TODO don't like this field.field stuff but not sure how
-	    // to better handle sorting fields (prob just pass the field
-	    // instead of fieldID to div props?)
-	    component = getFieldEditor(field.field.type);
+	var field = this.state.form[fieldID];
+	var isEditingThisField = this.state.isEditing === fieldID;
+	if (isEditingThisField) {
+	    component = getFieldEditor(field.type);
 	} else {
-	    component = getFieldDisplayer(field.field.type);
+	    component = getFieldDisplayer(field.type);
 	}
 	if (!this.state.isEditing) {
-	    editButton = <button onClick={this._editField.bind(this, field.id)}>Edit</button>;
+	    editButton = <button onClick={this._editField.bind(this, fieldID)}>Edit</button>;
 	}
-	var props = assign({}, field.field.props, {
-	    onSave: this._saveField.bind(this, field.id)
+	var props = assign({}, field.props, {
+	    onSave: this._saveField.bind(this, fieldID)
 	});
 	component = React.createElement(component, props);
 	return (
-	    <div fieldID={field.id} draggable={this.state.isEditing === null} key={field.id}>
-		<div className={ isEditing ? 'well' : ''}>
+	    <div fieldID={fieldID} key={fieldID}>
+		<div className={ isEditingThisField ? 'well' : ''}>
 		    {component}
 		</div>
 	        {editButton}
-		<button onClick={this._removeField.bind(this, field.id)}>Remove</button>
+		<button onClick={this._removeField.bind(this, fieldID)}>Remove</button>
 	    </div>
 	);
     },
@@ -140,8 +106,7 @@ var FormBuilder = React.createClass({
     },
 
     _addField: function (e) {
-	var fields = this.getOrderedFields();
-	var maxOrder = fields.length ? fields.slice(-1)[0].field.order : -1;
+	var maxOrder = this.getMaxOrder();
 	var order = maxOrder + 1;
 	var newFieldType = e.target.value;
 	var id = 'f' + _fieldID;
@@ -158,26 +123,17 @@ var FormBuilder = React.createClass({
 	this.setState(update(this.state, changes));
     },
     
+    _editField: function (fieldID) {
+	this.setState({isEditing: fieldID});
+    },
+
     _removeField: function (fieldID) {
-	// 'update' has no operation to remove an object key so here
-	// we rebuild the form object, dropping the field that has been
-	// deleted
-	var fields = {};
-	for (var id in this.state.form) {
-	    var field = this.state.form[id];
-	    if (id !== fieldID) {
-		fields[id] = field
-	    }
-	};
+	var fields = this.removeItem(fieldID);
 	var changes = {form: {$set: fields}};
 	if (fieldID === this.state.isEditing) {
 	    changes.isEditing = {$set: null}
 	}
 	this.setState(update(this.state, changes));
-    },
-
-    _editField: function (fieldID) {
-	this.setState({isEditing: fieldID});
     },
 
     _saveField: function (fieldID, newProps) {
@@ -189,19 +145,22 @@ var FormBuilder = React.createClass({
 	this.setState(update(this.state, changes));
     },
 
-    _reorderFields: function (components) {
-	// The Sortable compenent takes a list of *components* (as opposed to js objects) that can be reordered
-	// and calls this callback with the reordered components. Here we use that to
-	// reorder the field descriptions in this.state
-	var updates = {};
-	components.forEach((c, i) => {
-	    var fieldID = c.props.fieldID;
-	    updates[fieldID] = {order: {$set: i}};
-	});
-	this.setState(update(this.state,
-	    {form: updates}
-	));
-    }
 });
+
+function getFieldDisplayer(type) {
+    return _getFieldComponents(type).Displayer;
+}
+
+function getFieldEditor(type) {
+    return _getFieldComponents(type).Editor;
+}
+
+function _getFieldComponents(type) {
+    if (type === 'Text') {
+	return Text;
+    } else if (type === 'Single choice' || true) {
+	return Choice;
+    }
+}
 
 module.exports = FormBuilder;
