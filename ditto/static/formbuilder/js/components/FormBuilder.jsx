@@ -7,11 +7,11 @@ var Choice = require('./Choice.jsx');
 
 var FIELD_TYPES = [
     'Text',
-    'Paragraph',
-    'Yes, no',
-    'Yes, no, maybe',
+//    'Paragraph',
+//    'Yes, no',
+//    'Yes, no, maybe',
     'Single choice',
-    'Multiple choice',
+//    'Multiple choice',
 ];
 
 // Use an incrementing integer to give each field a unique ID
