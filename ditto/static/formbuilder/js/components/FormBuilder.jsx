@@ -24,7 +24,7 @@ var FormBuilder = React.createClass({
     
     getInitialState: function () {
 	return {
-	    isEditing: null,
+	    isEditing: 'f1',
 	    form: this.props.form || {
 		// dummy fields for now for testing
 		f0: {  // TODO this ID should probably come from the user (as part of the field editing widget)
@@ -41,8 +41,10 @@ var FormBuilder = React.createClass({
 		    props: {
 			isRequired: false,
 			isMultiple: false,
-			questionText: "Favourite rainbow character?",
-			choices: ["rod", "jane", "freddy"]
+			questionText: "Favourite Rainbow character?",
+			choices: ["rod", "jane", "freddy"],
+			hasOther: true,
+			otherText: "Other"
 		    },
 		},
 	    }

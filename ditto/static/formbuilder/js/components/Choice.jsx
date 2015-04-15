@@ -10,21 +10,40 @@ Choice.Displayer = React.createClass({
     propTypes: {
 	isMultiple: React.PropTypes.bool,
 	isRequired: React.PropTypes.bool,
+	hasOther: React.PropTypes.bool,
 	questionText: React.PropTypes.string,
 	choices: React.PropTypes.array,
+	otherText: React.PropTypes.string,
     },
 
     render: function () {
+	var other;
 	var type = this.props.isMultiple ? 'checkbox' : 'radio';
 	var options = this.props.choices.map(option => {
-	    return <li key={option}><label><input type={type} name={this.props.questionText} /> {option} </label></li>;
+	    return (
+		<li key={option}>
+		    <label>
+			<input type={type} name={this.props.questionText} />
+			{option}
+		    </label>
+		</li>
+	    );
 	});
+	if (this.props.hasOther) {
+	    other = (
+		<label>
+		    {this.props.otherText || 'Other'}:{' '}
+		    <input type="text" />
+		</label>
+	    );
+	}
 	return (
 	    <div>
 		<p>{this.props.questionText}{this.props.isRequired ? ' *' : ''}</p>
 		<ul>
 		    {options}
 		</ul>
+		{other}
 	    </div>
 	);
     }
@@ -49,8 +68,11 @@ Choice.Editor = React.createClass({
     propTypes: {
 	isMultiple: React.PropTypes.bool,
 	isRequired: React.PropTypes.bool,
+	hasOther: React.PropTypes.bool,
 	questionText: React.PropTypes.string,
 	choices: React.PropTypes.array,
+	otherText: React.PropTypes.string,
+	onSave: React.PropTypes.func,
     },
 
     getInitialState: function () {
@@ -59,6 +81,8 @@ Choice.Editor = React.createClass({
 	    choices: this._setInitialChoices(this.props.choices || ['', '', '']),
 	    isRequired: this.props.isRequired || false,
 	    isMultiple: this.props.isRequired || false,
+	    hasOther: this.props.hasOther || false,
+	    otherText: this.props.otherText || 'Other',
 	};
     },
 
@@ -74,18 +98,42 @@ Choice.Editor = React.createClass({
     },
 	
     render: function () {
-	var done;
+	var other, done;
 	var choices = this.getSortableComponent();
 	if (this.state.questionText && this._areChoicesValid()) {
 	    done = <button onClick={this._onSave}>Done</button>;
 	}
+	if (this.state.hasOther) {
+	    other = (
+		<p>
+		    <label>
+			{"Enter 'Other' text "}
+			<input
+				type='text'
+				valueLink={this.linkState('otherText')}
+				defaultValue="Other"
+				/>
+		    </label>
+		</p>
+	    );
+	}
 	return (
 	    <div>
-		<input
-			type='text'
-			valueLink={this.linkState('questionText')}
-			placeholder='Enter question text'
-	        />
+		<p>
+		    <label>
+			{'Required? '}
+			<input type="checkbox" checkedLink={this.linkState('isRequired')} />
+		    </label>
+		</p>
+		<label>
+		    {'Enter question text: '}
+		    <input
+			    type='text'
+			    valueLink={this.linkState('questionText')}
+			    placeholder='Enter question text'
+			    />
+		</label>
+		<p>Specify choices:</p>
 		{choices}
 		<p>
 	            <Button onClick={this._addChoice}
@@ -98,10 +146,11 @@ Choice.Editor = React.createClass({
 		</p>
 		<p>
 		    <label>
-			Required?
-			<input type="checkbox" checkedLink={this.linkState('isRequired')} />
+			{'Has other? '}
+			<input type="checkbox" checkedLink={this.linkState('hasOther')} />
 		    </label>
 		</p>
+		{other}
 		{done}
 	    </div>
 	);
@@ -173,12 +222,17 @@ Choice.Editor = React.createClass({
 	var orderedChoiceIDs = this.getSortedItemIDs();
 	// TODO filter placeholder blanks off the end
 	var choices = orderedChoiceIDs.map(id => this.state.choices[id].text);
-	this.props.onSave({
+	var field = {
 	    questionText: this.state.questionText,
 	    isMultiple: this.state.isMultiple,
 	    isRequired: this.state.isRequired,
 	    choices: choices
-	});
+	}
+	if (this.state.hasOther) {
+	    field.hasOther = true,
+	    field.otherText = this.state.otherText
+	}
+	this.props.onSave(field);
     }
 });
 
