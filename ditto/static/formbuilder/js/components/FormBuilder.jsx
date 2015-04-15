@@ -69,11 +69,14 @@ var FormBuilder = React.createClass({
     },
 
     getSortableItemComponent: function (fieldID) {
-	var component, editButton;
+	var component, editButton, cancelButton;
 	var field = this.state.form[fieldID];
 	var isEditingThisField = this.state.isEditing === fieldID;
 	if (isEditingThisField) {
 	    component = getFieldEditor(field.type);
+	    // TODO cancel button could live with field editor, then we can
+	    // detect/warn about un-applied changes
+	    cancelButton = <button onClick={this._cancelEditField}>Cancel</button>;
 	} else {
 	    component = getFieldDisplayer(field.type);
 	}
@@ -89,7 +92,7 @@ var FormBuilder = React.createClass({
 		<div className={ isEditingThisField ? 'well' : ''}>
 		    {component}
 		</div>
-	        {editButton}
+	        {editButton}{cancelButton}
 		<button onClick={this._removeField.bind(this, fieldID)}>Remove</button>
 	    </div>
 	);
@@ -127,6 +130,10 @@ var FormBuilder = React.createClass({
     
     _editField: function (fieldID) {
 	this.setState({isEditing: fieldID});
+    },
+
+    _cancelEditField: function () {
+	this.setState({isEditing: null});
     },
 
     _removeField: function (fieldID) {
