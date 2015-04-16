@@ -115,7 +115,7 @@ ScoreGroup.Editor = React.createClass({
     render: function () {
 	var done;
 	if (this._isValid()) {
-	    done = <button onClick={this._onSave}>Done</button>;
+	    done = <p><button onClick={this._onSave}>Done</button></p>;
 	}
 	return (
 	    <div>
@@ -135,8 +135,10 @@ ScoreGroup.Editor = React.createClass({
 		</label>
 		<p>Specify scores:</p>
 		{this._renderScores()}
+		<button onClick={this._addScore}>Add</button>
 		<p>Specify questions:</p>
 		{this._renderQuestions()}
+		<button onClick={this._addQuestion}>Add</button>
 		{done}
 		</div>
 	);
@@ -164,7 +166,8 @@ ScoreGroup.Editor = React.createClass({
 			value={score.value}
 			onChange={this._update.bind(this, 'scores', 'value', index)}
 			/>
-		{' (default '}{index}{')'}
+		{' (default '}{index}{') '}
+		<button onClick={this._removeItem.bind(this, 'scores', index)}>Remove</button>
 	    </li>
 	);
     },
@@ -184,10 +187,9 @@ ScoreGroup.Editor = React.createClass({
 			value={question.text}
 			onChange={this._update.bind(this, 'questions', 'text', index)}
 			/>
+		<button onClick={this._removeItem.bind(this, 'questions', index)}>Remove</button>
 	    </li>
-		    
 	);
-
     },
 
     _update: function (item, prop, index, e) {
@@ -196,6 +198,22 @@ ScoreGroup.Editor = React.createClass({
 	this.setState(update(this.state, change));
     },
 
+    _addScore: function () {
+	var change = {scores: {$push: [{label: ''}]}};
+	utils.updateState(this, change);
+    },
+
+    _addQuestion: function () {
+	var change = {questions: {$push: [{text: ''}]}};
+	utils.updateState(this, change);
+    },
+
+    _removeItem: function (item, index) {
+	var change = {};
+	change[item] = {$splice: [[index, 1]]};
+	utils.updateState(this, change);
+    },
+    
     _isValid: function () {
 	// TODO leverage browser validation (required, range inputs etc) -- probably
 	// good/required for a11y too?

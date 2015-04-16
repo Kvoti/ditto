@@ -1,3 +1,5 @@
+var React = require('react/addons');
+
 module.exports = {
     // TODO better names for these utils
     areItemsContiguous: function (items) {
@@ -24,6 +26,11 @@ module.exports = {
     isBlank: function (value) {
         // TODO is this right!!??
         return !value && value !== 0;
-    }
+    },
 
+    updateState: function (component, stateUpdate) {
+	component.setState(
+            React.addons.update(component.state, stateUpdate)
+        );
+    }
 }
