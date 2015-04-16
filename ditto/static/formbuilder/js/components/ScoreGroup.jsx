@@ -148,7 +148,7 @@ ScoreGroup.Editor = React.createClass({
     _renderScores: function () {
 	var scores = this.state.scores.map(this._renderScore);
 	return (
-	    <Sortable
+ 	    <Sortable
 		    components={scores}
 		    onReorder={this._reorderItems.bind(this, 'scores')}
 		    verify={() => true}
@@ -182,13 +182,19 @@ ScoreGroup.Editor = React.createClass({
 
     _renderQuestions: function () {
 	var questions = this.state.questions.map(this._renderQuestion);
-	return <ul>{questions}</ul>;
+	return (
+ 	    <Sortable
+		    components={questions}
+		    onReorder={this._reorderItems.bind(this, 'questions')}
+		    verify={() => true}
+		    />
+	);
     },
 
     _renderQuestion: function (question, index) {
 	var value;
 	return (
-	    <li>
+	    <div item={question} draggable={true} key={index}>
 		{'Question '}
 		<input
 			type="text"
@@ -196,7 +202,7 @@ ScoreGroup.Editor = React.createClass({
 			onChange={this._update.bind(this, 'questions', 'text', index)}
 			/>
 		<button onClick={this._removeItem.bind(this, 'questions', index)}>Remove</button>
-	    </li>
+	    </div>
 	);
     },
 
