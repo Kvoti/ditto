@@ -5,6 +5,7 @@ var Sortable = require('../mixins/Sortable.jsx');
 var Text = require('./Text.jsx');
 var Choice = require('./Choice.jsx');
 var Paragraph = require('./Paragraph.jsx');
+var ScoreGroup = require('./ScoreGroup.jsx');
 
 var FIELD_TYPES = [
     'Text',
@@ -12,10 +13,11 @@ var FIELD_TYPES = [
 //    'Yes, no',
 //    'Yes, no, maybe',
     'Choice',
+    'Score group',
 ];
 
 // Use an incrementing integer to give each field a unique ID
-var _fieldID = 3;  // TODO start at 0, starting at 2 for testing for now!
+var _fieldID = 4;  // TODO start at 0, starting at N for testing for now!
 
 var FormBuilder = React.createClass({
     mixins: [Sortable],
@@ -31,9 +33,8 @@ var FormBuilder = React.createClass({
 		    type: 'Text',
 		    order: 0,
 		    props: {
-			isRequired: false,
 			questionText: "Who's the daddy?"
-		    },
+		    }
 		},
 		f1: {
 		    type: 'Choice',
@@ -52,6 +53,23 @@ var FormBuilder = React.createClass({
 		    order: 2,
 		    props: {
 			questionText: 'Please enter your life story'
+		    }
+		},
+		f4: {
+		    type: 'Score group',
+		    order: 3,
+		    props: {
+			questionText: 'Please rate the following',
+			scores: [
+			    {label: 'Disagree'},
+			    {label: 'Unsure'},
+			    {label: 'Agree'},
+			],
+			questions: [
+			    {text: 'Mark is awesome'},
+			    {text: 'React is awesome'},
+			    {text: 'Porto is awesome'}
+			]
 		    }
 		}
 	    }
@@ -176,8 +194,10 @@ function _getFieldComponents(type) {
 	return Text;
     } else if (type === 'Choice') {
 	return Choice;
-    }else if (type === 'Paragraph' || true) {
+    } else if (type === 'Paragraph') {
 	return Paragraph;
+    } else if (type === 'Score group') {
+	return ScoreGroup;
     }
 }
 
