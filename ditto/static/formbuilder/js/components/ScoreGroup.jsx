@@ -206,7 +206,8 @@ ScoreGroup.Editor = React.createClass({
 	    this._hasAtLeastOneQuestion() &&
 	    this._areScoresContiguous() &&
 	    this._areQuestionsContiguous() &&
-	    this._hasValueForEachScore()
+	    this._hasValueForEachScore() &&
+	    this._areScoresAndQuestionsUnique()
 	);
 	// TODO
 	// check uniqueness across scores and questions!!
@@ -238,6 +239,20 @@ ScoreGroup.Editor = React.createClass({
 	);
     },
 
+    _areScoresAndQuestionsUnique: function () {
+	return [
+	    ['scores', 'label'],
+	    ['scores', 'value'],
+	    ['questions', 'text'],
+	].every(i => {
+	    var [item, prop] = i;
+	    var values = this.state[item]
+		.map(i => i[prop])
+		.filter(i => !utils.isBlank(i));
+	    return new Set(values).size === values.length;
+	});
+    },
+    
     _areAllValuesEmpty: function () {
 	var values = this.state.scores.map(s => s.value);
 	return utils.areAllValuesEmpty(values);
