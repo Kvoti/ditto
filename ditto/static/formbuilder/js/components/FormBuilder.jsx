@@ -113,7 +113,7 @@ var FormBuilder = React.createClass({
 	});
 	component = React.createElement(component, props);
 	return (
-	    <div fieldID={fieldID} key={fieldID}>
+	    <div fieldID={fieldID} key={fieldID} style={{border: '2px solid #f8f8f8',padding: 5}}>
 		<div className={ isEditingThisField ? 'well' : ''}>
 		    {component}
 		</div>
