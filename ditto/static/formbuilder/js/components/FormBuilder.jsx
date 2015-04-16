@@ -26,12 +26,29 @@ var FormBuilder = React.createClass({
     
     getInitialState: function () {
 	return {
-	    isEditing: null,
+	    isEditing: 'f4',
 	    form: this.props.form || {
 		// dummy fields for now for testing
+		f4: {
+		    type: 'Score group',
+		    order: 0,
+		    props: {
+			questionText: 'Please rate the following',
+			scores: [
+			    {label: 'Disagree'},
+			    {label: 'Unsure'},
+			    {label: 'Agree'},
+			],
+			questions: [
+			    {text: 'Mark is awesome'},
+			    {text: 'React is awesome'},
+			    {text: 'Porto is awesome'}
+			]
+		    }
+		},
 		f0: {  // TODO this ID should probably come from the user (as part of the field editing widget)
 		    type: 'Text',
-		    order: 0,
+		    order: 3,
 		    props: {
 			questionText: "Who's the daddy?"
 		    }
@@ -55,23 +72,6 @@ var FormBuilder = React.createClass({
 			questionText: 'Please enter your life story'
 		    }
 		},
-		f4: {
-		    type: 'Score group',
-		    order: 3,
-		    props: {
-			questionText: 'Please rate the following',
-			scores: [
-			    {label: 'Disagree'},
-			    {label: 'Unsure'},
-			    {label: 'Agree'},
-			],
-			questions: [
-			    {text: 'Mark is awesome'},
-			    {text: 'React is awesome'},
-			    {text: 'Porto is awesome'}
-			]
-		    }
-		}
 	    }
 	}
     },
