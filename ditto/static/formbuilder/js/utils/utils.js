@@ -1,4 +1,5 @@
 module.exports = {
+    // TODO better names for these utils
     areItemsContiguous: function (items) {
         // check list of items to make sure there are no blanks in the middle
 	var blank = false;
@@ -8,10 +9,21 @@ module.exports = {
 	    if (blank && item) {
 		return false;
 	    }
-	    if (!item) {
+	    if (this.isBlank(item)) {
 		blank = true;
 	    }
 	}
 	return true;
+    },
+
+    areAllValuesEmpty: function (values) {
+	values = values.filter(i => !this.isBlank(i));
+	return !values.length;
+    },
+
+    isBlank: function (value) {
+        // TODO is this right!!??
+        return !value && value !== 0;
     }
+
 }

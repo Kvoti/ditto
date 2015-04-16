@@ -2,6 +2,7 @@ var React = require('react/addons');
 var _ = require('lodash');
 var update = React.addons.update;
 var utils = require('../utils/utils');
+var intRegex = /^\d+$/;
 
 var ScoreGroup = React.createClass({render: function () {}});  // TODO this can't be right (maybe just make Displayer this?)
 
@@ -196,12 +197,16 @@ ScoreGroup.Editor = React.createClass({
     },
 
     _isValid: function () {
+	// TODO leverage browser validation (required, range inputs etc) -- probably
+	// good/required for a11y too?
+	// Probably get all that for free if using, say, newforms to render this editor
 	return (
 	    this.state.questionText &&
 	    this._hasAtLeastTwoScores() &&
 	    this._hasAtLeastOneQuestion() &&
 	    this._areScoresContiguous() &&
-	    this._areQuestionsContiguous()
+	    this._areQuestionsContiguous() &&
+	    this._hasValueForEachScore()
 	);
 	// TODO
 	// check uniqueness across scores and questions!!
@@ -216,15 +221,39 @@ ScoreGroup.Editor = React.createClass({
     },
 
     _areScoresContiguous: function () {
-	var scores = this.state.scores.map(s => s.label);
-	return utils.areItemsContiguous(scores);
+	return (
+	    this._areItemsContiguous('scores', 'label') &&
+	    this._areItemsContiguous('scores', 'value')
+	);
     },
     
     _areQuestionsContiguous: function () {
-	var questions = this.state.questions.map(s => s.text);
-	return utils.areItemsContiguous(questions);
+	return this._areItemsContiguous('questions', 'text');
     },
 
+    _hasValueForEachScore: function () {
+	return (
+	    this._areAllValuesEmpty() ||
+	    this._hasIntValueForEachScore()
+	);
+    },
+
+    _areAllValuesEmpty: function () {
+	var values = this.state.scores.map(s => s.value);
+	return utils.areAllValuesEmpty(values);
+    },
+
+    _hasIntValueForEachScore: function () {
+	return this.state.scores.every(s => {
+	    return utils.isBlank(s.label) || intRegex.test(s.value);
+	});
+    },
+    
+    _areItemsContiguous: function (item, prop) {
+	var items = this.state[item].map(i => i[prop]);
+	return utils.areItemsContiguous(items);
+    },
+    
     _onSave: function () {
 	var questionConfig = _.cloneDeep(this.state);
 	this.props.onSave(questionConfig);
