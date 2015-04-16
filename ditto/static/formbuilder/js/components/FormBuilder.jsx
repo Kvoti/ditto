@@ -1,11 +1,12 @@
 var assign = require("object-assign");
 var React = require('react/addons');
 var update = React.addons.update;
-var Sortable = require('../mixins/Sortable.jsx');
+var Sortable = require('react-components/Sortable');
 var Text = require('./Text.jsx');
 var Choice = require('./Choice.jsx');
 var Paragraph = require('./Paragraph.jsx');
 var ScoreGroup = require('./ScoreGroup.jsx');
+var utils = require('../utils/utils');
 
 var FIELD_TYPES = [
     'Text',
@@ -16,22 +17,15 @@ var FIELD_TYPES = [
     'Score group',
 ];
 
-// Use an incrementing integer to give each field a unique ID
-var _fieldID = 4;  // TODO start at 0, starting at N for testing for now!
-
 var FormBuilder = React.createClass({
-    mixins: [Sortable],
 
-    sortableItemsKey: 'form',
-    
     getInitialState: function () {
 	return {
-	    isEditing: 'f4',
-	    form: this.props.form || {
+	    isEditing: null,
+	    form: this.props.form || [
 		// dummy fields for now for testing
-		f4: {
+		{
 		    type: 'Score group',
-		    order: 0,
 		    props: {
 			questionText: 'Please rate the following',
 			scores: [
@@ -46,16 +40,14 @@ var FormBuilder = React.createClass({
 			]
 		    }
 		},
-		f0: {  // TODO this ID should probably come from the user (as part of the field editing widget)
+		{
 		    type: 'Text',
-		    order: 3,
 		    props: {
 			questionText: "Who's the daddy?"
 		    }
 		},
-		f1: {
+		{
 		    type: 'Choice',
-		    order: 1,
 		    props: {
 			isRequired: false,
 			isMultiple: true,
@@ -65,25 +57,28 @@ var FormBuilder = React.createClass({
 			otherText: "Other"
 		    },
 		},
-		f2: {
+		{
 		    type: 'Paragraph',
-		    order: 2,
 		    props: {
 			questionText: 'Please enter your life story'
 		    }
 		},
-	    }
+	    ]
 	}
     },
     
     render: function () {
-	var fields;
+	var fields = this.state.form.map(this._renderField);
 	if (!this.state.isEditing) {
 	    // Keep things simple and only allow re-ordering when not editing
 	    // any fields
-	    fields = this.getSortableComponent();
-	} else {
-	    fields = this.getSortedItemIDs().map(this.getSortableItemComponent);
+ 	    fields = (
+		<Sortable
+			components={fields}
+			onReorder={this._reorderFields}
+			verify={() => true}
+			/>
+		);
 	}
 	return (
 	    <div>
@@ -93,10 +88,9 @@ var FormBuilder = React.createClass({
 	);
     },
 
-    getSortableItemComponent: function (fieldID) {
+    _renderField: function (field, index) {
 	var component, editButton, cancelButton;
-	var field = this.state.form[fieldID];
-	var isEditingThisField = this.state.isEditing === fieldID;
+	var isEditingThisField = this.state.isEditing === index;
 	if (isEditingThisField) {
 	    component = getFieldEditor(field.type);
 	    // TODO cancel button could live with field editor, then we can
@@ -106,19 +100,19 @@ var FormBuilder = React.createClass({
 	    component = getFieldDisplayer(field.type);
 	}
 	if (!this.state.isEditing) {
-	    editButton = <button onClick={this._editField.bind(this, fieldID)}>Edit</button>;
+	    editButton = <button onClick={this._editField.bind(this, index)}>Edit</button>;
 	}
 	var props = assign({}, field.props, {
-	    onSave: this._saveField.bind(this, fieldID)
+	    onSave: this._saveField.bind(this, index)
 	});
 	component = React.createElement(component, props);
 	return (
-	    <div fieldID={fieldID} key={fieldID} style={{border: '2px solid #f8f8f8',padding: 5}}>
-		<div className={ isEditingThisField ? 'well' : ''}>
+	    <div draggable={!this.state.isEditing} field={field} key={index} style={{border: '2px solid #f8f8f8',padding: 5}}>
+		<div className={isEditingThisField ? 'well' : ''}>
 		    {component}
 		</div>
 	        {editButton}{cancelButton}
-		<button onClick={this._removeField.bind(this, fieldID)}>Remove</button>
+		<button onClick={this._removeField.bind(this, index)}>Remove</button>
 	    </div>
 	);
     },
@@ -136,46 +130,48 @@ var FormBuilder = React.createClass({
     },
 
     _addField: function (e) {
-	var maxOrder = this.getMaxOrder();
-	var order = maxOrder + 1;
 	var newFieldType = e.target.value;
-	var id = 'f' + _fieldID;
-	_fieldID += 1;
 	e.target.value = '';
 	var changes = {
-	    isEditing: {$set: id},
-	    form: {}
+	    isEditing: {$set: this.state.form.length},
+	    form: {$push: [{
+		type: newFieldType,
+	    }]}
 	};
-	changes.form[id] = {$set: {
-	    type: newFieldType,
-	    order: order
-	}};
-	this.setState(update(this.state, changes));
+	utils.updateState(this, changes);
     },
     
-    _editField: function (fieldID) {
-	this.setState({isEditing: fieldID});
+    _editField: function (index) {
+	this.setState({isEditing: index});
     },
 
     _cancelEditField: function () {
 	this.setState({isEditing: null});
     },
 
-    _removeField: function (fieldID) {
-	var fields = this.removeItem(fieldID);
-	var changes = {form: {$set: fields}};
-	if (fieldID === this.state.isEditing) {
+    _removeField: function (index) {
+	var changes = {form: {$splice: [[index, 1]]}};
+	if (index === this.state.isEditing) {
 	    changes.isEditing = {$set: null}
 	}
-	this.setState(update(this.state, changes));
+	utils.updateState(this, changes);
     },
-
-    _saveField: function (fieldID, newProps) {
+    
+    _reorderFields: function (reorderedComponents) {
+	// TODO should I be using refs here??
+	// (I'm not clear what c is at this point :(
+	var newState = {
+	    form: reorderedComponents.map(c => c.props.field)
+	};
+	this.setState(newState);
+    },
+    
+    _saveField: function (index, newProps) {
 	var changes = {
 	    form: {},
 	    isEditing: {$set: null}
 	};
-	changes.form[fieldID] = {props: {$set: newProps}};
+	changes.form[index] = {props: {$set: newProps}};
 	this.setState(update(this.state, changes));
     },
 

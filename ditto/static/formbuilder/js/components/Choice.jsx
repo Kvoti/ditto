@@ -2,7 +2,8 @@ var React = require('react/addons');
 var update = React.addons.update;
 var Button = require('react-bootstrap/lib/Button');
 var Icon = require('react-bootstrap/lib/Glyphicon');
-var SortableMixin = require('../mixins/Sortable.jsx');
+var Sortable = require('react-components/Sortable');
+var utils = require('../utils/utils');
 
 var Choice = React.createClass({render: function () {}});
 
@@ -49,21 +50,10 @@ Choice.Displayer = React.createClass({
     }
 });
 
-var _choiceID = 0;
-
-function _getChoiceID () {
-    var id = 'c' + _choiceID;
-    _choiceID += 1;
-    return id;
-}
-
 Choice.Editor = React.createClass({
     mixins: [
 	React.addons.LinkedStateMixin,
-	SortableMixin
     ],
-
-    sortableItemsKey: 'choices',
     
     propTypes: {
 	isMultiple: React.PropTypes.bool,
@@ -78,7 +68,7 @@ Choice.Editor = React.createClass({
     getInitialState: function () {
 	return {
 	    questionText: this.props.questionText || '',
-	    choices: this._setInitialChoices(this.props.choices || ['', '', '']),
+	    choices: this.props.choices || ['', '', ''],
 	    isRequired: this.props.hasOwnProperty('isRequired') ? this.props.isRequired : false,
 	    isMultiple: this.props.hasOwnProperty('isMultiple') ? this.props.isMultiple : false,
 	    hasOther: this.props.hasOther || false,
@@ -86,20 +76,9 @@ Choice.Editor = React.createClass({
 	};
     },
 
-    _setInitialChoices: function (choices) {
-	var sortableChoices = {}
-	choices.forEach((text, i) => {
-	    sortableChoices[_getChoiceID()] = {
-		order: i,
-		text: text
-	    }
-	});
-	return sortableChoices;
-    },
-	
     render: function () {
 	var other, done;
-	var choices = this.getSortableComponent();
+	var choices = this.state.choices.map(this._renderChoice);
 	if (this.state.questionText && this._areChoicesValid()) {
 	    done = <button onClick={this._onSave}>Done</button>;
 	}
@@ -140,7 +119,11 @@ Choice.Editor = React.createClass({
 			    />
 		</label>
 		<p>Specify choices:</p>
-		{choices}
+		<Sortable
+			components={choices}
+			onReorder={this._reorderChoices}
+			verify={() => true}
+			/>
 		<p>
 	            <Button onClick={this._addChoice}
 			    bsStyle='success'
@@ -162,16 +145,15 @@ Choice.Editor = React.createClass({
 	);
     },
 
-    getSortableItemComponent: function (choiceID) {
-	var choice = this.state.choices[choiceID];
+    _renderChoice: function (choice, index) {
 	return (
-	    <div>
+	    <div draggable={true} key={index} choice={choice}>
 		<input
-			onChange={this._updateChoice.bind(this, choiceID)}
-			value={choice.text}
+			onChange={this._updateChoice.bind(this, index)}
+			value={choice}
 			type='text'
 			/>
-		<Button onClick={this._removeChoice.bind(this, choiceID)}
+		<Button onClick={this._removeChoice.bind(this, index)}
 			bsStyle='danger'
 			ariaLabel='Remove choice'
 			title='Remove choice'
@@ -182,52 +164,45 @@ Choice.Editor = React.createClass({
 	);
     },
     
-    _updateChoice: function (choiceID, e) {
+    _updateChoice: function (index, e) {
 	var changes = {choices: {}};
-	changes.choices[choiceID] = {text: {$set: e.target.value}};
-	this.setState(update(this.state, changes));
+	changes.choices[index] = {$set: e.target.value};
+	utils.updateState(this, changes);
     },
 
     _addChoice: function () {
-	var changes = {choices: {}};
-	var choiceID = _getChoiceID();
-	changes.choices[choiceID] = {$set: {order: this.getMaxOrder() + 1, text: ''}};
-	this.setState(update(this.state, changes));
+	var changes = {choices: {$push: ['']}};
+	utils.updateState(this, changes);
     },
 
-    _removeChoice: function (choiceID) {
-	this.setState({choices: this.removeItem(choiceID)});
+    _removeChoice: function (index) {
+	var changes = {choices: {$splice: [[index, 1]]}};
+	utils.updateState(this, changes);
     },
 
+    _reorderChoices: function (reorderedComponents) {
+	// TODO should I be using refs here??
+	// (I'm not clear what c is at this point :(
+	var newState = {
+	    choices: reorderedComponents.map(c => c.props.choice)
+	};
+	this.setState(newState);
+    },
+    
     _areChoicesValid: function () {
 	return this._hasAtLeastTwoChoices() && !this._hasBlankChoiceInTheMiddle();
     },
 
     _hasAtLeastTwoChoices: function () {
-	return this.getSortedItemIDs().filter(id => this.state.choices[id].text !== '').length > 1;
+	return this.state.choices.filter(c => c !== '').length > 1;
     },
 
     _hasBlankChoiceInTheMiddle: function () {
-	var blank = false;
-	var choices = this.state.choices;
-	var choiceIDs = this.getSortedItemIDs();
-	var choice;
-	for (var i = 0; i < choiceIDs.length; i += 1) {
-	    choice = choices[choiceIDs[i]];
-	    if (blank && choice.text) {
-		return true;
-	    }
-	    if (!choice.text) {
-		blank = true;
-	    }
-	}
-	return false;
+	return !utils.areItemsContiguous(this.state.choices);
     },
     
     _onSave: function () {
-	var orderedChoiceIDs = this.getSortedItemIDs();
-	// TODO filter placeholder blanks off the end
-	var choices = orderedChoiceIDs.map(id => this.state.choices[id].text);
+	var choices = this.state.choices.filter(c => c !== '');
 	var field = {
 	    questionText: this.state.questionText,
 	    isMultiple: this.state.isMultiple,
