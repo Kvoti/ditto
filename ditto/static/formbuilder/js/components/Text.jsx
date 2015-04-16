@@ -36,7 +36,7 @@ Text.Editor = React.createClass({
     getInitialState: function() {
 	return {
 	    questionText: this.props.questionText || '',
-	    isRequired: this.props.isRequired || true,
+	    isRequired: this.props.hasOwnProperty('isRequired') ? this.props.isRequired : false,
 	};
     },
     

@@ -79,8 +79,8 @@ Choice.Editor = React.createClass({
 	return {
 	    questionText: this.props.questionText || '',
 	    choices: this._setInitialChoices(this.props.choices || ['', '', '']),
-	    isRequired: this.props.isRequired || false,
-	    isMultiple: this.props.isMultiple || false,
+	    isRequired: this.props.hasOwnProperty('isRequired') ? this.props.isRequired : false,
+	    isMultiple: this.props.hasOwnProperty('isMultiple') ? this.props.isMultiple : false,
 	    hasOther: this.props.hasOther || false,
 	    otherText: this.props.otherText || 'Other',
 	};
