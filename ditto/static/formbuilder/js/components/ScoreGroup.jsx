@@ -3,6 +3,7 @@ var _ = require('lodash');
 var update = React.addons.update;
 var utils = require('../utils/utils');
 var intRegex = /^\d+$/;
+var Sortable = require('react-components/Sortable');
 
 var ScoreGroup = React.createClass({render: function () {}});  // TODO this can't be right (maybe just make Displayer this?)
 
@@ -146,14 +147,21 @@ ScoreGroup.Editor = React.createClass({
 
     _renderScores: function () {
 	var scores = this.state.scores.map(this._renderScore);
-	return <ul>{scores}</ul>;
+	return (
+	    <Sortable
+		    components={scores}
+		    onReorder={this._reorderItems.bind(this, 'scores')}
+		    verify={() => true}
+		    />
+	);
     },
 
     _renderScore: function (score, index) {
 	var value;
 	// TODO add inputs for custom scores for question
 	return (
-	    <li>
+	    // TODO key={index} is surely wrong, key should relate to score obj!!
+	    <div item={score} key={index} draggable={true}>
 		{'Label '}
 		<input
 			type="text"
@@ -168,7 +176,7 @@ ScoreGroup.Editor = React.createClass({
 			/>
 		{' (default '}{index}{') '}
 		<button onClick={this._removeItem.bind(this, 'scores', index)}>Remove</button>
-	    </li>
+	    </div>
 	);
     },
 
@@ -212,6 +220,12 @@ ScoreGroup.Editor = React.createClass({
 	var change = {};
 	change[item] = {$splice: [[index, 1]]};
 	utils.updateState(this, change);
+    },
+
+    _reorderItems: function (item, reorderedComponents) {
+	var newState = {};
+	newState[item] = reorderedComponents.map(c => c.props.item);
+	this.setState(newState);
     },
     
     _isValid: function () {
