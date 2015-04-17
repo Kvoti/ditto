@@ -1,6 +1,9 @@
+import json
+
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
+from dittoforms.models import FormSubmission
 from users.models import User
 
 from . import models
@@ -40,6 +43,29 @@ def is_user_interaction_permitted(interaction, user1, user2):
     role2 = _get_role(user2)
     return models.Interaction.objects.get(
         name=interaction).is_permitted(role1, role2)
+
+
+def get_reg_data(user):
+    try:
+        submission = FormSubmission.objects.get(user=user)
+    except FormSubmission.DoesNotExist:
+        return []
+    else:
+        submitted_data = json.loads(submission.data)
+    spec = json.loads(submission.form.spec)
+    reg_data = []
+    for t in spec:
+        # TODO the field spec shouldn't have layout info in it (like field grouping)
+        if 'fields' in t:
+            for f in t['fields']:
+                reg_data.append(
+                    (f['name'], submitted_data[f['name']])
+                )
+        else:
+            reg_data.append(
+                (t['name'], submitted_data[t['name']])
+            )
+    return reg_data
 
 
 def _get_role(user):

@@ -12,6 +12,7 @@ from django.views.generic import ListView
 from braces.views import LoginRequiredMixin
 
 from core.views.mixins import NavMixin
+from configuration.utils import get_reg_data
 
 # Import the form from users/forms.py
 from .forms import UserForm
@@ -30,6 +31,7 @@ class UserDetailView(LoginRequiredMixin, NavMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(UserDetailView, self).get_context_data(**kwargs)
         context['is_me'] = self.request.user == self.object
+        context['reg_data'] = get_reg_data(self.object)
         return context
 
     
