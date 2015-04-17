@@ -9,6 +9,8 @@ class FormFromSpecMixin(object):
 
     def add_fields_from_spec(self, spec):
         for item in spec:
+            if 'on' in item and not item['on']:
+                continue
             if 'fields' in item:
                 # group of fields
                 # TODO form config should probably separate out UI stuff like field grouping
@@ -19,6 +21,8 @@ class FormFromSpecMixin(object):
                 self.add_field(item)
 
     def add_field(self, spec):
+        if 'on' in spec and not spec['on']:
+            return
         if 'required' not in spec:
             spec['required'] = False
         if 'options' in spec:  # TODO better to have explicit types for fields
