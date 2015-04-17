@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -49,16 +50,16 @@ def edit(request, form_slug):
 # TODO full rest_framework goodness here, just hacking this together for now
 from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt  # TODO remove this when remembered how to add token to ajax requests
-def api(request, form_slug):
-    form_spec = get_object_or_404(models.FormSpec, slug=form_slug)
+def api(request, role_name):
+    form_spec = get_object_or_404(
+        models.FormSpec, regform__role__name=role_name
+    )
     if request.method == 'GET':
-        print form_spec.spec
         return HttpResponse(
             form_spec.spec,
             content_type='application/json'
         )
     else:
         form_spec.spec = request.body
-        print form_spec.spec
         form_spec.save()
         return HttpResponse()  # 200 ok

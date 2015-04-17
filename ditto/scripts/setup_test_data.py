@@ -126,7 +126,12 @@ def setup_tenants():
 
 
 def setup_reg_form():
-    dittoforms.models.FormSpec.objects.create(
-        slug='reg',
-        spec=REG_FORM_SPEC
-    )
+    for role in Group.objects.all():
+        form = dittoforms.models.FormSpec.objects.create(
+            slug='reg',
+            spec=REG_FORM_SPEC
+        )
+        configuration.models.RegForm.objects.create(
+            role=role,
+            form=form
+        )

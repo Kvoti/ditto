@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     ),
 
     url(
-        regex=r'^(\w+)/api/$',
+        regex=r'^api/(\w+)/$',
         view=views.api,
     ),
 

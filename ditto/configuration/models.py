@@ -92,3 +92,9 @@ class PermittedInteraction(models.Model):
     
     class Meta:
         unique_together = ('interaction', 'role1', 'role2')
+
+
+class RegForm(models.Model):
+    role = models.ForeignKey('auth.Group', related_name="reg_forms")
+    form = models.ForeignKey('dittoforms.FormSpec')
+    

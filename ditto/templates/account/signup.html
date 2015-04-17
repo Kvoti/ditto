@@ -7,9 +7,19 @@
 {% block title %}{% trans "Signup" %}{% endblock title %}
 
 {% block content %}
-<h1>{% trans "Sign Up" %}</h1>
+<h1>{{ form.role.name }} {% trans "Sign Up" %}</h1>
 
 <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+{% if form.role.name == 'Member' %}
+<p>Are you registering for specific role? If so please sign up at the links below.</p>
+
+<ul>
+    {% for role in roles %}
+	<li><a href="{% url 'account_signup_role' role %}">{{ role }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
 
 <form class="signup" id="signup_form" method="post" action="{% if form.role %}{% url 'account_signup_role' form.role.name %}{% else %}{% url 'account_signup' %}{% endif %}">
   {% csrf_token %}

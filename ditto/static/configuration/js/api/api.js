@@ -4,7 +4,7 @@ module.exports = {
 
     getRegFormSettings: function (role) {
         $.get(
-            '/di/forms/reg/api/',
+            '/di/forms/api/' + role + '/',
             function (res) {
                 console.log(res);
                 SettingsActionCreators.receiveRegFormSettings(role, res);
@@ -14,7 +14,7 @@ module.exports = {
 
     updateRegFormSettings: function (role, settings) {
         $.post(  // or put?
-            '/di/forms/reg/api/',
+            '/di/forms/api/' + role + '/',
             JSON.stringify(settings)
         );
     }

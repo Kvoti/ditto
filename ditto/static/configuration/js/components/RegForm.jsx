@@ -44,11 +44,31 @@ var RegForm = React.createClass({
 	return (
 	    <Panel header={header} bsStyle="primary">
 		<p>
-		<em>Fields in grey are mandatory</em> <a target="_blank" href="/di/forms/reg/">View form</a>
+		<em>Fields in grey are mandatory</em>
 		</p>
+		<form className="form-horizontal">
+		<div className="form-group">
+		    <div className="col-md-8">
+			<input className="form-control" placeholder="Username" style={{backgroundColor: '#f5f5f5'}} />
+		    </div>
+		</div>
+		<div className="form-group">
+		    <div className="col-md-8">
+			<input className="form-control" placeholder="Email address" style={{backgroundColor: '#f5f5f5'}} />
+		    </div>
+		</div>
+		<div className="form-group">
+		    <div className="col-md-4">
+			<input className="form-control" placeholder="Password" style={{backgroundColor: '#f5f5f5'}} />
+		    </div>
+		    <div className="col-md-4">
+			<input className="form-control" placeholder="Verify password" style={{backgroundColor: '#f5f5f5'}} />
+		    </div>
+		</div>
 		{this._renderFields()}
 		{this._renderAddableFields()}
 		<CustomField role={this.state.role} />
+		</form>
 	    </Panel>
 	);
     },
@@ -72,7 +92,7 @@ var RegForm = React.createClass({
 		removeSection = this._renderRemoveButton(section);
 	    }
 	    return (
-		<div className="row" key={section.name}>
+		<div className="form-group" key={section.name}>
 		    {inputs} {removeSection}
 		</div>		
 	    );
@@ -91,7 +111,7 @@ var RegForm = React.createClass({
 	    return null;
 	}
 	return (
-	    <div className="row">
+	    <div className="form-group">
 		<div className="col-md-8">
 		    <select className="form-control" onChange={this._addField}>
 			<option>Select field to add</option>
@@ -162,7 +182,7 @@ var RegForm = React.createClass({
     },
     
     _renderTextField: function (fieldSpec, required) {
-	return <input className="form-control" type="text" placeholder={fieldSpec.name} style={{backgroundColor: fieldSpec.required || required ? '#f5f5f5' : '#fa8072'}} />
+	return <input className="form-control" type="text" placeholder={fieldSpec.name} style={{backgroundColor: fieldSpec.required || required ? '#f4c1cf' : '#fa8072'}} />
     },
 
     _renderRemoveButton: function (section) {
