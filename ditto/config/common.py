@@ -62,6 +62,7 @@ class Common(Configuration):
         'configuration',
         'skin',
         'dittoforms',
+        'signup'
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -241,6 +242,7 @@ class Common(Configuration):
     ACCOUNT_EMAIL_REQUIRED = True
     ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
     ACCOUNT_LOGOUT_REDIRECT_URL = 'ditto:home'
+    ACCOUNT_SIGNUP_FORM_CLASS = 'signup.forms.SignupForm'
     # END AUTHENTICATION CONFIGURATION
 
     # Custom user app defaults

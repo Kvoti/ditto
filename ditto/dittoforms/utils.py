@@ -5,18 +5,7 @@ from django import forms
 from .models import FormSubmission
 
 
-class Form(forms.Form):
-    """
-    Create a form from config.
-
-    Only used for serve-side valiation of POSTed data, not for form display.
-
-    """
-    def __init__(self, user, spec, *args, **kwargs):
-        super(Form, self).__init__(*args, **kwargs)
-        self.user = user
-        self.spec = spec
-        self.add_fields_from_spec(json.loads(spec.spec))
+class FormFromSpecMixin(object):
 
     def add_fields_from_spec(self, spec):
         for item in spec:
@@ -58,6 +47,29 @@ class Form(forms.Form):
             choices=choices,
             required=spec['required']
         )
+
+    def save_submission(self, spec, user):
+        FormSubmission.objects.create(
+            form=spec,
+            user=user,
+            # TODO just extract relevant fields from self.data (
+            # form might have extra fields or other metadata in self.data)
+            data=json.dumps(self.data)
+        )
+
+        
+class Form(FormFromSpecMixin, forms.Form):
+    """
+    Create a form from config.
+
+    Only used for serve-side valiation of POSTed data, not for form display.
+
+    """
+    def __init__(self, user, spec, *args, **kwargs):
+        super(Form, self).__init__(*args, **kwargs)
+        self.user = user
+        self.spec = spec
+        self.add_fields_from_spec(json.loads(spec.spec))
 
     def save(self):
         FormSubmission.objects.create(

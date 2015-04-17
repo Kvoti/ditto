@@ -15,6 +15,8 @@ urlpatterns = patterns('',
 
     # User management
     url(r'^users/', include("users.urls", namespace="users")),
+    # include 'signup' urls above 'allauth' to override                       
+    url(r'^accounts/', include('signup.urls')),
     url(r'^accounts/', include('allauth.urls')),
 
     # Uncomment the next line to enable avatars

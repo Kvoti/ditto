@@ -23,7 +23,7 @@ from users.models import User
 INTERACTIONS = ["Messaging"]
 
 
-REG_FORM_SPEC = '[{"name":"Name","on":true,"fields":[{"name":"First name"},{"name":"Last name"}]},{"name":"Username","required":true},{"name":"Email address","required":true},{"name":"Password","required":true,"fields":[{"name":"Password"},{"name":"Verify password"}]},{"name":"Gender","on":true,"options":["Male","Female","Other"]},{"name":"Ethnicity","on":true,"options":["White British","Other"]},{"name":"How did you hear about us?","on":true,"multiple":true,"options":["Internet search","Magazine","Other"]}]'
+REG_FORM_SPEC = '[{"name":"Name","on":true,"fields":[{"name":"First name"},{"name":"Last name"}]},{"name":"Gender","on":true,"options":["Male","Female","Other"]},{"name":"Ethnicity","on":true,"options":["White British","Other"]},{"name":"How did you hear about us?","on":true,"multiple":true,"options":["Internet search","Magazine","Other"]}]'
 
 
 def run():
