@@ -22,7 +22,7 @@ var FormBuilder = React.createClass({
 
     getInitialState: function () {
 	return {
-	    isEditing: null,
+	    isEditing: 1,
 	    form: this.props.form || [
 		// dummy fields for now for testing
 		{
