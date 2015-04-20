@@ -4,6 +4,7 @@ var update = React.addons.update;
 var utils = require('../utils/utils');
 var intRegex = /^\d+$/;
 var Sortable = require('react-components/Sortable');
+var Undo = require('./Undo.jsx');
 
 var ScoreGroup = React.createClass({render: function () {}});  // TODO this can't be right (maybe just make Displayer this?)
 
@@ -69,8 +70,6 @@ ScoreGroup.Displayer = React.createClass({
 });
 
 ScoreGroup.Editor = React.createClass({
-    mixins: [React.addons.LinkedStateMixin],
-    
     propTypes: {
 	questionText: React.PropTypes.string,
 	isRequired: React.PropTypes.bool,
@@ -110,7 +109,7 @@ ScoreGroup.Editor = React.createClass({
 	}
 	///////////
 	delete state.onSave;
-	return state;
+	return {config: state};
     },
     
     render: function () {
@@ -119,18 +118,19 @@ ScoreGroup.Editor = React.createClass({
 	    done = <p><button onClick={this._onSave}>Done</button></p>;
 	}
 	return (
-	    <div>
+	    <Undo state={this.state.config} onUndo={this._onunredo} onRedo={this._onunredo}>
 		<p>
 		    <label>
 			{'Required? '}
-			<input type="checkbox" checkedLink={this.linkState('isRequired')} />
+			<input type="checkbox" checked={this.state.config.isRequired} onChange={this._updateRequired} />
 		    </label>
 		</p>
 		<label>
 		    {'Enter question text: '}
 		    <input
 			    type='text'
-			    valueLink={this.linkState('questionText')}
+			    value={this.state.config.questionText}
+			    onChange={this._updateText}
 			    placeholder='Enter question text'
 			    />
 		</label>
@@ -141,12 +141,16 @@ ScoreGroup.Editor = React.createClass({
 		{this._renderQuestions()}
 		<button onClick={this._addQuestion}>Add</button>
 		{done}
-		</div>
+	    </Undo>
 	);
     },
 
+    _onunredo: function (otherState) {
+	this.setState({config: otherState});
+    },
+    
     _renderScores: function () {
-	var scores = this.state.scores.map(this._renderScore);
+	var scores = this.state.config.scores.map(this._renderScore);
 	return (
  	    <Sortable
 		    components={scores}
@@ -181,7 +185,7 @@ ScoreGroup.Editor = React.createClass({
     },
 
     _renderQuestions: function () {
-	var questions = this.state.questions.map(this._renderQuestion);
+	var questions = this.state.config.questions.map(this._renderQuestion);
 	return (
  	    <Sortable
 		    components={questions}
@@ -206,32 +210,39 @@ ScoreGroup.Editor = React.createClass({
 	);
     },
 
+    _updateText: function (e) {
+	this.setState(update(this.state, {config: {questionText: {$set: e.target.value}}}));
+    },
+    
+    _updateRequired: function (e) {
+	this.setState(update(this.state, {config: {isRequired: {$set: e.target.checked}}}));
+    },
+
     _update: function (item, prop, index, e) {
 	var value = e.target.value;
-	var change = buildUpdate([item, index, prop], {$set: value});
+	var change = buildUpdate(['config', item, index, prop], {$set: value});
 	this.setState(update(this.state, change));
     },
 
     _addScore: function () {
-	var change = {scores: {$push: [{label: ''}]}};
+	var change = {config: {scores: {$push: [{label: ''}]}}};
 	utils.updateState(this, change);
     },
 
     _addQuestion: function () {
-	var change = {questions: {$push: [{text: ''}]}};
+	var change = {config: {questions: {$push: [{text: ''}]}}};
 	utils.updateState(this, change);
     },
 
     _removeItem: function (item, index) {
-	var change = {};
-	change[item] = {$splice: [[index, 1]]};
+	var change = buildUpdate(['config', item], {$splice: [[index, 1]]});
 	utils.updateState(this, change);
     },
 
     _reorderItems: function (item, reorderedComponents) {
 	var newState = {};
-	newState[item] = reorderedComponents.map(c => c.props.item);
-	this.setState(newState);
+	var change = buildUpdate(['config', item], {$set: reorderedComponents.map(c => c.props.item)});
+	utils.updateState(this, change);
     },
     
     _isValid: function () {
@@ -239,7 +250,7 @@ ScoreGroup.Editor = React.createClass({
 	// good/required for a11y too?
 	// Probably get all that for free if using, say, newforms to render this editor
 	return (
-	    this.state.questionText &&
+	    this.state.config.questionText &&
 	    this._hasAtLeastTwoScores() &&
 	    this._hasAtLeastOneQuestion() &&
 	    this._areScoresContiguous() &&
@@ -252,11 +263,11 @@ ScoreGroup.Editor = React.createClass({
     },
 
     _hasAtLeastTwoScores: function () {
-	return this.state.scores.filter(s => s.label !== '').length > 1;
+	return this.state.config.scores.filter(s => s.label !== '').length > 1;
     },
 
     _hasAtLeastOneQuestion: function () {
-	return this.state.questions.filter(q => q.text !== '').length > 0;
+	return this.state.config.questions.filter(q => q.text !== '').length > 0;
     },
 
     _areScoresContiguous: function () {
@@ -284,7 +295,7 @@ ScoreGroup.Editor = React.createClass({
 	    ['questions', 'text'],
 	].every(i => {
 	    var [item, prop] = i;
-	    var values = this.state[item]
+	    var values = this.state.config[item]
 		.map(i => i[prop])
 		.filter(i => !utils.isBlank(i));
 	    return new Set(values).size === values.length;
@@ -292,23 +303,23 @@ ScoreGroup.Editor = React.createClass({
     },
     
     _areAllValuesEmpty: function () {
-	var values = this.state.scores.map(s => s.value);
+	var values = this.state.config.scores.map(s => s.value);
 	return utils.areAllValuesEmpty(values);
     },
 
     _hasIntValueForEachScore: function () {
-	return this.state.scores.every(s => {
+	return this.state.config.scores.every(s => {
 	    return utils.isBlank(s.label) || intRegex.test(s.value);
 	});
     },
     
     _areItemsContiguous: function (item, prop) {
-	var items = this.state[item].map(i => i[prop]);
+	var items = this.state.config[item].map(i => i[prop]);
 	return utils.areItemsContiguous(items);
     },
     
     _onSave: function () {
-	var questionConfig = _.cloneDeep(this.state);
+	var questionConfig = _.cloneDeep(this.state.config);
 	this.props.onSave(questionConfig);
     },
     
