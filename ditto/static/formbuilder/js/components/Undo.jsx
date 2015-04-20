@@ -23,16 +23,13 @@ var Undo = React.createClass({
     },
     
     render: function () {
-	var undo, redo
-	if (this.state.currentState > 0) {
-	    undo = <button onClick={this._undo}>Undo</button>;
-	}
-	if (this.state.currentState < this.state.states.length - 1) {
-	    redo = <button onClick={this._redo}>Redo</button>;
-	}
+	var canUndo, canRedo
+	canUndo = this.state.currentState > 0;
+	canRedo = this.state.currentState < this.state.states.length - 1;
 	return (
 	    <div>
-		{undo} {redo}
+		<button onClick={this._undo} disabled={!canUndo}>Undo</button>
+		<button onClick={this._redo} disabled={!canRedo}>Redo</button>
 		{this.props.children}
 	    </div>
 	);
