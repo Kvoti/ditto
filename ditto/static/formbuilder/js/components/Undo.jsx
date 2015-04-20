@@ -23,13 +23,21 @@ var Undo = React.createClass({
     },
     
     render: function () {
-	var canUndo, canRedo
+	var canUndo, canRedo, undoClasses, redoClasses;
 	canUndo = this.state.currentState > 0;
 	canRedo = this.state.currentState < this.state.states.length - 1;
+	undoClasses = React.addons.classSet({
+	    btn: true,
+	    'btn-primary': canUndo
+	})
+	redoClasses = React.addons.classSet({
+	    btn: true,
+	    'btn-primary': canRedo
+	})
 	return (
 	    <div>
-		<button onClick={this._undo} disabled={!canUndo}>Undo</button>
-		<button onClick={this._redo} disabled={!canRedo}>Redo</button>
+		<button className={undoClasses} onClick={this._undo} disabled={!canUndo}>Undo</button>
+		<button className={redoClasses} onClick={this._redo} disabled={!canRedo}>Redo</button>
 		{this.props.children}
 	    </div>
 	);
