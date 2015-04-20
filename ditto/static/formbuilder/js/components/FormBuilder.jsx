@@ -7,6 +7,7 @@ var Choice = require('./Choice.jsx');
 var Paragraph = require('./Paragraph.jsx');
 var ScoreGroup = require('./ScoreGroup.jsx');
 var utils = require('../utils/utils');
+var Undo = require('./Undo.jsx');
 
 var FIELD_TYPES = [
     'Text',
@@ -81,13 +82,17 @@ var FormBuilder = React.createClass({
 		);
 	}
 	return (
-	    <div>
+	    <Undo state={this.state.form} onUndo={this._onUndo} onRedo={this._onUndo}>
 		{fields}
 		{this._newFieldMenu()}
-	    </div>
+	    </Undo>
 	);
     },
 
+    _onUndo: function (prevState) {
+	this.setState({form: prevState});
+    },
+    
     _renderField: function (field, index) {
 	var component, editButton, cancelButton;
 	var isEditingThisField = this.state.isEditing === index;
@@ -163,7 +168,7 @@ var FormBuilder = React.createClass({
 	var newState = {
 	    form: reorderedComponents.map(c => c.props.field)
 	};
-	this.setState(newState);
+	this.setState(newState, function () { console.log(newState.form === this.state.form) });
     },
     
     _saveField: function (index, newProps) {
