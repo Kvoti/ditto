@@ -67,10 +67,14 @@ var FormBuilder = React.createClass({
 	    ]
 	}
     },
+
+    _isEditing: function () {
+	return this.state.isEditing !== null;
+    },
     
     render: function () {
 	var fields = this.state.form.map(this._renderField);
-	if (!this.state.isEditing) {
+	if (!this._isEditing()) {
 	    // Keep things simple and only allow re-ordering when not editing
 	    // any fields
  	    fields = (
@@ -104,7 +108,7 @@ var FormBuilder = React.createClass({
 	} else {
 	    component = getFieldDisplayer(field.type);
 	}
-	if (!this.state.isEditing) {
+	if (!this._isEditing()) {
 	    editButton = <button onClick={this._editField.bind(this, index)}>Edit</button>;
 	}
 	var props = assign({}, field.props, {
@@ -112,7 +116,7 @@ var FormBuilder = React.createClass({
 	});
 	component = React.createElement(component, props);
 	return (
-	    <div draggable={!this.state.isEditing} field={field} key={index} style={{border: '2px solid #f8f8f8',padding: 5}}>
+	    <div draggable={!this._isEditing()} field={field} key={index} style={{border: '2px solid #f8f8f8',padding: 5}}>
 		<div className={isEditingThisField ? 'well' : ''}>
 		    {component}
 		</div>
