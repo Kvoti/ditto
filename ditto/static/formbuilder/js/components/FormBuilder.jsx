@@ -121,7 +121,7 @@ var FormBuilder = React.createClass({
 		    {component}
 		</div>
 	        {editButton}{cancelButton}
-		<button onClick={this._removeField.bind(this, index)}>Remove</button>
+		{this._isEditing() ? null : <button onClick={this._removeField.bind(this, index)}>Remove</button>}
 	    </div>
 	);
     },
