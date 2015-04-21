@@ -104,24 +104,24 @@ var FormBuilder = React.createClass({
 	    component = getFieldEditor(field.type);
 	    // TODO cancel button could live with field editor, then we can
 	    // detect/warn about un-applied changes
-	    cancelButton = <button onClick={this._cancelEditField}>Cancel</button>;
+	    cancelButton = <button className="btn" onClick={this._cancelEditField}>Cancel</button>;
 	} else {
 	    component = getFieldDisplayer(field.type);
 	}
 	if (!this._isEditing()) {
-	    editButton = <button onClick={this._editField.bind(this, index)}>Edit</button>;
+	    editButton = <button className="btn btn-success" onClick={this._editField.bind(this, index)}>Edit</button>;
 	}
 	var props = assign({}, field.props, {
 	    onSave: this._saveField.bind(this, index)
 	});
 	component = React.createElement(component, props);
 	return (
-	    <div draggable={!this._isEditing()} field={field} key={index} style={{border: '2px solid #f8f8f8',padding: 5}}>
+	    <div draggable={!this._isEditing()} field={field} key={index} style={{border: '2px solid #f8f8f8',padding: 5,margin: '10px 0px'}}>
 		<div className={isEditingThisField ? 'well' : ''}>
 		    {component}
 		</div>
-	        {editButton}{cancelButton}
-		{this._isEditing() ? null : <button onClick={this._removeField.bind(this, index)}>Remove</button>}
+	        {editButton} {cancelButton}
+		{this._isEditing() ? null : <button className="btn btn-danger" onClick={this._removeField.bind(this, index)}>Remove</button>}
 	    </div>
 	);
     },

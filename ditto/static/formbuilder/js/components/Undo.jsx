@@ -37,7 +37,7 @@ var Undo = React.createClass({
 	return (
 	    <div>
 		<button className={undoClasses} onClick={this._undo} disabled={!canUndo}>Undo</button>
-		<button className={redoClasses} onClick={this._redo} disabled={!canRedo}>Redo</button>
+		{' '}<button className={redoClasses} onClick={this._redo} disabled={!canRedo}>Redo</button>
 		{this.props.children}
 	    </div>
 	);

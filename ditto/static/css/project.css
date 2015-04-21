@@ -303,3 +303,8 @@ footer {
 #emptychat {
     display: none;
 }
+
+#formbuilder ol {
+    padding-left: 0;
+    list-style-type: none;
+}
