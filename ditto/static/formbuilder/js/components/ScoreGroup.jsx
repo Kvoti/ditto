@@ -5,6 +5,8 @@ var utils = require('../utils/utils');
 var intRegex = /^\d+$/;
 var Sortable = require('react-components/Sortable');
 var Undo = require('./Undo.jsx');
+var forms = require('newforms');
+var flat = require('flat');
 
 var ScoreGroup = React.createClass({render: function () {}});  // TODO this can't be right (maybe just make Displayer this?)
 
@@ -111,8 +113,82 @@ ScoreGroup.Editor = React.createClass({
 	delete state.onSave;
 	return {config: state};
     },
-    
+
+    _getFormFromConfig: function () {
+	var config = this.state.config;
+	var formData = flat.flatten(config);
+	var fields = {};
+	for (var k in formData) {
+	    if (k === 'questionText') {
+		fields[k] = forms.CharField({required: true});
+	    } else if (
+		k === 'otherText' ||
+		k.indexOf('label') !== -1 ||
+		k.indexOf('text') !== -1
+	    ) {
+		fields[k] = forms.CharField({required: false});
+	    } else if (k.indexOf('value') !== -1) {
+		fields[k] = forms.IntegerField({required: false});
+	    } else {
+		fields[k] = forms.BooleanField({required: false});
+	    }
+	}
+	fields.clean = function () {
+	    var questions = [];
+	    var scores = [];
+	    for (name in this.cleanedData) {
+		if (name.indexOf('questions.') !== -1) {
+		    questions.push(this.cleanedData[name]);
+		}
+		if (name.indexOf('scores.') !== -1) {
+		    scores.push(this.cleanedData[name]);
+		}
+	    }
+	    if (!questions.some(q => !utils.isBlank(q))) {
+		throw forms.ValidationError(
+		    "Please provide at least one question")
+	    }
+	    if (scores.filter(s => !utils.isBlank(s)).length < 2) {
+		throw forms.ValidationError(
+		    "Please provide at least two scores")
+	    }
+	    scores.reverse();
+	    var isBlankError = false;
+	    scores.forEach((s, i) => {
+		if (!utils.isBlank(s)) {
+		    isBlankError = true;
+		} else if (isBlankError) {
+		    this.addError(
+			'scores.' + (scores.length - i - 1) + '.label',
+			"This score cannot be blank"
+		    )
+		}
+	    });
+	}
+	var self = this;
+	function onChange () {
+	    // this isn't a method so that 'this' is the form instance when called
+	    var newConfig = flat.unflatten(this.data);  // or cleanedData??
+	    self.setState({config: newConfig});
+	}
+	var Form = forms.Form.extend(fields);
+	return new Form({onChange: onChange, data: formData});
+    },
+
     render: function () {
+	var editForm = this._getFormFromConfig();
+	return (
+	    <form>
+	    {editForm.nonFieldErrors().render()}
+	    {
+		editForm.visibleFields().map(bf => {
+		    return <forms.FormRow bf={bf} />;
+		})
+	    }
+		<button>Save</button>
+	    </form>
+	);
+	
 	var done;
 	if (this._isValid()) {
 	    done = <p><button onClick={this._onSave}>Done</button></p>;
