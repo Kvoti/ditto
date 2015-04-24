@@ -6,6 +6,7 @@ var Text = require('./Text.jsx');
 var Choice = require('./Choice.jsx');
 var Paragraph = require('./Paragraph.jsx');
 var ScoreGroup = require('./ScoreGroup.jsx');
+var Address = require('./Address.jsx');
 var utils = require('../utils/utils');
 var Undo = require('./Undo.jsx');
 
@@ -18,11 +19,32 @@ var FIELD_TYPES = [
     'Score group',
 ];
 
+var CANNED_QUESTIONS = [
+    {
+	id: 'gender',
+	type: 'Choice',
+	props: {
+	    questionText: 'Gender',
+	    choices: ['Male', 'Female', 'Other']
+	}
+    },
+    {
+	id: 'address',
+	type: 'Address',
+    }
+]
+
 var FormBuilder = React.createClass({
 
+    // TODO: propTypes
+    
+    getDefaultProps: function () {
+	return {cannedQuestions: CANNED_QUESTIONS}
+    },
+    
     getInitialState: function () {
 	return {
-	    isEditing: 0,
+	    isEditing: null,
 	    form: this.props.form || [
 		// dummy fields for now for testing
 		{
@@ -108,7 +130,7 @@ var FormBuilder = React.createClass({
 	} else {
 	    component = getFieldDisplayer(field.type);
 	}
-	if (!this._isEditing()) {
+	if (!field.cannedID && !this._isEditing()) {
 	    editButton = <button className="btn btn-success" onClick={this._editField.bind(this, index)}>Edit</button>;
 	}
 	var props = assign({}, field.props, {
@@ -127,26 +149,57 @@ var FormBuilder = React.createClass({
     },
 
     _newFieldMenu: function () {
-	var options = FIELD_TYPES.map(option => {
-	    return <option key={option} value={option}>{option}</option>;
-	});
+	var usedCannedQuestions = this.state.form
+	    .filter(q => q.cannedID)
+	    .map(q => q.cannedID);
+	var availableCannedQuestions = this.props.cannedQuestions
+	    .filter(q => usedCannedQuestions.indexOf(q.id) === -1);
 	return (
-	    <select onChange={this._addField}>
-		<option value="">Select field type to add</option>
-		{options}
+	    <select className="form-control" onChange={this._addField}>
+		<option value="">Select question type to add</option>
+		<optgroup label="New field">
+     	            {FIELD_TYPES.map(option => {
+			return <option key={option} value={option}>{option}</option>;
+		    })}		    
+	        </optgroup>
+		{availableCannedQuestions.length ? 
+	            <optgroup label="Canned field">
+			{availableCannedQuestions.map(q => {
+			    return <option value={q.id} key={q.id}>{q.id}</option>;
+			 })}
+		    </optgroup>
+		    : null
+		 }
 	    </select>
 	);
     },
 
     _addField: function (e) {
 	var newFieldType = e.target.value;
+	// TODO this will break if canned.id equals some newField.type
+	var canned = this.props.cannedQuestions.filter(q => q.id === newFieldType);
+	var changes;
+	var cannedQuestion;
 	e.target.value = '';
-	var changes = {
-	    isEditing: {$set: this.state.form.length},
-	    form: {$push: [{
-		type: newFieldType,
-	    }]}
-	};
+	if (canned.length) {
+	    // Add canned question
+	    cannedQuestion = canned[0];
+	    changes = {
+		form: {$push: [{
+		    cannedID: cannedQuestion.id,
+		    type: cannedQuestion.type,
+		    props: cannedQuestion.props
+		}]}
+	    };
+	} else {
+	    // Add new unconfigured question
+	    changes = {
+		isEditing: {$set: this.state.form.length},
+		form: {$push: [{
+		    type: newFieldType,
+		}]}
+	    };
+	}
 	utils.updateState(this, changes);
     },
     
@@ -203,6 +256,8 @@ function _getFieldComponents(type) {
 	return Paragraph;
     } else if (type === 'Score group') {
 	return ScoreGroup;
+    } else if (type === 'Address') {
+	return Address;
     }
 }
 
