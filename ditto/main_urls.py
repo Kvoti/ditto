@@ -13,6 +13,8 @@ urlpatterns = patterns('',
         pattern_name='ditto:home',
         permanent=True,
     )),
+    # include 'signup' urls above 'allauth' to override                       
+    url(r'^main/accounts/', include('signup.urls')),
     url(r'^main/accounts/', include('allauth.urls')),
     url(r'^main/use-cases/', include('usecase_urls')),
     url(r'^main/', include('multitenancy.urls', namespace="ditto")),
