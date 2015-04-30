@@ -65,7 +65,7 @@ if (whosOnline) {
 var compose = document.getElementById('compose');
 if (compose) {
     React.render(
-            <MessageComposer threadID={Strophe.getNodeFromJid(chatConf.chatroom)}/>,
+            <MessageComposer threadID={Strophe.getNodeFromJid(chatConf.chatroom)} isGroup={true}/>,
         compose
     );
 }

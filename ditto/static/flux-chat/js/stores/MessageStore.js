@@ -104,12 +104,18 @@ MessageStore.dispatchToken = ChatAppDispatcher.register(function(action) {
       break;
 
     case ActionTypes.CREATE_MESSAGE:
-      var message = ChatMessageUtils.getCreatedMessageData(
-        action.text,
-        action.currentThreadID
-      );
-      _messages[message.id] = message;
-      MessageStore.emitChange();
+      if (!action.isGroup) {
+          // When you send a message to the group it gets sent back to you so
+          // no need to add it here. Private messages are, obviously, only
+          // delivered to their recipient so we need to add it here so that a user
+          // sees messages they send in the thread.
+          var message = ChatMessageUtils.getCreatedMessageData(
+              action.text,
+              action.currentThreadID
+          );
+          _messages[message.id] = message;
+          MessageStore.emitChange();
+      }
       break;
 
     case ActionTypes.RECEIVE_RAW_MESSAGES:
