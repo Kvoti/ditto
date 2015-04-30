@@ -9,13 +9,20 @@ var ThreadCreator = React.createClass({
 
     render: function() {
         return (
-	    <form onSubmit={this._onSubmit}>
-            <input
-		    name="message"
-		    value={this.state.text}
-		    onChange={this._onChange}
-		    />
-	    <input type="submit" value="Create thread" />
+	    <form className="form-horizontal" onSubmit={this._onSubmit}>
+		<div className="form-group">
+		    <div className="col-md-10">
+			<input
+				className="form-control"
+				name="message"
+				value={this.state.text}
+				onChange={this._onChange}
+				/>
+			</div>
+			<div className="col-md-2">
+			    <input className="btn btn-success" type="submit" value="Create thread" />
+			</div>
+		</div>
 	    </form>
         );
     },

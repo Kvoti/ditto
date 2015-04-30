@@ -61,9 +61,9 @@ var MessageSection = React.createClass({
             {messageListItems}
             </ul>
                 <WhosTyping users={this.state.whosTyping} />
-            <ThreadCreator threadID={this.state.thread.id}/>
             <MessageComposer threadID={this.state.thread.id}/>
-            </div>
+                <ThreadCreator threadID={this.state.thread.id}/>
+                </div>
         );
     },
 

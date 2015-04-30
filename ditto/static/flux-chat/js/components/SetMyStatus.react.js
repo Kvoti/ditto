@@ -25,19 +25,23 @@ var SetMyStatus = React.createClass({
 	    options.push(<option value={code} key={code}>{ChatConstants.chatStatus[code]}</option>);
 	}
 	return (
-	    <form onSubmit={this.handleStatusChange}>
-		<div className="col-md-2">
-		    <input className="form-control" value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Type your custom status message here..." ref="message" />
+	        <form className="form-horizontal" onSubmit={this.handleStatusChange}>
+                <div className="form-group">
+		<div className="col-md-6">
+		    <input className="form-control" value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Custom status..." ref="message" />
 		</div>
-		<div className="col-md-2">
+		<div className="col-md-6">
 		    <select className="form-control" ref="status">
 			<option value="">Online</option>
 			{options}
 		    </select>
 		</div>
-		<div className="col-md-1">
-		    <input className="form-control btn btn-success" type="submit" value="Set status" />
 		</div>
+                <div className="form-group">
+                <div className="col-md-6">
+		<input className="form-control btn btn-success col-md-6" type="submit" value="Set status" />
+                </div>
+                </div>
 	    </form>
 	);
     }

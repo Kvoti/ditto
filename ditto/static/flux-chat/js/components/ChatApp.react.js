@@ -30,11 +30,15 @@ var ChatApp = React.createClass({
         if (this.state.connection == ChatConstants.connected) {
             return (
                     <div className="row">
-                    <div className="col-md-4">                    
-                    <ThreadSection heightOffset={160} />
+                    <div className="col-md-3">
+                    <h3>My chats</h3>
+                    <ThreadSection heightOffset={250} />
                     </div>
-                    <div className="col-md-8">
+                    <div className="col-md-6">
                     <MessageSection heightOffset={270} />
+                    </div>
+                    <div className="col-md-3">
+                    <h3>My Tools</h3>
                     <SetMyStatus />
                     </div>
                     </div>
