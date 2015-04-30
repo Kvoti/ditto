@@ -18,3 +18,4 @@ class SignupForm(FormFromSpecMixin, forms.Form):
     def signup(self, request, user):
         if hasattr(self, 'role'):
             self.save_submission(self.spec, user)
+            user.groups.add(self.role)
