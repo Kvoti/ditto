@@ -1,10 +1,14 @@
-var React = require('react');
+var React = require('react/addons');
 var ChatConstants = require('../constants/ChatConstants');
 var ChatWebAPIUtils = require('../utils/ChatWebAPIUtils');
 
 var SetMyStatus = React.createClass({
     getInitialState: function() {
 	return {
+            prevStatus: {
+                status: '',
+                message: ''
+            },
 	    status: '',
 	    message: '',
 	};
@@ -16,12 +20,21 @@ var SetMyStatus = React.createClass({
 	e.preventDefault();
 	var message = this.refs.message.getDOMNode().value.trim();
 	var code = this.refs.status.getDOMNode().value;
-        ChatWebAPIUtils.setStatus(code, message);
+        ChatWebAPIUtils.setStatus(code, message);  // TODO show some sign of progress here until ack received?
         // TODO create an action here?
+        this.setState({prevStatus: {status: code, message: message}});
     },
     render: function () {
 	var options = [];
-	for (var code in ChatConstants.chatStatus) {
+        var isChanged = this._isChanged();
+        var submitClasses = React.addons.classSet({
+            'form-control': true,
+            'btn': true,
+            'col-md-6': true,
+            'btn-success': isChanged,
+            'btn-disabled': !isChanged
+        });
+        for (var code in ChatConstants.chatStatus) {
 	    options.push(<option value={code} key={code}>{ChatConstants.chatStatus[code]}</option>);
 	}
 	return (
@@ -31,7 +44,7 @@ var SetMyStatus = React.createClass({
 		    <input className="form-control" value={this.state.message} onChange={this.handleMessageChange} type="text" placeholder="Custom status..." ref="message" />
 		</div>
 		<div className="col-md-6">
-		    <select className="form-control" ref="status">
+		<select value={this.state.status} onChange={this._updateStatus} className="form-control" ref="status">
 			<option value="">Online</option>
 			{options}
 		    </select>
@@ -39,11 +52,18 @@ var SetMyStatus = React.createClass({
 		</div>
                 <div className="form-group">
                 <div className="col-md-6">
-		<input className="form-control btn btn-success col-md-6" type="submit" value="Set status" />
+		<input disabled={!this._isChanged()} className={submitClasses} type="submit" value="Set status" />
                 </div>
                 </div>
-	    </form>
+	        </form>
 	);
+    },
+    _updateStatus: function (e) {
+        this.setState({status: e.target.value});
+    },
+    _isChanged: function () {
+        // TODO this will be easier when I adopt immutable-js
+        return this.state.status !== this.state.prevStatus.status || this.state.message !== this.state.prevStatus.message;
     }
 });
 
