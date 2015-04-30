@@ -230,10 +230,6 @@ body {
     text-align: center;
     margin: 0;
 }
-.whosonline .avatar {
-    padding: 10px;
-    float: left;
-}
 
 footer {
     margin-top: 10px;
@@ -307,4 +303,17 @@ footer {
 #formbuilder ol {
     padding-left: 0;
     list-style-type: none;
+}
+
+.whosOnlineItem {
+    float: left;
+}
+
+.whosOnlineItem p {
+    margin: 0;
+    text-align: center;
+}
+
+.whosOnlineItem .username {
+    font-weight: 900;
 }
