@@ -317,7 +317,7 @@ footer {
     text-align: center;
 }
 
-.whosOnlineItem .username {
+.whosOnlineItem .username, .messageAuthor b {
     font-weight: 900;
 }
 

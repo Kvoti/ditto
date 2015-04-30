@@ -5,7 +5,7 @@ var TimeAgo = require('./TimeAgo.react');
 var Avatar = require('./Avatar.react');
 var Status = require('./Status.react');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
-
+var LeftRightAlign = require('../../../js/components/LeftRightAlign.jsx');
 var ReactPropTypes = React.PropTypes;
 
 var ThreadListItem = React.createClass({
@@ -26,17 +26,11 @@ var ThreadListItem = React.createClass({
           'active': thread.id === this.props.currentThreadID
         })}
         onClick={this._onClick}>
-            <div className="media">
-            <div className="media-left">
-            <Avatar user={contact} />
-        </div>
-            <div className="media-body">
-            <h4 className="media-heading">{thread.name}</h4>
-            <p><TimeAgo when={lastMessage ? lastMessage.date : new Date()} /></p>
-            <Status user={contact} />
+            <LeftRightAlign>
+            <p><b>{contact}</b> <em>[<Status user={contact} />]</em></p>
+            <p className="messageTimestamp"><TimeAgo when={lastMessage ? lastMessage.date : new Date()} /></p>
+            </LeftRightAlign>
             {lastMessage && lastMessage.text}
-        </div>
-        </div>
       </li>
     );
   },

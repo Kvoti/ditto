@@ -26,11 +26,11 @@ var Status = React.createClass({
         var status = this.state.status[this.props.user];
         var verboseStatus;
         if (!status || !status.hasOwnProperty('code')) {
-            return <p>Offline</p>;
+            return <span>Offline</span>;
         } else {
 	    verboseStatus = ChatConstants.chatStatus[status.code] || 'Online';
 	    return (
-	            <p>{verboseStatus} <em>{status.message}</em></p>
+	            <span>{verboseStatus} <em>{status.message}</em></span>
 	    );
         }
     },
