@@ -12,9 +12,9 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
-// Strophe.log = function (level, msg) {
-//     console.log(msg);
-// };
+Strophe.log = function (level, msg) {
+    console.log(msg);
+};
 
 function onConnect (status_code) {
     if (status_code == Strophe.Status.CONNECTED) {

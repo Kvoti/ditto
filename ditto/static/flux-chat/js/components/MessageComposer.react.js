@@ -27,7 +27,7 @@ var MessageComposer = React.createClass({
     render: function() {
         return (
                 <textarea
-            className="message-composer"
+            className="message-composer form-control"
             name="message"
             value={this.state.text}
             onChange={this._onChange}

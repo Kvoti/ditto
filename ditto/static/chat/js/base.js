@@ -49,7 +49,7 @@ var chatModule = document.getElementById('chat-module');
 var chatroom = document.getElementById('msgs');
 if (chatModule || chatroom) {
     React.render(
-        <ChatModule fluidHeight={!!chatroom} heightOffset={220} />,
+        <ChatModule fluidHeight={!!chatroom} heightOffset={300} />,
         chatModule || chatroom
     );
 }
@@ -57,7 +57,7 @@ if (chatModule || chatroom) {
 var whosOnline = document.getElementById('presence');
 if (whosOnline) {
     React.render(
-        <WhosOnline />,
+            <WhosOnline stacked={chatroom} />,
         whosOnline
     );
 }

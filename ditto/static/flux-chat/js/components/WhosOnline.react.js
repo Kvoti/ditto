@@ -28,6 +28,18 @@ var WhosOnline = React.createClass({
             var key = 'online' + i;
             var profile = this.state.userProfiles[user];
             // TODO defaulting to showing 'Member' is only needed until we sort out setting user role and avatar on account activation
+            if (this.props.stacked) { // TODO maybe make a separate component for chatroom presence?
+                return (
+                        <div style={{height: 50, display: 'table'}}>
+                        <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
+                        <Avatar user={user} key={key} size={30} />
+                        </div>
+                        <div style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: 5}}>
+                        <b>{user}</b> <i>[{profile ? profile.role : 'Member' }]</i>
+                        </div>
+                        </div>
+                );
+            }
             return (
                     <div className="whosOnlineItem">
                     <Avatar user={user} key={key} />

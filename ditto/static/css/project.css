@@ -218,6 +218,9 @@ body {
     height: 150px;
     overflow-y: scroll;
 }
+.message-list {
+    padding-left: 0;
+}
 
 .profile-chat #pchat_msgs {
     height: 150px;
@@ -316,4 +319,28 @@ footer {
 
 .whosOnlineItem .username {
     font-weight: 900;
+}
+
+.chatroomPresence, .chatroomMessages {
+    background-color: white;
+    padding: 10px;
+    border: 2px solid #CCC;
+}
+
+.avatar {
+    /* TODO figure out why avatar div height is 5px more than contained svg height */
+    margin: 0 0 -5px 0;
+    padding: 0;
+}
+
+.messageAuthor {
+    color: inherit
+}
+
+.messageTimestamp {
+    color: #777;
+}
+
+.media-heading p {
+    margin-bottom: 0;
 }

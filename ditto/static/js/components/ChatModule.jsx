@@ -39,22 +39,25 @@ var ChatModule = React.createClass({
     render: function() {
 	var style;
         var messageListItems = this.state.messages.map(getMessageListItem);
-        if (!this.state.messages.length) {
-            return (
-                    <div ref="messageList">Loading ...</div>
-            );
-        }
 	// TODO can we move the height stuff here to a mixin somehow?
 	if (this.props.fluidHeight) {
 	    style = {height: this.state.height};
 	}
-        return (
-            <div className="message-section">
-		<ul style={style} className="message-list" ref="messageList">
-		    {messageListItems}
-		</ul>
-            </div>
-        );
+        if (!this.state.messages.length) {
+            return (
+                <div style={style} ref="messageList">
+		    <p>Loading ...</p>
+		</div>
+            );
+        } else {
+            return (
+		<div className="message-section">
+		    <ul style={style} className="message-list" ref="messageList">
+			{messageListItems}
+		    </ul>
+		</div>
+            );
+	}
     },
     
     componentDidUpdate: function() {

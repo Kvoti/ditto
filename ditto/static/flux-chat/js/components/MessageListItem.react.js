@@ -18,10 +18,10 @@ var MessageListItem = React.createClass({
                 <Avatar user={message.authorName} size={25} />
                 </div>
                 <div className="media-body">
-                <h4 className="media-heading">
-                {message.authorName} (<Role user={message.authorName} />)
-                <small> <TimeAgo when={message.date} /></small>
-            </h4>
+                <div className="media-heading clearfix">
+                <p style={{float: 'left'}}><small className="messageAuthor"><b>{message.authorName}</b> <i>[<Role user={message.authorName} />]</i></small></p>
+                <p style={{float: 'right'}}><small className="messageTimestamp"><TimeAgo when={message.date} /></small></p>
+                </div>
                 {message.text}
             </div>
             </div>
