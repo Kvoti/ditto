@@ -90,12 +90,14 @@ module.exports = {
             var added, removed, presence;
             // TODO var nick_taken = msg.find('conflict');
             var from = Strophe.getResourceFromJid(msg.attr('from'));
+            var room = Strophe.getBareJidFromJid(msg.attr('from'));
             // First time we enter the chatroom for a new network the room
             // needs to be created and configured
             var isNewRoom = msg.find('status[code=201]').length;
             presence = {
                 user: from,
-                isNewRoom: isNewRoom
+                isNewRoom: isNewRoom,
+                room: room
             }
             added = msg.find('item[role!=none]');
             if (added.length) {
@@ -125,6 +127,11 @@ module.exports = {
                 text: body,
                 timestamp: when
             }
+        },
+        roomList: function (result) {
+            var result = $(result);
+            var roomJIDs = result.find('item').map(function () { return $(this).attr('jid'); });
+            return $.makeArray(roomJIDs);
         }
     }
 }

@@ -28,7 +28,6 @@ def chat_config(context, other=None, extra=None):
         'nick': user.username,
         'server': server,
         'password': password,
-        'chatroom': 'muc1@muc.%s' % chat_host,
         'element': 'emptychat',
         'page': None,
     }

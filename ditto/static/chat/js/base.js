@@ -1,5 +1,6 @@
 require("babel/polyfill");
 var ChatApp = require('../../flux-chat/js/components/ChatApp.react');
+var ChatRoomApp = require('../../flux-chat/js/components/ChatRoomApp.jsx');
 var ChatWebAPIUtils = require('../../flux-chat/js/utils/ChatWebAPIUtils');
 var Avatar = require('../../flux-chat/js/components/Avatar.react.js');
 var AvatarPicker = require('../../js/components/AvatarPicker.jsx');
@@ -16,7 +17,6 @@ ChatWebAPIUtils.connect(
     chatConf.server,
     chatConf.me,
     chatConf.password,
-    chatConf.chatroom,
     chatConf.nick
 );	
 
@@ -46,27 +46,26 @@ if (profileAvatar) {
 }
     
 var chatModule = document.getElementById('chat-module');
-var chatroom = document.getElementById('msgs');
-if (chatModule || chatroom) {
+if (chatModule) {
     React.render(
-        <ChatModule fluidHeight={!!chatroom} heightOffset={300} />,
+        <ChatModule fluidHeight={false} heightOffset={300} />,
         chatModule || chatroom
+    );
+}
+
+var chatrooms = document.getElementById('chatrooms');
+if (chatrooms) {
+    React.render(
+        <ChatRoomApp />,
+        chatrooms
     );
 }
 
 var whosOnline = document.getElementById('presence');
 if (whosOnline) {
     React.render(
-            <WhosOnline stacked={chatroom} />,
+            <WhosOnline stacked={false} />,
         whosOnline
-    );
-}
-
-var compose = document.getElementById('compose');
-if (compose) {
-    React.render(
-            <MessageComposer threadID={Strophe.getNodeFromJid(chatConf.chatroom)} isGroup={true}/>,
-        compose
     );
 }
 

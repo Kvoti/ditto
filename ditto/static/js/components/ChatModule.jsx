@@ -1,4 +1,4 @@
-// TODO this is very similar to MessageSection, just with a fixed threadID. Could prob refactor both
+// TODO this is **very** similar to MessageSection, Could prob refactor both
 var MessageListItem = require('../../flux-chat/js/components/MessageListItem.react');
 var MessageStore = require('../../flux-chat/js/stores/MessageStore');
 var FluidHeightMixin = require('../mixins/FluidHeightMixin.jsx');
@@ -6,7 +6,9 @@ var React = require('react');
 
 function getStateFromStores() {
     return {
-        messages: MessageStore.getAllForThread(Strophe.getNodeFromJid(chatConf.chatroom)),
+	// TODO this is a bit of a hack relying on the current thread defaulting to
+	// the main site chatroom
+        messages: MessageStore.getAllForCurrentThread()
     };
 }
 

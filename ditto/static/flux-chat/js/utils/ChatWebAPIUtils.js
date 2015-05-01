@@ -1,7 +1,7 @@
 var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
 
-var _connection, _domain, _me, _myJID, _chatroom, _nick;
+var _connection, _domain, _me, _myJID, _nick;
 
 // TODO I think this state is maybe in the wrong place
 // E.g. if we have a ContactStore, it would request history and profile
@@ -25,7 +25,10 @@ function onConnect (status_code) {
         _connection.vcard.init(_connection);
         loadUserProfile(Strophe.getNodeFromJid(_myJID));
         _connection.chatstates.init(_connection);
-        joinMainChatroom();
+        _connection.muc.init(_connection);
+        if (window.location.href.indexOf('messages') === -1) { // FIXME
+            fetchChatrooms();
+        }
         ChatServerActionCreators.connect(_connection);
     } else if (status_code == Strophe.Status.DISCONNECTED) {
         ChatServerActionCreators.disconnect();
@@ -36,14 +39,15 @@ function sendInitialPresence () {
     _connection.send($pres().tree());
 }
 
-function joinMainChatroom () {
-    _connection.muc.init(_connection);
-    _connection.muc.join(
-        _chatroom,
-        _nick,
-        receiveGroupMessage,
-	receiveGroupPresence
-    );
+function fetchChatrooms () {
+    var chatDomain = 'muc.' + _domain; // TODO pass in from config
+    _connection.muc.listRooms(chatDomain, receiveChatrooms // TODO handle error
+                             );
+};
+
+function receiveChatrooms (result) {
+    var roomList = XMPP.parse.roomList(result);
+    ChatServerActionCreators.receiveChatrooms(roomList);
 };
 
 function receiveGroupMessage (msg) {
@@ -62,14 +66,14 @@ function receiveGroupMessage (msg) {
 function receiveGroupPresence (pres) {
     var presence = XMPP.parse.groupPresence(pres);
     if (presence.added) {
-        ChatServerActionCreators.receiveOnline(presence.user);
+        ChatServerActionCreators.receiveOnline(presence.user, presence.room);
     } else if (presence.removed) {
-        ChatServerActionCreators.receiveOffline(presence.user);
+        ChatServerActionCreators.receiveOffline(presence.user, presence.room);
     }
     if (presence.isNewRoom) {
         // TODO handle failure
         _connection.muc.createInstantRoom(
-            chatConf.chatroom  // TODO support multiple group chats
+            presence.room
         );
     }
     return true;
@@ -171,9 +175,8 @@ function getBareJIDForNode (node) {
 
 module.exports = {
 
-    connect: function (server, jid, password, chatroom, nick, log=false) {
+    connect: function (server, jid, password, nick, log=false) {
 	_myJID = jid;
-        _chatroom = chatroom;
         _nick = nick;
 	_domain = Strophe.getDomainFromJid(jid);
 	_me = Strophe.getNodeFromJid(jid);
@@ -198,9 +201,11 @@ module.exports = {
     },
 
     createMessage: function(message, threadID) {
+        var roomJID;
         if (message.threadID.indexOf(':') === -1) {
+            roomJID = message.threadID + '@muc.' + _domain; // TODO fix hardcoded chat domain
             _connection.muc.groupchat(
-                _chatroom,  // TODO get from message or threadID
+                roomJID,
                 message.text
             )
         } else {
@@ -276,6 +281,14 @@ module.exports = {
 	    function (r) { },  // TODO handle something here?
 	    vcard
         );
-    }
-    
+    },
+
+    joinChatroom: function (roomJID) {
+        _connection.muc.join(
+            roomJID,
+            _nick,
+            receiveGroupMessage,
+	    receiveGroupPresence
+        );
+    },
 };

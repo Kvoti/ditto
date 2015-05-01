@@ -3,12 +3,18 @@ var ChatConstants = require('../constants/ChatConstants');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
+var ChatWebAPIUtils = require('../utils/ChatWebAPIUtils');
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
 var _currentID = null;
 var _threads = {};
+// TODO think more about handling chatrooms vs private chats.
+// should maybe separate out chatroom messages from privates messages?
+var _roomJIDs = [];
+var _currentRoomJID;
+
 
 var ThreadStore = assign({}, EventEmitter.prototype, {
 
@@ -90,8 +96,15 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
 
     getCurrent: function() {
         return this.get(this.getCurrentID());
-    }
+    },
 
+    getRooms: function () {
+        return _roomJIDs;
+    },
+
+    getCurrentRoomJID: function () {
+        return _currentRoomJID;
+    }
 });
 
 ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
@@ -120,6 +133,47 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
     case ActionTypes.RECEIVE_RAW_PRIVATE_MESSAGE:
         ThreadStore.init([action.rawMessage]);
+        ThreadStore.emitChange();
+        break;
+
+    case ActionTypes.RECEIVE_ROOM_LIST:
+        _roomJIDs = action.rooms;
+        if (!_currentRoomJID) {
+            _currentRoomJID = _roomJIDs[0];
+            _currentID = Strophe.getNodeFromJid(_currentRoomJID);
+            _threads[_currentID] = {
+                id: _currentID,
+                name: _currentID
+            }
+            ChatWebAPIUtils.joinChatroom(_currentRoomJID);  // TODO not sure about api call in store
+        }
+        ThreadStore.emitChange();
+        break;
+
+    case ActionTypes.CLICK_ROOM:
+        var roomJID = action.roomJID;
+        _currentRoomJID = roomJID;
+        _currentID = Strophe.getNodeFromJid(roomJID);
+        if (!_threads[_currentID]) {
+            _threads[_currentID] = {
+                id: _currentID,
+                name: _currentID
+            }
+            ChatWebAPIUtils.joinChatroom(_currentRoomJID);  // TODO not sure about api call in store
+        }
+        ThreadStore.emitChange();
+        break;
+
+    // TODO factor out common room code
+    case ActionTypes.CREATE_ROOM:
+        var roomJID = action.roomJID;
+        _roomJIDs.push(roomJID);
+        _currentRoomJID = roomJID;
+        _currentID = Strophe.getNodeFromJid(roomJID);
+        _threads[_currentID] = {
+            id: _currentID,
+            name: _currentID
+        }
         ThreadStore.emitChange();
         break;
         

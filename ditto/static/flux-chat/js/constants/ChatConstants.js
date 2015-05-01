@@ -23,6 +23,10 @@ module.exports = {
         RECEIVE_ONLINE: null,
         RECEIVE_OFFLINE: null,
 
+        RECEIVE_ROOM_LIST: null,
+        CLICK_ROOM: null,
+        CREATE_ROOM: null,
+        
         CHANGE_AVATAR: null
     }),
 

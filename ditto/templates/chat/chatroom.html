@@ -3,25 +3,5 @@
 {% load staticfiles %}
 
 {% block content %}
-    {# TODO move this layout markup to a react component as react needs to own these columns #}
-    <div class="row">
-	<div class="col-md-6">
-	    <h3>Chatroom 1</h3>
-	    <div class="chatroomMessages">
-		<div id="msgs">
-		</div>
-		<div id="compose">
-		</div>
-	    </div>
-	</div>
-	<div class="col-md-3">
-	    <h3>Who&rsquo;s in chatroom 1</h3>
-	    <div class="chatroomPresence">
-		<section id="presence"></section>
-	    </div>
-	</div>
-	<div class="col-md-3">
-	    <h3>Other chatrooms</h3>
-	</div>
-    </div>
+    <section id="chatrooms"></section>
 {% endblock %}

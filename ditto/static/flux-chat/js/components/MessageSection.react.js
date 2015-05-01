@@ -27,6 +27,12 @@ function getMessageListItem(message) {
 
 var MessageSection = React.createClass({
     mixins: [FluidHeightMixin],
+
+    getDefaultProps: function () {
+        return {
+            withThreadCreator: true
+        }
+    },
     
     getInitialState: function() {
         return getStateFromStores();
@@ -61,8 +67,8 @@ var MessageSection = React.createClass({
             {messageListItems}
             </ul>
                 <WhosTyping users={this.state.whosTyping} />
-            <MessageComposer threadID={this.state.thread.id}/>
-                <ThreadCreator threadID={this.state.thread.id}/>
+                <MessageComposer threadID={this.state.thread.id} isGroup={this.props.isGroup} />
+                {!this.props.isGroup ? <ThreadCreator threadID={this.state.thread.id}/> : null}
                 </div>
         );
     },

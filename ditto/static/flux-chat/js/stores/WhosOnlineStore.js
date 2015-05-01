@@ -7,11 +7,7 @@ var ThreadStore = require('../stores/ThreadStore');
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
-var _whosOnline = [];
-
-function _removeUser (user) {
-    _whosOnline.splice(_whosOnline.indexOf(user), 1);
-}
+var _whosOnline = {};
 
 var WhosOnlineStore = assign({}, EventEmitter.prototype, {
 
@@ -28,8 +24,7 @@ var WhosOnlineStore = assign({}, EventEmitter.prototype, {
     },
 
     get: function () {
-        console.log(_whosOnline);
-        return _whosOnline;
+        return _whosOnline[ThreadStore.getCurrentRoomJID()] || [];
     }
 });
 
@@ -38,12 +33,16 @@ WhosOnlineStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     switch(action.type) {
 
     case ActionTypes.RECEIVE_ONLINE:
-        _whosOnline.push(action.user);
+        var inside = _whosOnline[action.room];
+        if (!inside) {
+            _whosOnline[action.room] = [];
+        }
+        _whosOnline[action.room].push(action.user);
         WhosOnlineStore.emitChange();
         break;
 
     case ActionTypes.RECEIVE_OFFLINE:
-        _removeUser(action.user);
+        _removeUser(action.user, action.room);
         WhosOnlineStore.emitChange();
         break;
 
@@ -52,5 +51,9 @@ WhosOnlineStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     }
 
 });
+
+function _removeUser (user, room) {
+    _whosOnline[room].splice(_whosOnline[room].indexOf(user), 1);
+}
 
 module.exports = WhosOnlineStore;

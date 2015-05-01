@@ -69,17 +69,26 @@ module.exports = {
         });
     },
 
-    receiveOnline: function(user) {
+    receiveOnline: function(user, room) {
         ChatAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_ONLINE,
             user: user,
+            room: room
         });
     },
 
-    receiveOffline: function(user) {
+    receiveOffline: function(user, room) {
         ChatAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_OFFLINE,
             user: user,
+            room: room
         });
     },
+
+    receiveChatrooms: function (roomList) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_ROOM_LIST,
+            rooms: roomList,
+        });
+    }
 };
