@@ -3,7 +3,6 @@ var ChatConstants = require('../constants/ChatConstants');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
-var ChatWebAPIUtils = require('../utils/ChatWebAPIUtils');
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
@@ -145,7 +144,6 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
                 id: _currentID,
                 name: _currentID
             }
-            ChatWebAPIUtils.joinChatroom(_currentRoomJID);  // TODO not sure about api call in store
         }
         ThreadStore.emitChange();
         break;
@@ -159,7 +157,6 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
                 id: _currentID,
                 name: _currentID
             }
-            ChatWebAPIUtils.joinChatroom(_currentRoomJID);  // TODO not sure about api call in store
         }
         ThreadStore.emitChange();
         break;

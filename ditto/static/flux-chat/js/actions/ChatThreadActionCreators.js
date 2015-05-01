@@ -26,6 +26,7 @@ module.exports = {
             type: ActionTypes.CLICK_ROOM,
             roomJID: roomJID
         });
+        ChatWebAPIUtils.joinChatroom(roomJID);
     },
     
     createRoom: function(roomName) {

@@ -47,8 +47,21 @@ function fetchChatrooms () {
 
 function receiveChatrooms (result) {
     var roomList = XMPP.parse.roomList(result);
+    // TODO not sure where this belongs with flux. Yahoo docs say
+    // action creators can call async apis, but handlers ideally should not
+    joinChatroom(roomList[0]);
+    //
     ChatServerActionCreators.receiveChatrooms(roomList);
 };
+
+function joinChatroom (roomJID) {
+    _connection.muc.join(
+        roomJID,
+        _nick,
+        receiveGroupMessage,
+	receiveGroupPresence
+    );
+}
 
 function receiveGroupMessage (msg) {
     var message = XMPP.parse.groupMessage(msg);
@@ -283,12 +296,5 @@ module.exports = {
         );
     },
 
-    joinChatroom: function (roomJID) {
-        _connection.muc.join(
-            roomJID,
-            _nick,
-            receiveGroupMessage,
-	    receiveGroupPresence
-        );
-    },
+    joinChatroom: joinChatroom
 };
