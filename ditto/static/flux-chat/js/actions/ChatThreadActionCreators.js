@@ -29,7 +29,7 @@ module.exports = {
     },
     
     createRoom: function(roomName) {
-        var roomJID = roomName + '@muc' + chatConf.server // FIXME
+        var roomJID = roomName + '@muc.' + Strophe.getDomainFromJid(chatConf.me); // FIXME
         ChatAppDispatcher.dispatch({
             type: ActionTypes.CREATE_ROOM,
             roomJID: roomJID
