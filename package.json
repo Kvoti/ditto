@@ -8,6 +8,7 @@
     "object-assign": "^2.0.0",
     "react": "^0.13.1",
     "react-bootstrap": "^0.16.1",
+    "react-router": "^0.13.3",
     "strophe": "^1.2.0",
     "strophe-plugins": "^0.1.2",
     "timeago": "^0.2.0",

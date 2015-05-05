@@ -9,6 +9,8 @@ var MessageComposer = require('../../flux-chat/js/components/MessageComposer.rea
 var ChatModule = require('../../js/components/ChatModule.jsx');
 var EvaluationSettings = require('../../configuration/js/components/EvaluationSettings.jsx');
 var FormBuilder = require('../../formbuilder/js/components/FormBuilder.jsx');
+var Router = require('react-router')
+var RouteActionCreators = require('../../flux-chat/js/actions/RouteActionCreators.js');
 
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
@@ -55,10 +57,10 @@ if (chatModule) {
 
 var chatrooms = document.getElementById('chatrooms');
 if (chatrooms) {
-    React.render(
-        <ChatRoomApp />,
-        chatrooms
-    );
+    Router.run(ChatRoomApp, Router.HistoryLocation, (Root, state) => {
+        React.render(<Root/>, chatrooms);
+        RouteActionCreators.pathChange(state.path);
+    });
 }
 
 var whosOnline = document.getElementById('presence');

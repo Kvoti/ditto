@@ -1,7 +1,8 @@
 var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
 
-var _connection, _domain, _me, _myJID, _nick;
+var _connection, _connectionStatus, _domain, _me, _myJID, _nick;
+var _defaultRoom;
 
 // TODO I think this state is maybe in the wrong place
 // E.g. if we have a ContactStore, it would request history and profile
@@ -17,6 +18,7 @@ Strophe.log = function (level, msg) {
 };
 
 function onConnect (status_code) {
+    _connectionStatus = status_code;
     if (status_code == Strophe.Status.CONNECTED) {
         sendInitialPresence();
 	addPrivateChatHandlers();
@@ -28,6 +30,9 @@ function onConnect (status_code) {
         _connection.muc.init(_connection);
         if (window.location.href.indexOf('messages') === -1) { // FIXME
             fetchChatrooms();
+        }
+        if (_defaultRoom) {
+            joinChatroom(_defaultRoom);
         }
         ChatServerActionCreators.connect(_connection);
     } else if (status_code == Strophe.Status.DISCONNECTED) {
@@ -49,18 +54,27 @@ function receiveChatrooms (result) {
     var roomList = XMPP.parse.roomList(result);
     // TODO not sure where this belongs with flux. Yahoo docs say
     // action creators can call async apis, but handlers ideally should not
-    joinChatroom(roomList[0]);
+    //joinChatroom(roomList[0]);
     //
     ChatServerActionCreators.receiveChatrooms(roomList);
 };
 
 function joinChatroom (roomJID) {
-    _connection.muc.join(
-        roomJID,
-        _nick,
-        receiveGroupMessage,
-	receiveGroupPresence
-    );
+    if (_connectionStatus === Strophe.Status.CONNECTED) {
+        _connection.muc.join(
+            roomJID,
+            _nick,
+            receiveGroupMessage,
+	    receiveGroupPresence
+        );
+    } else {
+        // TODO really not sure what to do here.
+        // We need this because of routing. When someone goes to chatroom/:id
+        // we try to join the chatroom (from componentDidMount in ChatRoomApp) but
+        // the connection might not be ready. So we store the roomJID and join
+        // when the connection is ready.
+        _defaultRoom = roomJID;
+    }
 }
 
 function receiveGroupMessage (msg) {

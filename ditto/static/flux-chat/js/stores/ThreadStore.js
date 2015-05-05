@@ -148,18 +148,18 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         ThreadStore.emitChange();
         break;
 
-    case ActionTypes.CLICK_ROOM:
-        var roomJID = action.roomJID;
-        _currentRoomJID = roomJID;
-        _currentID = Strophe.getNodeFromJid(roomJID);
-        if (!_threads[_currentID]) {
-            _threads[_currentID] = {
-                id: _currentID,
-                name: _currentID
-            }
-        }
-        ThreadStore.emitChange();
-        break;
+    // case ActionTypes.CLICK_ROOM:
+    //     var roomJID = action.roomJID;
+    //     _currentRoomJID = roomJID;
+    //     _currentID = Strophe.getNodeFromJid(roomJID);
+    //     if (!_threads[_currentID]) {
+    //         _threads[_currentID] = {
+    //             id: _currentID,
+    //             name: _currentID
+    //         }
+    //     }
+    //     ThreadStore.emitChange();
+    //     break;
 
     // TODO factor out common room code
     case ActionTypes.CREATE_ROOM:
@@ -170,6 +170,21 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         _threads[_currentID] = {
             id: _currentID,
             name: _currentID
+        }
+        ThreadStore.emitChange();
+        break;
+
+    case ActionTypes.PATH_CHANGE:
+        var parts = action.path.split('/');
+        var roomID = parts[parts.length - 2];
+        var roomJID = roomID + '@muc.network1.localhost';
+        _currentRoomJID = roomJID;
+        _currentID = Strophe.getNodeFromJid(roomJID);
+        if (!_threads[_currentID]) {
+            _threads[_currentID] = {
+                id: _currentID,
+                name: _currentID
+            }
         }
         ThreadStore.emitChange();
         break;

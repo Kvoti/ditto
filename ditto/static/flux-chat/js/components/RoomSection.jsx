@@ -2,6 +2,9 @@ var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
 var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
 var cx = require('react/lib/cx');
+var Router = require('react-router');
+var Link = Router.Link;
+var Navigation = Router.Navigation;
 
 function getStateFromStores() {
     return {
@@ -11,6 +14,8 @@ function getStateFromStores() {
 }
 
 var RoomSection = React.createClass({
+    mixins: [Navigation],
+    
     getInitialState: function() {
         return getStateFromStores();
     },
@@ -25,18 +30,10 @@ var RoomSection = React.createClass({
 
     render: function() {
         var roomListItems = this.state.rooms.map(room => {
-            return (
-                <a className={cx({
-		    "list-group-item": true,
-		    'active': room === this.state.currentRoomJID
-		})}
-		href="#"
-		onClick={this._changeRoom.bind(this, room)}
-		key={room}
-		>
-		{room}
-		</a>
-            );
+	    var roomID = room.split('@')[0];
+	    return (
+		<Link key={roomID} className="list-group-item" to="chatroom" params={{id: roomID}}>{room}</Link>
+	    );
         });
         return (
 	    <div>
@@ -58,17 +55,13 @@ var RoomSection = React.createClass({
         this.setState(getStateFromStores());
     },
 
-    _changeRoom: function (room, e) {
-	e.preventDefault();
-	ChatThreadActionCreators.clickRoom(room);
-    },
-
     _createRoom: function (e) {
 	e.preventDefault();
 	var roomName = this.refs.roomName.getDOMNode().value;
 	this.refs.roomName.getDOMNode().value = '';
 	// TODO check room doesn't already exist
 	ChatThreadActionCreators.createRoom(roomName);
+	this.transitionTo('chatroom', {id: roomName});
     }
 });
 

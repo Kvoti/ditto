@@ -27,7 +27,9 @@ module.exports = {
         CLICK_ROOM: null,
         CREATE_ROOM: null,
         
-        CHANGE_AVATAR: null
+        CHANGE_AVATAR: null,
+
+        PATH_CHANGE: null
     }),
 
     chatStatus: {

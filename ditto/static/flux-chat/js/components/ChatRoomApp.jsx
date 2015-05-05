@@ -8,6 +8,11 @@ var SetMyStatus = require('./SetMyStatus.react');
 var WhosOnline = require('./WhosOnline.react');
 var RoomSection = require('./RoomSection.jsx');
 var ChatConstants = require('../constants/ChatConstants');
+var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
+var Router = require('react-router');
+var Route = Router.Route;
+var RouteHandler = Router.RouteHandler;
+var Navigation = Router.Navigation;
 
 function getStateFromStores() {
     return {
@@ -18,6 +23,7 @@ function getStateFromStores() {
 }
 
 var ChatRoomApp = React.createClass({
+    mixins: [Navigation],
     
     getInitialState: function() {
         return getStateFromStores();
@@ -26,6 +32,10 @@ var ChatRoomApp = React.createClass({
     componentDidMount: function() {
         ConnectionStore.addChangeListener(this._onChange);
         ThreadStore.addChangeListener(this._onChange);
+//	TODO not at all sure this is the right place to raise an action.
+//	var roomID = this.props.params.id;
+//	var roomJID = roomID + '@muc.network1.localhost';
+//	ChatThreadActionCreators.clickRoom(roomJID);
     },
 
     componentWillUnmount: function() {
@@ -33,6 +43,12 @@ var ChatRoomApp = React.createClass({
         ThreadStore.removeChangeListener(this._onChange);
     },
 
+//    componentWillReceiveProps: function (newProps) {
+//	var roomID = newProps.params.id;
+//	var roomJID = roomID + '@muc.network1.localhost';
+//	ChatThreadActionCreators.clickRoom(roomJID);
+//    },
+//
     render: function() {
 	// TODO chatroom presence should prob be separate component to whosOnline
 	// (whosOnline is supposed to have carousel etc.)
@@ -79,4 +95,62 @@ var ChatRoomApp = React.createClass({
 
 });
 
-module.exports = ChatRoomApp;
+var App = React.createClass({
+    render () {
+	return (
+	    <div>
+		<RouteHandler/>
+	    </div>
+	)
+    }
+});
+
+// TODO this is a bit of a hack here too. Want
+//     /chatroom/
+// to redirect to /chatroom/<mainChatroom>/
+// but we have to wait for the list of chatrooms to be loaded from
+// the server. Having this 'meta' component got things working but
+// not sure its right.
+var DefaultChatroom = React.createClass({
+    mixins: [Navigation],
+    
+    componentDidMount: function() {
+        ThreadStore.addChangeListener(this._onChange);
+    },
+    
+    componentWillUnmount: function() {
+        ThreadStore.removeChangeListener(this._onChange);
+    },
+
+    _onChange: function () {
+	var rooms = ThreadStore.getRooms();
+	if (rooms.length) {
+            ThreadStore.removeChangeListener(this._onChange);
+	    // TODO complete hack here, call transitionTo asynchronously otherwise
+	    // get an error from Dispatcher. Absolutely NO IDEA how to properly
+	    // integrate react-router with flux-style app.
+	    // One way is to move currentXX state out of the stores, as that info
+	    // is encoded in the url. Can then get state by calling store methods
+	    // with params from url. Eg.
+	    //
+	    //     {messages: MessageStore.getForChatroom(this.props.params.chatroom)}
+	    //
+	    setTimeout(() => {
+		this.transitionTo('chatroom', {id: Strophe.getNodeFromJid(rooms[0])})
+	    }, 0);
+	}
+    },
+    
+    render: function () { return null; }
+});
+
+
+// declare our routes and their hierarchy
+var routes = (
+    <Route handler={App}>
+	<Route path="/di/chatroom/" handler={DefaultChatroom}/>
+	<Route name="chatroom" path="/di/chatroom/:id/" handler={ChatRoomApp}/>
+    </Route>
+);
+
+module.exports = routes;
