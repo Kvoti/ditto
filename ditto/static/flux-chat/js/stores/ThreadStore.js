@@ -36,7 +36,7 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
             _currentID = allChrono[allChrono.length - 1].id;
         }
 
-        if (_threads[_currentID].lastMessage) {
+        if (_threads[_currentID] && _threads[_currentID].lastMessage) {
             // TODO need a big sort out of thread handling, this code largely unchangd from facebook's demo app
             // Might be we should separate out pchat and group chat messages. In any case isRead doesn't really work
             // as there's not way (I've found yet) of having that info on the server.
@@ -166,18 +166,20 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         ThreadStore.emitChange();
         break;
 
-    case ActionTypes.PATH_CHANGE:
-        var parts = action.path.split('/');
-        var roomID = parts[parts.length - 2];
-        var roomJID = roomID + '@muc.' + Strophe.getDomainFromJid(chatConf.me); // FIXME
-        _currentRoomJID = roomJID;
-        _currentID = Strophe.getNodeFromJid(roomJID);
+    case ActionTypes.CHANGE_CHATROOM:
+        _currentRoomJID = action.roomJID;
+        _currentID = action.roomID
         if (!_threads[_currentID]) {
             _threads[_currentID] = {
                 id: _currentID,
                 name: _currentID
             }
         }
+        ThreadStore.emitChange();
+        break;
+
+    case ActionTypes.CHANGE_PRIVATE_CHAT:
+        _currentID = action.threadID
         ThreadStore.emitChange();
         break;
         

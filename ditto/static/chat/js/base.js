@@ -59,7 +59,7 @@ var chatrooms = document.getElementById('chatrooms');
 if (chatrooms) {
     Router.run(ChatRoomApp, Router.HistoryLocation, (Root, state) => {
         React.render(<Root/>, chatrooms);
-        RouteActionCreators.pathChange(state.path);
+        RouteActionCreators.changeChatroom(state.path);
     });
 }
 
@@ -73,10 +73,10 @@ if (whosOnline) {
 
 var chatApp = document.getElementById('react');
 if (chatApp) {
-    React.render(
-        <ChatApp />,
-        chatApp
-    );
+    Router.run(ChatApp, Router.HistoryLocation, (Root, state) => {
+        React.render(<Root/>, chatApp);
+        RouteActionCreators.changePrivateChat(state.path);
+    });
 }
 
 var evaluationSettings = document.getElementById('evaluation');

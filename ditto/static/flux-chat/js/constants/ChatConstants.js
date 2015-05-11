@@ -6,7 +6,6 @@ module.exports = {
         CONNECT: null,
         DISCONNECT: null,
 
-        CLICK_THREAD: null,
         CREATE_THREAD: null,
         
         CREATE_MESSAGE: null,
@@ -24,12 +23,12 @@ module.exports = {
         RECEIVE_OFFLINE: null,
 
         RECEIVE_ROOM_LIST: null,
-        CLICK_ROOM: null,
         CREATE_ROOM: null,
         
         CHANGE_AVATAR: null,
 
-        PATH_CHANGE: null
+        CHANGE_CHATROOM: null,
+        CHANGE_PRIVATE_CHAT: null
     }),
 
     chatStatus: {

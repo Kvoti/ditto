@@ -57,9 +57,9 @@ var ThreadSection = React.createClass({
                 <div className="thread-count">
                 {unread}
             </div>
-                <ul className="list-group">
+                <div className="list-group">
                 {threadListItems}
-            </ul>
+            </div>
                 </div>
         );
     },

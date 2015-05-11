@@ -6,14 +6,24 @@ var ActionTypes = ChatConstants.ActionTypes;
 
 module.exports = {
 
-    pathChange: function(path) {
+    changeChatroom: function(path) {
         var parts = path.split('/');
         var roomID = parts[parts.length - 2];
         var roomJID = roomID + '@muc.' + Strophe.getDomainFromJid(chatConf.me); // FIXME
         ChatWebAPIUtils.joinChatroom(roomJID);
         ChatAppDispatcher.dispatch({
-            type: ActionTypes.PATH_CHANGE,
-            path: path
+            type: ActionTypes.CHANGE_CHATROOM,
+            roomJID: roomJID,
+            roomID: roomID
+        });
+    },
+
+    changePrivateChat: function(path) {
+        var parts = path.split('/');
+        var threadID = parts[parts.length - 2];
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.CHANGE_PRIVATE_CHAT,
+            threadID: threadID
         });
     },
 };
