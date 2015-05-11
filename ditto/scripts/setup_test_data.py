@@ -32,7 +32,7 @@ def run():
     setup_default_roles()
     setup_admin_permission()
     setup_interactions()
-    setup_admin_user()
+    setup_admin_users()
     setup_members()
     setup_tenants()
     setup_reg_form()
@@ -89,8 +89,9 @@ def setup_interactions():
         configuration.models.Interaction.objects.get_or_create(name=interaction)
 
 
-def setup_admin_user():
+def setup_admin_users():
     _create_user('admin', core.ADMIN_ROLE)
+    _create_user('guest', core.ADMIN_ROLE)
 
 
 def setup_members():
