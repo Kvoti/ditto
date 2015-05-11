@@ -6,6 +6,7 @@ from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
+from core.views import PageView
 # url patterns required for someone to sign up and create their own
 # new network
 urlpatterns = patterns('',
@@ -19,4 +20,6 @@ urlpatterns = patterns('',
     url(r'^main/use-cases/', include('usecase_urls')),
     url(r'^main/', include('multitenancy.urls', namespace="ditto")),
 
+    url(r'^main/([\w\-]+)/$', PageView.as_view(), name="page"),
+                       
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

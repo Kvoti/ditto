@@ -33,9 +33,19 @@
     
     <ul class="nav navbar-nav navbar-right">
         {% if request.tenant.is_main %}
-            {% url 'usecase' 'therapist' as url %}
+
+            {% url 'page' 'the-product' as url %}
+            {% navitem "the-product" url _("THE PRODUCT") %}
+
+	    {% url 'usecase' 'therapist' as url %}
             {% navitem "usecases" '/use-cases/therapist.html' _("USE CASES") %}
             {# navitem "usecases" url _("USE CASES") #}
+
+            {% url 'page' 'the-team' as url %}
+            {% navitem "the-team" url _("THE TEAM") %}
+	    
+            {% url 'page' 'contact-us' as url %}
+            {% navitem "contact-us" url _("CONTACT US") %}
         {% endif %}
             
         {% if not request.user.is_authenticated %}
