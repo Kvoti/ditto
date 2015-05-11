@@ -344,3 +344,7 @@ footer {
 .media-heading p {
     margin-bottom: 0;
 }
+
+.page h3 {
+    font-size: 20px;
+}
