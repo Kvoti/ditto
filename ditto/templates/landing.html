@@ -1,36 +1,15 @@
-{% extends "base.html" %}
+{% extends "pages/base.html" %}
 
-{% load staticfiles %}
-
-{% block css %}
-{{ block.super }}
-<style>
-    html, body, .logo {height:100%}
-    nav {
-    position:absolute;
-    }
-    body {
-    display:table;
-    width:100%;
-    }
-    .logo {
-    display: table-cell;
-    vertical-align:middle;
-    }
-</style>
-{% endblock %}
-
-{% block main %}
-    <div class="container-fluid">
-<h2>DITTO</h2>
+{% block page %}
+<h3>DITTO</h3>
 
 <p><strong>Digital Impacts’ Ditto is a unique web application with a simple ‘point and click’ User Interface for setting up Social Support Service Networks; with social, financial and commercial insight, evaluation and reporting tools built in.</strong></p>
 
-<h2>OUR VISION</h2>
+<h3>OUR VISION</h3>
 
 <p>To enable organisations to digitise the delivery of their Social Support Services.</p>
 
-<h2>OUR MISSION</h2>
+<h3>OUR MISSION</h3>
 
 <p>To design the best web application for Social Support Services across the world. Our product, Ditto, allows public, social, and care organisations to digitise their service delivery. In doing so, Digital Impacts strives to exceed our customers expectations with a product that is:</p>
 
