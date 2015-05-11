@@ -52,10 +52,12 @@ function fetchChatrooms () {
 
 function receiveChatrooms (result) {
     var roomList = XMPP.parse.roomList(result);
-    // TODO not sure where this belongs with flux. Yahoo docs say
-    // action creators can call async apis, but handlers ideally should not
-    //joinChatroom(roomList[0]);
-    //
+    // TODO something better than these path inspection hacks, pass some explicit option?
+    if (window.location.href.indexOf('chatroom') === -1) {
+        // Anywhere outside of /chatrooms/ we just want to join the 'main' site chatroom
+        // TODO should be explicit about main chatroom instead of relying on roomList[0]
+        joinChatroom(roomList[0]);
+    }
     ChatServerActionCreators.receiveChatrooms(roomList);
 };
 

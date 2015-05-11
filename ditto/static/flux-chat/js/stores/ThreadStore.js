@@ -36,7 +36,12 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
             _currentID = allChrono[allChrono.length - 1].id;
         }
 
-        _threads[_currentID].lastMessage.isRead = true;
+        if (_threads[_currentID].lastMessage) {
+            // TODO need a big sort out of thread handling, this code largely unchangd from facebook's demo app
+            // Might be we should separate out pchat and group chat messages. In any case isRead doesn't really work
+            // as there's not way (I've found yet) of having that info on the server.
+            _threads[_currentID].lastMessage.isRead = true;
+        }
     },
 
     emitChange: function() {
