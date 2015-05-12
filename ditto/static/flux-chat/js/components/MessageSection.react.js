@@ -54,11 +54,6 @@ var MessageSection = React.createClass({
     render: function() {
         var style;
         var messageListItems = this.state.messages.map(getMessageListItem);
-        if (!this.state.thread) {
-            return (
-                    <div ref="messageList">Loading ...</div>
-            );
-        }
 	// TODO can we move the height stuff here to a mixin somehow?
 	style = {height: this.state.height};
         return (

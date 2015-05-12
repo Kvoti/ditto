@@ -3,6 +3,7 @@ var XMPP = require('./xmpp.js');
 
 var _connection, _connectionStatus, _domain, _me, _myJID, _nick;
 var _defaultRoom;
+var _pendingFriends = [];
 
 // TODO I think this state is maybe in the wrong place
 // E.g. if we have a ContactStore, it would request history and profile
@@ -33,6 +34,9 @@ function onConnect (status_code) {
         }
         if (_defaultRoom) {
             joinChatroom(_defaultRoom);
+        }
+        if (_pendingFriends.length) {
+            _pendingFriends.forEach(f => addFriend(f));
         }
         ChatServerActionCreators.connect(_connection);
     } else if (status_code == Strophe.Status.DISCONNECTED) {
@@ -79,6 +83,8 @@ function joinChatroom (roomJID) {
     }
 }
 
+
+
 function receiveGroupMessage (msg) {
     var message = XMPP.parse.groupMessage(msg);
     // TODO not sure about treating a group message as just another message. Makes some sense, as it's just another thread
@@ -115,16 +121,29 @@ function addPrivateChatHandlers () {
 
 function getContacts () {
     _connection.roster.init(_connection);
-    // _connection.roster.registerRequestCallback(acceptFriendRequest);
+    _connection.roster.registerRequestCallback(acceptFriendRequest);
     _connection.roster.registerCallback(handleContacts);
     _connection.roster.get();
+}
+
+function addFriend(friend) {
+    if (_connectionStatus === Strophe.Status.CONNECTED) {
+        _connection.roster.subscribe(getBareJIDForNode(friend));
+    } else {
+        _pendingFriends.push(friend);
+    }
+}
+
+function acceptFriendRequest (from) {
+    _connection.roster.authorize(from);
+    return true;
 }
 
 function handleContacts (roster, item) {
     // var friends = [];
     roster.forEach((friend, i) => {
 	var username = Strophe.getNodeFromJid(friend.jid);
-	if (friend.subscription === 'both') {
+	if (friend.subscription === 'both' || true) { // FIXME 'both' or 'to' or 'from', or no conditional needed?
             loadPrivateChatHistory(friend.jid);
 	    //     friends.push(username);
 	    loadUserProfile(username);
@@ -312,5 +331,8 @@ module.exports = {
         );
     },
 
-    joinChatroom: joinChatroom
+    joinChatroom: joinChatroom,
+    
+    addFriend: addFriend
+
 };

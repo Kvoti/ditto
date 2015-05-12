@@ -177,6 +177,12 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
     case ActionTypes.CHANGE_PRIVATE_CHAT:
         _currentID = action.threadID
+        if (!_threads[_currentID]) {
+            _threads[_currentID] = {
+                id: _currentID,
+                name: _currentID
+            }
+        }
         ThreadStore.emitChange();
         break;
         
