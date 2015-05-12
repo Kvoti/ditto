@@ -21,6 +21,7 @@ module.exports = {
 
         RECEIVE_ONLINE: null,
         RECEIVE_OFFLINE: null,
+        RECEIVE_CHAT_STATUS: null,
 
         RECEIVE_ROOM_LIST: null,
         CREATE_ROOM: null,

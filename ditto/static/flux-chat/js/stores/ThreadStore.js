@@ -115,12 +115,6 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
     switch(action.type) {
 
-    case ActionTypes.CLICK_THREAD:
-        _currentID = action.threadID;
-        _threads[_currentID].lastMessage.isRead = true;
-        ThreadStore.emitChange();
-        break;
-        
     case ActionTypes.CREATE_THREAD:
         _currentID = action.threadID;
         _threads[_currentID] = {
@@ -139,6 +133,9 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         ThreadStore.init([action.rawMessage]);
         ThreadStore.emitChange();
         break;
+
+        // TODO actions below that change thread should mark the last message as read (as CLICK_THREAD
+        // used to. CLICK_THREAD is no longer used as we use routing to switch between threads)
 
     case ActionTypes.RECEIVE_ROOM_LIST:
         _roomJIDs = action.rooms;

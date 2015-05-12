@@ -95,14 +95,16 @@ var MessageStore = assign({}, EventEmitter.prototype, {
 
 MessageStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
-  switch(action.type) {
-
+    switch(action.type) {
+        
+    // TODO this action is never raised now we're using routing. Need to fix so we do this
+    // when the thread is changed
     case ActionTypes.CLICK_THREAD:
       ChatAppDispatcher.waitFor([ThreadStore.dispatchToken]);
       _markAllInThreadRead(ThreadStore.getCurrentID());
       MessageStore.emitChange();
       break;
-
+        
     case ActionTypes.CREATE_MESSAGE:
       if (!action.isGroup) {
           // When you send a message to the group it gets sent back to you so
