@@ -102,16 +102,12 @@ def setup_interactions():
 
 def setup_admin_users():
     _create_user('admin', core.ADMIN_ROLE)
-    _create_user('guest', core.ADMIN_ROLE)
+    _create_user('xxx', core.ADMIN_ROLE)
 
 
 def setup_members():
     for name in ['mark', 'sarah', 'ross', 'emma']:
         _create_user(name, core.MEMBER_ROLE)
-    # 'visitor' is someone who's come to the site to create their own
-    # network, hence we give them the admin role so they can do all
-    # the configuration necessary for a new network.
-    _create_user('visitor', core.ADMIN_ROLE)
         
 
 def _create_user(username, group_name):
