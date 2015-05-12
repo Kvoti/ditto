@@ -7,6 +7,8 @@ In any case, it's probably easier/better to have a single bootstrap
 script instead of a bunch of data migrations.
 
 """
+import os
+
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -27,6 +29,7 @@ REG_FORM_SPEC = '[{"name":"Name","on":true,"fields":[{"name":"First name"},{"nam
 
 
 def run():
+    setup_guest_passwords()
     setup_site()
     setup_features()
     setup_default_roles()
@@ -36,7 +39,15 @@ def run():
     setup_members()
     setup_tenants()
     setup_reg_form()
-    
+
+
+def setup_guest_passwords():
+    global GUEST_PASSWORDS
+    if 'GUEST_PASSWORDS' in os.environ:
+        GUEST_PASSWORDS = os.environ['GUEST_PASSWORDS'].split()
+    else:
+        GUEST_PASSWORDS = None
+        
 
 def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
     site = Site.objects.get_current()
@@ -109,7 +120,11 @@ def _create_user(username, group_name):
         verified=1,
         defaults={'email': '%s@example.com' % username})
     if created:
-        user.set_password("let me in")
+        if GUEST_PASSWORDS:
+            password = GUEST_PASSWORDS.pop()
+        else:
+            password = 'x'
+        user.set_password(password)
         user.save()
     user.groups.add(Group.objects.get(name=group_name))
 
