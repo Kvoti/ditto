@@ -143,7 +143,7 @@ function handleContacts (roster, item) {
     // var friends = [];
     roster.forEach((friend, i) => {
 	var username = Strophe.getNodeFromJid(friend.jid);
-	if (friend.subscription === 'both' || true) { // FIXME 'both' or 'to' or 'from', or no conditional needed?
+	if (friend.subscription !== 'none') {
             loadPrivateChatHistory(friend.jid);
 	    //     friends.push(username);
 	    loadUserProfile(username);
