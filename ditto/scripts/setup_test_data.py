@@ -116,7 +116,7 @@ def _create_user(username, group_name):
         verified=1,
         defaults={'email': '%s@example.com' % username})
     if created:
-        if GUEST_PASSWORDS:
+        if 'GUEST_PASSWORDS' in os.environ:
             password = GUEST_PASSWORDS.pop()
         else:
             password = 'x'
