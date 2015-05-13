@@ -102,7 +102,7 @@ def setup_interactions():
 
 def setup_admin_users():
     _create_user('admin', core.ADMIN_ROLE)
-    _create_user('xxx', core.ADMIN_ROLE)
+    _create_user('visitor', core.ADMIN_ROLE)
 
 
 def setup_members():
