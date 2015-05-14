@@ -91,6 +91,9 @@
 	</script>
 
 	{% block javascript %}
+	    <script>
+		var DITTO = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}'};
+	    </script>
 	    <!-- Latest JQuery -->
 	    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 

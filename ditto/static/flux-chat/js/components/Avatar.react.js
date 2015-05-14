@@ -1,6 +1,7 @@
 var React = require('react');
 var UserProfileStore = require('../stores/UserProfileStore');
 var avatarSVGs = $('#avatar_svgs').text();
+var MessageLink = require('../../../js/components/MessageLink.jsx');
 
 function getStateFromStores() {
     return {
@@ -14,7 +15,10 @@ var Avatar = React.createClass({
     },
 
     getDefaultProps: function () {
-        return {size: 50}
+        return {
+            size: 50,
+            link: true
+        }
     },
 
     getInitialState: function () {
@@ -30,7 +34,7 @@ var Avatar = React.createClass({
     },
 
     render: function () {
-	var avatarName;
+	var avatar, avatarName;
 	var profile = this.state.userProfiles[this.props.user];
 	if (profile) {
 	    avatarName = profile.avatar;
@@ -50,7 +54,15 @@ var Avatar = React.createClass({
 	} else {
 	    avatarSVG = '';
 	}
-	return <div className="avatar" dangerouslySetInnerHTML={{__html: avatarSVG}} />;
+        avatar = <div className="avatar" dangerouslySetInnerHTML={{__html: avatarSVG}} />;
+        if (this.props.link) {
+            avatar = (
+                <MessageLink from={DITTO.user} to={this.props.user}>
+                    {avatar}
+                </MessageLink>
+            );
+        }
+	return avatar;
     },
 
     _onChange: function() {

@@ -13,6 +13,10 @@ _table_prefix = local()
 _MAIN = 'main'
 
 
+def id():
+    return _current.value
+
+
 def is_main():
     return _current.value == _MAIN
 

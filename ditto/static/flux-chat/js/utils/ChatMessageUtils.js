@@ -30,6 +30,12 @@ module.exports = {
 	var participants = threadID.split(':');
 	var other = participants[0] === me ? participants[1] : participants[0];
         return other;
+    },
+
+    getPrivateChatThreadID: function (from, to) {
+	var participants = [from, to];
+	participants.sort();
+	var threadID = participants.join(':');
+        return threadID;
     }
-      
 };

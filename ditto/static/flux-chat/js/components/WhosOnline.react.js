@@ -2,6 +2,7 @@ var React = require('react');
 var WhosOnlineStore = require('../stores/WhosOnlineStore');
 var UserProfileStore = require('../stores/UserProfileStore');
 var Avatar = require('./Avatar.react');
+var MessageLink = require('../../../js/components/MessageLink.jsx');
 
 function getStateFromStores() {
     return {
@@ -29,24 +30,28 @@ var WhosOnline = React.createClass({
             // TODO defaulting to showing 'Member' is only needed until we sort out setting user role and avatar on account activation
             if (this.props.stacked) { // TODO maybe make a separate component for chatroom presence?
                 return (
-                        <div key={user} style={{height: 50, display: 'table'}}>
+                        <MessageLink from={DITTO.user} to={user} key={user}>
+                        <div style={{height: 50, display: 'table'}}>
                         <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
-                        <Avatar user={user} size={30} />
+                        <Avatar user={user} size={30} link={false} />
                         </div>
                         <div style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: 5}}>
                         <b>{user}</b> <i>[{profile ? profile.role : 'Member' }]</i>
                         </div>
                         </div>
+                        </MessageLink>
                 );
             }
             return (
-                    <div key={user} className="whosOnlineItem">
-                    <Avatar user={user}/>
+                    <MessageLink from={DITTO.user} to={user} key={user}>
+                    <div className="whosOnlineItem">
+                    <Avatar user={user} link={false}/>
                     <small>
                     <p className="username">{user}</p>
                     <p><i>[{profile ? profile.role : 'Member' }]</i></p>
                     </small>
                     </div>
+                    </MessageLink>
             );
         });
 	return (
