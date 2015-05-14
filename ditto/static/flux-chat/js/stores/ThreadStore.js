@@ -6,9 +6,15 @@ var assign = require('object-assign');
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
+var MESSAGE = 'message';
+var SESSION = 'session';
 
 var _currentID = null;
+var _currentMessageID = null;
+var _currentSessionID = 'xxx';
 var _threads = {};
+var _threadType = MESSAGE;
+
 // TODO think more about handling chatrooms vs private chats.
 // should maybe separate out chatroom messages from privates messages?
 var _roomJIDs = [];
@@ -17,6 +23,10 @@ var _currentRoomJID;
 
 var ThreadStore = assign({}, EventEmitter.prototype, {
 
+    message: MESSAGE,
+
+    session: SESSION,
+    
     init: function(rawMessages) {
         rawMessages.forEach(function(message) {
             var threadID = message.threadID;
@@ -70,12 +80,18 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
     },
 
     getAll: function() {
-        return _threads;
+        var filtered = {};
+        for (var id in _threads) {
+            if (_threadType === MESSAGE) {
+                filtered[id] = _threads[id];
+            }
+        }
+        return filtered;
     },
 
     getAllChrono: function() {
         var orderedThreads = [];
-        for (var id in _threads) {
+        for (var id in this.getAll()) {
             var thread = _threads[id];
             orderedThreads.push(thread);
         }
@@ -108,6 +124,10 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
 
     getCurrentRoomJID: function () {
         return _currentRoomJID;
+    },
+
+    getThreadType: function () {
+        return _threadType;
     }
 });
 
@@ -182,6 +202,19 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
                 id: _currentID,
                 name: _currentID
             }
+        }
+        ThreadStore.emitChange();
+        break;
+
+    case ActionTypes.TOGGLE_CHAT_TYPE:
+        if (_threadType === MESSAGE) {
+            _threadType = SESSION
+            _currentMessageID = _currentID;
+            _currentID = _currentSessionID;
+        } else {
+            _threadType = MESSAGE
+            _currentSessionID = _currentID;
+            _currentID = _currentMessageID;
         }
         ThreadStore.emitChange();
         break;

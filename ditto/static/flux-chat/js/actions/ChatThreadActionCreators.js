@@ -29,5 +29,11 @@ module.exports = {
             roomJID: roomJID
         });
         ChatWebAPIUtils.joinChatroom(roomJID);
+    },
+
+    toggleChatType: function () {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.TOGGLE_CHAT_TYPE,
+        });
     }
 };

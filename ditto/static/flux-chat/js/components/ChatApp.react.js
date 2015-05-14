@@ -37,7 +37,6 @@ var ChatApp = React.createClass({
             return (
                     <div className="row">
                     <div className="col-md-3">
-                    <h3>My chats</h3>
                     <ThreadSection heightOffset={250} />
                     </div>
                     <div className="col-md-6">

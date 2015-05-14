@@ -4,12 +4,14 @@ var ThreadListItem = require('../components/ThreadListItem.react');
 var ThreadStore = require('../stores/ThreadStore');
 var UnreadThreadStore = require('../stores/UnreadThreadStore');
 var FluidHeightMixin = require('../../../js/mixins/FluidHeightMixin.jsx');
+var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
 
 function getStateFromStores() {
     return {
         threads: ThreadStore.getAllChrono(),
         currentThreadID: ThreadStore.getCurrentID(),
-        unreadCount: UnreadThreadStore.getCount()
+        unreadCount: UnreadThreadStore.getCount(),
+        threadType: ThreadStore.getThreadType(),
     };
 }
 
@@ -54,6 +56,10 @@ var ThreadSection = React.createClass({
         }
         return (
                 <div className="thread-section" style={style}>
+                <ul className="nav nav-tabs">
+                <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}><a onClick={this._toggleChats} href="#">My chats</a></li>
+                <li role="presentation" className={this.state.threadType === ThreadStore.session ? 'active' : ''}><a onClick={this._toggleChats} href="#">My sessions</a></li>
+                </ul>
                 <div className="thread-count">
                 {unread}
             </div>
@@ -69,8 +75,12 @@ var ThreadSection = React.createClass({
      */
     _onChange: function() {
         this.setState(getStateFromStores());
-    }
+    },
 
+    _toggleChats: function () {
+        ChatThreadActionCreators.toggleChatType();
+    }
+    
 });
 
 module.exports = ThreadSection;
