@@ -310,6 +310,7 @@ footer {
 
 .whosOnlineItem {
     float: left;
+    padding: 10px;
 }
 
 .whosOnlineItem p {
