@@ -16,6 +16,14 @@ urlpatterns = patterns('',
         view=views.UserRedirectView.as_view(),
         name='redirect'
     ),
+
+    # TODO stick this at /api/. Probably (here it means we can't have a user called 'search'!
+    url(
+        regex=r'^search/$',
+        view=views.search,
+        name='search'
+    ),
+                       
     # URL pattern for the UserDetailView
     url(
         regex=r'^(?P<username>[\w.@+-]+)/$',
@@ -28,4 +36,5 @@ urlpatterns = patterns('',
         view=views.UserUpdateView.as_view(),
         name='update'
     ),
+        
 )

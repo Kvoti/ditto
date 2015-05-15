@@ -10,6 +10,7 @@ var Router = require('react-router');
 var Route = Router.Route;
 var RouteHandler = Router.RouteHandler;
 var Navigation = Router.Navigation;
+var SessionManager = require('../../../js/components/SessionManager.jsx');
 
 function getStateFromStores() {
     return {
@@ -41,6 +42,7 @@ var ChatApp = React.createClass({
                     </div>
                     <div className="col-md-6">
                     <MessageSection heightOffset={270} />
+                    <SessionManager />
                     </div>
                     <div className="col-md-3">
                     <h3>My Tools</h3>
