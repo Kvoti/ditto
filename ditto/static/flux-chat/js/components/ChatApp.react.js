@@ -81,57 +81,13 @@ var App = React.createClass({
     }
 });
 
-// TODO this is a bit of a hack here too. Want
-//     /messages/
-// to redirect to /messages/<mostRecentThread>/
-// but we have to wait for the messages to be loaded from
-// the server. Having this 'meta' component got things working but
-// not sure its right.
-var DefaultThread = React.createClass({
-    mixins: [Navigation],
-    
-    componentDidMount: function() {
-        ThreadStore.addChangeListener(this._onChange);
-    },
-    
-    componentWillUnmount: function() {
-        ThreadStore.removeChangeListener(this._onChange);
-    },
-
-    _onChange: function () {
-        var allChrono = ThreadStore.getAllChrono();
-        var latest;
-	if (allChrono.length) {
-            // TODO this doesn't work. We need to wait until all chat history is
-            // loaded so we know which is the most recent thread (in the fb demo
-            // chat history is all loaded at once, in this app chats are loaded for each
-            // person in the roster, so not in order of most recent messages)
-            latest = allChrono[0];
-            ThreadStore.removeChangeListener(this._onChange);  // TODO this needed?
-	    // TODO complete hack here, call transitionTo asynchronously otherwise
-	    // get an error from Dispatcher. Absolutely NO IDEA how to properly
-	    // integrate react-router with flux-style app.
-	    // One way is to move currentXX state out of the stores, as that info
-	    // is encoded in the url. Can then get state by calling store methods
-	    // with params from url. Eg.
-	    //
-	    //     {messages: MessageStore.getForChatroom(this.props.params.chatroom)}
-	    //
-	    setTimeout(() => {
-		this.transitionTo('messages', {id: latest.id})
-	    }, 0);
-	}
-    },
-    
-    render: function () { return null; }
-});
-
-
 // declare our routes and their hierarchy
 var routes = (
     <Route handler={App}>
-	<Route path="/di/messages/" handler={DefaultThread}/>
+	<Route name="messagesHome" path="/di/messages/" handler={ChatApp}/>
 	<Route name="messages" path="/di/messages/:id/" handler={ChatApp}/>
+	<Route name="sessionsHome" path="/di/sessions/" handler={ChatApp}/>
+	<Route name="sessions" path="/di/sessions/:id/" handler={ChatApp}/>
     </Route>
 );
 
