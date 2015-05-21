@@ -45,7 +45,12 @@ class _DBTable(object):
         if hasattr(_table_prefix, 'value'):
             return _table_prefix.value
         else:
-            return _table_prefix(_current.value)
+            # HACK for borrowed laptop
+            if not hasattr(_current, "value"):
+                value = _MAIN
+            else:
+                value = _current.value
+            return _table_prefix(value)
         
     def __get__(self, obj, objtype):
         orig = getattr(obj, '_db_table', '')

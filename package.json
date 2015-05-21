@@ -2,16 +2,20 @@
   "name": "ditto",
   "version": "0.1.0",
   "dependencies": {
+    "babel": "^5.4.4",
     "flux": "^2.0.1",
     "keymirror": "^0.1.1",
     "lodash": "^3.6.0",
     "object-assign": "^2.0.0",
     "react": "^0.13.1",
     "react-bootstrap": "^0.16.1",
+    "react-components": "^0.2.0",
     "react-router": "^0.13.3",
+    "reactify": "^1.1.1",
     "strophe": "^1.2.0",
     "strophe-plugins": "^0.1.2",
     "timeago": "^0.2.0",
+    "underscore": "^1.8.3",
     "visibilityjs": "^1.2.1"
   },
   "devDependencies": {

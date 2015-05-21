@@ -129,7 +129,7 @@ class Common(Configuration):
 
     # DATABASE CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-    DATABASES = values.DatabaseURLValue('mysql://localhost/ditto')
+    DATABASES = values.DatabaseURLValue('mysql://root@localhost/ditto')
     # END DATABASE CONFIGURATION
 
     # CACHING
