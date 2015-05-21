@@ -49,6 +49,7 @@ var ThreadSection = React.createClass({
                 key={thread.id}
                 thread={thread}
                 currentThreadID={this.state.currentThreadID}
+		threadType={this.state.threadType + "s"}
                     />
             );
         }, this);
@@ -80,6 +81,7 @@ var ThreadSection = React.createClass({
                 <div className="list-group">
                 {threadListItems}
             </div>
+		{this.state.currentSessionID ? <Link className="btn btn-primary" to="sessionsHome">New session</Link> : null }
                 </div>
         );
     },
