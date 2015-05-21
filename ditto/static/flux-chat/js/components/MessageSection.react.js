@@ -6,7 +6,6 @@ var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
 var WhosTypingStore = require('../stores/WhosTypingStore');
 var FluidHeightMixin = require('../../../js/mixins/FluidHeightMixin.jsx');
-var ThreadCreator = require('../../../js/components/ThreadCreator.jsx');
 
 function getStateFromStores() {
     return {
@@ -28,12 +27,6 @@ function getMessageListItem(message) {
 var MessageSection = React.createClass({
     mixins: [FluidHeightMixin],
 
-    getDefaultProps: function () {
-        return {
-            withThreadCreator: true
-        }
-    },
-    
     getInitialState: function() {
         return getStateFromStores();
     },
@@ -63,7 +56,6 @@ var MessageSection = React.createClass({
             </ul>
                 <WhosTyping users={this.state.whosTyping} />
                 {this.state.thread ? <MessageComposer threadID={this.state.thread.id} isGroup={this.props.isGroup} /> : null }
-                {this.state.thread && !this.props.isGroup ? <ThreadCreator threadID={this.state.thread.id}/> : null}
                 </div>
         );
     },

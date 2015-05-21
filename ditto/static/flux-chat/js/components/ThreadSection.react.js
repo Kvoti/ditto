@@ -41,6 +41,7 @@ var ThreadSection = React.createClass({
     },
 
     render: function() {
+	console.log("threads", this.state.threads);
 	var style = {height: this.state.height};
         var threadListItems = this.state.threads.map(function(thread) {
             return (
@@ -69,7 +70,7 @@ var ThreadSection = React.createClass({
                 </li>
                 <li role="presentation" className={this.state.threadType === ThreadStore.session ? 'active' : ''}>
                 {this.state.currentSessionID ?
-                 <Link to="sessions" params={{id: 'TODO'}}>My sessions</Link> :
+                 <Link to="sessions" params={{id: this.state.currentSessionID}}>My sessions</Link> :
                  <Link to="sessionsHome">My sessions</Link>}
                 </li>
                  </ul>

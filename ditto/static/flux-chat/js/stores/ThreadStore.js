@@ -152,15 +152,6 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
     switch(action.type) {
 
-    case ActionTypes.CREATE_THREAD:
-        _currentID = action.threadID;
-        _threads[_currentID] = {
-            id: action.threadID,
-            name: action.threadID
-        }
-        ThreadStore.emitChange();
-        break;
-
     case ActionTypes.RECEIVE_RAW_MESSAGES:
         ThreadStore.init(action.rawMessages);
         ThreadStore.emitChange();
@@ -247,12 +238,12 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         } else {
             _currentMessageID = _currentID
         }
-        if (!_threads[_currentID]) {
-            _threads[_currentID] = {
-                id: _currentID,
-                name: _currentID
-            }
-        }
+        //if (!_threads[_currentID]) {
+        //    _threads[_currentID] = {
+        //        id: _currentID,
+        //        name: _currentID
+        //    }
+        //}
         ThreadStore.emitChange();
         break;
         
