@@ -12,6 +12,7 @@
     "react-components": "^0.2.0",
     "react-router": "^0.13.3",
     "reactify": "^1.1.1",
+    "react-select": "^0.4.9",
     "strophe": "^1.2.0",
     "strophe-plugins": "^0.1.2",
     "timeago": "^0.2.0",

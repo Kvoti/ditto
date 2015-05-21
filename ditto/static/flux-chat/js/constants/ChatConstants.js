@@ -7,7 +7,6 @@ module.exports = {
         DISCONNECT: null,
 
         CREATE_THREAD: null,
-        TOGGLE_CHAT_TYPE: null,
         
         CREATE_MESSAGE: null,
         START_TYPING: null,
@@ -30,7 +29,8 @@ module.exports = {
         CHANGE_AVATAR: null,
 
         CHANGE_CHATROOM: null,
-        CHANGE_PRIVATE_CHAT: null
+        CHANGE_PRIVATE_CHAT: null,
+        CHANGE_PRIVATE_TYPE: null
     }),
 
     chatStatus: {
@@ -44,5 +44,6 @@ module.exports = {
 
     connected: 'connected',
 
-    disconnected: 'disconnected'
+    disconnected: 'disconnected',
+
 };

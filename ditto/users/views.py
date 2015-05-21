@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+import json
+
 # Import the reverse lookup function
 from django.core.urlresolvers import reverse
 
+from django.http import HttpResponse
 # view imports
 from django.views.generic import DetailView
 from django.views.generic import RedirectView
@@ -65,3 +68,13 @@ class UserListView(LoginRequiredMixin, ListView):
     # These next two lines tell the view to index lookups by username
     slug_field = "username"
     slug_url_kwarg = "username"
+
+
+#@login_required
+def search(request):
+    users = User.objects.values_list('username', flat=True)
+    query = request.GET.get('q', '')
+    if query:
+        users = users.filter(username__contains=query)
+    return HttpResponse(json.dumps(list(users)),
+                        content_type="application/json")

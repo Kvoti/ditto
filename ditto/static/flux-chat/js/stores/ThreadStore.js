@@ -11,7 +11,7 @@ var SESSION = 'session';
 
 var _currentID = null;
 var _currentMessageID = null;
-var _currentSessionID = 'xxx';
+var _currentSessionID = null;
 var _threads = {};
 var _threadType = MESSAGE;
 
@@ -41,12 +41,12 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
             };
         }, this);
 
-        if (!_currentID) {
-            var allChrono = this.getAllChrono();
-            _currentID = allChrono[allChrono.length - 1].id;
-        }
+        // if (!_currentID) {
+        //     var allChrono = this.getAllChrono();
+        //     _currentID = allChrono[allChrono.length - 1].id;
+        // }
 
-        if (_threads[_currentID] && _threads[_currentID].lastMessage) {
+        if (_currentID && _threads[_currentID] && _threads[_currentID].lastMessage) {
             // TODO need a big sort out of thread handling, this code largely unchangd from facebook's demo app
             // Might be we should separate out pchat and group chat messages. In any case isRead doesn't really work
             // as there's not way (I've found yet) of having that info on the server.
@@ -112,6 +112,14 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
 
     getCurrentID: function() {
         return _currentID;
+    },
+
+    getCurrentChatID: function() {
+        return _currentMessageID;
+    },
+    
+    getCurrentSessionID: function() {
+        return _currentSessionID;
     },
 
     getCurrent: function() {
@@ -196,7 +204,18 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         break;
 
     case ActionTypes.CHANGE_PRIVATE_CHAT:
-        _currentID = action.threadID
+        if (_threadType === SESSION && action.threadType === MESSAGE) {
+            _currentSessionID = _currentID
+        } else if (_threadType === MESSAGE && action.threadType === SESSION) {
+            _currentMessageID = _currentID
+        }
+        _currentID = action.threadID;
+        _threadType = action.threadType;
+        if (_threadType === SESSION) {
+            _currentSessionID = _currentID
+        } else {
+            _currentMessageID = _currentID
+        }
         if (!_threads[_currentID]) {
             _threads[_currentID] = {
                 id: _currentID,
@@ -205,16 +224,25 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         }
         ThreadStore.emitChange();
         break;
-
-    case ActionTypes.TOGGLE_CHAT_TYPE:
-        if (_threadType === MESSAGE) {
-            _threadType = SESSION
-            _currentMessageID = _currentID;
-            _currentID = _currentSessionID;
+        
+    case ActionTypes.CHANGE_PRIVATE_CHAT_TYPE:
+        if (_threadType === SESSION && action.threadType === MESSAGE) {
+            _currentSessionID = _currentID
+        } else if (_threadType === MESSAGE && action.threadType === SESSION) {
+            _currentMessageID = _currentID
+        }
+        _currentID = null;
+        _threadType = action.threadType;
+        if (_threadType === SESSION) {
+            _currentSessionID = _currentID
         } else {
-            _threadType = MESSAGE
-            _currentSessionID = _currentID;
-            _currentID = _currentMessageID;
+            _currentMessageID = _currentID
+        }
+        if (!_threads[_currentID]) {
+            _threads[_currentID] = {
+                id: _currentID,
+                name: _currentID
+            }
         }
         ThreadStore.emitChange();
         break;
