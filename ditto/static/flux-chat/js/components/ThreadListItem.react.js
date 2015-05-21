@@ -27,7 +27,8 @@ var ThreadListItem = React.createClass({
       <Link className={cx({
           'list-group-item': true,
           'active': thread.id === this.props.currentThreadID
-        })} to={this.props.threadType} params={{id: thread.id}}>
+      })} to={this.props.threadType} params={{id: thread.id}}>
+	    <p>{this.props.thread.name}</p>
             <LeftRightAlign>
             <p><b>{contact}</b> <em>[<Status user={contact} />]</em></p>
             <p className="messageTimestamp"><TimeAgo when={lastMessage ? lastMessage.date : new Date()} /></p>
