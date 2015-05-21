@@ -11,13 +11,23 @@ urlpatterns = patterns('',
     ),
                        
     url(
-        regex=r'^(?:messages|sessions)/$',
+        regex=r'^messages/$',
         view=login_required(
             views.TemplateView.as_view(
                 template_name="index.html"
             ),
         ),
         name='private_chats'
+    ),
+                       
+    url(
+        regex=r'^sessions/$',
+        view=login_required(
+            views.TemplateView.as_view(
+                template_name="index.html"
+            ),
+        ),
+        name='sessions'
     ),
                        
     url(
