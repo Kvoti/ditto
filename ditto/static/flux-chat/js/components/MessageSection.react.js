@@ -32,7 +32,6 @@ var MessageSection = React.createClass({
     },
 
     componentDidMount: function() {
-        this._scrollToBottom();
         MessageStore.addChangeListener(this._onChange);
         ThreadStore.addChangeListener(this._onChange);
         WhosTypingStore.addChangeListener(this._onChange);
@@ -48,7 +47,9 @@ var MessageSection = React.createClass({
         var style;
         var messageListItems = this.state.messages.map(getMessageListItem);
 	// TODO can we move the height stuff here to a mixin somehow?
-	style = {height: this.state.height};
+	if (this.state.messages.length) {
+	    style = {height: this.state.height};
+	};	    
         return (
             <div className="message-section">
             <ul style={style} className="message-list" ref="messageList">

@@ -7,7 +7,7 @@ var Navigation = Router.Navigation;
 
 function getStateFromStores() {
     return {
-        currentID: ThreadStore.getCurrentSessionID(),
+        currentID: ThreadStore.getCurrentID(),
         threadType: ThreadStore.getThreadType(),
     };
 }
@@ -31,15 +31,16 @@ var SessionCreator = React.createClass({
     },
 
     render: function() {
-	if (!(this.state.threadType === 'session' && !this.state.currentID)) {
+	if (this.state.currentID) {
 	    return null;
 	}
         return (
 	    <form className="form-horizontal" onSubmit={this._onSubmit}>
+  		<h4>Start new {this.state.threadType === ThreadStore.session ? "session" : "message" }</h4>
 		<div className="form-group">
 		    <div className="col-md-3">
 			<label>
-			    User
+  		            {this.state.threadType === ThreadStore.session ? "With" : "Recipient" }
 			</label>
 		    </div>
 		    <div className="col-md-9">
@@ -49,7 +50,7 @@ var SessionCreator = React.createClass({
 		<div className="form-group">
 		    <div className="col-md-3">
 			<label forHtml="id-message">
-			    Session title
+  		            {this.state.threadType === ThreadStore.session ? "Session title" : "Subject (optional)" }
 			</label>
 		    </div>
 		    <div className="col-md-9">
@@ -62,13 +63,13 @@ var SessionCreator = React.createClass({
 				/>
 		    </div>
 		</div>
-		<input disabled={!this._isValid()} className="btn btn-success" type="submit" value="Create session" />
+		<input disabled={!this._isValid()} className="btn btn-success" type="submit" value={"Create " + this.state.threadType} />
 	    </form>
         );
     },
 
     _isValid: function () {
-	return this.state.text && this.state.user;
+	return this.state.threadType === ThreadStore.message && this.state.user || this.state.text && this.state.user;
     },
 
     _onChange: function(event, value) {
@@ -92,10 +93,16 @@ var SessionCreator = React.createClass({
 	// that to a threadID, and then mapping that to the URL -- threads need
 	// a big sort out (made incrementally hacky changes from FBs original
 	// example, hence need to do big sort out)
-	threadID = 'session:' + participants + ':' + text;
-	console.log("creating thread", threadID);
-        //ChatThreadActionCreators.createThread(threadID);
-	this.transitionTo('sessions', {id: threadID});
+	threadID = participants;
+	if (text) {
+	    threadID = participants + ':' + text;
+	}
+	if (this.state.threadType === ThreadStore.session) {
+	    threadID = 'session:' + threadID;
+	}
+	this.transitionTo(
+	    this.state.threadType + 's',  // TODO aargh, fix this session vs sessions crap!
+	    {id: threadID});
         this.setState({
 	    text: '',
 	    user: null,
