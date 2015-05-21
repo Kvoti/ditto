@@ -28,6 +28,9 @@ module.exports = {
         var me = Strophe.getNodeFromJid(chatConf.me);
         // TODO repeated in webutils
 	var participants = threadID.split(':');
+	if (threadID.indexOf("session:") === 0) {
+	    participants = participants.slice(1);
+	}	    
 	var other = participants[0] === me ? participants[1] : participants[0];
         return other;
     },

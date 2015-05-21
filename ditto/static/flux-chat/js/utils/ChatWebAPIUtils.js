@@ -1,5 +1,6 @@
 var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
+var ChatMessageUtils = require('./ChatMessageUtils');
 
 var _connection, _connectionStatus, _domain, _me, _myJID, _nick;
 var _defaultRoom;
@@ -56,13 +57,15 @@ function fetchChatrooms () {
 
 function receiveChatrooms (result) {
     var roomList = XMPP.parse.roomList(result);
-    // TODO something better than these path inspection hacks, pass some explicit option?
-    if (window.location.href.indexOf('chatroom') === -1) {
-        // Anywhere outside of /chatrooms/ we just want to join the 'main' site chatroom
-        // TODO should be explicit about main chatroom instead of relying on roomList[0]
-        joinChatroom(roomList[0]);
+    if (roomList.length) {
+	// TODO something better than these path inspection hacks, pass some explicit option?
+	if (window.location.href.indexOf('chatroom') === -1) {
+            // Anywhere outside of /chatrooms/ we just want to join the 'main' site chatroom
+            // TODO should be explicit about main chatroom instead of relying on roomList[0]
+            joinChatroom(roomList[0]);
+	}
+	ChatServerActionCreators.receiveChatrooms(roomList);
     }
-    ChatServerActionCreators.receiveChatrooms(roomList);
 };
 
 function joinChatroom (roomJID) {
@@ -257,9 +260,7 @@ module.exports = {
                 message.text
             )
         } else {
-	    // yuk
-	    var participants = message.threadID.split(':');
-	    var to = participants[0] === _me ? participants[1] : participants[0];
+	    var to = ChatMessageUtils.getMessageOther(message.threadID);
 	    var payload = XMPP.create.privateMessage(
 	        message.text,
 	        _myJID,
@@ -287,10 +288,7 @@ module.exports = {
 
     // TODO only send this if other person is online? what's spec say?
     startTyping: function (threadID) {
-	// yuk
-	var participants = threadID.split(':');
-	var to = participants[0] === _me ? participants[1] : participants[0];
-	//
+	var to = ChatMessageUtils.getMessageOther(threadID);
 	if (!sentIsTyping[threadID]) {
 	    sentIsTyping[threadID] = true;
 	    _connection.chatstates.sendComposing(
@@ -300,10 +298,7 @@ module.exports = {
     },
 
     stopTyping: function (threadID) {
-	// yuk
-	var participants = threadID.split(':');
-	var to = participants[0] === _me ? participants[1] : participants[0];
-	//
+	var to = ChatMessageUtils.getMessageOther(threadID);
 	delete sentIsTyping[threadID];
 	_connection.chatstates.sendActive(
 	    getBareJIDForNode(to)

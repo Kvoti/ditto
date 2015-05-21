@@ -82,7 +82,9 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
     getAll: function() {
         var filtered = {};
         for (var id in _threads) {
-            if (_threadType === MESSAGE) {
+            if (_threadType === MESSAGE && !_isSession(id) ||
+		_threadType === SESSION && _isSession(id)
+	       ) {
                 filtered[id] = _threads[id];
             }
         }
@@ -139,6 +141,13 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
     }
 });
 
+function _isSession (threadID) {
+    // TODO better way to identify session? (though threadID seems to be all
+    // we have to work with)
+    return threadID.indexOf("session:") === 0;
+}
+
+    
 ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
     switch(action.type) {

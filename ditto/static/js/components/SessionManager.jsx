@@ -2,6 +2,8 @@ var ChatThreadActionCreators = require('../../flux-chat/js/actions/ChatThreadAct
 var React = require('react');
 var UserAutocomplete = require('./UserAutocomplete.jsx');
 var ThreadStore = require('../../flux-chat/js/stores/ThreadStore');
+var Router = require('react-router');
+var Navigation = Router.Navigation;
 
 function getStateFromStores() {
     return {
@@ -11,6 +13,8 @@ function getStateFromStores() {
 }
 
 var SessionCreator = React.createClass({
+    mixins: [Navigation],
+    
     componentDidMount: function() {
         ThreadStore.addChangeListener(this._onStoreChange);
     },
@@ -83,8 +87,15 @@ var SessionCreator = React.createClass({
 	participants = [DITTO.user, this.state.user];
 	participants.sort();
 	participants = participants.join(':');
+	// TODO threads can have parents so maybe we should have two top level
+	// threads, "messages" and "sessions" (and sort out generally mapping
+	// that to a threadID, and then mapping that to the URL -- threads need
+	// a big sort out (made incrementally hacky changes from FBs original
+	// example, hence need to do big sort out)
 	threadID = 'session:' + participants + ':' + text;
-        ChatThreadActionCreators.createThread(threadID);
+	console.log("creating thread", threadID);
+        //ChatThreadActionCreators.createThread(threadID);
+	this.transitionTo('sessions', {id: threadID});
         this.setState({
 	    text: '',
 	    user: null,
