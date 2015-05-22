@@ -21,4 +21,4 @@ def password(username):
         return ""
     else:
         signer = Signer()
-        return signer.sign(user.username)
+        return signer.sign(username)
