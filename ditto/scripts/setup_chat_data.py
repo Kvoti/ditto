@@ -49,7 +49,8 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         # listen for this event so that we we can initialize
         # our roster.
         self.add_event_handler("session_start", self.start, threaded=True)
-        self.add_event_handler("groupchat_presence", self.group_presence)
+        self.add_event_handler("presence", self.presence)
+        #self.add_event_handler("groupchat_message", self.group_message)
 
     def start(self, event):
         """
@@ -81,18 +82,24 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
                               mtype='chat')
 
         # TODO what event should I wait on before sending the group message?
+        # cant see how to wait on response to configureRoom
         from time import sleep
         sleep(2)
         self.send_message(mto=self.room,
                           mbody="hi, this is your friendly chat bot in the chatroom",
                           mtype='groupchat')
 
-        # Using wait=True ensures that the send queue will be
-        # emptied before ending the session.
-        self.disconnect(wait=True)
 
-    def group_presence(self, pr):
+    def presence(self, pr):
+        print "presence", pr
+        # TODO only do this once (when joined room), not on each presence
         self.plugin['xep_0045'].configureRoom(self.room, ifrom=self.me)
+
+    def group_message(self, msg):
+        if "friendly" in msg["body"]:
+            # Using wait=True ensures that the send queue will be
+            # emptied before ending the session.
+            self.disconnect(wait=True)
 
         
 def jid(username):

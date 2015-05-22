@@ -38,10 +38,10 @@ def builddb():
                  user="pydev")
             sudo(' ../../bin/python manage.py runscript setup_test_data',
                  user="pydev")
-    # Set up data for example network for digital impacts
-    newnetwork('di')
     # Restart chat so anything cached by the chat server is forgotten
     sudo('mongooseimctl restart')
+    # Set up data for example network for digital impacts
+    newnetwork('di')
 
 
 def newnetwork(name):
