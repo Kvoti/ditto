@@ -49,6 +49,7 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         # listen for this event so that we we can initialize
         # our roster.
         self.add_event_handler("session_start", self.start, threaded=True)
+        self.add_event_handler("groupchat_presence", self.group_presence)
 
     def start(self, event):
         """
@@ -65,16 +66,33 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         """
         self.send_presence()
         self.get_roster()
-
+        self.room = "main@muc.%s" % DOMAIN
+        self.plugin['xep_0045'].joinMUC(self.room,
+                                        "mark",
+                                        # If a room password is needed, use:
+                                        # password=the_room_password,
+                                        pfrom=self.me,
+                                        wait=True)
+        
         for recipient in ("sarah", "ross"):
             self.send_message(mto=jid(recipient),
                               mfrom=self.me,
                               mbody="hi, this is your friendly chat bot",
                               mtype='chat')
 
+        # TODO what event should I wait on before sending the group message?
+        from time import sleep
+        sleep(2)
+        self.send_message(mto=self.room,
+                          mbody="hi, this is your friendly chat bot in the chatroom",
+                          mtype='groupchat')
+
         # Using wait=True ensures that the send queue will be
         # emptied before ending the session.
         self.disconnect(wait=True)
+
+    def group_presence(self, pr):
+        self.plugin['xep_0045'].configureRoom(self.room, ifrom=self.me)
 
         
 def jid(username):
@@ -92,7 +110,8 @@ def run():
     xmpp = SendMsgBot(jid("mark"), chat.utils.password("mark"))
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0199') # XMPP Ping
-
+    xmpp.register_plugin('xep_0045')
+    
     # If you are working with an OpenFire server, you may need
     # to adjust the SSL version used:
     # xmpp.ssl_version = ssl.PROTOCOL_SSLv3

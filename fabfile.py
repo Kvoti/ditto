@@ -42,7 +42,8 @@ def builddb():
     newnetwork('di')
     # Restart chat so anything cached by the chat server is forgotten
     sudo('mongooseimctl restart')
-    
+
+
 def newnetwork(name):
     # TODO this needs to create the Tenant record in the main 'database'
     with cd('/srv/venv/ditto/ditto'):
