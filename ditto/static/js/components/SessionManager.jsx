@@ -44,7 +44,7 @@ var SessionCreator = React.createClass({
 			</label>
 		    </div>
 		    <div className="col-md-9">
-			<UserAutocomplete onChange={this._onUserChange} />
+			<UserAutocomplete value={this.state.user} onChange={this._onUserChange} />
 		    </div>
 		</div>
 		<div className="form-group">

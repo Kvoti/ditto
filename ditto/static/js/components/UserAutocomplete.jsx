@@ -24,7 +24,7 @@ var UserAutocomplete = React.createClass({
 	return (
 	    <Select
 		    name="form-field-name"
-		    value="one"
+		    value={this.props.value}
 		    placeholder="Enter username"
 		    asyncOptions={search}
 		    onChange={this.props.onChange}
