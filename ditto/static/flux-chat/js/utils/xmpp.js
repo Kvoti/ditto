@@ -43,7 +43,7 @@ module.exports = {
             // the archive for all messages. Really we want to load the
             // last N messags for *each* private chat
             var isGroupChat = msg.find('[type=groupchat]').length;
-	    var from = msg.find('message').attr("from");
+	    var from = msg.find('delay').attr("from");
             if (isGroupChat || !from) {
                 return;
             };
