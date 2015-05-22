@@ -40,6 +40,7 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
     """
 
     def __init__(self, jid, password):
+        self.me = jid
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         # The session_start event will be triggered when
@@ -67,6 +68,7 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
 
         for recipient in ("sarah", "ross"):
             self.send_message(mto=jid(recipient),
+                              mfrom=self.me,
                               mbody="hi, this is your friendly chat bot",
                               mtype='chat')
 
