@@ -16,6 +16,8 @@ from optparse import OptionParser
 
 import sleekxmpp
 
+import chat.utils
+
 # Python versions before 3.0 do not use UTF-8 encoding
 # by default. To ensure that Unicode is handled properly
 # throughout SleekXMPP, we will set the default encoding
@@ -25,6 +27,9 @@ if sys.version_info < (3, 0):
     setdefaultencoding('utf8')
 else:
     raw_input = input
+
+# Need to query the domain here as doing it inside SendMsgBot doesnt work
+DOMAIN = chat.utils.domain()
 
 
 class SendMsgBot(sleekxmpp.ClientXMPP):
@@ -61,8 +66,7 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         self.get_roster()
 
         for recipient in ("sarah", "ross"):
-            jid = "%s@%s" % (recipient, "network1.localhost")
-            self.send_message(mto=jid,
+            self.send_message(mto=jid(recipient),
                               mbody="hi, this is your friendly chat bot",
                               mtype='chat')
 
@@ -70,8 +74,12 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         # emptied before ending the session.
         self.disconnect(wait=True)
 
+        
+def jid(username):
+    return "%s@%s" % (username, DOMAIN)
 
-if __name__ == '__main__':
+
+def run():
     # Setup logging.
     logging.basicConfig(level=logging.DEBUG,
                         format='%(levelname)-8s %(message)s')
@@ -79,7 +87,7 @@ if __name__ == '__main__':
     # Setup the EchoBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
     # not matter.
-    xmpp = SendMsgBot("mark@network1.localhost", "")
+    xmpp = SendMsgBot(jid("mark"), "")
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0199') # XMPP Ping
 
@@ -91,7 +99,7 @@ if __name__ == '__main__':
     # xmpp.ca_certs = "path/to/ca/cert"
 
     # Connect to the XMPP server and start processing XMPP stanzas.
-    if xmpp.connect(("localhost", 5222)):
+    if xmpp.connect((chat.utils.server(), 5222)):
         # If you do not have the dnspython library installed, you will need
         # to manually specify the name of the server if it does not match
         # the one in the JID. For example, to use Google Talk you would
