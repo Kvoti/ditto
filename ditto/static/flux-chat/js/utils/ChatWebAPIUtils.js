@@ -233,7 +233,7 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log) {
+        if (log || true) {
             setupLogging();
         }
         _connection.connect(

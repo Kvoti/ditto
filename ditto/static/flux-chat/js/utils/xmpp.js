@@ -43,13 +43,14 @@ module.exports = {
             // the archive for all messages. Really we want to load the
             // last N messags for *each* private chat
             var isGroupChat = msg.find('[type=groupchat]').length;
-            if (isGroupChat) {
+	    var from = msg.find('message').attr("from");
+            if (isGroupChat || !from) {
                 return;
             };
             var message = {
                 id: msg.find('result').attr('id'),
 	        text: msg.find("body:first").text(),
-	        from: Strophe.getNodeFromJid(msg.find('message').attr("from")),
+	        from: Strophe.getNodeFromJid(from),
 	        to: Strophe.getNodeFromJid(msg.find('message').attr("to")),
 	        timestamp: new Date(msg.find('delay').attr('stamp')),
                 threadID: msg.find('thread').text()

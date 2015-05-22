@@ -40,7 +40,8 @@ def builddb():
                  user="pydev")
     # Set up data for example network for digital impacts
     newnetwork('di')
-
+    # Restart chat so anything cached by the chat server is forgotten
+    sudo('mongooseimctl restart')
     
 def newnetwork(name):
     # TODO this needs to create the Tenant record in the main 'database'
