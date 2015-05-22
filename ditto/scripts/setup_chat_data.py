@@ -87,7 +87,7 @@ def run():
     # Setup the EchoBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
     # not matter.
-    xmpp = SendMsgBot(jid("mark"), "")
+    xmpp = SendMsgBot(jid("mark"), chat.utils.password("mark"))
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0199') # XMPP Ping
 
