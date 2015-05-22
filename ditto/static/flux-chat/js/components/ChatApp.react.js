@@ -41,7 +41,7 @@ var ChatApp = React.createClass({
                     <ThreadSection heightOffset={250} />
                     </div>
                     <div className="col-md-6">
-                    <MessageSection heightOffset={270} />
+                    <MessageSection heightOffset={230} />
                     <SessionManager />
                     </div>
                     <div className="col-md-3">
