@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.contrib.sites.models import Site
@@ -29,7 +30,8 @@ def my_network(request):
         else:
             return create_my_network(request)
 
-    
+
+@login_required
 def create_my_network(request):
     if request.method == 'POST':
         form = forms.TenantForm(request.user, data=request.POST)
