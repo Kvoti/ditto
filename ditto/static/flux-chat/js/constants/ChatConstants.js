@@ -35,7 +35,7 @@ module.exports = {
 
     chatStatus: {
         away: 'Away',
-        chat: 'Free for chat',
+        chat: 'Available',
         dnd: 'Do not disturb',
         xa: 'Extended away',
     },
