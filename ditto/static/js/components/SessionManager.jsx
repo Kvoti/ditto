@@ -36,7 +36,7 @@ var SessionCreator = React.createClass({
 	}
         return (
 	    <form className="form-horizontal" onSubmit={this._onSubmit}>
-  		<h4>Start new {this.state.threadType === ThreadStore.session ? "session" : "message" }</h4>
+  		<h4>Start new {this.state.threadType === ThreadStore.session ? "session" : "chat" }</h4>
 		<div className="form-group">
 		    <div className="col-md-3">
 			<label>
@@ -63,7 +63,7 @@ var SessionCreator = React.createClass({
 				/>
 		    </div>
 		</div>
-		<input disabled={!this._isValid()} className="btn btn-success" type="submit" value={"Create " + this.state.threadType} />
+		<input disabled={!this._isValid()} className="btn btn-success" type="submit" value={"Create " + (this.state.threadType === ThreadStore.session ? "session" : "chat")} />
 	    </form>
         );
     },
