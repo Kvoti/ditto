@@ -1,5 +1,12 @@
 // TODO alternative to using jquery here to parse the XMPP packets?
 
+// TODO is increasing integer ok to use as id?
+var _messageID = 0;
+
+function getNewMessageID () {
+    return _messageID++;
+}
+
 function setThreadFields(message) {
     var thread = [message.from, message.to];
     thread.sort();
@@ -122,7 +129,7 @@ module.exports = {
 	        when = new Date();
             }
             return {
-                id: msg.find('archived').attr('id'),
+                id: getNewMessageID(),
                 from: from,
                 to: to,
                 text: body,

@@ -18,6 +18,34 @@ import sleekxmpp
 
 import chat.utils
 
+CHATROOM_SCRIPT = """\
+Users register to use Ditto on the Ditto homepage at ditto.technology.
+
+Once they have signed up and verified their email account, a user can then set up their own Ditto network http://ditto.technology/[networkname]/.
+
+Basic Information
+
+Name:  The given name of a Ditto network
+
+Theme:  The visual theme of a Ditto network
+
+Type:  The type of business sector, i.e. business, charity, social, voluntary etc.
+
+Description:  A brief description of the network
+
+Size Cap:  Determines the maximum number of users on the network.
+
+All basic setup information can be changed at any time via the ‘Settings’ menu by the network Administrator.
+
+Roles: Sets the number and name of the roles in a Ditto network. ‘Administrator’ and ‘Member’ roles are set as defaults.
+
+Example: A Sexual Health Service might specify the following roles:
+
+Counsellor, GP, Nurse Manager, Sexual Health Adviser
+
+Permissions: Sets the permissions for each role; determines how roles communicate with each other (IM, video, audio).
+"""
+
 # Python versions before 3.0 do not use UTF-8 encoding
 # by default. To ensure that Unicode is handled properly
 # throughout SleekXMPP, we will set the default encoding
@@ -85,9 +113,12 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         # cant see how to wait on response to configureRoom
         from time import sleep
         sleep(2)
-        self.send_message(mto=self.room,
-                          mbody="hi, this is your friendly chat bot in the chatroom",
-                          mtype='groupchat')
+        for msg in CHATROOM_SCRIPT.splitlines():
+            msg = msg.strip()
+            if msg:
+                self.send_message(mto=self.room,
+                                  mbody=msg,
+                                  mtype='groupchat')
 
 
     def presence(self, pr):

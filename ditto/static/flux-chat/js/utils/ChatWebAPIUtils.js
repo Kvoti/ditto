@@ -15,9 +15,9 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
-Strophe.log = function (level, msg) {
-    console.log(msg);
-};
+// Strophe.log = function (level, msg) {
+//     console.log(msg);
+// };
 
 function onConnect (status_code) {
     _connectionStatus = status_code;
@@ -233,7 +233,7 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log || true) {
+        if (log) {
             setupLogging();
         }
         _connection.connect(
