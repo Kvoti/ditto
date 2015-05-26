@@ -45,6 +45,11 @@
 	    
             {% url 'page' 'contact-us' as url %}
             {% navitem "contact-us" url _("CONTACT US") %}
+
+	    {% if perms.users.invite_user %}
+                {% url 'invites' as url %}
+                {% navitem "invites" url _("INVITES") %}
+	    {% endif %}
         {% endif %}
             
         {% if not request.user.is_authenticated %}

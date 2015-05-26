@@ -12,3 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 class User(AbstractUser):
     def __unicode__(self):
         return self.username
+
+    class Meta(AbstractUser.Meta):
+        permissions = (
+            ('invite_user', 'Can invite a user'),
+        )

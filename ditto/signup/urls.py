@@ -9,4 +9,8 @@ urlpatterns = patterns(
 
     # Role specific signup view
     url(r"^signup/(\w+)/$", views.signup, name="account_signup_role"),
+
+    url(r"^invites/$", views.invites, name="invites"),
+
+    url(r"^invites/add/$", views.add_invite, name="add_invite")
 )

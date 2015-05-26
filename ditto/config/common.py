@@ -49,6 +49,7 @@ class Common(Configuration):
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
         'django_extensions',
+        'sesame',
     )
 
     # Apps specific for this project go here.
@@ -82,6 +83,7 @@ class Common(Configuration):
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'django.contrib.sites.middleware.CurrentSiteMiddleware',
+        'sesame.middleware.AuthenticationMiddleware',
     )
     # END MIDDLEWARE CONFIGURATION
 
@@ -235,6 +237,7 @@ class Common(Configuration):
     AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
         'allauth.account.auth_backends.AuthenticationBackend',
+        'sesame.backends.ModelBackend',
     )
 
     # Some really nice defaults

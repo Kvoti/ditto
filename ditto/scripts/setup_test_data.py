@@ -52,7 +52,7 @@ def setup_guest_passwords():
 def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
     site = Site.objects.get_current()
     site.name = name
-    domain = 'localhost' if settings.DEBUG else site.name.lower()
+    domain = 'localhost:8000' if settings.DEBUG else site.name.lower()
     if subdomain:
         domain = '%s.%s' % (subdomain, domain)
     site.domain = domain
@@ -92,6 +92,8 @@ def setup_admin_permission():
         content_type=content_type)
     perm.name = 'Can administer'
     perm.save()
+    Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
+    perm = Permission.objects.get(codename='invite_user')
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     
 
