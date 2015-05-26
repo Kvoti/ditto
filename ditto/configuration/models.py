@@ -37,7 +37,14 @@ class Config(models.Model):
         'Charity',
         'Volunteer',
     )
-    SIZES = (1000, 5000, 10000)
+    SIZES = (
+        "100",
+        "500",
+        "1,000",
+        "5,000",
+        "10,000",
+        "Uber",
+    )
     
     theme = models.CharField(
         _("theme"),
@@ -52,8 +59,9 @@ class Config(models.Model):
         help_text=_("A brief description of your network"),
         blank=True,
     )
-    size_cap = models.IntegerField(
+    size_cap = models.CharField(
         _("size cap"),
+        max_length=10,
         help_text=_("How many people are you likely to have?"),
         choices=zip(SIZES, SIZES)
     )
