@@ -7,6 +7,13 @@
   <tr>
     <td>{{ user }}</td>
     <td><a href="{{ link }}">{{ link }}</a></td>
+    <td>
+      <form method="post" action="{% url 'revoke_invite' %}">
+	{% csrf_token %}
+	<input type="hidden" name="user" value="{{ user }}">
+	<input class="btn btn-danger" type="submit" value="revoke">
+      </form>
+    </td>
   </tr>
   {% endfor %}
 </table>

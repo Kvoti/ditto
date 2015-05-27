@@ -7,8 +7,11 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.sites.models import Site
+from django.views.decorators.http import require_POST
 
 import core
+from multitenancy.models import Tenant
+from multitenancy import tenant
 from users.models import User
 
 from . import forms
@@ -62,3 +65,28 @@ def invites(request):
               'http://%s/main/%s' % (Site.objects.get_current().domain, sesame.utils.get_query_string(user)))
              for user in guest_users]
     return render(request, 'signup/guest_links.html', {'links': links})
+
+
+@permission_required('users.invite_user', raise_exception=True)
+@require_POST
+def revoke_invite(request):
+    # need to revoke the auto login link for each network the user
+    # is a member of
+    user = get_object_or_404(User, username=request.POST.get('user'))
+    _revoke_invite(user)
+    for tenant_slug in Tenant.objects.values_list('slug', flat=True):
+        with tenant._tenant(tenant_slug):
+            try:
+                tenant_user = User.objects.get(username=user.username)
+            except User.DoesNotExist:
+                pass
+            else:
+                _revoke_invite(tenant_user)
+    messages.success(request, "Invite revoked for %s" % user.username)
+    return HttpResponseRedirect(reverse('invites'))
+                
+
+def _revoke_invite(user):
+    # We just need to change the password to revoke the current link
+    user.set_password(User.objects.make_random_password())
+    user.save()

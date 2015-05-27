@@ -12,5 +12,7 @@ urlpatterns = patterns(
 
     url(r"^invites/$", views.invites, name="invites"),
 
-    url(r"^invites/add/$", views.add_invite, name="add_invite")
+    url(r"^invites/add/$", views.add_invite, name="add_invite"),
+    
+    url(r"^invites/revoke/$", views.revoke_invite, name="revoke_invite")
 )
