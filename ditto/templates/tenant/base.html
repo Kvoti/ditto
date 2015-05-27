@@ -7,8 +7,8 @@
     {% block tenant-content %}
     {% endblock %}
     <h2>Other networks</h2>
-    {% for network in networks %}
-    <p>Go to <a href="{{ network.network_url }}">{{ network.network_name }}</a></p>
+    {% for link, name in networks %}
+    <p>Go to <a href="{{ link }}">{{ name }}</a></p>
     {% endfor %}
     <p><a href="{% url 'ditto:create' %}" class="btn btn-primary">Create another network</a></p>
     </div>

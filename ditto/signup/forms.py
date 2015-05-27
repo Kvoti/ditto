@@ -1,10 +1,13 @@
 import json
 
+from django.contrib.auth.models import Group
 from django import forms
 from django.utils.translation import ugettext, ugettext_lazy as _
 
+import core
 from dittoforms.models import FormSpec
 from dittoforms.utils import FormFromSpecMixin
+from multitenancy import tenant
 from users.models import User
 
 
@@ -49,7 +52,15 @@ class InviteForm(forms.Form):
         )
 
     def save(self):
-        User.objects.create_user(
+        self._create_user()
+        with tenant._tenant('di'):   # FIXME
+            # create the user on the example network so we can
+            # give them an auto login link
+            self._create_user()
+
+    def _create_user(self):
+        user = User.objects.create_user(
             username=self.cleaned_data['username'],
             password=User.objects.make_random_password()
         )
+        user.groups.add(Group.objects.get(name=core.GUEST_ROLE))

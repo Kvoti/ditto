@@ -1,3 +1,4 @@
+import sesame.utils
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -44,16 +45,30 @@ def create_my_network(request):
         form = forms.TenantForm(request.user)
     return render(request, 'tenant/create.html', {
         'form': form,
-        'networks': models.Tenant.objects.all(),
+        'networks': _get_network_links(request)
     })
 
 
 def _go_to_my_network(request, tenants):
     return render(request, 'tenant/go.html', {
         'tenants': tenants,
-        'networks': models.Tenant.objects.all(),
+        'networks': _get_network_links(request)
     })
 
+
+def _get_network_links(request):
+    for tenant in models.Tenant.objects.all():
+        if tenant.slug == 'di' and request.user.has_perm('users.guest'):
+            with utils._tenant(tenant.slug):
+                user = User.objects.get(username=request.user.username)
+                link = 'http://%s/di/%s' % (
+                    Site.objects.get_current().domain,
+                    sesame.utils.get_query_string(user)
+                )
+        else:
+            link = tenant.network_url
+        yield link, tenant.network_name
+    
 
 def _create_network_instance(tenant):
     admin = tenant.user

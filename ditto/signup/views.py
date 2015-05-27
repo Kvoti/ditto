@@ -56,7 +56,9 @@ def add_invite(request):
 
 @permission_required('users.invite_user', raise_exception=True)
 def invites(request):
+    guest_users = User.objects.filter(
+        groups__permissions__codename="guest").order_by('-date_joined')
     links = [(user.username,
               'http://%s/main/%s' % (Site.objects.get_current().domain, sesame.utils.get_query_string(user)))
-             for user in User.objects.order_by('-date_joined')]
+             for user in guest_users]
     return render(request, 'signup/guest_links.html', {'links': links})

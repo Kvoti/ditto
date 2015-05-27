@@ -16,4 +16,5 @@ class User(AbstractUser):
     class Meta(AbstractUser.Meta):
         permissions = (
             ('invite_user', 'Can invite a user'),
+            ('guest', 'Guest permission'),
         )
