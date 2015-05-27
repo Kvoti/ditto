@@ -16,10 +16,10 @@ def deploy():
         run('git fetch')
         changes = run('git log ..origin/master --oneline --no-color --reverse > /tmp/log; cat /tmp/log')
         run('git merge origin/master')
+        sudo('/srv/venv/bin/pip install -U -r /srv/venv/ditto/requirements/production.txt')
         with cd('ditto'), shell_env(DJANGO_CONFIGURATION='Production'):
             sudo(' ../../bin/python manage.py collectstatic --noinput',
                  user="pydev")
-    sudo('/srv/venv/bin/pip install -U -r /srv/venv/ditto/requirements/production.txt')
     run('apachectl graceful')
     for line in changes.splitlines():
         print green(line)
