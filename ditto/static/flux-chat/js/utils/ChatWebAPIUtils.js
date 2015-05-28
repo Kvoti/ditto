@@ -15,9 +15,9 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
-Strophe.log = function (level, msg) {
-    console.log(msg);
-};
+// Strophe.log = function (level, msg) {
+//     console.log(msg);
+// };
 
 function onConnect (status_code) {
     _connectionStatus = status_code;
@@ -236,7 +236,7 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log || true) {
+        if (log) {
             setupLogging();
         }
         _connection.connect(
@@ -340,8 +340,10 @@ module.exports = {
 	    to: getBareJIDForNode(to),
 	    type: 'chat'
 	});
-        payload.c('thread').t(threadID).up();
         payload.c('ended');
+        payload.c('thread').t(threadID).up();
+	// Add empty body so message gets archived
+        payload.c('body').up();
 	_connection.send(payload.tree()); // TODO handle error on message submit
     }
 };
