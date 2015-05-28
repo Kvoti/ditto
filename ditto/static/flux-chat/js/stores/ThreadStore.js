@@ -34,11 +34,15 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
             if (thread && thread.lastTimestamp > message.timestamp) {
                 return;
             }
-            _threads[threadID] = {
-                id: threadID,
-                name: message.threadName,
-                lastMessage: ChatMessageUtils.convertRawMessage(message, _currentID)
-            };
+	    if (thread) {
+                thread.lastMessage = ChatMessageUtils.convertRawMessage(message, _currentID);
+	    } else {
+		_threads[threadID] = {
+                    id: threadID,
+                    name: message.threadName,
+                    lastMessage: ChatMessageUtils.convertRawMessage(message, _currentID)
+		};
+	    }
         }, this);
 
         // if (!_currentID) {
@@ -250,6 +254,13 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     // Maybe should split this into different store as with unread threads?
     case ActionTypes.END_THREAD:
 	_threads[action.threadID].isEnded = true;
+        ThreadStore.emitChange();
+	break;
+
+    case ActionTypes.RECEIVE_END_THREAD:
+	console.log('ending', action.threadID);
+	_threads[action.threadID].isEnded = true;
+	console.log(_threads[action.threadID]);
         ThreadStore.emitChange();
 	break;
         

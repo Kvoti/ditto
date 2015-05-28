@@ -39,7 +39,9 @@ module.exports = {
                 timestamp: new Date(),
                 composing: msg.find('composing'),
                 active: msg.find('active'),
-                threadID: msg.find('thread').text()
+                threadID: msg.find('thread').text(),
+		// this is our custom element to indicate a chat has ended
+		ended: msg.find('ended'),
             };
             setThreadFields(message);
             return message;

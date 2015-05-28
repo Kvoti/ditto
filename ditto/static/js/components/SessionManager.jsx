@@ -32,6 +32,7 @@ var SessionCreator = React.createClass({
     },
 
     render: function() {
+	console.log('curr', this.state.thread);
 	if (this.state.currentID) {
 	    if (this.state.threadType == ThreadStore.session) {
 		if (this.state.thread.isEnded) {

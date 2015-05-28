@@ -38,7 +38,7 @@ module.exports = {
     },
 
     endThread: function (threadID) {
-	// TODO mark thread as ended with server. Use private storage??
+	ChatWebAPIUtils.endThread(threadID);
         ChatAppDispatcher.dispatch({
             type: ActionTypes.END_THREAD,
 	    threadID: threadID

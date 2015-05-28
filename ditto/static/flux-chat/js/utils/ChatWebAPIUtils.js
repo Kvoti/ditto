@@ -15,9 +15,9 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
-// Strophe.log = function (level, msg) {
-//     console.log(msg);
-// };
+Strophe.log = function (level, msg) {
+    console.log(msg);
+};
 
 function onConnect (status_code) {
     _connectionStatus = status_code;
@@ -193,6 +193,9 @@ function receivePrivateMessage (msg) {
 	if (message.active.length) {
 	    ChatServerActionCreators.receiveStopTyping(message.from, message.threadID);
 	}
+	if (message.ended.length) {
+	    ChatServerActionCreators.receiveEndThread(message.threadID);
+	}
 	if (message.text) {
             ChatServerActionCreators.receivePrivateMessage(message);
 	}
@@ -233,7 +236,7 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log) {
+        if (log || true) {
             setupLogging();
         }
         _connection.connect(
@@ -328,6 +331,17 @@ module.exports = {
 
     joinChatroom: joinChatroom,
     
-    addFriend: addFriend
+    addFriend: addFriend,
 
+    endThread: function (threadID) {
+	var to = ChatMessageUtils.getMessageOther(threadID);
+	var payload = $msg({
+	    from: _myJID,
+	    to: getBareJIDForNode(to),
+	    type: 'chat'
+	});
+        payload.c('thread').t(threadID).up();
+        payload.c('ended');
+	_connection.send(payload.tree()); // TODO handle error on message submit
+    }
 };

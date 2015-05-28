@@ -90,5 +90,12 @@ module.exports = {
             type: ActionTypes.RECEIVE_ROOM_LIST,
             rooms: roomList,
         });
-    }
+    },
+
+    receiveEndThread: function (threadID) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_END_THREAD,
+            threadID: threadID,
+        });
+    },
 };
