@@ -7,8 +7,9 @@ var Navigation = Router.Navigation;
 
 function getStateFromStores() {
     return {
-        currentID: ThreadStore.getCurrentID(),
+        currentID: ThreadStore.getCurrentID(),  // TODO don't need currentID and thread
         threadType: ThreadStore.getThreadType(),
+        thread: ThreadStore.getCurrent(),
     };
 }
 
@@ -32,7 +33,19 @@ var SessionCreator = React.createClass({
 
     render: function() {
 	if (this.state.currentID) {
-	    return null;
+	    if (this.state.threadType == ThreadStore.session) {
+		if (this.state.thread.isEnded) {
+		    return (
+			    <p>This session has ended.</p>
+		    );
+		} else {
+		    return (
+			    <button onClick={this._endSession} className="btn btn-primary">End session</button>
+		    );
+		}
+	    } else {
+		return null;
+	    }
 	}
         return (
 	    <form className="form-horizontal" onSubmit={this._onSubmit}>
@@ -107,6 +120,10 @@ var SessionCreator = React.createClass({
 	    text: '',
 	    user: null,
 	});
+    },
+
+    _endSession: function () {
+	ChatThreadActionCreators.endThread(this.state.currentID);
     },
 
     _onStoreChange: function() {

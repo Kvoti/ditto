@@ -7,6 +7,7 @@ module.exports = {
         DISCONNECT: null,
 
         CREATE_THREAD: null,
+	END_THREAD: null,
         
         CREATE_MESSAGE: null,
         START_TYPING: null,

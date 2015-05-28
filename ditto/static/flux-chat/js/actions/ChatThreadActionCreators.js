@@ -35,5 +35,13 @@ module.exports = {
         ChatAppDispatcher.dispatch({
             type: ActionTypes.TOGGLE_CHAT_TYPE,
         });
+    },
+
+    endThread: function (threadID) {
+	// TODO mark thread as ended with server. Use private storage??
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.END_THREAD,
+	    threadID: threadID
+        });
     }
 };

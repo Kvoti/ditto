@@ -246,6 +246,12 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         //}
         ThreadStore.emitChange();
         break;
+
+    // Maybe should split this into different store as with unread threads?
+    case ActionTypes.END_THREAD:
+	_threads[action.threadID].isEnded = true;
+        ThreadStore.emitChange();
+	break;
         
     default:
         // do nothing
