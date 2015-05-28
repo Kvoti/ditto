@@ -30,7 +30,10 @@ function onConnect (status_code) {
         loadUserProfile(Strophe.getNodeFromJid(_myJID));
         _connection.chatstates.init(_connection);
         _connection.muc.init(_connection);
-        if (window.location.href.indexOf('messages') === -1) { // FIXME
+	// TODO tidy this up, what's the problem with fetching chatrooms
+	// on the messages page?
+        if (window.location.href.indexOf('messages') === -1 &&
+	    window.location.href.indexOf('sessions') === -1) {
             fetchChatrooms();
         }
         if (_defaultRoom) {
@@ -208,6 +211,9 @@ var receiveArchivedPrivateMessage = function (msg) {
     if (message) { // TODO don't need if when not querying group messages
 	message.isRead = true;
         ChatServerActionCreators.receivePrivateMessage(message);
+	if (message.ended.length) {
+	    ChatServerActionCreators.receiveEndThread(message.threadID);
+	}
     }
     return true;
 };

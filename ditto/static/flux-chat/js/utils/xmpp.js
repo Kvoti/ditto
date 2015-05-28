@@ -62,7 +62,8 @@ module.exports = {
 	        from: Strophe.getNodeFromJid(from),
 	        to: Strophe.getNodeFromJid(msg.find('message').attr("to")),
 	        timestamp: new Date(msg.find('delay').attr('stamp')),
-                threadID: msg.find('thread').text()
+                threadID: msg.find('thread').text(),
+		ended: msg.find('ended'),
             }
             setThreadFields(message);
             return message;
