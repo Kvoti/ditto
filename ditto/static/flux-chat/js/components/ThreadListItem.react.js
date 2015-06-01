@@ -16,7 +16,7 @@ var ThreadListItem = React.createClass({
   propTypes: {
     thread: ReactPropTypes.object,
       currentThreadID: ReactPropTypes.string,
-      threadType: ReactPropTypes.string.required
+      threadType: ReactPropTypes.string.isRequired
   },
 
   render: function() {
