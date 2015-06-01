@@ -346,7 +346,7 @@ module.exports = {
 	    to: getBareJIDForNode(to),
 	    type: 'chat'
 	});
-        payload.c('ended');
+        payload.c('ended').up();
         payload.c('thread').t(threadID).up();
 	// Add empty body so message gets archived
         payload.c('body').up();
