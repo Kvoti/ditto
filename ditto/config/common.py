@@ -50,6 +50,7 @@ class Common(Configuration):
         'allauth.socialaccount',  # registration
         'django_extensions',
         'sesame',
+        'rest_framework'
     )
 
     # Apps specific for this project go here.

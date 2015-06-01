@@ -4,6 +4,7 @@ var UserAutocomplete = require('./UserAutocomplete.jsx');
 var ThreadStore = require('../../flux-chat/js/stores/ThreadStore');
 var Router = require('react-router');
 var Navigation = Router.Navigation;
+var SessionRating = require('./SessionRating.jsx');
 
 function getStateFromStores() {
     return {
@@ -32,12 +33,16 @@ var SessionCreator = React.createClass({
     },
 
     render: function() {
-	console.log('curr', this.state.thread);
+	// TESTING
+	return (
+		<SessionRating sessionID={this.state.currentID} />
+	);
+	///////
 	if (this.state.currentID) {
 	    if (this.state.threadType == ThreadStore.session) {
 		if (this.state.thread.isEnded) {
 		    return (
-			    <p>This session has ended.</p>
+			    <SessionRating sessionID={this.state.currentID} />
 		    );
 		} else {
 		    return (
