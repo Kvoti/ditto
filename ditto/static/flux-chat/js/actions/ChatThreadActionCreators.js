@@ -41,7 +41,7 @@ module.exports = {
 	ChatWebAPIUtils.endThread(threadID);
         ChatAppDispatcher.dispatch({
             type: ActionTypes.END_THREAD,
-	    threadID: threadID
+	    threadID: threadID,
         });
     },
 

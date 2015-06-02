@@ -207,7 +207,7 @@ function receivePrivateMessage (msg) {
 	    ChatServerActionCreators.receiveStopTyping(message.from, message.threadID);
 	}
 	if (message.ended.length) {
-	    ChatServerActionCreators.receiveEndThread(message.threadID);
+	    ChatServerActionCreators.receiveEndThread(message.threadID, null);
 	}
 	if (message.text) {
             ChatServerActionCreators.receivePrivateMessage(message);
