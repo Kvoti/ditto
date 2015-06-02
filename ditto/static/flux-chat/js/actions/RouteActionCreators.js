@@ -28,7 +28,16 @@ module.exports = {
         if (parts.length === 5) {
             var friend = ChatMessageUtils.getMessageOther(threadID);
             threadType = parts[parts.length - 3] === 'messages' ? 'message' : 'session';  // FIXME
+	    // TODO only if not already friend
             ChatWebAPIUtils.addFriend(friend);
+	    // TODO only if new session
+            ChatWebAPIUtils.startSession(
+		threadID,
+		[
+		    Strophe.getNodeFromJid(chatConf.me), // TODO gah, fix all the places where we do this to get the current user
+		    friend
+		]
+	    );
             ChatAppDispatcher.dispatch({
                 type: ActionTypes.CHANGE_PRIVATE_CHAT,
                 threadType: threadType,

@@ -76,11 +76,12 @@ class RatingViewSet(RetrieveUpdateViewSet):
 router = routers.DefaultRouter()
 router.register(r'ratings', RatingViewSet)
 
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = patterns('',
     url(r'^', include(router.urls)),
 
-    url(r'^ratings/$', CreateSession.as_view()),
+    url(r'^ratings/$', csrf_exempt(CreateSession.as_view())),
                        
     url(
         regex=r'^chatroom/$',

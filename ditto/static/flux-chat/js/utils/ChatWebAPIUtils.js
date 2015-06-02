@@ -1,6 +1,7 @@
 var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
 var ChatMessageUtils = require('./ChatMessageUtils');
+var urlUtils = require('./urlUtils');
 
 var _connection, _connectionStatus, _domain, _me, _myJID, _nick;
 var _defaultRoom;
@@ -338,6 +339,17 @@ module.exports = {
     joinChatroom: joinChatroom,
     
     addFriend: addFriend,
+
+    startSession: function (threadID, participants) {
+	var url = urlUtils.startSession();
+	$.post(
+	    url,
+	    {
+		session_id: threadID,
+		ratings: [for (p of participants) {user: p}]
+	    }
+	).fail(() => console.log('startsession failed'));
+    },
 
     endThread: function (threadID) {
 	var to = ChatMessageUtils.getMessageOther(threadID);
