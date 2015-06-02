@@ -1,5 +1,6 @@
 var React = require('react');
 var ChatThreadActionCreators = require('../../flux-chat/js/actions/ChatThreadActionCreators');
+var ChatConstants = require('../../flux-chat/js/constants/ChatConstants');
 
 var SessionRating = React.createClass({
     propTypes: {
@@ -16,29 +17,22 @@ var SessionRating = React.createClass({
 	if (this._isPending()) {
 	    rating = 'Loading rating...';
 	} else if (this._isRated()) {
-	    rating = <p>Rating is {this.props.rating}</p>;
+	    rating = <p>You rated this session "{ChatConstants.sessionRatings[this.props.rating]}".</p>;
 	} else {
 	    rating = (
 		<form onSubmit={this._onSubmit}>
 		    <p>Please rate how useful you found this session</p>
-		    {[
-		    // TODO get the rating from config
-			'Very poor',
-			'Poor',
-			'OK',
-			'Good',
-			'Very good'
-		     ].map((o,i) =>
-			 <p key={o}>
-			 <label><input
-			 checked={i === this.state.rating}
-			 onChange={this._updateRating.bind(this, i)}
-			 value={i}
-			 name="rating"
-			 type="radio"/> {o}</label>
-			 </p>
+		    {ChatConstants.sessionRatings.map((o,i) =>
+			<p key={o}>
+			<label><input
+			checked={i === this.state.rating}
+			onChange={this._updateRating.bind(this, i)}
+			value={i}
+			name="rating"
+			type="radio"/> {o}</label>
+			</p>
 		     )}
-		    <input disabled={this.state.rating === null} className="btn btn-primary" type="submit" />
+			<input disabled={this.state.rating === null} className="btn btn-primary" type="submit" />
 		</form>
 	    )
 	}

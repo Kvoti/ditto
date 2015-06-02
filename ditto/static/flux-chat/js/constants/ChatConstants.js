@@ -50,4 +50,13 @@ module.exports = {
 
     disconnected: 'disconnected',
 
+    sessionRatings: [
+	// TODO this is duplicated with django model definition
+	'Very poor',
+	'Poor',
+	'OK',
+	'Good',
+	'Very good'
+    ]
+        
 };
