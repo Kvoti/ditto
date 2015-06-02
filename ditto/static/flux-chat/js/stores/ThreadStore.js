@@ -258,9 +258,12 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 	break;
 
     case ActionTypes.RECEIVE_END_THREAD:
-	console.log('ending', action.threadID);
 	_threads[action.threadID].isEnded = true;
-	console.log(_threads[action.threadID]);
+        ThreadStore.emitChange();
+	break;
+
+    case ActionTypes.RECEIVE_SESSION_RATING:
+	_threads[action.threadID].rating = action.rating;
         ThreadStore.emitChange();
 	break;
         

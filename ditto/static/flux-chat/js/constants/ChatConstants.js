@@ -25,7 +25,7 @@ module.exports = {
         RECEIVE_CHAT_STATUS: null,
 
 	RECEIVE_END_THREAD: null,
-	
+	RECEIVE_SESSION_RATING: null,
         RECEIVE_ROOM_LIST: null,
         CREATE_ROOM: null,
         

@@ -98,4 +98,13 @@ module.exports = {
             threadID: threadID,
         });
     },
+
+    receiveSessionRating: function (threadID, rating) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_SESSION_RATING,
+            threadID: threadID,
+            rating: rating
+        });
+    },
+
 };

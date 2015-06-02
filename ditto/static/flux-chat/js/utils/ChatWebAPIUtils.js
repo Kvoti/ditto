@@ -16,9 +16,9 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
-// Strophe.log = function (level, msg) {
-//     console.log(msg);
-// };
+Strophe.log = function (level, msg) {
+    console.log(msg);
+};
 
 function onConnect (status_code) {
     _connectionStatus = status_code;
@@ -26,6 +26,8 @@ function onConnect (status_code) {
         sendInitialPresence();
 	addPrivateChatHandlers();
         _connection.mam.init(_connection);
+        _connection.addHandler(
+            receiveArchivedPrivateMessage, Strophe.NS.MAM, "message", null);        
         getContacts();
         _connection.vcard.init(_connection);
         loadUserProfile(Strophe.getNodeFromJid(_myJID));
@@ -162,13 +164,20 @@ function handleContacts (roster, item) {
 function loadPrivateChatHistory (contact) {
     if (historyLoadedFor.indexOf(contact) === -1) {
         historyLoadedFor.push(contact);
+        console.log('loading history between', _myJID, contact);
         _connection.mam.query(
             Strophe.getBareJidFromJid(_myJID),
             {
                 'with': contact,
                 'before': "",
                 'max': 3,
-                onMessage: receiveArchivedPrivateMessage
+                // TODO strophe.mam is a bit broken.
+                // It adds onMessage as handler for all received messages so
+                // if you send off multiple queries in parallel the handler is
+                // called several times. To workaround we add receiveArchivedPrivateMessage
+                // once above and pass a noop here.
+                // TODO remove the noop otherwise we're adding one each time we do a query
+                onMessage: function () { }
             }
         );
     }
@@ -214,6 +223,16 @@ var receiveArchivedPrivateMessage = function (msg) {
         ChatServerActionCreators.receivePrivateMessage(message);
 	if (message.ended.length) {
 	    ChatServerActionCreators.receiveEndThread(message.threadID);
+            // TODO not sure where this call belongs
+            getSessionRating(
+                message.threadID,
+                // TODO use Promise here?
+                rating => ChatServerActionCreators.receiveSessionRating(
+                    message.threadID,
+                    // TODO prob getSession should do this unpacking?
+                    rating.rating
+                )
+            )
 	}
     }
     return true;
@@ -224,6 +243,10 @@ function receivePresence (pres) {
     ChatServerActionCreators.receiveChatStatus(status);
     return true;
 };
+
+function getSessionRating (threadID, callback) {
+    $.get(urlUtils.getSessionRating(threadID)).done(callback);
+}
 
 function setupLogging () {
     _connection.rawInput = function (data) { console.log('RECV: ', data); };
@@ -342,13 +365,17 @@ module.exports = {
 
     startSession: function (threadID, participants) {
 	var url = urlUtils.startSession();
-	$.post(
-	    url,
-	    {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: JSON.stringify({
 		session_id: threadID,
 		ratings: [for (p of participants) {user: p}]
-	    }
-	).fail(() => console.log('startsession failed'));
+	    }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: () => console.log('startsession failed')
+        })        
     },
 
     endThread: function (threadID) {
@@ -363,5 +390,6 @@ module.exports = {
 	// Add empty body so message gets archived
         payload.c('body').up();
 	_connection.send(payload.tree()); // TODO handle error on message submit
-    }
+    },
+
 };

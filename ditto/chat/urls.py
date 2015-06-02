@@ -65,23 +65,20 @@ class RatingSerializer(serializers.ModelSerializer):
 
 class RatingViewSet(RetrieveUpdateViewSet):
     serializer_class = RatingSerializer
-    queryset = models.SessionRating.objects.all()  # TODO change to .none()
+    queryset = models.SessionRating.objects.none()
     lookup_field = 'session__session_id'
 
-    # TODO can only see/update your own ratings!
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     return user.session_ratings.all()
-                     
+    def get_queryset(self):
+        user = self.request.user
+        return user.session_ratings.all()
+    
 router = routers.DefaultRouter()
 router.register(r'ratings', RatingViewSet)
-
-from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = patterns('',
     url(r'^', include(router.urls)),
 
-    url(r'^ratings/$', csrf_exempt(CreateSession.as_view())),
+    url(r'^ratings/$', CreateSession.as_view()),
                        
     url(
         regex=r'^chatroom/$',

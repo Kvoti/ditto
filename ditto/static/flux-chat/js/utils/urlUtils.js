@@ -5,5 +5,9 @@ function _fullUrl(part) {
 module.exports = {
     startSession: function () {
 	return _fullUrl('ratings/');
+    },
+
+    getSessionRating: function (threadID) {
+	return _fullUrl('ratings/' + threadID + '/');
     }
 }

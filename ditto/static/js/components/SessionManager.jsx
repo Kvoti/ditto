@@ -33,16 +33,11 @@ var SessionCreator = React.createClass({
     },
 
     render: function() {
-	// TESTING
-	return (
-		<SessionRating sessionID={this.state.currentID} />
-	);
-	///////
 	if (this.state.currentID) {
 	    if (this.state.threadType == ThreadStore.session) {
 		if (this.state.thread.isEnded) {
 		    return (
-			    <SessionRating sessionID={this.state.currentID} />
+			    <SessionRating sessionID={this.state.currentID} rating={this.state.thread.rating}/>
 		    );
 		} else {
 		    return (

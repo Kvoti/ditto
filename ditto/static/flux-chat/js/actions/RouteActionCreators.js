@@ -34,7 +34,8 @@ module.exports = {
             ChatWebAPIUtils.startSession(
 		threadID,
 		[
-		    Strophe.getNodeFromJid(chatConf.me), // TODO gah, fix all the places where we do this to get the current user
+                    // TODO gah, fix all the places where we do this to get the current user
+		    Strophe.getNodeFromJid(chatConf.me),
 		    friend
 		]
 	    );

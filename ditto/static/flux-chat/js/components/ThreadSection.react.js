@@ -41,7 +41,6 @@ var ThreadSection = React.createClass({
     },
 
     render: function() {
-	console.log("threads", this.state.threads);
 	var style = {height: this.state.height};
         var threadListItems = this.state.threads.map(function(thread) {
             return (
