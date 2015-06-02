@@ -44,6 +44,11 @@ var MessageSection = React.createClass({
     },
 
     render: function() {
+        // temp hack so we can see the rating form properly
+        if (this.state.thread && this.state.thread.isEnded && this.state.thread.rating === null) {
+            return null;
+        }
+        ///////
         var style;
         var messageListItems = this.state.messages.map(getMessageListItem);
 	// TODO can we move the height stuff here to a mixin somehow?
@@ -66,8 +71,10 @@ var MessageSection = React.createClass({
     },
 
     _scrollToBottom: function() {
-        var ul = this.refs.messageList.getDOMNode();
-        ul.scrollTop = ul.scrollHeight;
+        if (this.refs.messageList) {
+            var ul = this.refs.messageList.getDOMNode();
+            ul.scrollTop = ul.scrollHeight;
+        }
     },
 
     /**

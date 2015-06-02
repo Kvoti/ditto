@@ -9,5 +9,10 @@ module.exports = {
 
     getSessionRating: function (threadID) {
 	return _fullUrl('ratings/' + threadID + '/');
+    },
+
+    rateSession (threadID) {
+	return this.getSessionRating(threadID);
     }
+
 }

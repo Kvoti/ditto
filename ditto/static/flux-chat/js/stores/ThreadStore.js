@@ -254,11 +254,17 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     // Maybe should split this into different store as with unread threads?
     case ActionTypes.END_THREAD:
 	_threads[action.threadID].isEnded = true;
+	_threads[action.threadID].rating = null;
         ThreadStore.emitChange();
 	break;
 
     case ActionTypes.RECEIVE_END_THREAD:
 	_threads[action.threadID].isEnded = true;
+        ThreadStore.emitChange();
+	break;
+        
+    case ActionTypes.RATE_THREAD:
+	_threads[action.threadID].rating = action.rating;
         ThreadStore.emitChange();
 	break;
 

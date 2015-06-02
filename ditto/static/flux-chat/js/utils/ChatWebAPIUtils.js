@@ -378,6 +378,20 @@ module.exports = {
         })        
     },
 
+    rateThread (threadID, rating) {
+	var url = urlUtils.rateSession(threadID);
+        $.ajax({
+            url: url,
+            type: "PUT",
+            data: JSON.stringify({
+		rating: rating
+	    }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: () => console.log('rate session failed')
+        })        
+    },
+    
     endThread: function (threadID) {
 	var to = ChatMessageUtils.getMessageOther(threadID);
 	var payload = $msg({

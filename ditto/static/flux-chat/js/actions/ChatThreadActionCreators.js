@@ -43,5 +43,15 @@ module.exports = {
             type: ActionTypes.END_THREAD,
 	    threadID: threadID
         });
+    },
+
+    rateThread: function (threadID, rating) {
+	ChatWebAPIUtils.rateThread(threadID, rating);
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.RATE_THREAD,
+	    threadID: threadID,
+            rating: rating
+        });
     }
+    
 };
