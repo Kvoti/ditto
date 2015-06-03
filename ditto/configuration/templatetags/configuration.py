@@ -14,7 +14,10 @@ def theme():
     return theme
 
 
-@register.assignment_tag
-def features():
+@register.assignment_tag(takes_context=True)
+def features(context):
     # TODO features probably need ordering
-    return models.Feature.objects.filter(is_active=True)
+    features = models.Feature.objects.filter(is_active=True)
+    if not context['user'].has_perm('configuration.can_chat'):
+        features = features.exclude(slug='chatroom')
+    return features

@@ -81,12 +81,6 @@ urlpatterns = patterns('',
     url(r'^ratings/$', CreateSession.as_view()),
                        
     url(
-        regex=r'^chatroom/$',
-        view=views.ChatroomView.as_view(),
-        name='chatroom'
-    ),
-                       
-    url(
         regex=r'^messages/$',
         view=login_required(
             views.TemplateView.as_view(
@@ -116,16 +110,16 @@ urlpatterns = patterns('',
             ),
         ),
     ),
-                       
+
     url(
         regex=r'^chatroom/new/$',
         view=views.new_chatroom,
         name='new-chatroom'
     ),
-    url(
-        regex=r'^chatroom/(\w+)/$',
-        view=views.private_chatroom,
-        name='private-chatroom'
-    ),
                        
+    url(
+        regex=r'^chatroom/(?:(\w+)/)?$',
+        view=views.ChatroomView.as_view(),
+        name='chatroom'
+    ),
 )

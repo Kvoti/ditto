@@ -11,7 +11,7 @@
             {% url 'ditto:about' as url %}
             {% navitem "about" url _("PEOPLE") %}
 
-            {% if request.user.is_authenticated and request.tenant.is_configured %}
+            {% if request.user.is_authenticated and request.tenant.is_configured and perms.configuration.can_chat %}
                 {% url 'ditto:chatroom' as url %}
                 {% navitem "chatroom" url _("CHATROOM") %}
             {% endif %}
