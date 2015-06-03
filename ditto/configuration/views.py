@@ -168,3 +168,14 @@ def evaluation(request):
     return TemplateResponse(request, 'configuration/evaluation.html', {
         'nav': ['evaluation'],
     })
+
+
+@admin_required
+def chatroom(request):
+    form = forms.ChatroomForm()
+    return TemplateResponse(request, 'configuration/chatroom_configuration.html', {
+        'form': form,
+        'nav': ['chatroom_config'],
+    })
+
+

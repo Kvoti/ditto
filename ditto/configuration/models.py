@@ -105,4 +105,14 @@ class PermittedInteraction(models.Model):
 class RegForm(models.Model):
     role = models.ForeignKey('auth.Group', related_name="reg_forms")
     form = models.ForeignKey('dittoforms.FormSpec')
+
+
+class Chatroom(models.Model):
+    open_time = models.TimeField(null=True)
+    duration = models.PositiveIntegerField(null=True)
+    close_message = models.CharField(
+        max_length=200,
+        default=_("The chatroom is now closed.")
+    )
+
     

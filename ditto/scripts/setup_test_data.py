@@ -39,7 +39,8 @@ def run():
     setup_members()
     setup_tenants()
     setup_reg_form()
-
+    setup_chat_conf()
+    
 
 def setup_guest_passwords():
     global GUEST_PASSWORDS
@@ -61,7 +62,10 @@ def setup_site(name='KVOTI.TECHNOLOGY', subdomain=None):
 
 def setup_features():
     for slug, name, perms in (
-            ('chatroom', 'Chatroom', [('can_chat', 'Can chat')]),
+            ('chatroom', 'Chatroom', [
+                ('can_chat', 'Can chat'),
+                ('create_chatroom', 'Can create chatroom')
+            ]),
             ('news', 'News', [('can_news', 'Can manage news')]),
             ('blog', 'Blog', [
                 ('can_blog', 'Can Blog'),
@@ -94,6 +98,8 @@ def setup_permissions():
     perm.save()
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='invite_user')
+    Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
+    perm = Permission.objects.get(codename='create_chatroom')
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='guest')
     Group.objects.get(name=core.GUEST_ROLE).permissions.add(perm)
@@ -151,3 +157,7 @@ def setup_reg_form():
             role=role,
             form=form
         )
+
+
+def setup_chat_conf():
+    configuration.models.Chatroom.objects.create()

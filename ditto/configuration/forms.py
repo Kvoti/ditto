@@ -6,6 +6,7 @@ from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 
 import core
+from users.models import User
 
 from . import models
 from . import utils
@@ -127,3 +128,29 @@ class PermissionsForm(forms.Form):
                 role.permissions.add(permission)
             else:
                 role.permissions.remove(permission)
+
+
+class ChatroomForm(forms.Form):
+    create_roles = forms.ModelMultipleChoiceField(Group.objects.all())
+    create_users = forms.ModelMultipleChoiceField(User.objects.all())
+    close_message = forms.CharField()
+    open_time = forms.TimeField()
+    open_duration = forms.IntegerField()
+    
+    def __init__(self, *args, **kwargs):
+        create_roles = Group.objects.filter(
+            permissions__codename='create_chatroom')
+        create_users = User.objects.filter(
+            user_permissions__codename='create_chatroom')
+        self.config = config = models.Chatroom.objects.get()
+        kwargs['initial'] = {
+            'create_roles': create_roles,
+            'create_users': create_users,
+            'close_message': config.close_message,
+            'open_time': config.open_time,
+            'open_duration': config.duration,
+        }
+        super(ChatroomForm, self).__init__(*args, **kwargs)
+
+    def save():
+        pass
