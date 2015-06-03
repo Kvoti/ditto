@@ -7,7 +7,7 @@ from fabric.colors import green
 
 env.hosts = ['134.213.147.235']
 env.user = 'root'
-#env.key_filename = '~/.ssh/id_rsa'
+env.key_filename = '~/.ssh/id_di'
 env.forward_agent = True
 
 

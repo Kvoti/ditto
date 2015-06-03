@@ -52,7 +52,7 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		    </button>
-		    <a class="navbar-brand text-hide" href="{% url 'ditto:home' %}">
+		    <a style="margin-left:5px" class="navbar-brand text-hide" href="{% url 'ditto:home' %}">
 			{{ request.site.name }}                
 		    </a>
 		</div>
@@ -77,7 +77,7 @@
 	    {% block modal %}{% endblock modal %}
 	    <footer class="footer">
 		<div class="container-fluid">
-		    <p><img width="30px" alt="" src="{% static 'images/ditto-logo.png' %}"> Ditto: a Digital Impacts Product, © 2015.</p>
+		    <p><img width="30px" alt="" src="{% static 'images/kvoti-web-logo.png' %}"> Kvoti: a Digital Impacts Product, © 2015.</p>
 		</div>
 	    </footer>
 	    <audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>

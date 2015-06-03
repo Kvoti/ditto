@@ -9,27 +9,27 @@ class UseCaseView(TemplateView):
         ('therapist', {
             'name': 'Psychotherapist',
             'img': 'Use-Case-Psychotherapist',
-            'alt': 'diagram showing use case of a Ditto network for a psychotherapist',
+            'alt': 'diagram showing use case of a Kvoti network for a psychotherapist',
         }),
         ('legal-practice', {
             'name': 'Legal practice',
             'img': 'Use-Case-Legal',
-            'alt': 'diagram showing use case of a Ditto network for a small legal practice',
+            'alt': 'diagram showing use case of a Kvoti network for a small legal practice',
         }),
         ('housing-association', {
             'name': 'Housing association',
             'img': 'Use-Case-Housing',
-            'alt': 'diagram showing use case of a Ditto network for a housing association',
+            'alt': 'diagram showing use case of a Kvoti network for a housing association',
         }),
         ('adult-social-care', {
             'name': 'Adult social care',
             'img': 'Use-Case-Adult-Social-Care',
-            'alt': 'diagram showing use case of a Ditto network for an adult social care organisation',
+            'alt': 'diagram showing use case of a Kvoti network for an adult social care organisation',
         }),
         ('sexual-health', {
             'name': 'Sexual health charity',
             'img': 'Use-Case-Sexual-Health-Charity',
-            'alt': 'diagram showing use case of a Ditto network for a sexual health charity',
+            'alt': 'diagram showing use case of a Kvoti network for a sexual health charity',
         }),
     ])
         

@@ -1,4 +1,4 @@
-"""Script to set up test data for a Ditto instance.
+"""Script to set up test data for a Kvoti instance.
 
 As before we tried to do this with migrations but ran into problems
 early on with custom permissions not being created.
@@ -49,7 +49,7 @@ def setup_guest_passwords():
         GUEST_PASSWORDS = None
         
 
-def setup_site(name='DITTO.TECHNOLOGY', subdomain=None):
+def setup_site(name='KVOTI.TECHNOLOGY', subdomain=None):
     site = Site.objects.get_current()
     site.name = name
     domain = 'localhost:8000' if settings.DEBUG else site.name.lower()

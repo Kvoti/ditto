@@ -19,15 +19,15 @@ import sleekxmpp
 import chat.utils
 
 CHATROOM_SCRIPT = """\
-Users register to use Ditto on the Ditto homepage at ditto.technology.
+Users register to use Kvoti on the Kvoti homepage at kvoti.technology.
 
-Once they have signed up and verified their email account, a user can then set up their own Ditto network http://ditto.technology/[networkname]/.
+Once they have signed up and verified their email account, a user can then set up their own Kvoti network http://kvoti.technology/[networkname]/.
 
 Basic Information
 
-Name:  The given name of a Ditto network
+Name:  The given name of a Kvoti network
 
-Theme:  The visual theme of a Ditto network
+Theme:  The visual theme of a Kvoti network
 
 Type:  The type of business sector, i.e. business, charity, social, voluntary etc.
 
@@ -37,7 +37,7 @@ Size Cap:  Determines the maximum number of users on the network.
 
 All basic setup information can be changed at any time via the ‘Settings’ menu by the network Administrator.
 
-Roles: Sets the number and name of the roles in a Ditto network. ‘Administrator’ and ‘Member’ roles are set as defaults.
+Roles: Sets the number and name of the roles in a Kvoti network. ‘Administrator’ and ‘Member’ roles are set as defaults.
 
 Example: A Sexual Health Service might specify the following roles:
 
