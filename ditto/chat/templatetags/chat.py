@@ -30,6 +30,7 @@ def chat_config(context, other=None, extra=None):
         'password': password,
         'element': 'emptychat',
         'page': None,
+        'hasChatroom': user.has_perm('configuration.can_chat'),
     }
     if extra:
         conf.update(extra)

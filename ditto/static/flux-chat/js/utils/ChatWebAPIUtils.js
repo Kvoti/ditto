@@ -32,15 +32,17 @@ function onConnect (status_code) {
         _connection.vcard.init(_connection);
         loadUserProfile(Strophe.getNodeFromJid(_myJID));
         _connection.chatstates.init(_connection);
-        _connection.muc.init(_connection);
-	// TODO tidy this up, what's the problem with fetching chatrooms
-	// on the messages page?
-        if (window.location.href.indexOf('messages') === -1 &&
-	    window.location.href.indexOf('sessions') === -1) {
-            fetchChatrooms();
-        }
-        if (_defaultRoom) {
-            joinChatroom(_defaultRoom);
+        if (chatConf.hasChatroom) {
+            _connection.muc.init(_connection);
+	    // TODO tidy this up, what's the problem with fetching chatrooms
+	    // on the messages page?
+            if (window.location.href.indexOf('messages') === -1 &&
+	        window.location.href.indexOf('sessions') === -1) {
+                fetchChatrooms();
+            }
+            if (_defaultRoom) {
+                joinChatroom(_defaultRoom);
+            }
         }
         if (_pendingFriends.length) {
             _pendingFriends.forEach(f => addFriend(f));
@@ -75,10 +77,14 @@ function receiveChatrooms (result) {
 };
 
 function joinChatroom (roomJID) {
+    if (!chatConf.hasChatroom) {
+        return;
+    }
     if (_connectionStatus === Strophe.Status.CONNECTED) {
         _connection.muc.join(
             roomJID,
             _nick,
+            // TODO move these to addHandler otherwise they're probably added every time we join a chatroom
             receiveGroupMessage,
 	    receiveGroupPresence
         );
