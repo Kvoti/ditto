@@ -1,7 +1,7 @@
 import collections
 
 import floppyforms.__future__ as forms
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 
@@ -130,27 +130,36 @@ class PermissionsForm(forms.Form):
                 role.permissions.remove(permission)
 
 
-class ChatroomForm(forms.Form):
-    create_roles = forms.ModelMultipleChoiceField(Group.objects.all())
-    create_users = forms.ModelMultipleChoiceField(User.objects.all())
-    close_message = forms.CharField()
-    open_time = forms.TimeField()
-    open_duration = forms.IntegerField()
+class ChatroomForm(forms.ModelForm):
+    class Meta:
+        model = models.Chatroom
+        fields = ('open_time', 'close_time', 'close_message')
+
+
+class CreateChatroomPermsForm(forms.Form):
+    creator_roles = forms.ModelMultipleChoiceField(
+        Group.objects.all(),
+        label=_("Roles that can create chatrooms"),
+        required=False
+    )
+    creator_users = forms.ModelMultipleChoiceField(
+        User.objects.all(),
+        label=_("Users that can create chatrooms"),
+        required=False
+    )
     
     def __init__(self, *args, **kwargs):
-        create_roles = Group.objects.filter(
+        creator_roles = Group.objects.filter(
             permissions__codename='create_chatroom')
-        create_users = User.objects.filter(
+        creator_users = User.objects.filter(
             user_permissions__codename='create_chatroom')
-        self.config = config = models.Chatroom.objects.get()
         kwargs['initial'] = {
-            'create_roles': create_roles,
-            'create_users': create_users,
-            'close_message': config.close_message,
-            'open_time': config.open_time,
-            'open_duration': config.duration,
+            'creator_roles': creator_roles,
+            'creator_users': creator_users,
         }
-        super(ChatroomForm, self).__init__(*args, **kwargs)
+        super(CreateChatroomPermsForm, self).__init__(*args, **kwargs)
 
-    def save():
-        pass
+    def save(self):
+        perm = Permission.objects.get(codename='create_chatroom')
+        perm.user_set = self.cleaned_data['creator_users']
+        perm.group_set = self.cleaned_data['creator_roles']

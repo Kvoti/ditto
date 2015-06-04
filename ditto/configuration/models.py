@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.core import validators
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -108,11 +110,16 @@ class RegForm(models.Model):
 
 
 class Chatroom(models.Model):
-    open_time = models.TimeField(null=True)
-    duration = models.PositiveIntegerField(null=True)
+    open_time = models.TimeField(null=True, blank=True)
+    close_time = models.TimeField(null=True, blank=True)
     close_message = models.CharField(
         max_length=200,
         default=_("The chatroom is now closed.")
     )
 
-    
+    def clean(self):
+        if (
+                self.open_time and not self.close_time or
+                self.close_time and not self.open_time
+        ):
+            raise ValidationError('Please specify both open and close times')

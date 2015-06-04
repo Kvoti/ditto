@@ -172,10 +172,20 @@ def evaluation(request):
 
 @admin_required
 def chatroom(request):
-    form = forms.ChatroomForm()
+    conf = utils.get_chatroom_config()
+    if request.method == 'POST':
+        chatroom_conf_form = forms.ChatroomForm(data=request.POST, instance=conf)
+        chatroom_perms_form = forms.CreateChatroomPermsForm(request.POST)
+        if chatroom_conf_form.is_valid() and chatroom_perms_form.is_valid():
+            chatroom_conf_form.save()
+            chatroom_perms_form.save()
+            messages.success(request, "Chatroom configuration updated.")
+            return HttpResponseRedirect(".")
+    else:
+        chatroom_conf_form = forms.ChatroomForm(instance=conf)
+        chatroom_perms_form = forms.CreateChatroomPermsForm()
     return TemplateResponse(request, 'configuration/chatroom_configuration.html', {
-        'form': form,
+        'chatroom_conf_form': chatroom_conf_form,
+        'chatroom_perms_form': chatroom_perms_form,
         'nav': ['chatroom_config'],
     })
-
-
