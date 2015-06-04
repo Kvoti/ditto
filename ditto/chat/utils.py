@@ -1,13 +1,9 @@
-from datetime import timedelta
-
 from django.conf import settings
 from django.core.signing import Signer
 from django.utils.timezone import now, localtime
 
 from configuration.utils import get_chatroom_config
 from multitenancy import tenant
-
-from . import models
 
 
 def jid(username):
