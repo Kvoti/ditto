@@ -85,14 +85,14 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
                                         wait=True)
         if not self.is_chatroom_open:
             self.plugin['xep_0045'].destroy(self.room, ifrom=self.me)
-        # TODO figure out how to close down properly. Not sure how to do it as it's all async
-        #self.disconnect(wait=True)
+            self.disconnect(wait=True)
         
     def presence(self, pr):
         if self.is_chatroom_open:
             # TODO only do this once (when joined room), not on each presence
             # TODO only need to configure the room if not already configured
             self.plugin['xep_0045'].configureRoom(self.room, ifrom=self.me)
+            self.disconnect(wait=True)
 
         
 def jid(username):
