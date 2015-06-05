@@ -3,8 +3,9 @@ var XMPP = require('./xmpp.js');
 var ChatMessageUtils = require('./ChatMessageUtils');
 var urlUtils = require('./urlUtils');
 
-var _connection, _connectionStatus, _domain, _me, _myJID, _nick;
-var _defaultRoom;
+var _connection, // raw connection
+    _connectResolve,     
+    _connectionStatus, _domain, _me, _myJID, _nick;
 var _pendingFriends = [];
 
 // TODO I think this state is maybe in the wrong place
@@ -20,36 +21,36 @@ Strophe.log = function (level, msg) {
     console.log(msg);
 };
 
-function onConnect (status_code) {
-    _connectionStatus = status_code;
-    if (status_code == Strophe.Status.CONNECTED) {
-        sendInitialPresence();
-	addPrivateChatHandlers();
-        _connection.mam.init(_connection);
-        _connection.addHandler(
-            receiveArchivedPrivateMessage, Strophe.NS.MAM, "message", null);        
-        getContacts();
-        _connection.vcard.init(_connection);
-        loadUserProfile(Strophe.getNodeFromJid(_myJID));
-        _connection.chatstates.init(_connection);
-        if (chatConf.hasChatroom) {
-            _connection.muc.init(_connection);
-	    // TODO tidy this up, what's the problem with fetching chatrooms
-	    // on the messages page?
-            if (window.location.href.indexOf('messages') === -1 &&
-	        window.location.href.indexOf('sessions') === -1) {
-                fetchChatrooms();
+
+var connect = new Promise((resolve, reject) => {
+    _connectResolve = resolve;
+});
+
+
+function onConnectFactory (resolve) {
+    return function (status_code) {
+        _connectionStatus = status_code;
+        if (status_code == Strophe.Status.CONNECTED) {
+            sendInitialPresence();
+	    addPrivateChatHandlers();
+            _connection.mam.init(_connection);
+            _connection.addHandler(
+                receiveArchivedPrivateMessage, Strophe.NS.MAM, "message", null);        
+            getContacts();
+            _connection.vcard.init(_connection);
+            loadUserProfile(Strophe.getNodeFromJid(_myJID));
+            _connection.chatstates.init(_connection);
+            if (chatConf.hasChatroom) {
+                _connection.muc.init(_connection);
             }
-            if (_defaultRoom) {
-                joinChatroom(_defaultRoom);
+            if (_pendingFriends.length) {
+                _pendingFriends.forEach(f => addFriend(f));
             }
+            resolve(_connection);
+            ChatServerActionCreators.connect(_connection);
+        } else if (status_code == Strophe.Status.DISCONNECTED) {
+            ChatServerActionCreators.disconnect();
         }
-        if (_pendingFriends.length) {
-            _pendingFriends.forEach(f => addFriend(f));
-        }
-        ChatServerActionCreators.connect(_connection);
-    } else if (status_code == Strophe.Status.DISCONNECTED) {
-        ChatServerActionCreators.disconnect();
     }
 };
 
@@ -57,14 +58,33 @@ function sendInitialPresence () {
     _connection.send($pres().tree());
 }
 
-function fetchChatrooms () {
-    var chatDomain = 'muc.' + _domain; // TODO pass in from config
-    _connection.muc.listRooms(chatDomain, receiveChatrooms // TODO handle error
-                             );
+var getChatrooms = new Promise((resolve, reject) => {
+    // if (window.location.href.indexOf('messages') === -1 &&
+    //     window.location.href.indexOf('sessions') === -1) {
+    // TODO not sure here about using a promise inside a promise
+    connect.then(connection => {
+        var chatDomain = 'muc.' + _domain; // TODO pass in from config
+        connection.muc.listRooms(
+            chatDomain,
+            receiveChatrooms(resolve),
+            reject
+        )
+    });
+});
+
+// TODO is there a better pattern to use here?
+// Want getChatrooms to be a promise but want .then funcs to receive the parsed roomList
+// not the raw XMPP result. Seems I'm going to be writing a lot of factory functions to
+// return functions that call `resolve`...
+function receiveChatrooms (resolve) {
+    return function (result) {
+        var roomList = XMPP.parse.roomList(result);
+        resolve(roomList);
+	ChatServerActionCreators.receiveChatrooms(roomList);
+    }
 };
 
-function receiveChatrooms (result) {
-    var roomList = XMPP.parse.roomList(result);
+getChatrooms.then(roomList => {
     if (roomList.length) {
 	// TODO something better than these path inspection hacks, pass some explicit option?
 	if (window.location.href.indexOf('chatroom') === -1) {
@@ -72,32 +92,34 @@ function receiveChatrooms (result) {
             // TODO should be explicit about main chatroom instead of relying on roomList[0]
             joinChatroom(roomList[0]);
 	}
-	ChatServerActionCreators.receiveChatrooms(roomList);
     }
-};
+});
 
 function joinChatroom (roomJID) {
     if (!chatConf.hasChatroom) {
         return;
     }
-    if (_connectionStatus === Strophe.Status.CONNECTED) {
-        _connection.muc.join(
+    Promise.all([
+        connect,  // TODO not sure this is need as getChatrooms already depends on it
+        getChatrooms
+    ]).then(result => {
+        var [connection, roomList] = result;
+        if (roomList.indexOf(roomJID) === -1) {
+            console.log('No such room', roomList);
+            return;
+        }
+        // TODO this isn't quite the right place, should probably do
+        // when get presence back confirming room join
+        ChatServerActionCreators.joinChatroom(roomJID);
+        connection.muc.join(
             roomJID,
             _nick,
             // TODO move these to addHandler otherwise they're probably added every time we join a chatroom
             receiveGroupMessage,
 	    receiveGroupPresence
         );
-    } else {
-        // TODO really not sure what to do here.
-        // We need this because of routing. When someone goes to chatroom/:id
-        // we try to join the chatroom (from componentDidMount in ChatRoomApp) but
-        // the connection might not be ready. So we store the roomJID and join
-        // when the connection is ready.
-        _defaultRoom = roomJID;
-    }
+    });
 }
-
 
 
 function receiveGroupMessage (msg) {
@@ -119,13 +141,11 @@ function receiveGroupPresence (pres) {
         ChatServerActionCreators.receiveOnline(presence.user, presence.room);
     } else if (presence.removed) {
         ChatServerActionCreators.receiveOffline(presence.user, presence.room);
-    }
-    if (presence.isNewRoom) {
-        // TODO handle failure
-        _connection.muc.createInstantRoom(
-            presence.room
-        );
-    }
+        if (presence.destroyed) {
+            ChatServerActionCreators.leaveChatroom(presence.room);
+        }        
+    } 
+    // TODO ChatServerActionCreators.joinChatroom
     return true;
 }
 
@@ -272,13 +292,13 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log) {
+        if (log || true) {
             setupLogging();
         }
         _connection.connect(
             jid,
 	    password,
-            onConnect
+            onConnectFactory(_connectResolve)
         );
     },
     

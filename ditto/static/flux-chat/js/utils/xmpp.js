@@ -98,7 +98,7 @@ module.exports = {
         },
         groupPresence: function (pres) {
             var msg = $(pres);
-            var added, removed, presence;
+            var added, removed, presence, destroyed;
             // TODO var nick_taken = msg.find('conflict');
             var from = Strophe.getResourceFromJid(msg.attr('from'));
             var room = Strophe.getBareJidFromJid(msg.attr('from'));
@@ -117,6 +117,10 @@ module.exports = {
             removed = msg.find('item[role=none]');
             if (removed.length) {
                 presence.removed = true;
+            }
+            destroyed = msg.find('destroy');
+            if (destroyed.length) {
+                presence.destroyed = true;
             }
             return presence;
         },

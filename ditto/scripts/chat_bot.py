@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
+Chat admin bot to open and close the chatroom.
+
+Run via cron.
+
     SleekXMPP: The Sleek XMPP Library
     Copyright (C) 2010  Nathanael C. Fritz
     This file is part of SleekXMPP.
@@ -45,6 +49,7 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         # listen for this event so that we we can initialize
         # our roster.
         self.add_event_handler("session_start", self.start, threaded=True)
+        self.add_event_handler("presence", self.presence)
 
     def start(self, event):
         """
@@ -62,19 +67,32 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         self.send_presence()
         self.get_roster()
         self.room = "main@muc.%s" % DOMAIN
+        with tenant._tenant('di'):
+            self.is_chatroom_open = chat.utils.is_chatroom_open()
+            ### TESTING HACKS!!
+            # import os
+            # self.is_chatroom_open = 'OPEN' in os.environ
+            ######
+        # todo be more sensible to get room list here and only join
+        # if room needs opened or closed
+        # (it's sort of ok as outside chat hours the room will remain unconfigured so
+        # it can't be used)
         self.plugin['xep_0045'].joinMUC(self.room,
                                         "chatadmin",
                                         # If a room password is needed, use:
                                         # password=the_room_password,
                                         pfrom=self.me,
                                         wait=True)
-        with tenant._tenant('di'):
-            logging.debug('Is chatroom open? %s' % chat.utils.is_chatroom_open())
-            if not chat.utils.is_chatroom_open():
-                logging.debug('Closing chatroom')
-                self.plugin['xep_0045'].destroy(self.room, ifrom=self.me)
-        # TODO really I want to wait until the destruction is confirmed (and report error if not)
-        self.disconnect(wait=True)
+        if not self.is_chatroom_open:
+            self.plugin['xep_0045'].destroy(self.room, ifrom=self.me)
+        # TODO figure out how to close down properly. Not sure how to do it as it's all async
+        #self.disconnect(wait=True)
+        
+    def presence(self, pr):
+        if self.is_chatroom_open:
+            # TODO only do this once (when joined room), not on each presence
+            # TODO only need to configure the room if not already configured
+            self.plugin['xep_0045'].configureRoom(self.room, ifrom=self.me)
 
         
 def jid(username):

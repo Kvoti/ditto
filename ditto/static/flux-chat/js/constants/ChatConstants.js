@@ -29,6 +29,8 @@ module.exports = {
 	RECEIVE_SESSION_RATING: null,
         RECEIVE_ROOM_LIST: null,
         CREATE_ROOM: null,
+        JOIN_ROOM: null,
+        LEAVE_ROOM: null,
         
         CHANGE_AVATAR: null,
 

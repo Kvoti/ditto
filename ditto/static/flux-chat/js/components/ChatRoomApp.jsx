@@ -18,7 +18,7 @@ function getStateFromStores() {
     return {
         connection: ConnectionStore.get(),
 	// TODO maybe push parts needing to know about thread into sub-components?
-        thread: ThreadStore.getCurrentID(),
+        thread: ThreadStore.getCurrent(),
     };
 }
 
@@ -53,16 +53,19 @@ var ChatRoomApp = React.createClass({
 	// TODO chatroom presence should prob be separate component to whosOnline
 	// (whosOnline is supposed to have carousel etc.)
         if (this.state.connection == ChatConstants.connected) {
+	    if (this.state.thread && !this.state.thread.isJoined) {
+		return <p>This chatroom is closed</p>;
+	    }
             return (
 		<div className="row">
 		    <div className="col-md-6">
-			<h3>Chatroom {this.state.thread}</h3>
+			<h3>Chatroom {this.state.thread.id}</h3>
 			<div className="chatroomMessages">
 			    <MessageSection heightOffset={300} isGroup={true} />
 			</div>
 		    </div>
 		    <div className="col-md-3">
-			<h3>Who&rsquo;s in chatroom {this.state.thread}</h3>
+			<h3>Who&rsquo;s in chatroom {this.state.thread.id}</h3>
 			<div className="chatroomPresence">
 			    <WhosOnline stacked={true}/>
 			</div>

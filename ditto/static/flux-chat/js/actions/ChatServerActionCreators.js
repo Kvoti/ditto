@@ -85,6 +85,20 @@ module.exports = {
         });
     },
 
+    joinChatroom: function (roomJID) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.JOIN_ROOM,
+            roomJID: roomJID
+        });
+    },
+
+    leaveChatroom: function (roomJID) {
+        ChatAppDispatcher.dispatch({
+            type: ActionTypes.LEAVE_ROOM,
+            roomJID: roomJID
+        });
+    },
+    
     receiveChatrooms: function (roomList) {
         ChatAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_ROOM_LIST,

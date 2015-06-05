@@ -195,6 +195,18 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         ThreadStore.emitChange();
         break;
 
+    case ActionTypes.JOIN_ROOM:
+        var roomJID = action.roomJID;
+        _threads[Strophe.getNodeFromJid(roomJID)].isJoined = true;
+        ThreadStore.emitChange();
+        break;
+        
+    case ActionTypes.LEAVE_ROOM:
+        var roomJID = action.roomJID;
+        _threads[Strophe.getNodeFromJid(roomJID)].isJoined = false;
+        ThreadStore.emitChange();
+        break;
+        
     case ActionTypes.CHANGE_CHATROOM:
         _currentRoomJID = action.roomJID;
         _currentID = action.roomID
