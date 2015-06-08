@@ -5,10 +5,5 @@
 {% endblock %}
 
 {% block config-content %}
-    <form method="post" action=".">
-	{% csrf_token %}
-	{{ chatroom_perms_form }}
-	{{ chatroom_conf_form }}
-	<input class="btn btn-success" type="submit" value="Save">
-    </form>
+    <section id="chatroomsettings"></section>
 {% endblock %}

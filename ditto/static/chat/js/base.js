@@ -8,6 +8,7 @@ var WhosOnline = require('../../flux-chat/js/components/WhosOnline.react');
 var MessageComposer = require('../../flux-chat/js/components/MessageComposer.react');
 var ChatModule = require('../../js/components/ChatModule.jsx');
 var EvaluationSettings = require('../../configuration/js/components/EvaluationSettings.jsx');
+var ChatroomSettings = require('../../configuration/js/components/ChatroomSettings.jsx');
 var FormBuilder = require('../../formbuilder/js/components/FormBuilder.jsx');
 var Router = require('react-router')
 var RouteActionCreators = require('../../flux-chat/js/actions/RouteActionCreators.js');
@@ -86,7 +87,15 @@ if (evaluationSettings) {
         evaluationSettings
     );
 }
-   
+
+var chatroomSettings = document.getElementById('chatroomsettings');
+if (chatroomSettings) {
+    React.render(
+            <ChatroomSettings roles={['Admin', 'Member', 'Counsellor']} />,
+        chatroomSettings
+    );
+}
+
 var formBuilder = document.getElementById('formbuilder');
 if (formBuilder) {
     React.render(
