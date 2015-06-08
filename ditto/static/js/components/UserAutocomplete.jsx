@@ -29,6 +29,8 @@ var UserAutocomplete = React.createClass({
 		    asyncOptions={search}
 		    onChange={this.props.onChange}
 		    autoload={false}
+	            delimiter={'|'}
+	            multi={this.props.multi}
 		    />
 	);
     }
