@@ -8,7 +8,7 @@ var ChatroomScheduleViewer = React.createClass({
 
     getDefaultProps () {
 	return {
-	    width: 600,
+	    width: 800,
 	    rowHeight: 20,
 	    dayLabelWidth: 50,
 	};
@@ -85,6 +85,16 @@ var ChatroomScheduleViewer = React.createClass({
     _renderHeader () {
 	var labels = [];
 	for (var i = 0; i < 24; i += 1) {
+	    let hour;
+	    if (i === 0) {
+		hour = '12am';
+	    } else if (i === 12) {
+		hour = '12pm';
+	    } else if (i < 12) {
+		hour = i + 'am';
+	    } else {
+		hour = (i - 12) + 'pm';
+	    }
 	    labels.push(
 		<div key={i}
 			style={{
@@ -93,7 +103,7 @@ var ChatroomScheduleViewer = React.createClass({
 			       float: 'left',
 			       textAlign: 'center',
 			       }}>
-		    {i}
+		    <small>{hour}</small>
 		</div>
 	    );
 	}
@@ -102,7 +112,7 @@ var ChatroomScheduleViewer = React.createClass({
 			clear: 'both',
 			width: this.props.width,
 			height: this.props.rowHeight,
-			marginLeft: 1.5 / 24 * this.props.width,
+			marginLeft: -0.5 / 24 * this.props.width + this.props.dayLabelWidth,
 			}}>
 		{labels}
 	    </div>

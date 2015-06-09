@@ -26,7 +26,8 @@ var ChatroomSchedule = React.createClass({
 			slots={[
 			       {day: 'Mon', start: 6, end: 2},
 			       {day: 'Tue', start: 9, end: 11},
-			       {day: 'Fri', start: 10, end: 22},
+			       {day: 'Fri', start: 10, end: 12},
+			       {day: 'Fri', start: 14, end: 16},
 			       ]}
 			/>
 	    </div>
