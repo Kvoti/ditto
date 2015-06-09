@@ -19,9 +19,16 @@ var ChatroomScheduleViewer = React.createClass({
 	this.props.slots.forEach(s => {
 	    var width;
 	    var offset;
+	    var end;
 	    var day = rows[Constants.days.indexOf(s.day)];
+	    var nextDay = rows[(Constants.days.indexOf(s.day) + 1) % 7];
 	    offset = this.props.width * s.start / 24 + this.props.dayLabelWidth;
-	    width = this.props.width * ((Math.min(s.end, 24) - s.start) / 24);
+	    if (s.end < s.start) {
+		end = 24;
+	    } else {
+		end = s.end
+	    }
+	    width = this.props.width * (end - s.start) / 24;
 	    day.push(
 		<div style={{
 			    position: 'absolute',
@@ -31,6 +38,18 @@ var ChatroomScheduleViewer = React.createClass({
 			    backgroundColor: 'blue'
 			    }}></div>
 	    );
+	    width = this.props.width * s.end / 24;
+	    if (s.end < s.start) {
+		nextDay.push(
+		    <div style={{
+				position: 'absolute',
+				left: this.props.dayLabelWidth,
+				width: width,
+				height: this.props.rowHeight,
+				backgroundColor: 'blue'
+				}}></div>
+		);
+	    }
 	});
 	
 	return (

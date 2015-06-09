@@ -24,7 +24,7 @@ var ChatroomSchedule = React.createClass({
 		{this.state.addingSlot ? this._renderAddSlot() : null}
 		<ChatroomScheduleViewer
 			slots={[
-			       {day: 'Mon', start: 6, end: 23},
+			       {day: 'Mon', start: 6, end: 2},
 			       {day: 'Tue', start: 9, end: 11},
 			       {day: 'Fri', start: 10, end: 22},
 			       ]}
