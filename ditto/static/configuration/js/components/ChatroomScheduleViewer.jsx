@@ -2,6 +2,7 @@ var React = require('react/addons');
 var update = React.addons.update;
 var Constants = require('../constants/SettingsConstants');
 var assign = require('object-assign');
+var utils = require('../utils');
 
 var ChatroomScheduleViewer = React.createClass({
 
@@ -16,58 +17,45 @@ var ChatroomScheduleViewer = React.createClass({
     },
     
     render () {
-	var rows = [for (d of Constants.days) [this._renderDayLabel(d)]];
-	this.props.slots.forEach(s => {
-	    var end;
-	    var dayIndex = Constants.days.indexOf(s.day);
-	    var day = rows[dayIndex];
-	    var nextDay = rows[(dayIndex + 1) % 7];
-	    if (s.end < s.start) {
-		end = 24;
-	    } else {
-		end = s.end
-	    }
-	    day.push(
-		<Slot dayLabelWidth={this.props.dayLabelWidth} rowWidth={this.props.width} start={s.start} end={end} />
-	    );
-	    if (s.end < s.start) {
-		nextDay.push(
-		    <Slot dayLabelWidth={this.props.dayLabelWidth} rowWidth={this.props.width} start={0} end={s.end} />
+	var groupedSlots = utils.slotsToDayIntervals(this.props.slots);
+	var rows = [];
+	groupedSlots.forEach((slots, i) => {
+	    var day = [this._renderDayLabel(i)];
+	    rows.push(day);
+	    slots.forEach(slot => {
+		day.push(
+		    <Slot dayLabelWidth={this.props.dayLabelWidth}
+			    rowWidth={this.props.width}
+			    start={slot.start}
+			    end={slot.end}
+			    isPending={slot.isPending}
+			    />
 		);
-	    }
+	    })
 	});
 	
 	return (
 	    <div>
 		{this._renderHeader()}
-		{rows.map(row => <Row width={this.props.width} height={this.props.rowHeight}>{row}</Row>)}
+		{rows.map((row, i) => <Row key={i} width={this.props.width} height={this.props.rowHeight}>{row}</Row>)}
 	    </div>
 	);
     },
 
-    _renderDayLabel (dayName) {
+    _renderDayLabel (dayIndex) {
 	return (
 	    <div style={{
  		float: 'left',
 		width: this.props.dayLabelWidth,
 		height: this.props.rowHeight,
-	    }}>{dayName}</div>
+	    }}>{Constants.days[dayIndex]}</div>
 	);
     },
     
     _renderHeader () {
 	var labels = [];
 	for (var i = 0; i < 24; i += 1) {
-	    let hour;
-	    if (i === 0) {
-		hour = '12am';
-	    } else if (i === 12) {
-		hour = '12pm';
-	    } else if (i < 12) {
-		hour = i + 'am';
-	    } else {
-		hour = (i - 12) + 'pm';
-	    }
+	    let hour = utils.displayTime(i);
 	    labels.push(
 		<div key={i}
 			style={{
@@ -130,7 +118,8 @@ var Slot = React.createClass({
 	    if (value < start + 1) {
 		return new Error('End must be greater than start');
 	    }
-	}
+	},
+	isPending: React.PropTypes.bool,
     },
 
     render () {
@@ -142,7 +131,8 @@ var Slot = React.createClass({
 			left: offset,
 			width: width,
 			height: '100%',
-			backgroundColor: 'blue'
+			backgroundColor: this.props.isPending ? 'orange' : 'blue',
+			margin: this.props.isPending ? 2 : 0
 			}}>
 	    </div>
 	);
