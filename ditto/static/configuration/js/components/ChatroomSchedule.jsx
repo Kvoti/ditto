@@ -16,6 +16,8 @@ var ChatroomSchedule = React.createClass({
 		{day: 'Fri', start: 10, end: 12},
 		{day: 'Fri', start: 14, end: 16},
 	    ],
+	    editingSlot: null,
+	    addingSlot: null,
 	}
     },
     
@@ -27,8 +29,8 @@ var ChatroomSchedule = React.createClass({
 	return (
 	    <div>
 		{!this.state.addingSlot ? <p><button onClick={this._addingSlot}>Add slot</button></p> : null}
-		{this.state.addingSlot ? this._renderAddSlot() : null}
-		<ChatroomScheduleViewer slots={slots} />
+		{this.state.addingSlot || (this.state.editingSlot !== null) ? this._renderAddEditSlot() : null}
+		<ChatroomScheduleViewer slots={slots} onSlotClick={this._editSlot}/>
 	    </div>
 	);
     },
@@ -44,32 +46,34 @@ var ChatroomSchedule = React.createClass({
 	});
     },
 
-    _renderAddSlot () {
+    _renderAddEditSlot () {
+	var slot = this.state.addingSlot;
+	console.log('editing', slot);
 	var startHours = [], endHours = [];
-	var overlaps = this.state.addingSlot ? this._validatePendingSlot() : [];
+	var overlaps = slot ? this._validatePendingSlot(slot) : [];
 	for (let i = 0; i < 24; i += 1) {
 	    startHours.push(i);
 	}
-	for (let i = this.state.addingSlot.start + 1; i <= 24; i += 1) {
+	for (let i = slot.start + 1; i <= 24; i += 1) {
 	    endHours.push(i);
 	}
-	for (let i = 1; i < this.state.addingSlot.start; i += 1) {
+	for (let i = 1; i < slot.start; i += 1) {
 	    endHours.push(i);
 	}
 	return (
 	    <div>Add slot:{' '}
 		<label>Day
-		    <select onChange={this._updatePending.bind(this, 'day')} value={this.state.addingSlot.day}>
+		    <select onChange={this._updatePending.bind(this, 'day')} value={slot.day}>
 			{Constants.days.map(d => <option key={d}>{d}</option>)}
 		    </select>
 		</label>
 		<label>Start
-		    <select onChange={this._updatePending.bind(this, 'start')} value={this.state.addingSlot.start}>
+		    <select onChange={this._updatePending.bind(this, 'start')} value={slot.start}>
 			{startHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
 		    </select>
 		</label>
 		<label>End
-		    <select onChange={this._updatePending.bind(this, 'end')} value={this.state.addingSlot.end}>
+		    <select onChange={this._updatePending.bind(this, 'end')} value={slot.end}>
 			{endHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
 		    </select>
 		</label>
@@ -98,17 +102,20 @@ var ChatroomSchedule = React.createClass({
 	this.setState(update(this.state, change));
     },
     
-    _validatePendingSlot () {
+    _validatePendingSlot (slot) {
 	// Brute force, check pending slot against all other slots for overlap
 	// (probably some clever way to do this [given slots are sorted]...)
-	var pending = utils.slotsToDayIntervals([this.state.addingSlot]);
+	var pending = utils.slotsToDayIntervals([slot]);
 	var current = utils.slotsToDayIntervals(this.state.slots);
 	var overlaps = [];
 	current.forEach((day, dayIndex) => {
 	    day.forEach(slot => {
 		pending[dayIndex].forEach(pendingSlot => {
 		    if (this._overlaps(slot, pendingSlot)) {
-			overlaps.push({day: dayIndex, slot: slot});
+			// don't report a slot being edited as overlapping with itself
+			if (this.state.editingSlot === null || slot.index !== this.state.editingSlot) {
+			    overlaps.push({day: dayIndex, slot: slot});
+			}
 		    }
 		});
 	    });
@@ -119,18 +126,41 @@ var ChatroomSchedule = React.createClass({
     _addPendingSlot () {
 	var newSlot = assign({}, this.state.addingSlot);
 	delete newSlot.isPending;
+	var addSlot;
+	if (this.state.editingSlot !== null) {
+	    // replace the currently editing slot with new values
+	    addSlot = {};
+	    addSlot[this.state.editingSlot] = {$set: newSlot};
+	} else {
+	    // add the new slot to the list of slots
+	    addSlot = {$push: [newSlot]};
+	}
 	this.setState(
 	    update(this.state,
 		{
 		    addingSlot: {$set: null},
-		    slots: {$push: [newSlot]},
+		    editingSlot: {$set: null},
+		    slots: addSlot,
 		}
 	    )
 	);
     },
 
     _cancelPendingSlot () {
-	this.setState({addingSlot: null});
+	this.setState({
+	    addingSlot: null,
+	    editingSlot: null,
+	});
+    },
+
+    _editSlot (index) {
+	console.log('editing', index);
+	var pendingSlot = assign({}, this.state.slots[index]);
+	pendingSlot.isPending = true;
+	this.setState({
+	    editingSlot: index,
+	    addingSlot: pendingSlot,
+	}); 
     },
     
     _overlaps (a, b) {

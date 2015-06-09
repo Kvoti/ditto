@@ -7,7 +7,7 @@ module.exports = {
         // day. Takes care of wrap around where slots end the following
         // day.
 	var days = [for (d of Constants.days) []];
-	slots.forEach(s => {
+	slots.forEach((s, i) => {
 	    var end;
 	    var dayIndex = Constants.days.indexOf(s.day);
 	    var day = days[dayIndex];
@@ -17,9 +17,9 @@ module.exports = {
 	    } else {
 		end = s.end
 	    }
-	    day.push({start: s.start, end: end, isPending: s.isPending});
+	    day.push({start: s.start, end: end, isPending: s.isPending, index: i});
 	    if (s.end < s.start) {
-		nextDay.push({start: 0, end: s.end, isPending: s.isPending});                    
+		nextDay.push({start: 0, end: s.end, isPending: s.isPending, index: i});           
 	    }
 	});
         return days;

@@ -28,7 +28,9 @@ var ChatroomScheduleViewer = React.createClass({
 			    rowWidth={this.props.width}
 			    start={slot.start}
 			    end={slot.end}
-			    isPending={slot.isPending}
+		            isPending={slot.isPending}
+		            index={slot.index}
+		            onClick={this.props.onSlotClick}
 			    />
 		);
 	    })
@@ -120,6 +122,7 @@ var Slot = React.createClass({
 	    }
 	},
 	isPending: React.PropTypes.bool,
+	onClick: React.PropTypes.func
     },
 
     render () {
@@ -128,15 +131,24 @@ var Slot = React.createClass({
 	return (
 	    <div style={{
 			position: 'absolute',
-			left: offset,
+                        cursor: 'pointer',
+		        left: offset,
 			width: width,
 			height: '100%',
 			backgroundColor: this.props.isPending ? 'orange' : 'blue',
 			margin: this.props.isPending ? 2 : 0
-			}}>
+	    }}
+	    onClick={this._onClick.bind(this, this.props.index)}
+	    >
 	    </div>
 	);
-    }
+    },
+
+    _onClick (index) {
+	console.log('clicked', index);
+	this.props.onClick(index);
+    },
+    
 });
 
 module.exports = ChatroomScheduleViewer;
