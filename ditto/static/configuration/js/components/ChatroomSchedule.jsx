@@ -74,6 +74,7 @@ var ChatroomSchedule = React.createClass({
 		    </select>
 		</label>
 		<button className="btn btn-success" disabled={overlaps.length !== 0} onClick={this._addPendingSlot}>Done</button>
+		<button className="btn" onClick={this._cancelPendingSlot}>Cancel</button>
 		{overlaps.map(o => {
 		    return (
 			<p key={[o.day, o.slot.start, o.slot.end].join(',')}>Slot overlaps {Constants.days[o.day]}{' '}
@@ -128,6 +129,10 @@ var ChatroomSchedule = React.createClass({
 	);
     },
 
+    _cancelPendingSlot () {
+	this.setState({addingSlot: null});
+    },
+    
     _overlaps (a, b) {
 	return (
 	    (a.start >= b.start && a.start <= b.end) || // a starts inside b
