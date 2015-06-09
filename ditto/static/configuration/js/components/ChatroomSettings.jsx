@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var update = React.addons.update;
 var CheckList = require('./CheckList.jsx');
+var ChatroomSchedule = require('./ChatroomSchedule.jsx');
 var UserAutocomplete = require('../../../js/components/UserAutocomplete.jsx');
 var Accordion = require('react-bootstrap/lib/Accordion');
 
@@ -9,7 +10,6 @@ var ChatroomSettings = React.createClass({
 	return {
 	    creatorRoles: [],
 	    creatorUsers: [],
-	    chatrooms: []
 	}
     },
     
@@ -22,6 +22,7 @@ var ChatroomSettings = React.createClass({
 			    selected={this.state.creatorRoles}
 			    onChange={this._updateRoles} />
 		</p>
+		<p>Select users who can create chatrooms</p>
 		<UserAutocomplete
 			value={this.state.creatorUsers.length ?
 			       this.state.creatorUsers.join('|') : null
@@ -29,6 +30,7 @@ var ChatroomSettings = React.createClass({
 			multi={true}
 			onChange={this._updateUsers}
 			/>
+		<ChatroomSchedule />
 	    </div>
 	);
     },

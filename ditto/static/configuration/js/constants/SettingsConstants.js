@@ -27,4 +27,8 @@ module.exports = {
 
         RECEIVE_REG_FORM_SETTINGS: null,
     }),
+
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+
+
 };
