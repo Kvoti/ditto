@@ -17,27 +17,27 @@ var ChatroomSchedule = React.createClass({
 		{day: 'Fri', start: 14, end: 16},
 	    ],
 	    editingSlot: null,
-	    addingSlot: null,
+	    pendingSlot: null,
 	}
     },
     
     render () {
 	var slots = this.state.slots.slice();
-	if (this.state.addingSlot) {
-	    slots.push(this.state.addingSlot);
+	if (this.state.pendingSlot) {
+	    slots.push(this.state.pendingSlot);
 	}
 	return (
 	    <div>
-		{!this.state.addingSlot ? <p><button onClick={this._addingSlot}>Add slot</button></p> : null}
-		{this.state.addingSlot || (this.state.editingSlot !== null) ? this._renderAddEditSlot() : null}
+		{!this.state.pendingSlot ? <p><button className="btn btn-success" onClick={this._addPendingSlot}>Add slot</button></p> : null}
+		{this.state.pendingSlot || this._isEditingExistingSlot() ? this._renderPendingSlotEditor() : null}
 		<ChatroomScheduleViewer slots={slots} onSlotClick={this._editSlot}/>
 	    </div>
 	);
     },
 
-    _addingSlot () {
+    _addPendingSlot () {
 	this.setState({
-	    addingSlot: {
+	    pendingSlot: {
 		day: 'Mon',
 		start: 9,
 		end: 17,
@@ -46,8 +46,8 @@ var ChatroomSchedule = React.createClass({
 	});
     },
 
-    _renderAddEditSlot () {
-	var slot = this.state.addingSlot;
+    _renderPendingSlotEditor () {
+	var slot = this.state.pendingSlot;
 	console.log('editing', slot);
 	var startHours = [], endHours = [];
 	var overlaps = slot ? this._validatePendingSlot(slot) : [];
@@ -61,25 +61,30 @@ var ChatroomSchedule = React.createClass({
 	    endHours.push(i);
 	}
 	return (
-	    <div>Add slot:{' '}
-		<label>Day
-		    <select onChange={this._updatePending.bind(this, 'day')} value={slot.day}>
-			{Constants.days.map(d => <option key={d}>{d}</option>)}
-		    </select>
-		</label>
-		<label>Start
-		    <select onChange={this._updatePending.bind(this, 'start')} value={slot.start}>
-			{startHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
-		    </select>
-		</label>
-		<label>End
-		    <select onChange={this._updatePending.bind(this, 'end')} value={slot.end}>
-			{endHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
-		    </select>
-		</label>
-		<button className="btn btn-success" disabled={overlaps.length !== 0} onClick={this._addPendingSlot}>Save</button>
-		<button className="btn" onClick={this._cancelPendingSlot}>Cancel</button>
-		{this.state.editingSlot !== null ? <button className="btn" onClick={this._deleteSlot}>Delete</button> : null}
+	    <div>
+		<div className="form-inline">
+		    <div className="form-group">
+			<label forHtml="day">Day</label>
+			<select id="day" className="form-control" onChange={this._updatePendingSlot.bind(this, 'day')} value={slot.day}>
+			    {Constants.days.map(d => <option key={d}>{d}</option>)}
+			</select>
+		    </div>
+		    <div className="form-group">
+			<label forHtml="start">Start</label>
+			<select id="start" className="form-control" onChange={this._updatePendingSlot.bind(this, 'start')} value={slot.start}>
+			    {startHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
+			</select>
+		    </div>
+		    <div className="form-group">
+			<label forHtml="end">End</label>
+			<select id="end" className="form-control" onChange={this._updatePendingSlot.bind(this, 'end')} value={slot.end}>
+			    {endHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
+			</select>
+		    </div>
+		    <button className="btn btn-success" disabled={overlaps.length !== 0} onClick={this._savePendingSlot}>Save</button>
+		    <button className="btn btn-default" onClick={this._cancelPendingSlot}>Cancel</button>
+		    {this._isEditingExistingSlot() ? <button className="btn btn-danger" onClick={this._deleteSlot}>Delete</button> : null}
+		</div>
 		{overlaps.map(o => {
 		    return (
 			<p key={[o.day, o.slot.start, o.slot.end].join(',')}>Slot overlaps {Constants.days[o.day]}{' '}
@@ -92,14 +97,17 @@ var ChatroomSchedule = React.createClass({
 	);
     },
 
-    _updatePending (key, e) {
+    _isEditingExistingSlot () {
+	return this.state.editingSlot !== null;
+    },
+    
+    _updatePendingSlot (key, e) {
 	var value = e.target.value;
 	if (key === 'start' || 'key' === 'end') {
 	    value = parseInt(value, 10);
 	}
-	var pending = this.state.addingSlot;
-	var change = {addingSlot: {}};
-	change.addingSlot[key] = {$set: value};
+	var change = {pendingSlot: {}};
+	change.pendingSlot[key] = {$set: value};
 	this.setState(update(this.state, change));
     },
     
@@ -124,11 +132,11 @@ var ChatroomSchedule = React.createClass({
 	return overlaps;
     },
 
-    _addPendingSlot () {
-	var newSlot = assign({}, this.state.addingSlot);
+    _savePendingSlot () {
+	var newSlot = assign({}, this.state.pendingSlot);
 	delete newSlot.isPending;
 	var addSlot;
-	if (this.state.editingSlot !== null) {
+	if (this._isEditingExistingSlot()) {
 	    // replace the currently editing slot with new values
 	    addSlot = {};
 	    addSlot[this.state.editingSlot] = {$set: newSlot};
@@ -139,7 +147,7 @@ var ChatroomSchedule = React.createClass({
 	this.setState(
 	    update(this.state,
 		{
-		    addingSlot: {$set: null},
+		    pendingSlot: {$set: null},
 		    editingSlot: {$set: null},
 		    slots: addSlot,
 		}
@@ -149,25 +157,24 @@ var ChatroomSchedule = React.createClass({
 
     _cancelPendingSlot () {
 	this.setState({
-	    addingSlot: null,
+	    pendingSlot: null,
 	    editingSlot: null,
 	});
     },
 
     _editSlot (index) {
-	console.log('editing', index);
 	var pendingSlot = assign({}, this.state.slots[index]);
 	pendingSlot.isPending = true;
 	this.setState({
 	    editingSlot: index,
-	    addingSlot: pendingSlot,
+	    pendingSlot: pendingSlot,
 	}); 
     },
 
     _deleteSlot () {
 	this.setState(update(this.state, {
 	    slots: {$splice: [[this.state.editingSlot, 1]]},
-	    addingSlot: {$set: null},
+	    pendingSlot: {$set: null},
 	    editingSlot: {$set: null},
 	}));
     },

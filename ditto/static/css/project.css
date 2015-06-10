@@ -585,3 +585,11 @@ footer {
 	-webkit-transform: rotate(1turn);
     }
 }
+/*************/
+
+/* For some reason inline forms have no spacing between elements
+*  TODO figure out why!
+*/
+.form-inline .form-group, .form-inline button {
+    margin-right: 5px;
+}
