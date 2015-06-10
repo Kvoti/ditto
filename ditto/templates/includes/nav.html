@@ -34,9 +34,12 @@
     <ul class="nav navbar-nav navbar-right">
         {% if request.tenant.is_main %}
 
+            {% url 'page' 'product-overview' as url %}
+            {% navitem "product-overview" url _("PRODUCT OVERVIEW") %}
+
             {% url 'page' 'the-product' as url %}
             {% navitem "the-product" url _("THE PRODUCT") %}
-
+	    
             {% url 'page' 'the-team' as url %}
             {% navitem "the-team" url _("THE TEAM") %}
 	    

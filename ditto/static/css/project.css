@@ -593,3 +593,22 @@ footer {
 .form-inline .form-group, .form-inline button {
     margin-right: 5px;
 }
+
+/* Product overview carousel */
+#overview-carousel {
+    width: 1260px;
+    margin: auto;
+}
+#overview-carousel .carousel-indicators li {
+    border: 1px solid #0f001c;
+}
+#overview-carousel .carousel-indicators .active {
+    background-color: #0f001c;
+}
+.carousel-control.left, .carousel-control.right {
+    background-image: none;
+}
+#overview-carousel a.carousel-control {
+    color: #0f001c;
+}
+/***********/
