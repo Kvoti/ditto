@@ -77,8 +77,9 @@ var ChatroomSchedule = React.createClass({
 			{endHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
 		    </select>
 		</label>
-		<button className="btn btn-success" disabled={overlaps.length !== 0} onClick={this._addPendingSlot}>Done</button>
+		<button className="btn btn-success" disabled={overlaps.length !== 0} onClick={this._addPendingSlot}>Save</button>
 		<button className="btn" onClick={this._cancelPendingSlot}>Cancel</button>
+		{this.state.editingSlot !== null ? <button className="btn" onClick={this._deleteSlot}>Delete</button> : null}
 		{overlaps.map(o => {
 		    return (
 			<p key={[o.day, o.slot.start, o.slot.end].join(',')}>Slot overlaps {Constants.days[o.day]}{' '}
@@ -161,6 +162,14 @@ var ChatroomSchedule = React.createClass({
 	    editingSlot: index,
 	    addingSlot: pendingSlot,
 	}); 
+    },
+
+    _deleteSlot () {
+	this.setState(update(this.state, {
+	    slots: {$splice: [[this.state.editingSlot, 1]]},
+	    addingSlot: {$set: null},
+	    editingSlot: {$set: null},
+	}));
     },
     
     _overlaps (a, b) {
