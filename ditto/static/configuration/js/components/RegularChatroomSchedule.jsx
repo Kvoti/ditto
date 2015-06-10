@@ -5,9 +5,10 @@ var Constants = require('../constants/SettingsConstants');
 var utils = require('../utils');
 var assign = require('object-assign');
 
-var ChatroomSchedule = React.createClass({
+var RegularChatroomSchedule = React.createClass({
     getInitialState () {
 	return {
+	    type: null,
 	    open: null,
 	    close: null,
 	    slots: [
@@ -188,4 +189,4 @@ var ChatroomSchedule = React.createClass({
     }
 });
 
-module.exports = ChatroomSchedule;
+module.exports = RegularChatroomSchedule;

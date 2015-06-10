@@ -4,12 +4,17 @@ var CheckList = require('./CheckList.jsx');
 var ChatroomSchedule = require('./ChatroomSchedule.jsx');
 var UserAutocomplete = require('../../../js/components/UserAutocomplete.jsx');
 var Accordion = require('react-bootstrap/lib/Accordion');
+var Panel = require('react-bootstrap/lib/Panel');
 
 var ChatroomSettings = React.createClass({
     getInitialState () {
 	return {
 	    creatorRoles: [],
 	    creatorUsers: [],
+	    chatrooms: [
+		{id: 'main'},
+		{id: 'surgery'}
+	    ]
 	}
     },
     
@@ -30,7 +35,15 @@ var ChatroomSettings = React.createClass({
 			multi={true}
 			onChange={this._updateUsers}
 			/>
-		<ChatroomSchedule />
+		<Accordion defaultActiveKey={this.state.chatrooms[0].id}>
+	    {this.state.chatrooms.map(room => {
+		return (
+		    <Panel eventKey={room.id} header={room.id}>
+			<ChatroomSchedule />
+		    </Panel>
+		);
+	    })}
+		</Accordion>
 	    </div>
 	);
     },
