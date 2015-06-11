@@ -1,5 +1,7 @@
 var Constants = require('./constants/SettingsConstants');
 
+var _count = 0;
+
 module.exports = {
     slotsToDayIntervals (slots) {
         // Take a bunch of *ordered* slots with day, start and end and
@@ -37,6 +39,10 @@ module.exports = {
 	    hour = (i - 12) + 'pm';
         }
         return hour;
+    },
+
+    uniqueID () {
+        return 'id' + _count++;
     },
     
 }    

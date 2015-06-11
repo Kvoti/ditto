@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var update = React.addons.update;
 var RegularChatroomSchedule = require('./RegularChatroomSchedule.jsx');
+var OneOffChatroomSchedule = require('./OneOffChatroomSchedule.jsx');
 var Constants = require('../constants/SettingsConstants');
 var utils = require('../utils');
 var assign = require('object-assign');
@@ -25,7 +26,7 @@ var ChatroomSchedule = React.createClass({
 		    </label>
 		</p>
 		{this.state.type === 'regular' ? <RegularChatroomSchedule /> : null}
-		{this.state.type === 'oneoff' ? <p>TODO one of schedule</p> : null}
+		{this.state.type === 'oneoff' ? <OneOffChatroomSchedule /> : null}
 	    </div>
 	);
     },

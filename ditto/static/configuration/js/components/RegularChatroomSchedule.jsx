@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var update = React.addons.update;
 var ChatroomScheduleViewer = require('./ChatroomScheduleViewer.jsx');
+var ChatHours = require('./ChatHours.jsx');
 var Constants = require('../constants/SettingsConstants');
 var utils = require('../utils');
 var assign = require('object-assign');
@@ -49,39 +50,17 @@ var RegularChatroomSchedule = React.createClass({
 
     _renderPendingSlotEditor () {
 	var slot = this.state.pendingSlot;
-	console.log('editing', slot);
-	var startHours = [], endHours = [];
 	var overlaps = slot ? this._validatePendingSlot(slot) : [];
-	for (let i = 0; i < 24; i += 1) {
-	    startHours.push(i);
-	}
-	for (let i = slot.start + 1; i <= 24; i += 1) {
-	    endHours.push(i);
-	}
-	for (let i = 1; i < slot.start; i += 1) {
-	    endHours.push(i);
-	}
 	return (
 	    <div>
 		<div className="form-inline">
 		    <div className="form-group">
 			<label forHtml="day">Day</label>
-			<select id="day" className="form-control" onChange={this._updatePendingSlot.bind(this, 'day')} value={slot.day}>
+			<select id="day" className="form-control" onChange={this._updatePendingSlotDay} value={slot.day}>
 			    {Constants.days.map(d => <option key={d}>{d}</option>)}
 			</select>
 		    </div>
-		    <div className="form-group">
-			<label forHtml="start">Start</label>
-			<select id="start" className="form-control" onChange={this._updatePendingSlot.bind(this, 'start')} value={slot.start}>
-			    {startHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
-			</select>
-		    </div>
-		    <div className="form-group">
-			<label forHtml="end">End</label>
-			<select id="end" className="form-control" onChange={this._updatePendingSlot.bind(this, 'end')} value={slot.end}>
-			    {endHours.map(h => <option value={h} key={h}>{utils.displayTime(h)}</option>)}
-			</select>
-		    </div>
+		    <ChatHours onChange={this._updatePendingSlotTime} start={slot.start} end={slot.end} />
 		    <button className="btn btn-success" disabled={overlaps.length !== 0} onClick={this._savePendingSlot}>Save</button>
 		    <button className="btn btn-default" onClick={this._cancelPendingSlot}>Cancel</button>
 		    {this._isEditingExistingSlot() ? <button className="btn btn-danger" onClick={this._deleteSlot}>Delete</button> : null}
@@ -102,11 +81,14 @@ var RegularChatroomSchedule = React.createClass({
 	return this.state.editingSlot !== null;
     },
     
-    _updatePendingSlot (key, e) {
+    _updatePendingSlotDay (e) {
 	var value = e.target.value;
-	if (key === 'start' || 'key' === 'end') {
-	    value = parseInt(value, 10);
-	}
+	var change = {pendingSlot: {}};
+	change.pendingSlot[key] = {$set: value};
+	this.setState(update(this.state, change));
+    },
+    
+    _updatePendingSlotTime (key, value) {
 	var change = {pendingSlot: {}};
 	change.pendingSlot[key] = {$set: value};
 	this.setState(update(this.state, change));

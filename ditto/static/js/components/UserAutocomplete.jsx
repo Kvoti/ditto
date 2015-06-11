@@ -24,15 +24,31 @@ var UserAutocomplete = React.createClass({
 	return (
 	    <Select
 		    name="form-field-name"
-		    value={this.props.value}
+		    value={this._value()}
 		    placeholder="Enter username"
 		    asyncOptions={search}
-		    onChange={this.props.onChange}
+		    onChange={this._onChange}
 		    autoload={false}
 	            delimiter={'|'}
 	            multi={this.props.multi}
 		    />
 	);
+    },
+
+    _value () {
+	if (this.props.multi) {
+	    if (this.props.value.length) {
+		return this.props.value.join('|');
+	    } else {
+		return null
+	    }
+	} else {
+	    return this.props.value;
+	}
+    },
+    
+    _onChange (users) {
+	this.props.onChange(users.split('|'));
     }
 });
 
