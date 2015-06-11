@@ -32,6 +32,12 @@ var ChatroomSettings = React.createClass({
 			onChangeRoles={this._updateRoles}
 			onChangeUsers={this._updateUsers}
 			/>
+		<hr/>
+		<h3>Configure chatrooms</h3>
+		<p>
+		    <input type="text" valueLink={this.linkState('newChatroomID')} placeholder="Enter id" />
+		    <button disabled={!this.state.newChatroomID} onClick={this._addChatroom}>Add chatroom</button>
+		</p>
 		<Accordion defaultActiveKey={this.state.chatrooms[0].id}>
 		    {this.state.chatrooms.map(room => {
 			return (
@@ -41,10 +47,6 @@ var ChatroomSettings = React.createClass({
 			);
 		     })}
 		</Accordion>
-		<p>
-		    <input type="text" valueLink={this.linkState('newChatroomID')} placeholder="Enter id" />
-		    <button disabled={!this.state.newChatroomID} onClick={this._addChatroom}>Add chatroom</button>
-		</p>
 	    </div>
 	);
     },
@@ -59,7 +61,7 @@ var ChatroomSettings = React.createClass({
 
     _addChatroom () {
 	this.setState(update(this.state, {
-	    chatrooms: {$push: [{id: this.state.newChatroomID}]},
+	    chatrooms: {$splice: [[0, 0, {id: this.state.newChatroomID}]]},
 	    newChatroomID: {$set: ""}
 	}));
     }
