@@ -26,6 +26,8 @@ module.exports = {
         UPDATE_CHOICE_FIELD: null,
 
         RECEIVE_REG_FORM_SETTINGS: null,
+
+        RECEIVE_CHATROOMS: null
     }),
 
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

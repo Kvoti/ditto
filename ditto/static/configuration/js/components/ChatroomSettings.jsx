@@ -5,6 +5,12 @@ var ChatroomSchedule = require('./ChatroomSchedule.jsx');
 var RoleAndUserSelect = require('./RoleAndUserSelect.jsx');
 var Accordion = require('react-bootstrap/lib/Accordion');
 var Panel = require('react-bootstrap/lib/Panel');
+var API = require('../utils/SettingsWebAPIUtils');
+var RoomStore = require('../stores/RoomStore');
+
+function getStateFromStores () {
+    return RoomStore.getAll();
+}
 
 var ChatroomSettings = React.createClass({
     mixins: [React.addons.LinkedStateMixin],
@@ -13,12 +19,23 @@ var ChatroomSettings = React.createClass({
 	return {
 	    creatorRoles: [],
 	    creatorUsers: [],
-	    chatrooms: [
-		{id: 'main'},
-		{id: 'surgery'}
-	    ],
+	    chatrooms: getStateFromStores(),
 	    newChatroomID: ""
 	}
+    },
+    
+    componentDidMount () {
+	API.loadChatrooms();
+        RoomStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount () {
+        RoomStore.removeChangeListener(this._onChange);
+    },
+    
+    _onChange () {
+        this.setState(update(this.state,
+	    {chatrooms: {$set: getStateFromStores()}}));
     },
     
     render () {
@@ -38,10 +55,10 @@ var ChatroomSettings = React.createClass({
 		    <input type="text" valueLink={this.linkState('newChatroomID')} placeholder="Enter id" />
 		    <button disabled={!this.state.newChatroomID} onClick={this._addChatroom}>Add chatroom</button>
 		</p>
-		<Accordion defaultActiveKey={this.state.chatrooms[0].id}>
+		<Accordion defaultActiveKey={this.state.chatrooms.length && this.state.chatrooms[0].slug}>
 		    {this.state.chatrooms.map(room => {
 			return (
-			    <Panel eventKey={room.id} header={room.id}>
+			    <Panel eventKey={room.slug} header={room.name}>
 			    <ChatroomSchedule />
 			    </Panel>
 			);
@@ -65,6 +82,7 @@ var ChatroomSettings = React.createClass({
 	    newChatroomID: {$set: ""}
 	}));
     }
+    
 });
 
 module.exports = ChatroomSettings;

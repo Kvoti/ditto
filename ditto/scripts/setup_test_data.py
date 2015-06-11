@@ -14,6 +14,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 
+import chat.models
 import configuration.models
 import core
 import dittoforms.models
@@ -161,3 +162,5 @@ def setup_reg_form():
 
 def setup_chat_conf():
     configuration.models.Chatroom.objects.create()
+    chat.models.Room.objects.create(slug='main', name='Main chatroom')
+    

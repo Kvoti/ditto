@@ -158,6 +158,12 @@ module.exports = {
         });
     },
 
+    receiveChatrooms (rooms) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_CHATROOMS,
+            rooms: rooms,
+        });
+    },
 };
 // TODO fix circ. dependency between api and this
 var API = require('../api/api');
