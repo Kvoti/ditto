@@ -24,6 +24,30 @@ r = requests.post(
 )
 print r, r.text
 
+# add some slots
+r = requests.post(
+    'http://localhost:8000/di/api/chat/slots/',
+    data=json.dumps({
+        'room': 'test',
+        'day': 0,
+        'start': 8,
+        'end': 15,
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+sid = r.json()['id']
+r = requests.put(
+    'http://localhost:8000/di/api/chat/slots/%s/' % sid,
+    data=json.dumps({
+        'day': 0,
+        'start': 9,
+        'end': 12,
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+
 r = requests.post(
     'http://localhost:8000/di/api/chat/rooms/',
     data=json.dumps({
