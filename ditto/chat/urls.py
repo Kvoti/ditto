@@ -6,6 +6,7 @@ from users.models import User
 from . import models
 from . import views
 
+# TODO move this api stuff to api.py
 from rest_framework import routers, serializers, viewsets, generics, mixins
 
 
