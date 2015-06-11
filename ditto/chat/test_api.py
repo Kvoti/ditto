@@ -47,6 +47,99 @@ r = requests.post(
 )
 print r, r.text
 
+r = requests.post(
+    'http://localhost:8000/di/api/chat/rooms/',
+    data=json.dumps({
+        'slug': 'test2',
+        'name': 'test chatroom',
+        'users': ['ross', 'mark'],
+        'roles': ['Administrator'],
+        'start': 'xxxx',
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+
+r = requests.post(
+    'http://localhost:8000/di/api/chat/rooms/',
+    data=json.dumps({
+        'slug': 'test2',
+        'name': 'test chatroom',
+        'users': ['ross', 'mark'],
+        'roles': ['Administrator'],
+        'start': '2015-06-20T08:00',
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+
+r = requests.post(
+    'http://localhost:8000/di/api/chat/rooms/',
+    data=json.dumps({
+        'slug': 'test2',
+        'name': 'test chatroom',
+        'users': ['ross', 'mark'],
+        'roles': ['Administrator'],
+        'start': '2015-06-20T08:00',
+        'end': '2015-06-20T15:00',
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+
+r = requests.post(
+    'http://localhost:8000/di/api/chat/rooms/',
+    data=json.dumps({
+        'slug': 'test3',
+        'name': 'test chatroom',
+        'users': ['ross', 'mark'],
+        'roles': ['Administrator'],
+        'end': '2015-06-20T08:00',
+        'start': '2015-06-20T15:00',
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+
+r = requests.post(
+    'http://localhost:8000/di/api/chat/rooms/',
+    data=json.dumps({
+        'slug': 'test3',
+        'name': 'test chatroom',
+        'users': ['ross', 'mark'],
+        'roles': ['Administrator'],
+        'start': '2015-06-20T08:00',
+        'end': '2015-06-20T15:00',
+        'slots': [
+            {
+                'day': 0,
+                'start': 8,
+                'end': 22
+            }
+        ]
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+
+r = requests.post(
+    'http://localhost:8000/di/api/chat/rooms/',
+    data=json.dumps({
+        'slug': 'test4',
+        'name': 'test chatroom',
+        'users': ['ross', 'mark'],
+        'roles': ['Administrator'],
+        'slots': [
+            {
+                'day': 0,
+                'start': 8,
+                'end': 22
+            }
+        ]
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
 
 """r = requests.post(
     'http://localhost:8000/di/ratings/',
