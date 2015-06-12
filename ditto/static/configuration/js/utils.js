@@ -11,7 +11,7 @@ module.exports = {
 	var days = [for (d of Constants.days) []];
 	slots.forEach((s, i) => {
 	    var end;
-	    var dayIndex = Constants.days.indexOf(s.day);
+	    var dayIndex = s.day;
 	    var day = days[dayIndex];
 	    var nextDay = days[(dayIndex + 1) % 7];
 	    if (s.end < s.start) {

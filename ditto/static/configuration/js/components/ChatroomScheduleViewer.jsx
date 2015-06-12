@@ -17,6 +17,7 @@ var ChatroomScheduleViewer = React.createClass({
     },
     
     render () {
+	console.log('viewing', this.props.slots);
 	var groupedSlots = utils.slotsToDayIntervals(this.props.slots);
 	var rows = [];
 	groupedSlots.forEach((slots, i) => {

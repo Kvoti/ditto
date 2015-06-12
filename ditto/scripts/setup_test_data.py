@@ -162,5 +162,14 @@ def setup_reg_form():
 
 def setup_chat_conf():
     configuration.models.Chatroom.objects.create()
-    chat.models.Room.objects.create(slug='main', name='Main chatroom')
-    
+    room = chat.models.Room.objects.create(
+        slug='main',
+        name='Main chatroom',
+        is_regular=True
+    )
+    chat.models.Slot.objects.create(
+        room=room,
+        day=chat.models.Slot.Monday,
+        start=8,
+        end=22,
+    )

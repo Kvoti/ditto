@@ -33,6 +33,7 @@ class RoomSerializer(serializers.ModelSerializer):
         fields = (
             'slug',
             'name',
+            'is_regular',
             'start',
             'end',
             'slots',

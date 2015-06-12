@@ -3,24 +3,35 @@ var update = React.addons.update;
 var ChatroomScheduleViewer = require('./ChatroomScheduleViewer.jsx');
 var ChatHours = require('./ChatHours.jsx');
 var Constants = require('../constants/SettingsConstants');
+var SlotStore = require('../stores/SlotStore');
 var utils = require('../utils');
 var assign = require('object-assign');
+var SettingsActionCreators = require('../actions/SettingsActionCreators');
+
+function getStateFromStores (room) {
+    return SlotStore.getForRoom(room);
+}
 
 var RegularChatroomSchedule = React.createClass({
     getInitialState () {
 	return {
-	    type: null,
-	    open: null,
-	    close: null,
-	    slots: [
-		{day: 'Mon', start: 6, end: 2},
-		{day: 'Tue', start: 9, end: 11},
-		{day: 'Fri', start: 10, end: 12},
-		{day: 'Fri', start: 14, end: 16},
-	    ],
+	    slots: getStateFromStores(this.props.room),
 	    editingSlot: null,
 	    pendingSlot: null,
 	}
+    },
+    
+    componentDidMount () {
+        SlotStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount () {
+        SlotStore.removeChangeListener(this._onChange);
+    },
+    
+    _onChange () {
+	var slots = getStateFromStores(this.props.room);
+        this.setState({slots: slots});
     },
     
     render () {
@@ -40,7 +51,7 @@ var RegularChatroomSchedule = React.createClass({
     _addPendingSlot () {
 	this.setState({
 	    pendingSlot: {
-		day: 'Mon',
+		day: 0,
 		start: 9,
 		end: 17,
 		isPending: true
@@ -57,7 +68,7 @@ var RegularChatroomSchedule = React.createClass({
 		    <div className="form-group">
 			<label forHtml="day">Day</label>
 			<select id="day" className="form-control" onChange={this._updatePendingSlotDay} value={slot.day}>
-			    {Constants.days.map(d => <option key={d}>{d}</option>)}
+			    {Constants.days.map((d, i) => <option key={d} value={i}>{d}</option>)}
 			</select>
 		    </div>
 		    <ChatHours onChange={this._updatePendingSlotTime} start={slot.start} end={slot.end} />
@@ -82,9 +93,9 @@ var RegularChatroomSchedule = React.createClass({
     },
     
     _updatePendingSlotDay (e) {
-	var value = e.target.value;
+	var value = parseInt(e.target.value, 10);
 	var change = {pendingSlot: {}};
-	change.pendingSlot[key] = {$set: value};
+	change.pendingSlot['day'] = {$set: value};
 	this.setState(update(this.state, change));
     },
     
@@ -116,26 +127,45 @@ var RegularChatroomSchedule = React.createClass({
     },
 
     _savePendingSlot () {
-	var newSlot = assign({}, this.state.pendingSlot);
+	this.setState({
+	    pendingSlot: null,
+	    editingSlot: null
+	});
+	var newSlot = assign({room: this.props.room}, this.state.pendingSlot);
 	delete newSlot.isPending;
 	var addSlot;
 	if (this._isEditingExistingSlot()) {
+	    SettingsActionCreators.updateSlot(newSlot);
 	    // replace the currently editing slot with new values
-	    addSlot = {};
-	    addSlot[this.state.editingSlot] = {$set: newSlot};
+	    //addSlot = {};
+	    //ddSlot[this.state.editingSlot] = {$set: newSlot};
 	} else {
+	    SettingsActionCreators.createSlot(newSlot);
 	    // add the new slot to the list of slots
-	    addSlot = {$push: [newSlot]};
+	    //addSlot = {$push: [newSlot]};
 	}
-	this.setState(
-	    update(this.state,
-		{
-		    pendingSlot: {$set: null},
-		    editingSlot: {$set: null},
-		    slots: addSlot,
-		}
-	    )
-	);
+	//this.setState(
+	    // TODO bit of a gotcha here with trying to use immutable state.
+	    // updateSlot above will optimistically update slot store and trigger a change
+	    // event, so here we need to set pendingSlot and editingSlot to null in a
+	    // function so we get the state at the time of the update *not* the state now.
+	    // Wonder what's good/typical practice here? Don't really need to use `update`
+	    // I suppose could just setState({pendingSlot: ...}) then there's no problem.
+	    // Doesn't this mean a potential problem *everywhere* I've used `update` (as
+	    // setState changes are queued and batched)!!?
+	    // Think maybe I've misused `update`. If want perf gains should probably go
+	    // full hog and use immutability-js.
+	    //(state) => {
+	    //	update(this.state,
+	    //	    {
+	    //		pendingSlot: {$set: null},
+	    //		editingSlot: {$set: null},
+	    //		//slots: addSlot,
+	    //	    }
+	    //	)
+	    //}
+	    // 
+	//);
     },
 
     _cancelPendingSlot () {

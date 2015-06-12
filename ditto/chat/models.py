@@ -16,8 +16,9 @@ class Room(models.Model):
     """
     slug = models.SlugField(primary_key=True)
     name = models.CharField(max_length=50)
-
-    # specifying a start and end time makes this a one-off room
+    is_regular = models.BooleanField(default=False)
+    
+    # a one-off room needs to have a start and end time
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
 

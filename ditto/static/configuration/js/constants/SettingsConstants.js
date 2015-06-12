@@ -27,10 +27,11 @@ module.exports = {
 
         RECEIVE_REG_FORM_SETTINGS: null,
 
-        RECEIVE_CHATROOMS: null
+        RECEIVE_CHATROOMS: null,
+        RECEIVE_SLOTS: null,
+        CREATE_SLOT: null,
     }),
 
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-
 
 };

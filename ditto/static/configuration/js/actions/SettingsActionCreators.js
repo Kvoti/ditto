@@ -1,3 +1,5 @@
+// TODO split this out into logical groups of actions
+// (eg flux-chat example, has messageActions, threadActions and serverActions)
 var SettingsAppDispatcher = require('../../../flux-chat/js/dispatcher/ChatAppDispatcher');
 var SettingsConstants = require('../constants/SettingsConstants');
 var RoleStore = require('../stores/RoleStore');
@@ -164,6 +166,23 @@ module.exports = {
             rooms: rooms,
         });
     },
+    
+    receiveSlots (slots) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_SLOTS,
+            slots: slots,
+        });
+    },
+
+    createSlot (slot) {
+        SettingsWebAPIUtils.createSlot(slot);
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.CREATE_SLOT,
+            slot: slot,
+        });
+    },
+    
 };
 // TODO fix circ. dependency between api and this
 var API = require('../api/api');
+var SettingsWebAPIUtils = require('../utils/SettingsWebAPIUtils');
