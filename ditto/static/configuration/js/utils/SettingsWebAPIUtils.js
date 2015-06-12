@@ -34,8 +34,18 @@ module.exports = {
             dataType: "json",
             error: () => console.log('rate session failed')
         })        
-        // TODO success callback to remove pending state from slot
+        // TODO success callback to remove pending state from slot and also set id
+        // for saved slot
         // TODO error callback to so slot can be removed from store/ui (retry option?)
     },
-    
+
+    deleteSlot (slotID) {
+        $.ajax({
+            // TODO fix hardcoded url
+            url: '/di/api/chat/slots/' + slotID + '/',
+            type: "DELETE",
+            dataType: "json",
+        });
+        // TODO handle success/failure
+    },
 };

@@ -185,11 +185,11 @@ var RegularChatroomSchedule = React.createClass({
     },
 
     _deleteSlot () {
-	this.setState(update(this.state, {
-	    slots: {$splice: [[this.state.editingSlot, 1]]},
-	    pendingSlot: {$set: null},
-	    editingSlot: {$set: null},
-	}));
+	SettingsActionCreators.deleteSlot(this.state.pendingSlot.id);
+	this.setState({
+	    pendingSlot: null,
+	    editingSlot: null,
+	});
     },
     
     _overlaps (a, b) {

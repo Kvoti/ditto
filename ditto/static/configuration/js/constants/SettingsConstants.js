@@ -30,6 +30,7 @@ module.exports = {
         RECEIVE_CHATROOMS: null,
         RECEIVE_SLOTS: null,
         CREATE_SLOT: null,
+        DELETE_SLOT: null,
     }),
 
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

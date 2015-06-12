@@ -42,8 +42,14 @@ SlotStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
 
     case ActionTypes.CREATE_SLOT:
         // Optimistic update: add new slot to ui as it's being saved
-        console.log('optimistic update slot');
         _slots.push(action.slot);
+        SlotStore.emitChange();
+        break;
+        
+    case ActionTypes.DELETE_SLOT:
+        // Optimistic update: remove slot as it's being deleted via api
+        var index = _slots.findIndex(s => s.id === action.slotID);
+        _slots.splice(index, 1);
         SlotStore.emitChange();
         break;
         

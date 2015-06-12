@@ -182,6 +182,14 @@ module.exports = {
         });
     },
     
+    deleteSlot (slotID) {
+        SettingsWebAPIUtils.deleteSlot(slotID);
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.DELETE_SLOT,
+            slotID: slotID,
+        });
+    },
+    
 };
 // TODO fix circ. dependency between api and this
 var API = require('../api/api');
