@@ -29,6 +29,7 @@ module.exports = {
 
         RECEIVE_CHATROOMS: null,
         RECEIVE_SLOTS: null,
+        RECEIVE_CREATE_SLOT_SUCCESS: null,
         CREATE_SLOT: null,
         UPDATE_SLOT: null,
         DELETE_SLOT: null,

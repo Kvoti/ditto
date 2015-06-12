@@ -174,6 +174,14 @@ module.exports = {
         });
     },
 
+    receiveCreateSlotSuccess (slot, slotID) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_CREATE_SLOT_SUCCESS,
+            slot: slot,
+            slotID: slotID
+        });
+    },
+    
     createSlot (slot) {
         SettingsWebAPIUtils.createSlot(slot);
         SettingsAppDispatcher.dispatch({

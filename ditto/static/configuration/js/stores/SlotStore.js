@@ -39,6 +39,11 @@ SlotStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         _slots = action.slots;
         SlotStore.emitChange();
         break;
+        
+    case ActionTypes.RECEIVE_CREATE_SLOT_SUCCESS:
+        action.slot.id = action.slotID;
+        SlotStore.emitChange();
+        break;
 
     case ActionTypes.CREATE_SLOT:
         // Optimistic update: add new slot to ui as it's being saved
