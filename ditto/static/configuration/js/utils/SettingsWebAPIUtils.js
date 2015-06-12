@@ -38,6 +38,21 @@ module.exports = {
         // for saved slot
         // TODO error callback to so slot can be removed from store/ui (retry option?)
     },
+    
+    updateSlot (slot) {
+        $.ajax({
+            // TODO fix hardcoded url
+            url: '/di/api/chat/slots/' + slot.id + '/',
+            type: "PUT",
+            data: JSON.stringify(slot),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: () => console.log('rate session failed')
+        })        
+        // TODO success callback to remove pending state from slot
+        // for saved slot
+        // TODO error callback to so slot can be restored on failure (retry option?)
+    },
 
     deleteSlot (slotID) {
         $.ajax({

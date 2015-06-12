@@ -30,6 +30,7 @@ module.exports = {
         RECEIVE_CHATROOMS: null,
         RECEIVE_SLOTS: null,
         CREATE_SLOT: null,
+        UPDATE_SLOT: null,
         DELETE_SLOT: null,
     }),
 

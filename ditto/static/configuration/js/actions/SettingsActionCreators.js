@@ -182,6 +182,14 @@ module.exports = {
         });
     },
     
+    updateSlot (slot) {
+        SettingsWebAPIUtils.updateSlot(slot);
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SLOT,
+            slot: slot,
+        });
+    },
+    
     deleteSlot (slotID) {
         SettingsWebAPIUtils.deleteSlot(slotID);
         SettingsAppDispatcher.dispatch({
