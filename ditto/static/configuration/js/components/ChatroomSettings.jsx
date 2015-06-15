@@ -8,6 +8,7 @@ var Accordion = require('react-bootstrap/lib/Accordion');
 var Panel = require('react-bootstrap/lib/Panel');
 var API = require('../utils/SettingsWebAPIUtils');
 var RoomStore = require('../stores/RoomStore');
+var Alert = require('react-bootstrap/lib/Alert');
 
 function getStateFromStores () {
     return RoomStore.getAll();
@@ -21,7 +22,9 @@ var ChatroomSettings = React.createClass({
 	    creatorRoles: [],
 	    creatorUsers: [],
 	    chatrooms: getStateFromStores(),
-	    newChatroomID: ""
+	    newChatroomID: "",
+	    newChatroomName: "",
+	    newChatroomFormErrors: []
 	}
     },
     
@@ -53,10 +56,18 @@ var ChatroomSettings = React.createClass({
 			/>
 		<hr/>
 		<h3>Configure chatrooms</h3>
-		<p>
-		    <input type="text" valueLink={this.linkState('newChatroomID')} placeholder="Enter id" />
-		    <button disabled={!this.state.newChatroomID} onClick={this._addChatroom}>Add chatroom</button>
-		</p>
+		{this.state.newChatroomFormErrors.map(e => <Alert bsStyle="danger">{e}</Alert>)}
+	    <div className="form-inline">
+		<div className="form-group">
+		    <input className="form-control" type="text" valueLink={this.linkState('newChatroomID')} placeholder="Enter id (a-z characters only)" />
+		</div>
+		<div className="form-group">
+		    <input className="form-control" type="text" valueLink={this.linkState('newChatroomName')} placeholder="Enter name" />
+		</div>
+		<div className="form-group">
+		    <button className="btn btn-success" onClick={this._addChatroom}>Add chatroom</button>
+		</div>
+	    </div>
 		<Accordion defaultActiveKey={this.state.chatrooms.length && this.state.chatrooms[0].slug}>
 		    {this.state.chatrooms.map(room => {
 			return (
@@ -71,7 +82,7 @@ var ChatroomSettings = React.createClass({
 	    </div>
 	);
     },
-    
+
     _updateRoles (roles) {
 	this.setState({creatorRoles: roles});
     },
@@ -81,11 +92,34 @@ var ChatroomSettings = React.createClass({
     },
 
     _addChatroom () {
-	this.setState(update(this.state, {
-	    chatrooms: {$splice: [[0, 0, {id: this.state.newChatroomID}]]},
-	    newChatroomID: {$set: ""}
-	}));
-    }
+	var errors = this._validateNewChatroom();
+	if (errors.length) {
+	    this.setState({newChatroomFormErrors: errors});
+	} else {
+	    //SettingsActionCreators.createChatroom()
+	    this.setState({
+		newChatroomName: "",
+		newChatroomID: "",
+		newChatroomFormErrors: []
+	    });
+	}
+    },
+
+    _validateNewChatroom () {
+	var errors = [];
+	if (this.state.newChatroomID && !/^[a-z]+$/.test(this.state.newChatroomID)) {
+	    errors.push('Please only use lowecase letters for the ID');
+	}
+	if (!this.state.newChatroomID && this.state.newChatroomName ||
+	    !this.state.newChatroomName && this.state.newChatroomID) {
+		errors.push('Please provide an ID and a name');
+	}
+	console.log(this.state.chatrooms);
+	if (this.state.chatrooms.findIndex(c => c.slug === this.state.newChatroomID) > -1) {
+	    errors.push('Room with id ' + this.state.newChatroomID + ' already exists');
+	}
+	return errors;
+    },
     
 });
 
