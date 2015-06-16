@@ -58,15 +58,15 @@ def newnetwork(name):
 
 @hosts('localhost')
 def email(body):
-    fromaddr = 'mark@digital-impacts.com'
-    toaddrs = ['sarah@digital-impacts.com', 'mark@digital-impacts.com']
+    fromaddr = 'mark@kvoti.technology'
+    toaddrs = ['sarah@kvoti.technology', 'mark@kvoti.technology']
 
     msg = MIMEText(body)
     msg['Subject'] = '[DITTO] deployment'
     msg['From'] = fromaddr
     msg['To'] = ','.join(toaddrs)
 
-    username = 'mark@digital-impacts.com'
+    username = 'mark@kvoti.technology'
     password = os.environ['FAB_EMAIL_PASS']
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
