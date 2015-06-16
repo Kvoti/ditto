@@ -1,24 +1,26 @@
 var React = require('react/addons');
-var update = React.addons.update;
-var RegularChatroomSchedule = require('./RegularChatroomSchedule.jsx');
-var ChatHours = require('./ChatHours.jsx');
 var RoleAndUserSelect = require('./RoleAndUserSelect.jsx');
-var Constants = require('../constants/SettingsConstants');
 var utils = require('../utils');
-var assign = require('object-assign');
 var RoomStore = require('../stores/RoomStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
+var _ = require('lodash'); // TODO only needed until switch to immutable data and can compare by ref
+var assign = require('object-assign');
+var Alert = require('react-bootstrap/lib/Alert');
+var Button = require('react-bootstrap/lib/Button');
 
 function getStateFromStores (room) {
-    return RoomStore.get(room);
+    var initial = RoomStore.get(room);
+    var current = assign({}, initial);
+    return {
+	initial: initial,
+	current: current
+    }
 }
 
 var OneOffChatroomSchedule = React.createClass({
 
     getInitialState () {
-	return {
-	    room: getStateFromStores(this.props.room),
-	}
+	return getStateFromStores(this.props.room);
     },
     
     componentDidMount () {
@@ -30,12 +32,11 @@ var OneOffChatroomSchedule = React.createClass({
     },
     
     _onChange () {
-	var room = getStateFromStores(this.props.room);
-        this.setState({room: room});
+        this.setState(getStateFromStores(this.props.room));
     },
 
     componentWillUpdate (nextProps, nextState) {
-	if (this.state.pendingSince && !nextState.room.isPending) {
+	if (this.state.pendingSince && !nextState.initial.isPending) {
 	    let elapsed = new Date() - this.state.pendingSince;
 	    let cancelInterval = Math.max(0, 500 - elapsed);
 	    setTimeout(() => this.setState({pendingSince: null}), cancelInterval);
@@ -53,15 +54,29 @@ var OneOffChatroomSchedule = React.createClass({
 	// datetimes stored in UTC and serialized, by default, in UTC
 	// Here we should display in local timezone so need to change serializer
 	// to take account of current timezone when serializing/deserializing
-	var start = this.state.start || this.state.room.start;
+	var start = this.state.current.start;
 	if (start) {
 	    start = start.replace('Z', '');
 	}
-	var end = this.state.end || this.state.room.end;
+	var end = this.state.current.end;
 	if (end) {
 	    end = end.replace('Z', '');
 	}
 	// -----------------------------------
+	if (this.state.current.failed) {
+	    return (
+		<div>
+		    <Alert bsStyle='danger' onDismiss={this.handleAlertDismiss}>
+			<h4>Error saving changes!</h4>
+			<p>There was a server error trying to save your changes. Close this to revert your changes and try again.</p>
+			<p>If the problem persists ...</p>
+			<p>
+			    <Button bsStyle="danger" onClick={this._revert}>Revert changes</Button>
+			</p>
+		    </Alert>
+ 		</div>
+	    );
+	}
 	return (
 	    <div>
 		<div className="form-inline">
@@ -76,54 +91,55 @@ var OneOffChatroomSchedule = React.createClass({
 		</div>
 		<p>You can make this a private room by selecting roles and users below.</p>
 		<RoleAndUserSelect
-			selectedRoles={this.state.roles || this.state.room.roles}
-			users={this.state.users || this.state.room.users}
+			selectedRoles={this.state.current.roles}
+			users={this.state.current.users}
 			onChangeRoles={this._update.bind(this, 'roles')}
 			onChangeUsers={this._update.bind(this, 'users')}
 			/>
-	    <button disabled={this.state.pendingSince} className="btn btn-success" onClick={this._save}>
+	    <button disabled={this.state.pendingSince || !this._isChanged()} className="btn btn-success" onClick={this._save}>
 		{this.state.pendingSince ? 'Saving...' : 'Save'}
 	    </button>
-		<button className="btn btn-default" onClick={this._cancel}>Cancel</button>
+	    {this._isChanged() ? <button className="btn btn-default" onClick={this._cancel}>Cancel</button> : null }
 	    </div>
 	);
     },
 
+    _isChanged () {
+	// TODO urgh, use immutable data here and make this easier!
+	return !_.isEqual(this.state.current, this.state.initial);
+    },
+    
     _update (key, value) {
-	var change = {};
-	change[key] = value;
-	this.setState(change);
+	var current = this.state.current;
+	current[key] = value;
+	this.setState({current: current});
     },
     
     _updateDateTime (key, e) {
 	var value = e.target.value;
-	var change = {};
-	change[key] = value;
-	this.setState(change);
+	var current = this.state.current;
+	current[key] = value;
+	this.setState({current: current});
     },
 
     _cancel () {
-	this.setState({
-	    start: null,
-	    end: null,
-	    users: null,
-	    roles: null
-	});
+	var current = assign({}, this.state.initial);
+	this.setState({current: current});
+    },
+
+    _revert () {
+	SettingsActionCreators.revertChatroom(this.props.room);
+	this._cancel();
     },
 
     _save () {
 	SettingsActionCreators.updateChatroom(this.props.room, {
-	    start: this.state.start || this.state.room.start,
-	    end: this.state.end || this.state.room.end,
-	    // TODO allow partial updates so we only specify fields that have changed?
-	    users: this.state.users || this.state.room.users,
-	    roles: this.state.roles || this.state.room.roles
+	    start: this.state.current.start,
+	    end: this.state.current.end,
+	    users: this.state.current.users,
+	    roles: this.state.current.roles,
 	});
 	this.setState({
-	    start: null,
-	    end: null,
-	    users: null,
-	    roles: null,
 	    pendingSince: new Date()
 	});
     }

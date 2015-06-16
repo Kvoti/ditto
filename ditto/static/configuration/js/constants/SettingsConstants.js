@@ -37,6 +37,7 @@ module.exports = {
         UPDATE_ROOM: null,
         UPDATE_ROOM_SUCCESS: null,
         UPDATE_ROOM_FAILURE: null,
+        UPDATE_ROOM_REVERT: null,
         CREATE_SLOT: null,
         UPDATE_SLOT: null,
         DELETE_SLOT: null,

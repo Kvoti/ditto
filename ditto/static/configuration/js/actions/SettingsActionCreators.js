@@ -198,6 +198,7 @@ module.exports = {
                 SettingsAppDispatcher.dispatch({
                     type: ActionTypes.UPDATE_ROOM_SUCESS,
                     room: slug,
+                    update: roomConfig
                 });
             })
             .fail(() => {
@@ -210,6 +211,13 @@ module.exports = {
             type: ActionTypes.UPDATE_ROOM,
             room: slug,
             update: roomConfig,
+        });
+    },
+
+    revertChatroom (slug) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_ROOM_REVERT,
+            room: slug,
         });
     },
     

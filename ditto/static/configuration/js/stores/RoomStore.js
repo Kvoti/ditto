@@ -51,19 +51,32 @@ ChatroomStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
     case ActionTypes.UPDATE_ROOM:
         // Add room in pending state
         var room = ChatroomStore.get(action.room);
-        assign(room, action.update);
         room.isPending = true;
         ChatroomStore.emitChange();
         break;
 
     case ActionTypes.UPDATE_ROOM_SUCESS:
         var room = ChatroomStore.get(action.room);
+        // We only commit the change on success. Possibly more normal
+        // to optimistically update and then rollback on error but that's
+        // a bit trickier.
+        assign(room, action.update);
         room.isPending = false;
         ChatroomStore.emitChange();
         break;
         
     case ActionTypes.UPDATE_ROOM_FAILURE:
-        // TODO
+        var room = ChatroomStore.get(action.room);
+        room.isPending = false;
+        room.failed = true;
+        ChatroomStore.emitChange();
+        break;
+        
+    case ActionTypes.UPDATE_ROOM_REVERT:
+        var room = ChatroomStore.get(action.room);
+        room.isPending = false;
+        room.failed = false;
+        ChatroomStore.emitChange();
         break;
         
     default:
