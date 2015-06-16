@@ -55,6 +55,40 @@ class RoomSerializer(serializers.ModelSerializer):
         #     raise serializers.ValidationError('Please specify either start/end time or slots')
         return data
 
+
+class UpdateRoomSerializer(serializers.ModelSerializer):
+    users = serializers.SlugRelatedField(
+        many=True,
+        queryset=User.objects.all(),
+        slug_field='username',
+        required=False
+    )
+    roles = serializers.SlugRelatedField(
+        many=True,
+        queryset=Group.objects.all(),
+        slug_field='name',
+        required=False
+    )
+    
+    class Meta:
+        model = models.Room
+        fields = (
+            'start',
+            'end',
+            'users',
+            'roles',
+        )
+
+    def validate(self, data):
+        start = data.get('start')
+        end = data.get('end')
+        if (start and not end or
+            end and not start):
+            raise serializers.ValidationError('Please specify both start and end times')
+        if (start and start > end):
+            raise serializers.ValidationError('End time must be after start time')
+        return data
+    
 # TODO not sure if I need separate read/write serializers (can I leave 'room' of the field list here?)
 class SlotSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,6 +112,11 @@ class RoomViewSet(viewsets.ModelViewSet):
     queryset = models.Room.objects.all()
     serializer_class = RoomSerializer
     #permission_classes  #TODO admin only?
+    
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return UpdateRoomSerializer
+        return RoomSerializer
 
     
 class SlotViewSet(viewsets.ModelViewSet):

@@ -1,6 +1,17 @@
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 
 module.exports = {
+    
+    loadRoles () {
+        // TODO handle errors
+        $.get(
+            // TODO fix hardcoded url
+            '/di/api/roles/',
+            function (res) {
+                SettingsActionCreators.receiveRoles(res);
+            }
+        );
+    },
 
     loadChatrooms () {
         // TODO handle errors
@@ -24,6 +35,34 @@ module.exports = {
         );
     },
 
+    createRoom (roomConfig) {
+        $.ajax({
+            // TODO fix hardcoded url
+            url: '/di/api/chat/rooms/',
+            type: "POST",
+            data: JSON.stringify(roomConfig),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: () => console.log('create room failed')
+        })
+        // TODO success callback
+        // TODO error callback
+    },
+    
+    updateRoom (slug, roomConfig) {
+        return $.ajax({
+            // TODO fix hardcoded url
+            url: '/di/api/chat/rooms/' + slug + '/',
+            type: "PUT",
+            data: JSON.stringify(roomConfig),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: () => console.log('update room failed')
+        })
+        // TODO success callback
+        // TODO error callback
+    },
+    
     createSlot (slot) {
         $.ajax({
             // TODO fix hardcoded url

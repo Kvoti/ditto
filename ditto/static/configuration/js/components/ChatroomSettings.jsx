@@ -9,6 +9,7 @@ var Panel = require('react-bootstrap/lib/Panel');
 var API = require('../utils/SettingsWebAPIUtils');
 var RoomStore = require('../stores/RoomStore');
 var Alert = require('react-bootstrap/lib/Alert');
+var SettingsActionCreators = require('../actions/SettingsActionCreators');
 
 function getStateFromStores () {
     return RoomStore.getAll();
@@ -31,6 +32,7 @@ var ChatroomSettings = React.createClass({
     componentDidMount () {
 	API.loadChatrooms();
 	API.loadSlots();
+	API.loadRoles();
         RoomStore.addChangeListener(this._onChange);
     },
 
@@ -58,6 +60,12 @@ var ChatroomSettings = React.createClass({
 		<h3>Configure chatrooms</h3>
 		{this.state.newChatroomFormErrors.map(e => <Alert bsStyle="danger">{e}</Alert>)}
 	    <div className="form-inline">
+		<div className="form-group">
+		    <label>
+			<input className="form-control" type="checkbox" checkedLink={this.linkState('isNewChatroomRegular')} />
+			Regular scheduled room?
+		    </label>
+		</div>
 		<div className="form-group">
 		    <input className="form-control" type="text" valueLink={this.linkState('newChatroomID')} placeholder="Enter id (a-z characters only)" />
 		</div>
@@ -96,11 +104,16 @@ var ChatroomSettings = React.createClass({
 	if (errors.length) {
 	    this.setState({newChatroomFormErrors: errors});
 	} else {
-	    //SettingsActionCreators.createChatroom()
+	    SettingsActionCreators.createChatroom({
+		is_regular: this.state.isNewChatroomRegular,
+		slug: this.state.newChatroomID,
+		name: this.state.newChatroomName
+	    })
 	    this.setState({
 		newChatroomName: "",
 		newChatroomID: "",
-		newChatroomFormErrors: []
+		newChatroomFormErrors: [],
+		isNewChatroomRegular: false,
 	    });
 	}
     },

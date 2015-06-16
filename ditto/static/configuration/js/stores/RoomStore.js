@@ -8,7 +8,7 @@ var CHANGE_EVENT = 'change';
 
 var _rooms = [];
 
-var ChatoomStore = assign({}, EventEmitter.prototype, {
+var ChatroomStore = assign({}, EventEmitter.prototype, {
 
     emitChange: function() {
         this.emit(CHANGE_EVENT);
@@ -26,15 +26,44 @@ var ChatoomStore = assign({}, EventEmitter.prototype, {
         return _rooms;
     },
 
+    get (slug) {
+        var index = _rooms.findIndex(r => r.slug === slug);
+        return _rooms[index];
+    }
+
 });
 
-ChatoomStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
+ChatroomStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
 
     switch(action.type) {
 
     case ActionTypes.RECEIVE_CHATROOMS:
         _rooms = action.rooms;
-        ChatoomStore.emitChange();
+        ChatroomStore.emitChange();
+        break;
+        
+    case ActionTypes.CREATE_ROOM2:
+        // Optimistically add new room
+        _rooms.splice(0, 0, action.room);
+        ChatroomStore.emitChange();
+        break;
+        
+    case ActionTypes.UPDATE_ROOM:
+        // Add room in pending state
+        var room = ChatroomStore.get(action.room);
+        assign(room, action.update);
+        room.isPending = true;
+        ChatroomStore.emitChange();
+        break;
+
+    case ActionTypes.UPDATE_ROOM_SUCESS:
+        var room = ChatroomStore.get(action.room);
+        room.isPending = false;
+        ChatroomStore.emitChange();
+        break;
+        
+    case ActionTypes.UPDATE_ROOM_FAILURE:
+        // TODO
         break;
         
     default:
@@ -43,4 +72,4 @@ ChatoomStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
 
 });
 
-module.exports = ChatoomStore;
+module.exports = ChatroomStore;

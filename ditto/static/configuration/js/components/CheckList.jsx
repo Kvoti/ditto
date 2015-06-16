@@ -7,7 +7,7 @@ var CheckList = React.createClass({
     getInitialState () {
 	return {
 	    items: this.props.items,
-	    selected: [] || this.props.selected
+	    selected: this.props.selected || [],
 	};
     },
     

@@ -181,6 +181,37 @@ module.exports = {
             slotID: slotID
         });
     },
+
+    createChatroom (roomConfig) {
+        SettingsWebAPIUtils.createRoom(roomConfig);
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.CREATE_ROOM2,
+            room: roomConfig,
+        });
+    },
+    
+    updateChatroom (slug, roomConfig) {
+        // TODO this is very verbose, and similar is needed for all api endpoints
+        // more succint way to write this?
+        SettingsWebAPIUtils.updateRoom(slug, roomConfig)
+            .done(() => {
+                SettingsAppDispatcher.dispatch({
+                    type: ActionTypes.UPDATE_ROOM_SUCESS,
+                    room: slug,
+                });
+            })
+            .fail(() => {
+                SettingsAppDispatcher.dispatch({
+                    type: ActionTypes.UPDATE_ROOM_FAILURE,
+                    room: slug,
+                });
+            })
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_ROOM,
+            room: slug,
+            update: roomConfig,
+        });
+    },
     
     createSlot (slot) {
         SettingsWebAPIUtils.createSlot(slot);
@@ -203,6 +234,13 @@ module.exports = {
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.DELETE_SLOT,
             slotID: slotID,
+        });
+    },
+
+    receiveRoles (roles) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_ROLES,
+            roles: roles,
         });
     },
     

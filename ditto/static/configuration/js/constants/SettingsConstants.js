@@ -30,9 +30,18 @@ module.exports = {
         RECEIVE_CHATROOMS: null,
         RECEIVE_SLOTS: null,
         RECEIVE_CREATE_SLOT_SUCCESS: null,
+        // TODO alredy have a CREATE_ROOM action. Need to obsolete the other one
+        // as we no longer create chatrooms with the chat server directly from the
+        // browser
+        CREATE_ROOM2: null,
+        UPDATE_ROOM: null,
+        UPDATE_ROOM_SUCCESS: null,
+        UPDATE_ROOM_FAILURE: null,
         CREATE_SLOT: null,
         UPDATE_SLOT: null,
         DELETE_SLOT: null,
+
+        RECEIVE_ROLES: null,
     }),
 
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

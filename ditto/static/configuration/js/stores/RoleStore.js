@@ -6,8 +6,8 @@ var assign = require('object-assign');
 var ActionTypes = SettingsConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
-var _roles = ['Administrator', 'Counsellor', 'Member'];
-var _currentRole = _roles[0];
+var _roles = [];
+var _currentRole;
 
 var RoleStore = assign({}, EventEmitter.prototype, {
 
@@ -37,6 +37,12 @@ RoleStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
 
     switch(action.type) {
 
+    case ActionTypes.RECEIVE_ROLES:
+        _currentRole = action.roles[0];
+        _roles = action.roles;
+        RoleStore.emitChange();
+        break;
+        
     case ActionTypes.CLICK_ROLE:
         _currentRole = action.role;
         RoleStore.emitChange();
