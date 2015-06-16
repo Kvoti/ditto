@@ -33,6 +33,14 @@ var OneOffChatroomSchedule = React.createClass({
 	var room = getStateFromStores(this.props.room);
         this.setState({room: room});
     },
+
+    componentWillUpdate (nextProps, nextState) {
+	if (this.state.pendingSince && !nextState.room.isPending) {
+	    let elapsed = new Date() - this.state.pendingSince;
+	    let cancelInterval = Math.max(0, 500 - elapsed);
+	    setTimeout(() => this.setState({pendingSince: null}), cancelInterval);
+	}
+    },
     
     render () {
 	// Not we only need these IDs as using bootstrap and styling doesn't
@@ -73,8 +81,8 @@ var OneOffChatroomSchedule = React.createClass({
 			onChangeRoles={this._update.bind(this, 'roles')}
 			onChangeUsers={this._update.bind(this, 'users')}
 			/>
-	    <button disabled={this.state.room.isPending} className="btn btn-success" onClick={this._save}>
-		{this.state.room.isPending ? 'Saving...' : 'Save'}
+	    <button disabled={this.state.pendingSince} className="btn btn-success" onClick={this._save}>
+		{this.state.pendingSince ? 'Saving...' : 'Save'}
 	    </button>
 		<button className="btn btn-default" onClick={this._cancel}>Cancel</button>
 	    </div>
@@ -115,7 +123,8 @@ var OneOffChatroomSchedule = React.createClass({
 	    start: null,
 	    end: null,
 	    users: null,
-	    roles: null
+	    roles: null,
+	    pendingSince: new Date()
 	});
     }
     
