@@ -11,14 +11,6 @@ from . import forms
 from . import utils
 
 
-@login_required  # @admin_required
-@nav(['newchatroom'])
-def new_chatroom(request):
-    form = forms.NewChatroomForm(request.user)
-    return TemplateResponse(
-        request, 'chat/newchatroom.html', {'form': form})
-
-    
 class ChatroomView(views.LoginRequiredMixin,
                    views.PermissionRequiredMixin,
                    NavMixin,

@@ -113,12 +113,6 @@ urlpatterns = patterns('',
     ),
 
     url(
-        regex=r'^chatroom/new/$',
-        view=views.new_chatroom,
-        name='new-chatroom'
-    ),
-                       
-    url(
         regex=r'^chatroom/(?:(\w+)/)?$',
         view=views.ChatroomView.as_view(),
         name='chatroom'
