@@ -13,7 +13,7 @@ var CheckList = React.createClass({
 			    <label>
 				<input
 					onChange={this._toggleItem.bind(this, r)}
-					checked={this.props.selected.indexOf(r) !== -1}
+					checked={this.props.selected && this.props.selected.indexOf(r) !== -1}
 					type="checkbox" /> {r}
 			    </label>
 			</p>

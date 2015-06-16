@@ -37,7 +37,7 @@ var UserAutocomplete = React.createClass({
 
     _value () {
 	if (this.props.multi) {
-	    if (this.props.value.length) {
+	    if (this.props.value && this.props.value.length) {
 		return this.props.value.join('|');
 	    } else {
 		return null
