@@ -36,6 +36,7 @@ var UserAutocomplete = React.createClass({
     },
 
     _value () {
+	console.log('xx', this.props.multi, this.props.value);
 	if (this.props.multi) {
 	    if (this.props.value && this.props.value.length) {
 		return this.props.value.join('|');
@@ -48,8 +49,15 @@ var UserAutocomplete = React.createClass({
     },
     
     _onChange (users) {
-	this.props.onChange(users.split('|'));
+	var userList;
+	if (users) {
+	    userList = users.split('|');
+	} else {
+	    userList = "";
+	}
+	this.props.onChange(userList);
     }
+
 });
 
 module.exports = UserAutocomplete;
