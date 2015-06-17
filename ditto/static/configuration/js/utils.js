@@ -44,5 +44,21 @@ module.exports = {
     uniqueID () {
         return 'id' + _count++;
     },
-    
+
+    ISODateStringToDate (ISODateString) {
+        if (!ISODateString) {
+            return ISODateString;
+        }
+        var sinceEpoch = Date.parse(ISODateString);
+        var d = new Date();
+        d.setTime(sinceEpoch);
+        return d;
+    },
+
+    addHours (datetime, hours) {
+        var sinceEpoch = datetime.getTime();
+        sinceEpoch = sinceEpoch + hours * 3600 * 1000;
+        return new Date(sinceEpoch);
+    }
+
 }    

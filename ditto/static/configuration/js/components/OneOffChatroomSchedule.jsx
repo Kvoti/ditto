@@ -7,7 +7,7 @@ var _ = require('lodash');
 var assign = require('object-assign');
 var Alert = require('react-bootstrap/lib/Alert');
 var Button = require('react-bootstrap/lib/Button');
-var DateTime = require('./DateTime.jsx');
+var DateTimeRange = require('./DateTimeRange.jsx');
 
 function getStateFromStores (room) {
     var initial = RoomStore.get(room);
@@ -67,16 +67,12 @@ var OneOffChatroomSchedule = React.createClass({
 	}
 	return (
 	    <div>
-		<div className="form-inline">
-		    <div className="form-group">
-			<label htmlFor={startID}>Start</label>
-			<DateTime id={startID} value={this.state.current.start} onChange={this._updateDateTime.bind(this, 'start')}/>
-		    </div>
-		    <div className="form-group">
-			<label htmlFor={endID}>End</label>
-			<DateTime id={endID} value={this.state.current.end} onChange={this._updateDateTime.bind(this, 'end')}/>
-		    </div>
-		</div>
+		<DateTimeRange
+			min={new Date()}
+			start={this.state.current.start}
+			end={this.state.current.end}
+			onChange={this._updateDateTimeRange}
+			/>
 		<p>You can make this a private room by selecting roles and users below.</p>
 		<RoleAndUserSelect
 			selectedRoles={this.state.current.roles}
@@ -103,10 +99,11 @@ var OneOffChatroomSchedule = React.createClass({
 	this.setState({current: current});
     },
     
-    _updateDateTime (key, value) {
-	console.log('setting', key, value);
+    _updateDateTimeRange (start, end) {
+	console.log('setting', start, end);
 	var current = this.state.current;
-	current[key] = value;
+	current.start = start;
+	current.end = end;
 	this.setState({current: current});
     },
 

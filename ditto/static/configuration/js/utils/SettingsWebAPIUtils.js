@@ -1,4 +1,6 @@
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
+var utils = require('../utils');
+var assign = require('object-assign');
 
 module.exports = {
     
@@ -19,6 +21,11 @@ module.exports = {
             // TODO fix hardcoded url
             '/di/api/chat/rooms/',
             function (res) {
+                // Only deal with datetimes as strings at api boundary
+                res.forEach(room => {
+                    room.start = utils.ISODateStringToDate(room.start);
+                    room.end = utils.ISODateStringToDate(room.end);
+                });
                 SettingsActionCreators.receiveChatrooms(res);
             }
         );
@@ -50,6 +57,9 @@ module.exports = {
     },
     
     updateRoom (slug, roomConfig) {
+        roomConfig = assign({}, roomConfig);
+        roomConfig.start = roomConfig.start && roomConfig.start.toISOString();
+        roomConfig.end = roomConfig.end && roomConfig.end.toISOString();
         return $.ajax({
             // TODO fix hardcoded url
             url: '/di/api/chat/rooms/' + slug + '/',

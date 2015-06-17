@@ -7,25 +7,44 @@ var _ = require('lodash');
 var timezoneOffsetString = getTimezoneOffsetString();
 
 var DateTime = React.createClass({
+    propTypes: {
+	min: React.PropTypes.object, // date
+	max: React.PropTypes.object, // date
+	value: React.PropTypes.object, // date
+	onChange: React.PropTypes.func 
+    },
+    
     render () {
-	var value = localeStringFromISOStringInUTC(this.props.value);
+	var localeDatetimeStrings = {};
+	['min', 'max', 'value'].forEach(k => {
+	    let datetime = this.props[k];
+	    if (datetime) {
+		localeDatetimeStrings[k] = localeStringFromDate(this.props[k]);
+	    } else {
+		localeDatetimeStrings[k] = datetime;
+	    }
+	});
 	return (
-	    <input {...this.props} type="datetime-local" value={value} onChange={this._onChange} />
+	    <input {...this.props}
+		    ref="input"
+		    type="datetime-local"
+		    value={localeDatetimeStrings.value}
+		    min={localeDatetimeStrings.min}
+		    max={localeDatetimeStrings.max}
+		    onChange={this._onChange}
+		    />
 	);
     },
 
     _onChange (e) {
-	var value = ISOStringInUTCFromLocaleString(e.target.value);
+	var value = DateFromLocaleString(e.target.value);
 	this.props.onChange(value);
-    }
+    },
 
 });
 
-function localeStringFromISOStringInUTC (ISOString) {
-    console.log('orig time', ISOString);
-    var sinceEpoch = Date.parse(ISOString);
-    var date = new Date();
-    date.setTime(sinceEpoch);
+function localeStringFromDate (date) {
+    console.log('converting', date);
     var year = date.getFullYear();
     var month = _.padLeft(date.getMonth() + 1, 2, 0);
     var day = _.padLeft(date.getDate(), 2, 0);
@@ -36,13 +55,15 @@ function localeStringFromISOStringInUTC (ISOString) {
     return localeString;
 }
 
-function ISOStringInUTCFromLocaleString (localeString) {
+function DateFromLocaleString (localeString) {
+    if (!localeString) {
+	return localeString;
+    }
     var withTZ = `${localeString}${timezoneOffsetString}`;
-    console.log('value with tz', withTZ);
     var sinceEpoch = Date.parse(withTZ);
     var UTCDateTime = new Date();
     UTCDateTime.setTime(sinceEpoch);
-    return UTCDateTime.toISOString();
+    return UTCDateTime;
 }
 
 function getTimezoneOffsetString () {
