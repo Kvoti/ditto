@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var DateTime = require('./DateTime.jsx');
 var utils = require('../utils');
+var Alert = require('react-bootstrap/lib/Alert');
 
 var DateTimeRange = React.createClass({
     propTypes: {
@@ -30,6 +31,7 @@ var DateTimeRange = React.createClass({
 	}
 	return (
 	    <div className="form-inline">
+		{this._validate().map(e => <Alert key={e} bsStyle="danger">{e}</Alert>)}
 		<div className="form-group">
 		    <label htmlFor={this.startID}>Start</label>
 		    <DateTime
@@ -51,6 +53,14 @@ var DateTimeRange = React.createClass({
 	);
     },
 
+    _validate () {
+	var errors = [];
+	if (this.props.end < utils.addHours(this.props.start, this.props.minDelta)) {
+	    errors.push('Please select a later end time');
+	}
+	return errors;
+    },
+    
     _onChangeStart (start) {
 	var end = this.props.end;
 	if (start && end && start >= end) {
