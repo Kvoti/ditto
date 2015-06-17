@@ -76,7 +76,8 @@ var ChatroomSettings = React.createClass({
 		    <button className="btn btn-success" onClick={this._addChatroom}>Add chatroom</button>
 		</div>
 	    </div>
-		<Accordion defaultActiveKey={this.state.chatrooms.length && this.state.chatrooms[0].slug}>
+	    {this.state.chatrooms.length ? 
+		<Accordion defaultActiveKey={this.state.chatrooms[0].slug}>
 		    {this.state.chatrooms.map(room => {
 			return (
 			    <Panel eventKey={room.slug} header={room.name}>
@@ -87,6 +88,7 @@ var ChatroomSettings = React.createClass({
 			);
 		    })}
 		</Accordion>
+	     : null }
 	    </div>
 	);
     },
