@@ -41,6 +41,9 @@ module.exports = {
         CREATE_SLOT: null,
         UPDATE_SLOT: null,
         DELETE_SLOT: null,
+        DELETE_ROOM: null,
+        DELETE_ROOM_SUCCESS: null,
+        DELETE_ROOM_FAILURE: null,
 
         RECEIVE_ROLES: null,
     }),

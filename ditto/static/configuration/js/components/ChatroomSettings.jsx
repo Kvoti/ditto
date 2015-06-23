@@ -83,7 +83,15 @@ var ChatroomSettings = React.createClass({
 			    <Panel eventKey={room.slug} header={room.name}>
 				{room.is_regular ?
 				 <RegularChatroomSchedule room={room.slug} /> :
-				 <OneOffChatroomSchedule room={room.slug} />}
+				    <OneOffChatroomSchedule room={room.slug} />}
+			    <p>
+			    <button
+			    className="btn btn-danger"
+			    disabled={room.isDeleting}
+			    onClick={this._deleteChatroom.bind(this, room.slug)}>
+			    {room.isDeleting ? 'Deleting ...' : 'Delete room'}
+			    </button>
+			    </p>
 			    </Panel>
 			);
 		    })}
@@ -135,7 +143,10 @@ var ChatroomSettings = React.createClass({
 	}
 	return errors;
     },
-    
+
+    _deleteChatroom (slug) {
+	SettingsActionCreators.deleteChatroom(slug);
+    }
 });
 
 module.exports = ChatroomSettings;

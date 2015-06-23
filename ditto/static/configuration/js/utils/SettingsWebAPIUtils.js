@@ -73,6 +73,16 @@ module.exports = {
         // TODO error callback
     },
     
+    deleteRoom (slug) {
+        return $.ajax({
+            // TODO fix hardcoded url
+            url: '/di/api/chat/rooms/' + slug + '/',
+            type: "DELETE",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+        })
+    },
+    
     createSlot (slot) {
         $.ajax({
             // TODO fix hardcoded url

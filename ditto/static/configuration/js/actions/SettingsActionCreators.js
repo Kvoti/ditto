@@ -214,6 +214,28 @@ module.exports = {
         });
     },
 
+    deleteChatroom (slug) {
+        // TODO this is very verbose, and similar is needed for all api endpoints
+        // more succint way to write this?
+        SettingsWebAPIUtils.deleteRoom(slug)
+            .done(() => {
+                SettingsAppDispatcher.dispatch({
+                    type: ActionTypes.DELETE_ROOM_SUCCESS,
+                    room: slug,
+                });
+            })
+            .fail(() => {
+                SettingsAppDispatcher.dispatch({
+                    type: ActionTypes.DELETE_ROOM_FAILURE,
+                    room: slug,
+                });
+            })
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.DELETE_ROOM,
+            room: slug,
+        });
+    },
+    
     revertChatroom (slug) {
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.UPDATE_ROOM_REVERT,

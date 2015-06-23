@@ -79,6 +79,25 @@ ChatroomStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         ChatroomStore.emitChange();
         break;
         
+    case ActionTypes.DELETE_ROOM:
+        var room = ChatroomStore.get(action.room);
+        room.isDeleting = true;
+        ChatroomStore.emitChange();
+        break;
+
+    case ActionTypes.DELETE_ROOM_SUCCESS:
+        // We only commit the change on success. Possibly more normal
+        // to optimistically update and then rollback on error but that's
+        // a bit trickier.
+        console.log('room deleted successfully');
+        var index = _rooms.findIndex(r => r.slug === action.room);
+        console.log('removing room', index);
+        _rooms.splice(index, 1);
+        ChatroomStore.emitChange();
+        break;
+        
+    // TODO case ActionTypes.DELETE_ROOM_FAILURE:
+        
     default:
         // do nothing
     }
