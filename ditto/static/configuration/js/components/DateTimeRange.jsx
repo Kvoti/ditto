@@ -55,7 +55,7 @@ var DateTimeRange = React.createClass({
 
     _validate () {
 	var errors = [];
-	if (this.props.end < utils.addHours(this.props.start, this.props.minDelta)) {
+	if (this.props.start && (this.props.end < utils.addHours(this.props.start, this.props.minDelta))) {
 	    errors.push('Please select a later end time');
 	}
 	return errors;

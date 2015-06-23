@@ -58,8 +58,8 @@ module.exports = {
     
     updateRoom (slug, roomConfig) {
         roomConfig = assign({}, roomConfig);
-        roomConfig.start = roomConfig.start && roomConfig.start.toISOString();
-        roomConfig.end = roomConfig.end && roomConfig.end.toISOString();
+        roomConfig.start = roomConfig.start && roomConfig.start.toISOString() || null;
+        roomConfig.end = roomConfig.end && roomConfig.end.toISOString() || null;
         return $.ajax({
             // TODO fix hardcoded url
             url: '/di/api/chat/rooms/' + slug + '/',
