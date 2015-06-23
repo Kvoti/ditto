@@ -107,19 +107,3 @@ class PermittedInteraction(models.Model):
 class RegForm(models.Model):
     role = models.ForeignKey('auth.Group', related_name="reg_forms")
     form = models.ForeignKey('dittoforms.FormSpec')
-
-
-class Chatroom(models.Model):
-    open_time = models.TimeField(null=True, blank=True)
-    close_time = models.TimeField(null=True, blank=True)
-    close_message = models.CharField(
-        max_length=200,
-        default=_("The chatroom is now closed.")
-    )
-
-    def clean(self):
-        if (
-                self.open_time and not self.close_time or
-                self.close_time and not self.open_time
-        ):
-            raise ValidationError('Please specify both open and close times')

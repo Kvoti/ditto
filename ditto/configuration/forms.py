@@ -128,38 +128,3 @@ class PermissionsForm(forms.Form):
                 role.permissions.add(permission)
             else:
                 role.permissions.remove(permission)
-
-
-class ChatroomForm(forms.ModelForm):
-    class Meta:
-        model = models.Chatroom
-        fields = ('open_time', 'close_time', 'close_message')
-
-
-class CreateChatroomPermsForm(forms.Form):
-    creator_roles = forms.ModelMultipleChoiceField(
-        Group.objects.all(),
-        label=_("Roles that can create chatrooms"),
-        required=False
-    )
-    creator_users = forms.ModelMultipleChoiceField(
-        User.objects.all(),
-        label=_("Users that can create chatrooms"),
-        required=False
-    )
-    
-    def __init__(self, *args, **kwargs):
-        creator_roles = Group.objects.filter(
-            permissions__codename='create_chatroom')
-        creator_users = User.objects.filter(
-            user_permissions__codename='create_chatroom')
-        kwargs['initial'] = {
-            'creator_roles': creator_roles,
-            'creator_users': creator_users,
-        }
-        super(CreateChatroomPermsForm, self).__init__(*args, **kwargs)
-
-    def save(self):
-        perm = Permission.objects.get(codename='create_chatroom')
-        perm.user_set = self.cleaned_data['creator_users']
-        perm.group_set = self.cleaned_data['creator_roles']
