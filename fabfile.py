@@ -40,7 +40,7 @@ def builddb():
                  user="pydev")
     # Restart chat so anything cached by the chat server is forgotten
     sudo('mongooseimctl restart')
-    # Set up data for example network for digital impacts
+    # Set up data for example network for Kvoti
     newnetwork('di')
 
 

@@ -143,12 +143,12 @@ def setup_tenants():
     user = User.objects.get(username='mark')
     multitenancy.models.Tenant.objects.create(
         user=user,
-        network_name='Digital Impacts',
+        network_name='Kvoti',
         slug='di',
         is_configured=True,
     )
     if not multitenancy.tenant.is_main():
-        setup_site(name='Digital Impacts', subdomain='di')
+        setup_site(name='Kvoti', subdomain='di')
 
 
 def setup_reg_form():
