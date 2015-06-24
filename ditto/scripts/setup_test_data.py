@@ -162,7 +162,6 @@ def setup_reg_form():
 
 
 def setup_chat_conf():
-    configuration.models.Chatroom.objects.create()
     room = chat.models.Room.objects.create(
         slug='main',
         name='Main chatroom',
