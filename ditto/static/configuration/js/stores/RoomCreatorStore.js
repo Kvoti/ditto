@@ -7,7 +7,6 @@ var ActionTypes = SettingsConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
 var _creators = [];
-var _currentRoomCreator;
 
 var RoomCreatorStore = assign({}, EventEmitter.prototype, {
 
@@ -34,6 +33,11 @@ RoomCreatorStore.dispatchToken = SettingsAppDispatcher.register(function(action)
     switch(action.type) {
 
     case ActionTypes.RECEIVE_ROOM_CREATORS:
+        _creators = action.creators;
+        RoomCreatorStore.emitChange();
+        break;
+
+    case ActionTypes.UPDATE_ROOM_CREATORS_SUCCESS:
         _creators = action.creators;
         RoomCreatorStore.emitChange();
         break;

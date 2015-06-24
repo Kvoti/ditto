@@ -138,4 +138,16 @@ module.exports = {
         });
         // TODO handle success/failure
     },
+
+    updateRoomCreators (roles, users) {
+        return $.ajax({
+            // TODO fix hardcoded url
+            url: '/di/api/chat/creators/',
+            type: "POST", // TODO PUT?
+            data: JSON.stringify({roles: roles, users: users}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+        })
+    },
+
 };

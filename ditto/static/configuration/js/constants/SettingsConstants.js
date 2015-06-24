@@ -45,6 +45,9 @@ module.exports = {
         DELETE_ROOM_SUCCESS: null,
         DELETE_ROOM_FAILURE: null,
         RECEIVE_ROOM_CREATORS: null,
+        UPDATE_ROOM_CREATORS: null,
+        UPDATE_ROOM_CREATORS_SUCCESS: null,
+        UPDATE_ROOM_CREATORS_FAILURE: null,
         
         RECEIVE_ROLES: null,
     }),

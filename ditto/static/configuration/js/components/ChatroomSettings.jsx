@@ -12,6 +12,7 @@ var RoomCreatorStore = require('../stores/RoomCreatorStore');
 var Alert = require('react-bootstrap/lib/Alert');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var assign = require('object-assign');
+var _ = require('lodash');
 
 function getStateFromStores () {
     return {
@@ -24,11 +25,14 @@ var ChatroomSettings = React.createClass({
     mixins: [React.addons.LinkedStateMixin],
     
     getInitialState () {
+	var initial = getStateFromStores();
 	return assign({
 	    newChatroomID: "",
 	    newChatroomName: "",
-	    newChatroomFormErrors: []
-	}, getStateFromStores());
+	    newChatroomFormErrors: [],
+	    creatorRoles: initial.creators.roles,
+	    creatorUsers: initial.creators.users,
+	}, initial);
     },
     
     componentDidMount () {
@@ -46,7 +50,10 @@ var ChatroomSettings = React.createClass({
     },
     
     _onChange () {
-        this.setState(getStateFromStores());
+	var newState = getStateFromStores();
+	newState.creatorRoles = newState.creators.roles;
+	newState.creatorUsers = newState.creators.users;
+        this.setState(newState);
     },
     
     render () {
@@ -55,11 +62,18 @@ var ChatroomSettings = React.createClass({
 		<p>Select which roles and users can create chatrooms.</p>
 		<RoleAndUserSelect
 			roles={['Admin', 'Member', 'Counsellor']}
-			selectedRoles={this.state.creators.roles}
-			users={this.state.creators.users}
+			selectedRoles={this.state.creatorRoles}
+			users={this.state.creatorUsers}
 			onChangeRoles={this._updateRoles}
 			onChangeUsers={this._updateUsers}
 			/>
+	    <button
+		    className="btn btn-success"
+		    disabled={!this._isChanged()}
+		    onClick={this._save}
+		    >Save
+	    </button> 
+	    {this._isChanged() ? <button className="btn btn-default" onClick={this._cancel}>Cancel</button> : null }
 		<hr/>
 		<h3>Configure chatrooms</h3>
 		{this.state.newChatroomFormErrors.map(e => <Alert bsStyle="danger">{e}</Alert>)}
@@ -105,6 +119,27 @@ var ChatroomSettings = React.createClass({
 	);
     },
 
+    _isChanged () {
+	return !(
+	    _.isEqual(this.state.creatorRoles, this.state.creators.roles) &&
+	    _.isEqual(this.state.creatorUsers, this.state.creators.users)
+	);
+    },
+
+    _save () {
+	SettingsActionCreators.updateRoomCreators(
+	    this.state.creatorRoles,
+	    this.state.creatorUsers
+	);
+    },
+
+    _cancel () {
+	this.setState({
+	    creatorRoles: this.state.creators.roles,
+	    creatorUsers: this.state.creators.users,
+	});
+    },
+    
     _updateRoles (roles) {
 	this.setState({creatorRoles: roles});
     },
