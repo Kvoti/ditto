@@ -65,11 +65,6 @@ def setup_features():
                 ('can_chat', 'Can chat'),
                 ('create_chatroom', 'Can create chatroom')
             ]),
-            ('news', 'News', [('can_news', 'Can manage news')]),
-            ('blog', 'Blog', [
-                ('can_blog', 'Can Blog'),
-                ('can_comment', 'Can comment'),
-            ]),
     ):
         feature, _ = configuration.models.Feature.objects.get_or_create(
             slug=slug, name=name)
