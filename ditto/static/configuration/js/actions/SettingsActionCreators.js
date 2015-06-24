@@ -273,6 +273,13 @@ module.exports = {
             roles: roles,
         });
     },
+
+    receiveRoomCreators (creators) {
+        SettingsAppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_ROOM_CREATORS,
+            creators: creators,
+        });
+    },
     
 };
 // TODO fix circ. dependency between api and this

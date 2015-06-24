@@ -42,6 +42,17 @@ module.exports = {
         );
     },
 
+    loadCreators () {
+        // TODO handle errors
+        $.get(
+            // TODO fix hardcoded url
+            '/di/api/chat/creators/',
+            function (res) {
+                SettingsActionCreators.receiveRoomCreators(res);
+            }
+        );
+    },
+    
     createRoom (roomConfig) {
         $.ajax({
             // TODO fix hardcoded url

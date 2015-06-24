@@ -8,41 +8,45 @@ var Accordion = require('react-bootstrap/lib/Accordion');
 var Panel = require('react-bootstrap/lib/Panel');
 var API = require('../utils/SettingsWebAPIUtils');
 var RoomStore = require('../stores/RoomStore');
+var RoomCreatorStore = require('../stores/RoomCreatorStore');
 var Alert = require('react-bootstrap/lib/Alert');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
+var assign = require('object-assign');
 
 function getStateFromStores () {
-    return RoomStore.getAll();
+    return {
+	chatrooms: RoomStore.getAll(),
+	creators: RoomCreatorStore.get()
+    }
 }
 
 var ChatroomSettings = React.createClass({
     mixins: [React.addons.LinkedStateMixin],
     
     getInitialState () {
-	return {
-	    creatorRoles: [],
-	    creatorUsers: [],
-	    chatrooms: getStateFromStores(),
+	return assign({
 	    newChatroomID: "",
 	    newChatroomName: "",
 	    newChatroomFormErrors: []
-	}
+	}, getStateFromStores());
     },
     
     componentDidMount () {
+	// TODO api batching probably useful here
 	API.loadChatrooms();
 	API.loadSlots();
 	API.loadRoles();
+	API.loadCreators();
         RoomStore.addChangeListener(this._onChange);
+        RoomCreatorStore.addChangeListener(this._onChange);
     },
 
     componentWillUnmount () {
-        RoomStore.removeChangeListener(this._onChange);
+        RoomCreatorStore.removeChangeListener(this._onChange);
     },
     
     _onChange () {
-        this.setState(update(this.state,
-	    {chatrooms: {$set: getStateFromStores()}}));
+        this.setState(getStateFromStores());
     },
     
     render () {
@@ -51,8 +55,8 @@ var ChatroomSettings = React.createClass({
 		<p>Select which roles and users can create chatrooms.</p>
 		<RoleAndUserSelect
 			roles={['Admin', 'Member', 'Counsellor']}
-			selectedRoles={this.state.creatorRoles}
-			users={this.state.creatorUsers}
+			selectedRoles={this.state.creators.roles}
+			users={this.state.creators.users}
 			onChangeRoles={this._updateRoles}
 			onChangeUsers={this._updateUsers}
 			/>

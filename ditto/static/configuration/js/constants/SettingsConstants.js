@@ -44,7 +44,8 @@ module.exports = {
         DELETE_ROOM: null,
         DELETE_ROOM_SUCCESS: null,
         DELETE_ROOM_FAILURE: null,
-
+        RECEIVE_ROOM_CREATORS: null,
+        
         RECEIVE_ROLES: null,
     }),
 
