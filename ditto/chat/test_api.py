@@ -1,6 +1,24 @@
 import json
 import requests
 
+# list roles and users that can create chatrooms
+r = requests.get(
+    'http://localhost:8000/di/api/chat/creators/',
+)
+print r, r.text
+
+# set roles and users that can create chatrooms
+r = requests.post(
+    'http://localhost:8000/di/api/chat/creators/',
+    data=json.dumps({
+        'roles': [{'name': 'Member'}],
+        'users': [{'username': 'mark'}]
+    }),
+    headers={'content-type': 'application/json'}
+)
+print r, r.text
+
+stop
 
 # list chatrooms
 r = requests.get(

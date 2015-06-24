@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url, include
 from django.contrib.auth.models import Group
-from rest_framework import routers, serializers, viewsets, generics, mixins
+from rest_framework import routers, serializers, viewsets, generics, mixins, response, status, views
 
 from users.models import User
 
@@ -128,6 +128,60 @@ class SlotViewSet(viewsets.ModelViewSet):
         if self.request.method in ['PUT', 'PATCH']:
             return UpdateSlotSerializer
         return SlotSerializer
+
+
+# TODO not sure of the best way of handling the set of roles and users
+# that can create chatrooms in rest_framework
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('name',)
+
+    def save(self):
+        print self.validated_data
+        
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username',)
+
+    def save(self):
+        print self.validated_data
+    
+
+class CreatorsAPIView(views.APIView):
+    # TODO permission_classes = [permissions.IsAdmin]
+    
+    def get(self, request):
+        roles = Group.objects.filter(
+            permissions__codename='create_chatroom')
+        users = User.objects.filter(
+            user_permissions__codename='create_chatroom')
+        return response.Response({
+            'roles': RoleSerializer(roles, many=True).data,
+            'users': UserSerializer(users, many=True).data,
+        })
+
+    def post(self, request):
+        errors = []
+        for field in ['users', 'roles']:
+            if field not in request.data:
+                errors.append({field: 'This field is required.'})
+        if not errors:
+            serializers = []
+            for field, serializer_class in [['users', UserSerializer],
+                                            ['roles', RoleSerializer]]:
+                serializer = serializer_class(data=request.data[field], many=True)
+                serializers.append(serializer)
+                if not serializer.is_valid():
+                    errors.extend(serializer.errors)
+            if not errors:
+                [s.save() for s in serializers]
+                return response.Response(request.data)
+        return response.Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
     
 router = routers.DefaultRouter()
 router.register(r'rooms', RoomViewSet)
@@ -135,4 +189,5 @@ router.register(r'slots', SlotViewSet)
 
 urlpatterns = patterns('',
     url(r'^', include(router.urls)),
+    url(r'^creators/$', CreatorsAPIView.as_view()),
 )

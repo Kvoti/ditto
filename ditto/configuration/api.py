@@ -12,7 +12,7 @@ class RoleSerializer(serializers.ModelSerializer):
 class RoleList(generics.ListAPIView):
     queryset = Group.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]  # TODO IsAdmin
 
     
 urlpatterns = patterns('',
