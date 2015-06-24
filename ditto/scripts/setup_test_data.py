@@ -51,12 +51,10 @@ def setup_guest_passwords():
         GUEST_PASSWORDS = None
         
 
-def setup_site(name='KVOTI.TECHNOLOGY', subdomain=None):
+def setup_site(name='KVOTI.TECHNOLOGY'):
     site = Site.objects.get_current()
     site.name = name
     domain = 'localhost:8000' if settings.DEBUG else site.name.lower()
-    if subdomain:
-        domain = '%s.%s' % (subdomain, domain)
     site.domain = domain
     site.save()
 
@@ -148,7 +146,7 @@ def setup_tenants():
         is_configured=True,
     )
     if not multitenancy.tenant.is_main():
-        setup_site(name='Kvoti', subdomain='di')
+        setup_site(name='Kvoti')
 
 
 def setup_reg_form():
