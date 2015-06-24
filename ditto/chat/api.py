@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url, include
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from rest_framework import routers, serializers, viewsets, generics, mixins, response, status, views
 
 from users.models import User
@@ -131,36 +131,20 @@ class SlotViewSet(viewsets.ModelViewSet):
 
 
 # TODO not sure of the best way of handling the set of roles and users
-# that can create chatrooms in rest_framework
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = ('name',)
-
-    def save(self):
-        print self.validated_data
-        
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username',)
-
-    def save(self):
-        print self.validated_data
-    
-
+# that can create chatrooms in rest_framework. Setting a list of users
+# and roles at one api endpoint doesn't fit with rest_framework (e.g. no
+# ModelMultipleChoice field)
 class CreatorsAPIView(views.APIView):
     # TODO permission_classes = [permissions.IsAdmin]
     
     def get(self, request):
         roles = Group.objects.filter(
-            permissions__codename='create_chatroom')
+            permissions__codename='create_chatroom').values_list('name', flat=True)
         users = User.objects.filter(
-            user_permissions__codename='create_chatroom')
+            user_permissions__codename='create_chatroom').values_list('username', flat=True)
         return response.Response({
-            'roles': RoleSerializer(roles, many=True).data,
-            'users': UserSerializer(users, many=True).data,
+            'roles': list(roles),
+            'users': list(users)
         })
 
     def post(self, request):
@@ -169,18 +153,17 @@ class CreatorsAPIView(views.APIView):
             if field not in request.data:
                 errors.append({field: 'This field is required.'})
         if not errors:
-            serializers = []
-            for field, serializer_class in [['users', UserSerializer],
-                                            ['roles', RoleSerializer]]:
-                serializer = serializer_class(data=request.data[field], many=True)
-                serializers.append(serializer)
-                if not serializer.is_valid():
-                    errors.extend(serializer.errors)
-            if not errors:
-                [s.save() for s in serializers]
-                return response.Response(request.data)
+            result = {}
+            for field, model, key in [['users', User, 'username'],
+                                      ['roles', Group, 'name']]:
+                # TODO validate data as serializer would (check it's a list, check each group/user is valid)
+                result[field] = model.objects.filter(
+                    **{'%s__in' % key: request.data[field]})
+            perm = Permission.objects.get(codename='create_chatroom')
+            perm.user_set = result['users']
+            perm.group_set = result['roles']
+            return response.Response(request.data)
         return response.Response(errors, status=status.HTTP_400_BAD_REQUEST)
-
     
     
 router = routers.DefaultRouter()

@@ -11,8 +11,8 @@ print r, r.text
 r = requests.post(
     'http://localhost:8000/di/api/chat/creators/',
     data=json.dumps({
-        'roles': [{'name': 'Member'}],
-        'users': [{'username': 'mark'}]
+        'roles': ['Member'],
+        'users': ['mark']
     }),
     headers={'content-type': 'application/json'}
 )
