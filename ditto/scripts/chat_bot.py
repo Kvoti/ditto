@@ -39,8 +39,9 @@ DOMAIN = chat.utils.domain()
 
 
 class SendMsgBot(sleekxmpp.ClientXMPP):
-    def __init__(self, jid, password):
+    def __init__(self, jid, password, actions):
         self.me = jid
+        self.actions = actions
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         # The session_start event will be triggered when
@@ -49,7 +50,6 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         # listen for this event so that we we can initialize
         # our roster.
         self.add_event_handler("session_start", self.start, threaded=True)
-        self.add_event_handler("presence", self.presence)
 
     def start(self, event):
         """
@@ -66,33 +66,31 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         """
         self.send_presence()
         self.get_roster()
-        self.room = "main@muc.%s" % DOMAIN
-        with tenant._tenant('di'):
-            self.is_chatroom_open = chat.utils.is_chatroom_open()
-            ### TESTING HACKS!!
-            # import os
-            # self.is_chatroom_open = 'OPEN' in os.environ
-            ######
-        # todo be more sensible to get room list here and only join
-        # if room needs opened or closed
-        # (it's sort of ok as outside chat hours the room will remain unconfigured so
-        # it can't be used)
-        self.plugin['xep_0045'].joinMUC(self.room,
-                                        "chatadmin",
-                                        # If a room password is needed, use:
-                                        # password=the_room_password,
-                                        pfrom=self.me,
-                                        wait=True)
-        if not self.is_chatroom_open:
-            self.plugin['xep_0045'].destroy(self.room, ifrom=self.me)
-            self.disconnect(wait=True)
-        
-    def presence(self, pr):
-        if self.is_chatroom_open:
-            # TODO only do this once (when joined room), not on each presence
-            # TODO only need to configure the room if not already configured
-            self.plugin['xep_0045'].configureRoom(self.room, ifrom=self.me)
-            self.disconnect(wait=True)
+
+        for action in self.actions:
+            room = "%s@muc.%s" % (action['room'].slug, DOMAIN)
+            self.plugin['xep_0045'].joinMUC(room,
+                                            "chatadmin",
+                                            # If a room password is needed, use:
+                                            # password=the_room_password,
+                                            pfrom=self.me,
+                                            wait=True)
+            if action['action'] == 'open':
+                self.plugin['xep_0045'].configureRoom(room, ifrom=self.me)
+            else:
+                # TODO maybe destroy is too strong here, should just set
+                # unusable password or set to private room with no
+                # participants?
+                self.plugin['xep_0045'].destroy(room, ifrom=self.me)
+            with tenant._tenant('di'):
+                if action['action'] == 'open':
+                    action['room'].is_opened = True
+                    action['room'].is_closed = False
+                else:
+                    action['room'].is_closed = True
+                    action['room'].is_opened = False
+                action['room'].save()
+        self.disconnect(wait=True)
 
         
 def jid(username):
@@ -104,10 +102,32 @@ def run():
     logging.basicConfig(level=logging.DEBUG,
                         format='%(levelname)-8s %(message)s')
 
+    # Iterate over the chatrooms in the django db and see which need
+    # opened or closed
+    with tenant._tenant('di'):  # TODO do for all tenants
+        actions = []
+        for room in chat.models.Room.objects.all():
+            if room.is_open() and not room.is_opened:
+                actions.append({'room': room, 'action': 'open'})
+            elif not room.is_open() and not room.is_closed:
+                actions.append({'room': room, 'action': 'close'})
+
+    # TESTING
+    import os
+    if 'OPEN' in os.environ:
+        with tenant._tenant('di'):
+            room = chat.models.Room.objects.get(slug='main')
+        actions = [{'room': room, 'action': 'open'}]
+    elif 'CLOSE' in os.environ:
+        with tenant._tenant('di'):
+            room = chat.models.Room.objects.get(slug='main')
+        actions = [{'room': room, 'action': 'close'}]
+    ####################
+
     # Setup the EchoBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
     # not matter.
-    xmpp = SendMsgBot(jid("mark"), chat.utils.password("mark"))
+    xmpp = SendMsgBot(jid("mark"), chat.utils.password("mark"), actions)
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0199') # XMPP Ping
     xmpp.register_plugin('xep_0045')

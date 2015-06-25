@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q, F
+from django.utils.timezone import now, localtime
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -33,6 +35,13 @@ class Room(models.Model):
         default=_("The chatroom is now closed.")
     )
 
+    # These two fields track the state of the room in the chat server.
+    # For now we're running a cron every minute that checks which rooms
+    # should be open and closed. We record the state here so we know next
+    # time whether a room needs to be opened or closed.
+    is_opened = models.BooleanField(default=False)
+    is_closed = models.BooleanField(default=False)
+    
     def clean(self):
         if (
                 self.start and not self.end or
@@ -40,7 +49,36 @@ class Room(models.Model):
         ):
             raise ValidationError(_('Please specify both open and close times'))
 
+    def is_open(self):
+        if self.is_regular:
+            return self._is_regular_room_open()
+        else:
+            return self._is_one_off_room_open()
 
+    def _is_regular_room_open(self):
+        # TODO this feels massively flakey and surely doesn't do the
+        # right thing around clock change (will have to change anyway
+        # when Slot model changes from (day, start, end) to ((day,
+        # start), (day, end)) [probably])
+        localnow = localtime(now())
+        weekday = localnow.weekday()
+        yesterday = (weekday - 1) % 7
+        time = localnow.hour + localnow.minute / 60.0
+        return self.slots.filter(
+            # |   s--t------e       |
+            Q(day=weekday, start__lt=F('end'), start__lte=time, end__gt=time) |
+            # |----e    s----t------|
+            Q(day=weekday, start__gt=F('end'), start__lte=time) |
+            # |--t--e               |
+            Q(day=yesterday, start__gt=F('end'), end__gt=time)
+        ).count()
+
+    def _is_one_off_room_open(self):
+        return self.start <= now() <= self.end
+
+
+# TODO specify slot as a pair of (day, hour) tuples. Currently a bit inflexible
+# assuming a slot finishes the following day
 class Slot(models.Model):
     """A time slot when the referenced chatroom is open.
 

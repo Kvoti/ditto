@@ -71,7 +71,3 @@ def get_reg_data(user):
 def _get_role(user):
     # TODO not sure here if user will have multiple groups
     return user.groups.all()[0]
-
-
-def get_chatroom_config():
-    return models.Chatroom.objects.get()

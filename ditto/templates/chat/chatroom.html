@@ -3,9 +3,5 @@
 {% load staticfiles %}
 
 {% block content %}
-    {% if is_open %}
-	<section id="chatrooms"></section>
-    {% else %}
-	<p>{{ closed_message }}</p>
-    {% endif %}
+    <section id="chatrooms"></section>
 {% endblock %}
