@@ -9,6 +9,11 @@ register = template.Library()
 
 @register.inclusion_tag('chat/_conf.html', takes_context=True)
 def chat_config(context, other=None, extra=None):
+    # debugging errors on live site where request is not in context -- django trying to render 500 page?
+    # occurs on api requests, hence sarah not seeing, for example, the chatroom settings a lot of the time
+    if 'request' not in context:
+        return {'conf': json.dumps({})}
+    ############################################################
     user = context['request'].user
     chat_host = context['request'].tenant.chat_host()
     server = "localhost" if settings.DEBUG else "134.213.147.235"
