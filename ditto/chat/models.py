@@ -4,6 +4,8 @@ from django.db.models import Q, F
 from django.utils.timezone import now, localtime
 from django.utils.translation import ugettext_lazy as _
 
+from users.models import User
+
 
 class Room(models.Model):
     """A chatroom
@@ -54,6 +56,9 @@ class Room(models.Model):
             return self._is_regular_room_open()
         else:
             return self._is_one_off_room_open()
+
+    def members(self):
+        return self.users.all() | User.objects.filter(groups__in=self.roles.all())
 
     def _is_regular_room_open(self):
         # TODO this feels massively flakey and surely doesn't do the

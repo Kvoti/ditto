@@ -76,7 +76,18 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
                                             pfrom=self.me,
                                             wait=True)
             if action['action'] == 'open':
-                self.plugin['xep_0045'].configureRoom(room, ifrom=self.me)
+                if action['members']:
+                    config = self.plugin['xep_0045'].getRoomConfig(room)
+                    config.field['muc#roomconfig_membersonly']['value'] = 1
+                else:
+                    config = None
+                self.plugin['xep_0045'].configureRoom(room, ifrom=self.me, form=config)
+                for member in action['members']:
+                    self.plugin['xep_0045'].setAffiliation(
+                        room,
+                        ifrom=self.me,
+                        jid=jid(member)
+                    )
             else:
                 # TODO maybe destroy is too strong here, should just set
                 # unusable password or set to private room with no
@@ -108,7 +119,15 @@ def run():
         actions = []
         for room in chat.models.Room.objects.all():
             if room.is_open() and not room.is_opened:
-                actions.append({'room': room, 'action': 'open'})
+                # we set the members of the room once when we open it, we
+                # don't keep checking if role changes mean changes to the
+                # member list.
+                # TODO maybe we should?
+                # TODO can we use the chatserver idea of role?
+                # TODO this could get very big, probably *need* to do something
+                # smarter than using explicit member list
+                members = list(room.members().values_list('username', flat=True))
+                actions.append({'room': room, 'action': 'open', 'members': members})
             elif not room.is_open() and not room.is_closed:
                 actions.append({'room': room, 'action': 'close'})
 
@@ -117,7 +136,7 @@ def run():
     if 'OPEN' in os.environ:
         with tenant._tenant('di'):
             room = chat.models.Room.objects.get(slug='main')
-        actions = [{'room': room, 'action': 'open'}]
+        actions = [{'room': room, 'action': 'open', 'members': []}]
     elif 'CLOSE' in os.environ:
         with tenant._tenant('di'):
             room = chat.models.Room.objects.get(slug='main')
