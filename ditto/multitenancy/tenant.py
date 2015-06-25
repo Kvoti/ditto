@@ -84,8 +84,10 @@ def _tenant(slug):
 
     """
     _table_prefix.value = _table_prefix(slug)
+    logging.debug('set _table_prefix to %s' % _table_prefix.value)
     yield
     del _table_prefix.value
+    logging.debug('unset _table_prefix')
     
 
 def _set_default():
@@ -117,7 +119,7 @@ def _get_for_id(tenant_id):
     if tenant_id == _MAIN:
         return _MAIN
     else:
-        with _main():
+        with _tenant(_MAIN):  # _main():
             try:
                 tenant = models.Tenant.objects.get(slug=tenant_id)
             except models.Tenant.DoesNotExist:
