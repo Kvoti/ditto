@@ -80,7 +80,7 @@ var OneOffChatroomSchedule = React.createClass({
 			onChangeRoles={this._update.bind(this, 'roles')}
 			onChangeUsers={this._update.bind(this, 'users')}
 			/>
-	    <button disabled={this.state.pendingSince || !this._isChanged()} className="btn btn-success" onClick={this._save}>
+	    <button disabled={this.state.pendingSince || !this._isChanged() || !this._isValid()} className="btn btn-success" onClick={this._save}>
 		{this.state.pendingSince ? 'Saving...' : 'Save'}
 	    </button>
 	    {this._isChanged() ? <button className="btn btn-default" onClick={this._cancel}>Cancel</button> : null }
@@ -92,7 +92,20 @@ var OneOffChatroomSchedule = React.createClass({
 	// TODO urgh, use immutable data here and make this easier!
 	return !_.isEqual(this.state.current, this.state.initial);
     },
-    
+
+    _isValid () {
+	// Require both start and end time
+	// TODO want to validate that end is at least an hour after start
+	// Not sure how to handle this as DateTimeRange does validation
+	// but doesn't communicate that to this component. Maybe it could pass
+	// back errors along with the new start and end values?
+	// Or maybe DateTimeRange should be totally dumb and all validation
+	// and interaction of start/end times handled by this component?
+	// But can imagine a useful re-usable DateTimeRange that handles common
+	// cases like requiring start and end times and end > start ...
+	return this.state.current.start && this.state.current.end;
+    },
+
     _update (key, value) {
 	var current = this.state.current;
 	current[key] = value;
