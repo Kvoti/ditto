@@ -156,7 +156,9 @@ var ChatroomSettings = React.createClass({
 	    SettingsActionCreators.createChatroom({
 		is_regular: this.state.isNewChatroomRegular,
 		slug: this.state.newChatroomID,
-		name: this.state.newChatroomName
+		name: this.state.newChatroomName,
+		roles: [],
+		users: []
 	    })
 	    this.setState({
 		newChatroomName: "",
