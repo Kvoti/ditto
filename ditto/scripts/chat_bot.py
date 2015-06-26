@@ -76,11 +76,12 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
                                             pfrom=self.me,
                                             wait=True)
             if action['action'] == 'open':
+                config = self.plugin['xep_0045'].getRoomConfig(room)
                 if action['members']:
-                    config = self.plugin['xep_0045'].getRoomConfig(room)
+                    logging.warn('setting member only %s' % room)
                     config.field['muc#roomconfig_membersonly']['value'] = 1
                 else:
-                    config = None
+                    config.field['muc#roomconfig_membersonly']['value'] = 0
                 self.plugin['xep_0045'].configureRoom(room, ifrom=self.me, form=config)
                 for member in action['members']:
                     self.plugin['xep_0045'].setAffiliation(
