@@ -288,7 +288,10 @@ class Common(Configuration):
                 'level': 'ERROR',
                 'propagate': True,
             },
-        }
+        },
+        'root': {
+            'level': 'DEBUG',
+        },
     }
     # END LOGGING CONFIGURATION
 
