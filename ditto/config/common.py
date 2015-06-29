@@ -64,7 +64,8 @@ class Common(Configuration):
         'configuration',
         'skin',
         'dittoforms',
-        'signup'
+        'signup',
+        'casenotes',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

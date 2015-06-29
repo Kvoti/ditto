@@ -14,6 +14,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 
+import casenotes.models
 import chat.models
 import configuration.models
 import core
@@ -41,6 +42,7 @@ def run():
     setup_tenants()
     setup_reg_form()
     setup_chat_conf()
+    setup_case_notes()
     
 
 def setup_guest_passwords():
@@ -168,3 +170,14 @@ def setup_chat_conf():
         start=8,
         end=22,
     )
+
+
+def setup_case_notes():
+    client = User.objects.get(username="mark")
+    author = User.objects.get(username="sarah")
+    for i in range(1, 5):
+        casenotes.models.CaseNote.objects.create(
+            author=author,
+            client=client,
+            text="Case note %s" % i
+        )
