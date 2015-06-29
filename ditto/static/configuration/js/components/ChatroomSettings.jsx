@@ -13,16 +13,21 @@ var Alert = require('react-bootstrap/lib/Alert');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var assign = require('object-assign');
 var _ = require('lodash');
+var Router = require('react-router');
+var Route = Router.Route;
+var RouteHandler = Router.RouteHandler;
+var Navigation = Router.Navigation;
 
 function getStateFromStores () {
     return {
 	chatrooms: RoomStore.getAll(),
+	currentRoomID: RoomStore.getCurrentID(),
 	creators: RoomCreatorStore.get()
     }
 }
 
 var ChatroomSettings = React.createClass({
-    mixins: [React.addons.LinkedStateMixin],
+    mixins: [React.addons.LinkedStateMixin, Navigation],
     
     getInitialState () {
 	var initial = getStateFromStores();
@@ -32,6 +37,7 @@ var ChatroomSettings = React.createClass({
 	    newChatroomFormErrors: [],
 	    creatorRoles: initial.creators.roles,
 	    creatorUsers: initial.creators.users,
+	    currentRoomID: initial.currentRoomID,
 	}, initial);
     },
     
@@ -57,6 +63,7 @@ var ChatroomSettings = React.createClass({
     },
     
     render () {
+	console.log('rendering settings for room', this.state.currentRoomID);
 	return (
 	    <div>
 		<p>Select which roles and users can create chatrooms.</p>
@@ -95,7 +102,7 @@ var ChatroomSettings = React.createClass({
 		</div>
 	    </div>
 	    {this.state.chatrooms.length ? 
-		<Accordion defaultActiveKey={this.state.chatrooms[0].slug}>
+		<Accordion activeKey={this.state.currentRoomID} onSelect={this._changeRoom}>
 		    {this.state.chatrooms.map(room => {
 			return (
 			    <Panel eventKey={room.slug} header={room.name}>
@@ -131,6 +138,10 @@ var ChatroomSettings = React.createClass({
 	);
     },
 
+    _changeRoom (slug) {
+	this.transitionTo("chatrooms", {id: slug});
+    },
+    
     _isChanged () {
 	return !(
 	    _.isEqual(this.state.creatorRoles, this.state.creators.roles) &&
@@ -211,4 +222,22 @@ var ChatroomSettings = React.createClass({
     }
 });
 
-module.exports = ChatroomSettings;
+// TODO this is just cut and paste from the hacky routing stuff for the chatrooms
+var App = React.createClass({
+    render () {
+	return (
+	    <div>
+		<RouteHandler/>
+	    </div>
+	)
+    }
+});
+
+// declare our routes and their hierarchy
+var routes = (
+    <Route handler={App}>
+	<Route name="chatrooms" path="/di/config/chatroom/:id/" handler={ChatroomSettings} ignoreScrollBehavior/>
+    </Route>
+);
+
+module.exports = routes;

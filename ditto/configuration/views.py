@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 
+import chat.models
 from core.views.decorators import admin_required, nav
 
 from . import forms
@@ -171,7 +172,12 @@ def evaluation(request):
 
 
 @admin_required
-def chatroom(request):
+def chatroom(request, room=None):
+    if room is None:
+        default_room = chat.models.Room.objects.values_list(
+            'slug', flat=True)[0]
+        return HttpResponseRedirect(
+            reverse('ditto:chatroom_config_room', args=(default_room,)))
     return TemplateResponse(request, 'configuration/chatroom_configuration.html', {
         'nav': ['chatroom_config'],
     })

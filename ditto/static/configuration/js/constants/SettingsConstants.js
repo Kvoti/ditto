@@ -48,6 +48,7 @@ module.exports = {
         UPDATE_ROOM_CREATORS: null,
         UPDATE_ROOM_CREATORS_SUCCESS: null,
         UPDATE_ROOM_CREATORS_FAILURE: null,
+        CHANGE_ROOM: null,
         
         RECEIVE_ROLES: null,
     }),

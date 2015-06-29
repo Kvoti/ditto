@@ -7,6 +7,7 @@ var ActionTypes = SettingsConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
 var _rooms = [];
+var _current;
 
 var ChatroomStore = assign({}, EventEmitter.prototype, {
 
@@ -29,8 +30,11 @@ var ChatroomStore = assign({}, EventEmitter.prototype, {
     get (slug) {
         var index = _rooms.findIndex(r => r.slug === slug);
         return _rooms[index];
-    }
+    },
 
+    getCurrentID () {
+        return _current;
+    }
 });
 
 ChatroomStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
@@ -97,6 +101,11 @@ ChatroomStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         break;
         
     // TODO case ActionTypes.DELETE_ROOM_FAILURE:
+        
+    case ActionTypes.CHANGE_ROOM:
+        _current = action.room;
+        ChatroomStore.emitChange();
+        break;
         
     default:
         // do nothing
