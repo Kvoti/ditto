@@ -31,7 +31,7 @@ def builddb():
         with shell_env(DJANGO_CONFIGURATION='Production'):
             sudo("echo 'drop database app_data;create database app_data' | ../../bin/python manage.py dbshell",
                  user="pydev")
-            sudo("echo 'source /usr/lib/mongooseim//lib/ejabberd-2.1.8+mim-1.5.1/priv/mysql.sql' | ../../bin/python manage.py dbshell",
+            sudo("echo 'source /usr/lib/mongooseim//lib/ejabberd-2.1.8+mim-1.5.0/priv/mysql.sql' | ../../bin/python manage.py dbshell",
                  user="pydev")
             # Set up data for main site
             sudo(' ../../bin/python manage.py migrate',
