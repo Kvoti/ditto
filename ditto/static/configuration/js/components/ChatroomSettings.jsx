@@ -103,12 +103,24 @@ var ChatroomSettings = React.createClass({
 				 <RegularChatroomSchedule room={room.slug} /> :
 				    <OneOffChatroomSchedule room={room.slug} />}
 			    <p>
-			    <button
+			    {!this.state.confirmDelete ? <button
 			    className="btn btn-danger"
 			    disabled={room.isDeleting}
-			    onClick={this._deleteChatroom.bind(this, room.slug)}>
+			    onClick={this._confirmDeleteChatroom.bind(this, room.slug)}>
 			    {room.isDeleting ? 'Deleting ...' : 'Delete room'}
-			    </button>
+			    </button> : null}
+			    {this.state.confirmDelete === room.slug ?
+				<span>Are you sure? <button
+				className="btn btn-danger"
+				onClick={this._deleteChatroom.bind(this, room.slug)}>
+				Yes
+				</button>
+				<button
+				className="btn btn-default"
+				onClick={this._cancelDeleteChatroom.bind(this, room.slug)}>
+				Cancel
+				</button></span>
+				: null}
 			    </p>
 			    </Panel>
 			);
@@ -185,8 +197,17 @@ var ChatroomSettings = React.createClass({
 	return errors;
     },
 
+    _confirmDeleteChatroom (slug) {
+	this.setState({confirmDelete: slug});
+    },
+
+    _cancelDeleteChatroom (slug) {
+	this.setState({confirmDelete: null});
+    },
+    
     _deleteChatroom (slug) {
 	SettingsActionCreators.deleteChatroom(slug);
+	this.setState({confirmDelete: null});
     }
 });
 
