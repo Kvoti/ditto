@@ -83,11 +83,19 @@ def _tenant(slug):
     """Context manager to allow access to tenant database tables.
 
     """
+    if hasattr(_table_prefix, 'value'):
+        previous = _table_prefix.value
+    else:
+        previous = None
     _table_prefix.value = _table_prefix(slug)
     logging.debug('set _table_prefix to %s' % _table_prefix.value)
     yield
-    del _table_prefix.value
-    logging.debug('unset _table_prefix')
+    if previous:
+        _table_prefix.value = previous
+        logging.debug('restored _table_prefix to %s' % previous)
+    else:
+        del _table_prefix.value
+        logging.debug('unset _table_prefix')
     
 
 def _set_default():
