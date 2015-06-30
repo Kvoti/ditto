@@ -36,7 +36,7 @@ module.exports = {
 
         CHANGE_CHATROOM: null,
         CHANGE_PRIVATE_CHAT: null,
-        CHANGE_PRIVATE_TYPE: null
+        CHANGE_PRIVATE_CHAT_TYPE: null
     }),
 
     chatStatus: {
