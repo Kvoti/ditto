@@ -26,6 +26,8 @@
 
 	    <!-- This file store project specific CSS -->
 	    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+	    <!-- Manually include datagrid css (TODO webpack better than browserify as it handles css? -->
+	    <link href="{% static 'css/index.css' %}" rel="stylesheet">
 	{% endblock %}
 
 	{% if not debug %}

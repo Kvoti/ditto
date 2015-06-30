@@ -5,6 +5,9 @@ from . import models
 
 
 class CaseNoteSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    client = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    
     class Meta:
         model = models.CaseNote
         fields = (

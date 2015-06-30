@@ -2,6 +2,7 @@ require("babel/polyfill");
 var ChatApp = require('../../flux-chat/js/components/ChatApp.react');
 var ChatRoomApp = require('../../flux-chat/js/components/ChatRoomApp.jsx');
 var ChatWebAPIUtils = require('../../flux-chat/js/utils/ChatWebAPIUtils');
+var SettingsWebAPIUtils = require('../../configuration/js/utils/SettingsWebAPIUtils');
 var Avatar = require('../../flux-chat/js/components/Avatar.react.js');
 var AvatarPicker = require('../../js/components/AvatarPicker.jsx');
 var WhosOnline = require('../../flux-chat/js/components/WhosOnline.react');
@@ -13,6 +14,7 @@ var FormBuilder = require('../../formbuilder/js/components/FormBuilder.jsx');
 var Router = require('react-router')
 var RouteActionCreators = require('../../flux-chat/js/actions/RouteActionCreators.js');
 var SettingsRouteActionCreators = require('../../configuration/js/actions/RouteActionCreators.js');
+var CaseNotes = require('../../casenotes/js/components/CaseNotes.jsx');
 
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
@@ -23,6 +25,8 @@ ChatWebAPIUtils.connect(
     chatConf.password,
     chatConf.nick
 );	
+
+SettingsWebAPIUtils.loadRoles();
 
 var user = Strophe.getNodeFromJid(chatConf.me);
 React.render(
@@ -105,4 +109,11 @@ if (formBuilder) {
         formBuilder
     );
 }
-   
+
+var caseNotes = document.getElementById('casenotes');
+if (caseNotes) {
+    React.render(
+            <CaseNotes />,
+        caseNotes
+    );
+}

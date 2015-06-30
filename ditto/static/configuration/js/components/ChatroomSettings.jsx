@@ -45,7 +45,6 @@ var ChatroomSettings = React.createClass({
 	// TODO api batching probably useful here
 	API.loadChatrooms();
 	API.loadSlots();
-	API.loadRoles();
 	API.loadCreators();
         RoomStore.addChangeListener(this._onChange);
         RoomCreatorStore.addChangeListener(this._onChange);
