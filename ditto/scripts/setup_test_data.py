@@ -164,12 +164,13 @@ def setup_chat_conf():
         name='Main chatroom',
         is_regular=True
     )
-    chat.models.Slot.objects.create(
-        room=room,
-        day=chat.models.Slot.Monday,
-        start=8,
-        end=22,
-    )
+    for day in range(7):
+        chat.models.Slot.objects.create(
+            room=room,
+            day=day,
+            start=8,
+            end=18,
+        )
 
 
 def setup_case_notes():
