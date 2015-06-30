@@ -104,7 +104,7 @@ var ChatroomSettings = React.createClass({
 		<Accordion activeKey={this.state.currentRoomID} onSelect={this._changeRoom}>
 		    {this.state.chatrooms.map(room => {
 			return (
-			    <Panel eventKey={room.slug} header={room.name}>
+			    <Panel key={room.slug} eventKey={room.slug} header={room.name}>
 				{room.is_regular ?
 				 <RegularChatroomSchedule room={room.slug} /> :
 				    <OneOffChatroomSchedule room={room.slug} />}
