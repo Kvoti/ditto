@@ -99,6 +99,13 @@
 	    <!-- Latest JQuery -->
 	    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
+	    <script>
+	    $( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
+		// Make ajax errors very obvious (and annoying) to try and see what's going on for sarah
+		alert('ajax error: ' + settings.url + ' ' + thrownError);
+	    });
+	    </script>
+	    
 	    <!-- Latest compiled and minified JavaScript -->
 	    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
