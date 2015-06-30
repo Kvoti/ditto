@@ -59,17 +59,22 @@ function sendInitialPresence () {
 }
 
 var getChatrooms = new Promise((resolve, reject) => {
-    // if (window.location.href.indexOf('messages') === -1 &&
-    //     window.location.href.indexOf('sessions') === -1) {
     // TODO not sure here about using a promise inside a promise
-    connect.then(connection => {
-        var chatDomain = 'muc.' + _domain; // TODO pass in from config
-        connection.muc.listRooms(
-            chatDomain,
-            receiveChatrooms(resolve),
-            reject
-        )
-    });
+    // TODO fix this hack to workaround problems joining the main chatroom
+    // when viewing private messages. For now we don't join the chatroom
+    // as private and group threads are intermingled in the thread store
+    // and that breaks thinsgs.
+    if (window.location.href.indexOf('messages') === -1 &&
+        window.location.href.indexOf('sessions') === -1) {
+        connect.then(connection => {
+            var chatDomain = 'muc.' + _domain; // TODO pass in from config
+            connection.muc.listRooms(
+                chatDomain,
+                receiveChatrooms(resolve),
+                reject
+            )
+        });
+    }
 });
 
 // TODO is there a better pattern to use here?
@@ -78,6 +83,7 @@ var getChatrooms = new Promise((resolve, reject) => {
 // return functions that call `resolve`...
 function receiveChatrooms (resolve) {
     return function (result) {
+        console.log('got chatrooms');
         var roomList = XMPP.parse.roomList(result);
         resolve(roomList);
 	ChatServerActionCreators.receiveChatrooms(roomList);
@@ -292,7 +298,7 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log || true) {
+        if (log) {
             setupLogging();
         }
         _connection.connect(
