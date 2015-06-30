@@ -1,4 +1,3 @@
-var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var utils = require('../utils');
 var assign = require('object-assign');
 
@@ -151,3 +150,5 @@ module.exports = {
     },
 
 };
+
+var SettingsActionCreators = require('../actions/SettingsActionCreators');
