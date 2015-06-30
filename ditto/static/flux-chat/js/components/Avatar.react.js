@@ -39,7 +39,9 @@ var Avatar = React.createClass({
 	if (profile) {
 	    avatarName = profile.avatar;
 	} else {
-            avatarName = 'sunshine';
+            // Show nothing until profiles are loaded and we know
+            // what avatar to show.
+            return null;
 	}
 	// TODO better way to generate svg without jquery/outerHTML, convert svg to react component?
 	var avatarSVG = $(avatarSVGs);
