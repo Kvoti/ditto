@@ -1,7 +1,9 @@
-var React = require('react');
+var React = require('react/addons');
 var RoleAndUserSelect = require('../../../configuration/js/components/RoleAndUserSelect.jsx');
 
 var CaseNoteEditor = React.createClass({
+    mixins: [React.addons.LinkedStateMixin],
+    
     getInitialState () {
 	return {
 	    text: this.props.initialText,
@@ -13,7 +15,7 @@ var CaseNoteEditor = React.createClass({
     render () {
 	return (
 	    <div>
-		<textarea placeholder="Enter note text" />
+		<textarea placeholder="Enter note text" valueLink={this.linkState('text')} />
 		<p>Select any roles and/or users you want to share this note with.</p>
 		<RoleAndUserSelect
 			onChangeRoles={this._updateSharing.bind(this, 'shareRoles')}
@@ -22,7 +24,10 @@ var CaseNoteEditor = React.createClass({
 			users={this.state.shareUsers}
 		/>
 		<p>
-		    <button>save</button>
+		    <button
+			    disabled={!this.state.text}
+			    onClick={this._onSave}
+			    >save</button>
 		    <button onClick={this.props.onCancel}>cancel</button>
 		</p>
 	    </div>
@@ -33,7 +38,16 @@ var CaseNoteEditor = React.createClass({
 	var update = {};
 	update[key] = value;
 	this.setState(update);
+    },
+
+    _onSave () {
+	this.props.onSave(
+	    this.state.text,
+	    this.state.shareUsers,
+	    this.state.shareRoles
+	);
     }
+
 });
 
 module.exports = CaseNoteEditor;

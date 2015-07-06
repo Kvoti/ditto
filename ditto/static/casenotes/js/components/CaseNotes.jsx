@@ -32,7 +32,10 @@ var CaseNotes = React.createClass({
 		<DataGrid idProperty="caseNotesGrid" dataSource={this.state.caseNotes} columns={this.columns}/>
 		{!this.state.isAdding ?
 		 <button onClick={this._addNote}>Add case note</button> : null}
-		 {this.state.isAdding ? <CaseNoteEditor onCancel={this._cancelAdd} /> : null}
+		 {this.state.isAdding ?
+		  <CaseNoteEditor
+		  onSave={this._saveNote}
+		  onCancel={this._cancelAdd} /> : null}
 	    </div>
 	);
     },
@@ -44,6 +47,45 @@ var CaseNotes = React.createClass({
     _cancelAdd () {
 	this.setState({isAdding: false});
     },
+
+    _saveNote (text, shareWithUsers, shareWithRoles) {
+	var pendingIndex;
+	var caseNotes = this.state.caseNotes;
+	caseNotes.push({
+	    author: DITTO.user,
+	    created_at: new Date(),  // TODO set this on save?
+	    text: text
+	});
+	pendingIndex = caseNotes.length - 1;
+	this.setState({caseNotes: caseNotes}, () => {
+            $.ajax({
+		// TODO fix hardcoded url
+		url: '/' + DITTO.tenant + '/api/casenotes/',
+		type: "POST",
+		data: JSON.stringify({
+		    client: hackGetClient(),
+		    text: text,
+		    shared_with_roles: shareWithRoles,
+		    shared_with_users: shareWithUsers,
+		}),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+            }).done(() => this.setState({isAdding: false}))
+		.fail(() => {
+		    alert('there was a problem saving the case note');
+		    var caseNotes = this.state.caseNotes;
+		    caseNotes.splice(pendingIndex, 1);
+		    this.setState({caseNotes: caseNotes});
+		});
+	});
+    }
+    
 });
+
+// TODO pass this in as props
+function hackGetClient () {
+    var parts = window.location.href.split('/');
+    return parts[parts.length - 2];
+}
 
 module.exports = CaseNotes;

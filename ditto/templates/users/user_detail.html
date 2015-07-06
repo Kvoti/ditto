@@ -42,9 +42,9 @@
             <div class="col-md-8">
                 {% with accordion_id='user_content' %}
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
-                    {% include "users/_bio.html" with index=0 %}
+                    {% include "users/_bio.html" with index=2 %}
                     {% include "users/_blog.html" with index=1 %}
-		    <section id="casenotes"></section>
+                    {% include "users/_casenotes.html" with index=0 %}
                 </div>
                 {% endwith %}
             </div>
