@@ -71,5 +71,5 @@ class CaseNotesList(generics.ListCreateAPIView):
         
 
 urlpatterns = patterns('',
-    url(r'^$', CaseNotesList.as_view()),
+    url(r'^$', CaseNotesList.as_view(), name="casenote_list"),
 )
