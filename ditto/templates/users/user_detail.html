@@ -8,7 +8,7 @@
     <div class="row">
     <div class="col-md-9 main-content">
         <div class="row">
-            <div class="col-md-4 avatar-profile">
+            <div class="col-md-3 avatar-profile">
                 <div data-avatar id="profile-avatar" data-name="{{ object.username }}"></div>
                 {% if is_me %}
                 <div id="change-avatar"></div>
@@ -18,9 +18,24 @@
                     {% include "users/_comm_button.html" with label="VIDEO CHAT" id="video" %}
                     {% include "users/_comm_button.html" with label="AUDIO CHAT" id="audio" %}
                 </ul>
+		<div class="panel panel-success">
+		    <div class="panel-heading">
+			<h4 class="panel-title">
+			    ACTIONS
+			</h4>
+		    </div>
+		    <div class="panel-body">
+			<p>Report {{ object.username }}</p>
+			<p>Block {{ object.username }}</p>
+			<p>Flag {{ object.username }}</p>
+			<p>Email {{ object.username }}</p>
+			<p>Invite {{ object.username }} to</p>
+			<p>Tag {{ object.username }}</p>
+		    </div>
+		</div>
 		{% endif %}
-            </div>
-            <div class="col-md-8">
+	    </div>
+            <div class="col-md-9">
 		<div class="well">
                     <h2>{{ object.get_full_name|default:object.username }} | {{ object.groups.all.0.name }} <span style="background-color:red;border-radius:50%">o</span></h2>
                     <p><strong>Joined: </strong> {{ object.date_joined }}</p>
