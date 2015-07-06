@@ -56,7 +56,7 @@ var Avatar = React.createClass({
 	} else {
 	    avatarSVG = '';
 	}
-        avatar = <div className="avatar" dangerouslySetInnerHTML={{__html: avatarSVG}} />;
+        avatar = <div className="avatar" style={{width:this.props.size,margin:'auto'}} dangerouslySetInnerHTML={{__html: avatarSVG}} />;
         if (this.props.link) {
             avatar = (
                 <MessageLink from={DITTO.user} to={this.props.user}>
