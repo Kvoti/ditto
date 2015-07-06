@@ -23,7 +23,6 @@ var CaseNotes = React.createClass({
 
     columns: [
 	{name: 'author'},
-	{name: 'client'},
 	{name: 'created_at'},
 	{name: 'text'},
     ],

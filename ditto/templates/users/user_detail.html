@@ -44,7 +44,7 @@
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
                     {% include "users/_bio.html" with index=2 %}
                     {% include "users/_blog.html" with index=1 %}
-                    {% include "users/_casenotes.html" with index=0 %}
+                    {% if show_casenotes %}{% include "users/_casenotes.html" with index=0 %}{% endif %}
                 </div>
                 {% endwith %}
             </div>

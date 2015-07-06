@@ -1,6 +1,17 @@
 from django.db import models
 
 
+class CaseNoteQuerySet(models.QuerySet):
+    def filter_for_viewer(self, viewer):
+        if not viewer.has_perm('casenotes.view_casenote'):
+            query = models.Q(shared_with_users=viewer) | models.Q(author=viewer)
+            for group in viewer.groups.all():
+                query |= models.Q(shared_with_roles=group)
+            return self.filter(query)
+        else:
+            return self
+    
+
 class CaseNote(models.Model):
     author = models.ForeignKey(
         'users.User', related_name="authored_case_notes")
@@ -16,3 +27,10 @@ class CaseNote(models.Model):
     )
     resolved = models.BooleanField(default=False)
     text = models.TextField()
+
+    objects = CaseNoteQuerySet.as_manager()
+    
+    class Meta:
+        permissions = (
+            ('view_casenote', 'Can view case notes'),
+        )

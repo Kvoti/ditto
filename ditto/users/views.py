@@ -14,6 +14,7 @@ from django.views.generic import ListView
 # Only authenticated users can access views using this.
 from braces.views import LoginRequiredMixin
 
+from casenotes.models import CaseNote
 from core.views.mixins import NavMixin
 from configuration.utils import get_reg_data
 
@@ -35,6 +36,8 @@ class UserDetailView(LoginRequiredMixin, NavMixin, DetailView):
         context = super(UserDetailView, self).get_context_data(**kwargs)
         context['is_me'] = self.request.user == self.object
         context['reg_data'] = get_reg_data(self.object)
+        context['show_casenotes'] = CaseNote.objects.filter_for_viewer(
+            self.request.user).count()
         return context
 
     

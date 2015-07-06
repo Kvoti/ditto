@@ -7,6 +7,13 @@ In any case, it's probably easier/better to have a single bootstrap
 script instead of a bunch of data migrations.
 
 """
+# Must install config and setup Django before importing models
+from configurations import importer
+importer.install()
+import django
+django.setup()
+####################
+
 import os
 
 from django.conf import settings
@@ -67,6 +74,10 @@ def setup_features():
                 ('can_chat', 'Can chat'),
                 ('create_chatroom', 'Can create chatroom')
             ]),
+            ('casenotes', 'Case notes', [
+                ('add_casenote', 'Can add case notes'),
+                ('view_casenote', 'Can view case notes')
+            ]),
     ):
         feature, _ = configuration.models.Feature.objects.get_or_create(
             slug=slug, name=name)
@@ -74,7 +85,7 @@ def setup_features():
         for codename, name in perms:
             perm, _ = Permission.objects.get_or_create(
                 codename=codename,
-                content_type=content_type)
+                defaults={'content_type': content_type})
             perm.name = name
             perm.save()
             feature.permissions.add(perm)
@@ -96,6 +107,10 @@ def setup_permissions():
     perm = Permission.objects.get(codename='invite_user')
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='create_chatroom')
+    Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
+    perm = Permission.objects.get(codename='add_casenote')
+    Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
+    perm = Permission.objects.get(codename='view_casenote')
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='guest')
     Group.objects.get(name=core.GUEST_ROLE).permissions.add(perm)
@@ -182,3 +197,7 @@ def setup_case_notes():
             client=client,
             text="Case note %s" % i
         )
+
+if __name__ == '__main__':
+    run()
+    
