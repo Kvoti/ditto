@@ -2,14 +2,19 @@ var React = require('react');
 var DataGrid = require('react-datagrid');
 var CaseNoteEditor = require('./CaseNoteEditor.jsx');
 
+var caseNotesURL = '/' + DITTO.tenant + '/api/casenotes/';
+
 var CaseNotes = React.createClass({
+    propTypes: {
+	client: React.PropTypes.string.isRequired
+    },
+    
     getInitialState () {
 	return {};
     },
     
     componentDidMount () {
-	// TODO fix hardcoded 'di' (and rest of url)
-	$.get('/di/api/casenotes/')
+	$.get(caseNotesURL + '?client__username=' + this.props.client )
 	    .done(res => {
 		this.setState({caseNotes: res});
 	    });
@@ -60,10 +65,10 @@ var CaseNotes = React.createClass({
 	this.setState({caseNotes: caseNotes}, () => {
             $.ajax({
 		// TODO fix hardcoded url
-		url: '/' + DITTO.tenant + '/api/casenotes/',
+		url: caseNotesURL,
 		type: "POST",
 		data: JSON.stringify({
-		    client: hackGetClient(),
+		    client: this.props.client,
 		    text: text,
 		    shared_with_roles: shareWithRoles,
 		    shared_with_users: shareWithUsers,
@@ -81,11 +86,5 @@ var CaseNotes = React.createClass({
     }
     
 });
-
-// TODO pass this in as props
-function hackGetClient () {
-    var parts = window.location.href.split('/');
-    return parts[parts.length - 2];
-}
 
 module.exports = CaseNotes;

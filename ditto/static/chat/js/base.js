@@ -112,8 +112,13 @@ if (formBuilder) {
 
 var caseNotes = document.getElementById('casenotes');
 if (caseNotes) {
+    // TODO get this from config (DITTO.client or something)
+    function hackGetClient () {
+        var parts = window.location.href.split('/');
+        return parts[parts.length - 2];
+    }
     React.render(
-            <CaseNotes />,
+        <CaseNotes client={hackGetClient()} />,
         caseNotes
     );
 }

@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from django.contrib.auth.models import Group
-from rest_framework import generics, serializers
+from rest_framework import generics, serializers, filters
 
 from users.models import User
 from . import models
@@ -53,12 +53,17 @@ class CreateCaseNoteSerializer(serializers.ModelSerializer):
 
 class CaseNotesList(generics.ListCreateAPIView):
     queryset = models.CaseNote.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('client__username',)
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CreateCaseNoteSerializer
         else:
             return CaseNoteSerializer
+
+    # def get_queryset(self):
+    #     TODO restrict to notes the current user can see
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
