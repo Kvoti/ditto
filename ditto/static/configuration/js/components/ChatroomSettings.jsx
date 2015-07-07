@@ -8,7 +8,6 @@ var Accordion = require('react-bootstrap/lib/Accordion');
 var Panel = require('react-bootstrap/lib/Panel');
 var API = require('../utils/SettingsWebAPIUtils');
 var RoomStore = require('../stores/RoomStore');
-var RoomCreatorStore = require('../stores/RoomCreatorStore');
 var Alert = require('react-bootstrap/lib/Alert');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var assign = require('object-assign');
@@ -22,7 +21,6 @@ function getStateFromStores () {
     return {
 	chatrooms: RoomStore.getAll(),
 	currentRoomID: RoomStore.getCurrentID(),
-	creators: RoomCreatorStore.get()
     }
 }
 
@@ -35,8 +33,6 @@ var ChatroomSettings = React.createClass({
 	    newChatroomID: "",
 	    newChatroomName: "",
 	    newChatroomFormErrors: [],
-	    creatorRoles: initial.creators.roles,
-	    creatorUsers: initial.creators.users,
 	    currentRoomID: initial.currentRoomID,
 	}, initial);
     },
@@ -45,43 +41,21 @@ var ChatroomSettings = React.createClass({
 	// TODO api batching probably useful here
 	API.loadChatrooms();
 	API.loadSlots();
-	API.loadCreators();
         RoomStore.addChangeListener(this._onChange);
-        RoomCreatorStore.addChangeListener(this._onChange);
     },
 
     componentWillUnmount () {
-        RoomCreatorStore.removeChangeListener(this._onChange);
+        RoomStore.removeChangeListener(this._onChange);
     },
     
     _onChange () {
-	var newState = getStateFromStores();
-	newState.creatorRoles = newState.creators.roles;
-	newState.creatorUsers = newState.creators.users;
-        this.setState(newState);
+        this.setState(getStateFromStores());
     },
     
     render () {
 	console.log('rendering settings for room', this.state.currentRoomID);
 	return (
 	    <div>
-		<p>Select which roles and users can create chatrooms.</p>
-		<RoleAndUserSelect
-			roles={['Admin', 'Member', 'Counsellor']}
-			selectedRoles={this.state.creatorRoles}
-			users={this.state.creatorUsers}
-			onChangeRoles={this._updateRoles}
-			onChangeUsers={this._updateUsers}
-			/>
-	    <button
-		    className="btn btn-success"
-		    disabled={!this._isChanged()}
-		    onClick={this._save}
-		    >Save
-	    </button> 
-	    {this._isChanged() ? <button className="btn btn-default" onClick={this._cancel}>Cancel</button> : null }
-		<hr/>
-		<h3>Configure chatrooms</h3>
 		{this.state.newChatroomFormErrors.map(e => <Alert bsStyle="danger">{e}</Alert>)}
 	    <div className="form-inline">
 		<div className="form-group">
@@ -141,35 +115,6 @@ var ChatroomSettings = React.createClass({
 	this.transitionTo("chatrooms", {id: slug});
     },
     
-    _isChanged () {
-	return !(
-	    _.isEqual(this.state.creatorRoles, this.state.creators.roles) &&
-	    _.isEqual(this.state.creatorUsers, this.state.creators.users)
-	);
-    },
-
-    _save () {
-	SettingsActionCreators.updateRoomCreators(
-	    this.state.creatorRoles,
-	    this.state.creatorUsers
-	);
-    },
-
-    _cancel () {
-	this.setState({
-	    creatorRoles: this.state.creators.roles,
-	    creatorUsers: this.state.creators.users,
-	});
-    },
-    
-    _updateRoles (roles) {
-	this.setState({creatorRoles: roles});
-    },
-
-    _updateUsers (users) {
-	this.setState({creatorUsers: users});
-    },
-
     _addChatroom () {
 	var errors = this._validateNewChatroom();
 	if (errors.length) {

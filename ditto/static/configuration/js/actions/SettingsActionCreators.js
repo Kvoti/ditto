@@ -274,36 +274,6 @@ module.exports = {
         });
     },
 
-    receiveRoomCreators (creators) {
-        SettingsAppDispatcher.dispatch({
-            type: ActionTypes.RECEIVE_ROOM_CREATORS,
-            creators: creators,
-        });
-    },
-
-    updateRoomCreators (roles, users) {
-        // TODO this is very verbose, and similar is needed for all api endpoints
-        // more succint way to write this?
-        var creators = {roles: roles, users: users};
-        SettingsWebAPIUtils.updateRoomCreators(roles, users)
-            .done(() => {
-                SettingsAppDispatcher.dispatch({
-                    type: ActionTypes.UPDATE_ROOM_CREATORS_SUCCESS,
-                    creators: creators,
-                });
-            })
-            .fail(() => {
-                SettingsAppDispatcher.dispatch({
-                    type: ActionTypes.UPDATE_ROOM_CREATORS_FAILURE,
-                    creators: creators,
-                });
-            })
-        SettingsAppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_ROOM_CREATORS,
-            room: creators,
-        });
-    },
-
 };
 // TODO fix circ. dependency between api and this
 var API = require('../api/api');

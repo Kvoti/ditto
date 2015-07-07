@@ -129,42 +129,6 @@ class SlotViewSet(viewsets.ModelViewSet):
             return UpdateSlotSerializer
         return SlotSerializer
 
-
-# TODO not sure of the best way of handling the set of roles and users
-# that can create chatrooms in rest_framework. Setting a list of users
-# and roles at one api endpoint doesn't fit with rest_framework (e.g. no
-# ModelMultipleChoice field)
-class CreatorsAPIView(views.APIView):
-    # TODO permission_classes = [permissions.IsAdmin]
-    
-    def get(self, request):
-        roles = Group.objects.filter(
-            permissions__codename='create_chatroom').values_list('name', flat=True)
-        users = User.objects.filter(
-            user_permissions__codename='create_chatroom').values_list('username', flat=True)
-        return response.Response({
-            'roles': list(roles),
-            'users': list(users)
-        })
-
-    def post(self, request):
-        errors = []
-        for field in ['users', 'roles']:
-            if field not in request.data:
-                errors.append({field: 'This field is required.'})
-        if not errors:
-            result = {}
-            for field, model, key in [['users', User, 'username'],
-                                      ['roles', Group, 'name']]:
-                # TODO validate data as serializer would (check it's a list, check each group/user is valid)
-                result[field] = model.objects.filter(
-                    **{'%s__in' % key: request.data[field]})
-            perm = Permission.objects.get(codename='create_chatroom')
-            perm.user_set = result['users']
-            perm.group_set = result['roles']
-            return response.Response(request.data)
-        return response.Response(errors, status=status.HTTP_400_BAD_REQUEST)
-    
     
 router = routers.DefaultRouter()
 router.register(r'rooms', RoomViewSet)
@@ -172,5 +136,4 @@ router.register(r'slots', SlotViewSet)
 
 urlpatterns = patterns('',
     url(r'^', include(router.urls)),
-    url(r'^creators/$', CreatorsAPIView.as_view()),
 )
