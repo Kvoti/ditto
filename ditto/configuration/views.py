@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
@@ -171,7 +172,7 @@ def evaluation(request):
     })
 
 
-@admin_required
+@permission_required('configuration.create_chatroom', raise_exception=True)
 def chatroom(request, room=None):
     if room is None:
         default_room = chat.models.Room.objects.values_list(

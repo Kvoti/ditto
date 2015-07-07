@@ -81,13 +81,19 @@
                 </li>
                 {% endif %}
                 
-                {% if request.tenant.is_configured and perms.users.can_admin %}
-                <li{% if "settings" in nav %} class="active"{% endif %}>
-                    {% url "ditto:editconfig" "basicinfo" as url %}
-                    <a class="navicon navicon-settings text-hide" href="{{ url }}">
-                        Settings
-                    </a>
-                </li>
+                {% if request.tenant.is_configured %}
+		    {% if perms.users.can_admin or perms.configuration.create_chatroom %}
+			<li{% if "settings" in nav %} class="active"{% endif %}>
+			    {% if perms.users.can_admin %}
+				{% url "ditto:editconfig" "basicinfo" as url %}
+			    {% else %}
+				{% url "ditto:chatroom_config" as url %}
+			    {% endif %}
+			    <a class="navicon navicon-settings text-hide" href="{{ url }}">
+				Settings
+			    </a>
+			</li>
+                    {% endif %}
                 {% endif %}
             {% endif %}
         {% endif %}
