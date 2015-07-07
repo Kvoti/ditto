@@ -615,3 +615,11 @@ footer {
     color: #0f001c;
 }
 /***********/
+
+#profile-avatar {
+    height: 155px;
+}
+.profile-role {
+    font-weight: 200;
+    text-decoration: underline;
+}

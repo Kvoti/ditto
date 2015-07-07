@@ -7,15 +7,23 @@
 {% block content %}
     <div class="row">
         <div class="col-md-3 avatar-profile">
-            <div data-avatar id="profile-avatar" data-name="{{ object.username }}"></div>
+	    <div class="panel panel-default">
+		<div class="panel-body">
+		    <div data-avatar id="profile-avatar" data-name="{{ object.username }}"></div>
+		</div>
+	    </div>
             {% if is_me %}
                 <div id="change-avatar"></div>
             {% else %}
-                <ul class="comms-list nav nav-pills nav-justified">
-                    {% include "users/_comm_button.html" with label="CHAT" id="chat" %}
-                    {% include "users/_comm_button.html" with label="VIDEO CHAT" id="video" %}
-                    {% include "users/_comm_button.html" with label="AUDIO CHAT" id="audio" %}
-                </ul>
+		<div class="panel panel-default">
+		    <div class="panel-body">
+			<ul class="comms-list nav nav-pills nav-justified">
+			    {% include "users/_comm_button.html" with label="CHAT" id="chat" %}
+			    {% include "users/_comm_button.html" with label="VIDEO CHAT" id="video" %}
+			    {% include "users/_comm_button.html" with label="AUDIO CHAT" id="audio" %}
+			</ul>
+		    </div>
+		</div>
 		<div class="panel panel-success">
 		    <div class="panel-heading">
 			<h4 class="panel-title">
@@ -35,8 +43,8 @@
 	</div>
         <div class="col-md-6">
 	    <div class="well">
-                <h2>{{ object.get_full_name|default:object.username }} | {{ object.groups.all.0.name }} <span id="my-status"></span></h2>
-                <p><strong>Joined: </strong> {{ object.date_joined }}</p>
+                <h2>{{ object.get_full_name|default:object.username }} | <span class="profile-role">{{ object.groups.all.0.name }}</span> <span id="my-status"></span></h2>
+                <p><em><strong>Joined: </strong> {{ object.date_joined }}</em></p>
 		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem.</p>
 	    </div>
             {% with accordion_id='user_content' %}
