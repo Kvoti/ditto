@@ -1,11 +1,34 @@
 {% extends "skin/forms/form.html" %}
 
+{% load ditto %}
+
 {% block form %}
-    {% with id='config' %}
-    <div class="panel-group" id=id role="tablist" aria-multiselectable="true">
-        {% for role in roles %}
-            {% include "configuration/permissions_panel.html" with index=forloop.counter0 %}
-        {% endfor %}
-    </div>
-    {% endwith %}
+    <table class="table">
+	<thead>
+	    <tr>
+		<th></th>
+		{% for role in roles %}
+		    <th>{{ role.name }}</th>
+		{% endfor %}
+		<th>Users</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    {% for feature in features %}
+		{% for perm in feature.permissions.all %}
+		    <tr>
+			<th>{{ perm.name }}</th>
+			{% for role in roles %}
+			    <td>
+				{% with field=role.name|add:"-"|add:feature.name|add:"-"|add:perm.name %}
+				    {{ form|lookup:field }}
+				{% endwith %}
+			    </td>
+			{% endfor %}
+			<td><input class="form-control" type="text" placeholder="Search for users"></td>
+		    </tr>
+		{% endfor %}
+	    {% endfor %}
+	</tbody>
+    </table>
 {% endblock %}
