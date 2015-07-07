@@ -251,16 +251,18 @@ footer {
 .comms {
     height: 50px;
     background-repeat: no-repeat;
-    background-position: left center;
 }
 .comms-video {
     background-image: url(../images/icons/video-50.png);
+    background-position: center center;
 }
 .comms-chat {
     background-image: url(../images/icons/chat-50.png);
+    background-position: left center;
 }
 .comms-audio {
     background-image: url(../images/icons/audio-50.png);
+    background-position: right center;
 }
 .nav-justified > li > a.comms {
     text-align: left;
