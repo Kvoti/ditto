@@ -56,6 +56,11 @@
             {% endwith %}
         </div>
 	<div class="col-md-3 main-sidebar">
+	    {% if is_me %}
+	    <div class="clearfix">
+		<a href="#" class="profile-tickets text-hide">Tickets</a>
+	    </div>
+	    {% endif %}
             {% with accordion_id='user_meta' footer=1 %}
 		<div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
 		    {% include "ditto/module/chatroom.html" with index=0 %}

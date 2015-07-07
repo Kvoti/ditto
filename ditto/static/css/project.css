@@ -623,3 +623,13 @@ footer {
     font-weight: 200;
     text-decoration: underline;
 }
+.profile-tickets {
+    background-image: url(../images/icons/ticket.png);
+    background-position: right center;
+    background-repeat: none;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    float: right;
+    margin-bottom: 10px;
+}
