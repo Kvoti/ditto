@@ -21,14 +21,11 @@
         <div id="presence"></div>
     </div>
     <div class="col-md-4 col-md-offset-4 modules">
-        {% features as features %}
         {% with footer=1 accordion_id='modules' %}
-        <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
-        {% for feature in features %}
-            {% include "ditto/module/"|add:feature.slug|add:".html" with feature=feature index=forloop.counter0 %}
-        {% endfor %}
+            <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
+		{% include "ditto/module/chatroom.html" with index=0 %}
+            </div>
         {% endwith %}
-        </div>
     </div>
 </div>
 {% endblock %}
