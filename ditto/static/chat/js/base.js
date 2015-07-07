@@ -4,6 +4,7 @@ var ChatRoomApp = require('../../flux-chat/js/components/ChatRoomApp.jsx');
 var ChatWebAPIUtils = require('../../flux-chat/js/utils/ChatWebAPIUtils');
 var SettingsWebAPIUtils = require('../../configuration/js/utils/SettingsWebAPIUtils');
 var Avatar = require('../../flux-chat/js/components/Avatar.react.js');
+var Status = require('../../flux-chat/js/components/Status.react.js');
 var AvatarPicker = require('../../js/components/AvatarPicker.jsx');
 var WhosOnline = require('../../flux-chat/js/components/WhosOnline.react');
 var MessageComposer = require('../../flux-chat/js/components/MessageComposer.react');
@@ -112,13 +113,22 @@ if (formBuilder) {
 
 var caseNotes = document.getElementById('casenotes');
 if (caseNotes) {
-    // TODO get this from config (DITTO.client or something)
-    function hackGetClient () {
-        var parts = window.location.href.split('/');
-        return parts[parts.length - 2];
-    }
     React.render(
         <CaseNotes client={hackGetClient()} />,
         caseNotes
     );
+}
+
+var myStatus = document.getElementById('my-status');
+if (myStatus) {
+    React.render(
+        <Status user={hackGetClient()} />,
+        myStatus
+    );
+}
+
+// TODO get this from config (DITTO.client or something)
+function hackGetClient () {
+    var parts = window.location.href.split('/');
+    return parts[parts.length - 2];
 }
