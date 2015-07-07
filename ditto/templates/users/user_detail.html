@@ -6,13 +6,11 @@
 
 {% block content %}
     <div class="row">
-    <div class="col-md-9 main-content">
-        <div class="row">
-            <div class="col-md-3 avatar-profile">
-                <div data-avatar id="profile-avatar" data-name="{{ object.username }}"></div>
-                {% if is_me %}
+        <div class="col-md-3 avatar-profile">
+            <div data-avatar id="profile-avatar" data-name="{{ object.username }}"></div>
+            {% if is_me %}
                 <div id="change-avatar"></div>
-                {% else %}
+            {% else %}
                 <ul class="comms-list nav nav-pills nav-justified">
                     {% include "users/_comm_button.html" with label="CHAT" id="chat" %}
                     {% include "users/_comm_button.html" with label="VIDEO CHAT" id="video" %}
@@ -33,31 +31,29 @@
 			<p>Tag {{ object.username }}</p>
 		    </div>
 		</div>
-		{% endif %}
+	    {% endif %}
+	</div>
+        <div class="col-md-6">
+	    <div class="well">
+                <h2>{{ object.get_full_name|default:object.username }} | {{ object.groups.all.0.name }} <span id="my-status"></span></h2>
+                <p><strong>Joined: </strong> {{ object.date_joined }}</p>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem.</p>
 	    </div>
-            <div class="col-md-9">
-		<div class="well">
-                    <h2>{{ object.get_full_name|default:object.username }} | {{ object.groups.all.0.name }} <span id="my-status"></span></h2>
-                    <p><strong>Joined: </strong> {{ object.date_joined }}</p>
-		    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem.</p>
-		</div>
-                {% with accordion_id='user_content' %}
+            {% with accordion_id='user_content' %}
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
                     {% if show_casenotes %}{% include "users/_casenotes.html" with index=0 %}{% endif %}
                     {% include "users/_evaluation.html" with index=1 %}
                     {% include "users/_reports.html" with index=2 %}
                 </div>
-                {% endwith %}
-            </div>
+            {% endwith %}
         </div>
+	<div class="col-md-3 main-sidebar">
+            {% with accordion_id='user_meta' footer=1 %}
+		<div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
+		    {% include "ditto/module/chatroom.html" with index=0 %}
+		    {% include "users/_activity.html" with index=1 %}
+		</div>
+            {% endwith %}
+	</div>
     </div>
-    <div class="col-md-3 main-sidebar">
-        {% with accordion_id='user_meta' footer=1 %}
-        <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
-            {% include "ditto/module/chatroom.html" with index=0 %}
-            {% include "users/_activity.html" with index=1 %}
-        </div>
-        {% endwith %}
-    </div>
-</div>
 {% endblock content %}
