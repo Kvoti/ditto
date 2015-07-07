@@ -19,15 +19,20 @@ function search(input, callback) {
 }
 
 var UserAutocomplete = React.createClass({
+    getDefaultProps () {
+	return {
+	    name: 'user-autocomplete'
+	};
+    },
 
     render: function () {
 	return (
 	    <Select
-		    name="form-field-name"
+		    name={this.props.name}
 		    value={this._value()}
 		    placeholder="Enter username"
 		    asyncOptions={search}
-		    onChange={this._onChange}
+		    onChange={this.props.onChange ? this._onChange : null}
 		    autoload={false}
 	            delimiter={'|'}
 	            multi={this.props.multi}

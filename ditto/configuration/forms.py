@@ -102,7 +102,6 @@ class InteractionsForm(forms.Form):
             interaction.deny(role1, role2)
 
 
-            
 class PermissionsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(PermissionsForm, self).__init__(*args, **kwargs)
@@ -119,12 +118,28 @@ class PermissionsForm(forms.Form):
                     checkbox.role = role
                     checkbox.permission = permission
                     self.fields[name] = checkbox
+        for feature in models.Feature.objects.all():
+            for permission in feature.permissions.all():
+                users = User.objects.filter(user_permissions=permission).values_list('username', flat=True)
+                users = '|'.join(users)
+                name = '%s-%s' % (permission.content_type_id, permission.codename)
+                self.fields[name] = forms.CharField(
+                    required=False,
+                    initial=users
+                )
+                self.fields[name].permission = permission
 
     def save(self):
         for name, is_enabled in self.cleaned_data.items():
-            role = self.fields[name].role
-            permission = self.fields[name].permission
-            if is_enabled:
-                role.permissions.add(permission)
+            if hasattr(self.fields[name], 'role'):
+                role = self.fields[name].role
+                permission = self.fields[name].permission
+                if is_enabled:
+                    role.permissions.add(permission)
+                else:
+                    role.permissions.remove(permission)
             else:
-                role.permissions.remove(permission)
+                users = is_enabled.split('|')
+                # TODO validate users value
+                users = User.objects.filter(username__in=users)
+                self.fields[name].permission.user_set = users

@@ -20,12 +20,18 @@
 			<th>{{ perm.name }}</th>
 			{% for role in roles %}
 			    <td>
-				{% with field=role.name|add:"-"|add:feature.name|add:"-"|add:perm.name %}
-				    {{ form|lookup:field }}
+				{% with fieldname=role.name|add:"-"|add:feature.name|add:"-"|add:perm.name %}
+				    {{ form|lookup:fieldname }}
 				{% endwith %}
 			    </td>
 			{% endfor %}
-			<td><input class="form-control" type="text" placeholder="Search for users"></td>
+			<td>
+			    {% with fieldname=perm.content_type_id|capfirst|add:"-"|add:perm.codename %}
+			    {% with field=form|lookup:fieldname %}
+				<span class="user-autocomplete" data-perm="{{ fieldname }}" data-value="{{ field.value }}"></span>
+			    {% endwith %}
+			    {% endwith %}
+			</td>
 		    </tr>
 		{% endfor %}
 	    {% endfor %}

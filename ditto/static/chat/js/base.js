@@ -16,6 +16,7 @@ var Router = require('react-router')
 var RouteActionCreators = require('../../flux-chat/js/actions/RouteActionCreators.js');
 var SettingsRouteActionCreators = require('../../configuration/js/actions/RouteActionCreators.js');
 var CaseNotes = require('../../casenotes/js/components/CaseNotes.jsx');
+var UserAutocomplete = require('../../js/components/UserAutocomplete.jsx');
 
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
@@ -126,6 +127,18 @@ if (myStatus) {
         myStatus
     );
 }
+
+var inputs = document.getElementsByClassName('user-autocomplete');
+Array.prototype.forEach.call(inputs, (el) => {
+    React.render(
+            <UserAutocomplete
+        name={el.dataset.perm}
+        multi={true}
+        value={el.dataset.value && el.dataset.value.split('|')}
+            />,
+        el
+    );
+});
 
 // TODO get this from config (DITTO.client or something)
 function hackGetClient () {
