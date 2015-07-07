@@ -107,3 +107,9 @@ class PermittedInteraction(models.Model):
 class RegForm(models.Model):
     role = models.ForeignKey('auth.Group', related_name="reg_forms")
     form = models.ForeignKey('dittoforms.FormSpec')
+
+
+# Patch the Group model to add description instead of adding
+# another model with a one to one field
+from django.contrib.auth.models import Group
+Group.add_to_class('description', models.TextField(blank=True))

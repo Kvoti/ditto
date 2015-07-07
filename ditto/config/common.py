@@ -297,3 +297,7 @@ class Common(Configuration):
     # END LOGGING CONFIGURATION
 
     # Your common stuff: Below this line define 3rd party library settings
+    MIGRATION_MODULES = {
+        'auth': 'core.migrations'
+    }
+    

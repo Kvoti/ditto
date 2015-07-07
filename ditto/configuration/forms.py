@@ -47,7 +47,7 @@ class BasicInfoForm(forms.ModelForm):
 class RoleForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ('name',)
+        fields = ('name', 'description')
 
 
 class BaseRoleFormSet(forms.models.BaseModelFormSet):
