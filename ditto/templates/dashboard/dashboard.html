@@ -27,9 +27,11 @@
         <p>{% block section %}DASHBOARD{% endblock %}</p>
         {% m "sidenav" %}
         {% block sidenav %}
-            {% navitem "tasks" "#" _("Tickets") %}
+	    {% url "tickets" as url %}
+            {% navitem "ditto:tasks" url _("Tickets") %}
             {% navitem "usermgmt" "#" _("User Management") %}
-            {% navitem "safeguarding" "#" _("Safeguarding") %}
+	    {% url "ditto:safeguarding" as url %}
+            {% navitem "safeguarding" url _("Safeguarding") %}
             {% navitem "reports" "#" _("Reports") %}
         {% endblock %}
         {% endm %}

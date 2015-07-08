@@ -1,0 +1,26 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dash-content %}
+    <table class="table table-striped">
+	<thead>
+	    <tr>
+		<th>CLIENT</th>
+		<th>PROFESSIONAL</th>
+		<th>DATE/TIME</th>
+		<th>TICKET</th>
+		<th>ACTION</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    {% for ticket in tickets %}
+		<tr>
+		    <td>{{ ticket.client }}</td>
+		    <td>{{ ticket.professional }}</td>
+		    <td>{{ ticket.created }}</td>
+		    <td>{{ ticket.type }}</td>
+		    <td>Claim</td>
+		</tr>
+	    {% endfor %}
+	</tbody>
+    </table>
+{% endblock %}
