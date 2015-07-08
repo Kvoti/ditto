@@ -1,7 +1,9 @@
 {% extends "dashboard/dashlet/base.html" %}
 
+{% block title_class %}users{% endblock %}
+
 {% block title %}User Management{% endblock %}
 
-{% block summary %}382{% endblock %}
-
-{% block description %}ONLINE{% endblock %}
+{% block body %}
+    {% include "dashboard/dashlet/_counts.html" with count1=6 item1="Warnings" count2=2 item2="Bans" count3=1 item3="Account deletion" %}
+{% endblock %}

@@ -1,7 +1,9 @@
 {% extends "dashboard/dashlet/base.html" %}
 
+{% block title_class %}safeguarding{% endblock %}
+
 {% block title %}Safeguarding{% endblock %}
 
-{% block summary %}7{% endblock %}
-
-{% block description %}NEW CASES{% endblock %}
+{% block body %}
+    {% include "dashboard/dashlet/_counts.html" with count1=4 item1="Internal Referals" count2=2 item2="External Referals" count3=1 item3="Case Opened" %}
+{% endblock %}

@@ -1,7 +1,9 @@
 {% extends "dashboard/dashlet/base.html" %}
 
+{% block title_class %}reports{% endblock %}
+
 {% block title %}Reports{% endblock %}
 
-{% block summary %}63%{% endblock %}
-
-{% block description %}BLAH{% endblock %}
+{% block body %}
+    {% include "dashboard/dashlet/_counts.html" with count1=8 item1="Social Impact" count2=6 item2="Commerical Impact" count3=5 item3="Financial Impact" %}
+{% endblock %}

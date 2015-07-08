@@ -1,7 +1,7 @@
 {% extends "dashboard/dashlet/base.html" %}
 
-{% block title %}Tasks{% endblock %}
+{% block title_class %}tasks{% endblock %} {% block title %}Tickets{% endblock %}
 
-{% block summary %}12{% endblock %}
-
-{% block description %}FOR REVIEW{% endblock %}
+{% block body %}
+    {% include "dashboard/dashlet/_counts.html" with count1=6 item1="Case Notes" count2=2 item2="Support Requests" count3=1 item3="Counselling Request" %}
+{% endblock %}
