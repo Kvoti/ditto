@@ -28,6 +28,7 @@ class CaseNote(models.Model):
         null=True, blank=True
     )
     resolved = models.BooleanField(default=False)
+    title = models.CharField(max_length=100)
     text = models.TextField()
 
     objects = CaseNoteQuerySet.as_manager()

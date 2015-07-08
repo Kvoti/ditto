@@ -195,6 +195,7 @@ def setup_case_notes():
         casenotes.models.CaseNote.objects.create(
             author=author,
             client=client,
+            title="Case note %s" % i,
             text="Case note %s" % i
         )
 

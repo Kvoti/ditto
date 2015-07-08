@@ -25,7 +25,7 @@ var CaseNotes = React.createClass({
     columns: [
 	{name: 'author'},
 	{name: 'created_at'},
-	{name: 'text'},
+	{name: 'title'},
     ],
     
     render () {
@@ -34,7 +34,7 @@ var CaseNotes = React.createClass({
 		<BS.TabPane tab="New note" eventKey={1}>
 		    {this.state.saving ? "saving..." : null}
 	    {this.state.saved ?
-		<BS.Alert bsStyle="success">{"Saved " + this.state.saved.text}</BS.Alert>
+		<BS.Alert bsStyle="success">{"Saved " + this.state.saved.title}</BS.Alert>
 		: null
 	    }
 	    {!this.state.saving ?
@@ -52,12 +52,13 @@ var CaseNotes = React.createClass({
 	);
     },
 
-    _saveNote (text, shareWithUsers, shareWithRoles) {
+    _saveNote (title, text, shareWithUsers, shareWithRoles) {
 	var pendingIndex;
 	var caseNotes = this.state.caseNotes;
 	var caseNote = {
 	    author: DITTO.user,
 	    created_at: new Date(),  // TODO set this on save?
+	    title: title,
 	    text: text
 	}
 	caseNotes.push(caseNote);
@@ -68,6 +69,7 @@ var CaseNotes = React.createClass({
 		type: "POST",
 		data: JSON.stringify({
 		    client: this.props.client,
+		    title: title,
 		    text: text,
 		    shared_with_roles: shareWithRoles,
 		    shared_with_users: shareWithUsers,

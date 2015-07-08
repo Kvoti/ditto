@@ -20,6 +20,7 @@ class CaseNoteSerializer(serializers.ModelSerializer):
             'shared_with_users',
             'assigned_to',
             'resolved',
+            'title',
             'text'
         )
 
@@ -47,6 +48,7 @@ class CreateCaseNoteSerializer(serializers.ModelSerializer):
             'client',
             'shared_with_roles',
             'shared_with_users',
+            'title',
             'text'
         )
 

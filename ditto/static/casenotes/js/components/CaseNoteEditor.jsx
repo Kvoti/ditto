@@ -7,6 +7,7 @@ var CaseNoteEditor = React.createClass({
     getInitialState () {
 	return {
 	    text: this.props.initialText || "",
+	    title: this.props.initialText || "",
 	    shareRoles: this.props.initialShareRoles || [],
 	    shareUsers: this.props.initialShareUsers || []
 	};
@@ -15,6 +16,7 @@ var CaseNoteEditor = React.createClass({
     render () {
 	return (
 	    <div>
+		<input className="form-control" placeholder="Enter note title" valueLink={this.linkState('title')} />
 		<textarea className="form-control" placeholder="Enter note text" valueLink={this.linkState('text')} />
 		<p>Select any roles and/or users you want to share this note with.</p>
 		<RoleAndUserSelect
@@ -26,7 +28,7 @@ var CaseNoteEditor = React.createClass({
 		<p>
 		    <button
 			    className="btn btn-success"
-			    disabled={!this.state.text}
+			    disabled={!this.state.text || !this.state.title}
 			    onClick={this._onSave}
 			    >save</button>
 		    <button
@@ -49,11 +51,13 @@ var CaseNoteEditor = React.createClass({
 
     _onSave () {
 	this.props.onSave(
+	    this.state.title,
 	    this.state.text,
 	    this.state.shareUsers,
 	    this.state.shareRoles
 	);
 	this.setState({
+	    title: "",
 	    text: "",
 	    shareRoles: [],
 	    shareUsers: []
