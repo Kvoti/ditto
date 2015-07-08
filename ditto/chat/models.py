@@ -43,7 +43,13 @@ class Room(models.Model):
     # time whether a room needs to be opened or closed.
     is_opened = models.BooleanField(default=False)
     is_closed = models.BooleanField(default=False)
-    
+
+    class Meta:
+        permissions = (
+            # A single permission that let's you perform all room related actions
+            ('configure_chatroom', 'Can configure chatrooms'),
+        )
+        
     def clean(self):
         if (
                 self.start and not self.end or

@@ -82,7 +82,7 @@
                 {% endif %}
                 
                 {% if request.tenant.is_configured %}
-		    {% if perms.users.can_admin or perms.configuration.create_chatroom %}
+		    {% if perms.users.can_admin or perms.chat.configure_chatroom %}
 			<li{% if "settings" in nav %} class="active"{% endif %}>
 			    {% if perms.users.can_admin %}
 				{% url "ditto:editconfig" "basicinfo" as url %}

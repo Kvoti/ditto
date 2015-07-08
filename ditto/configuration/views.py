@@ -172,7 +172,7 @@ def evaluation(request):
     })
 
 
-@permission_required('configuration.create_chatroom', raise_exception=True)
+@permission_required('chat.configure_chatroom', raise_exception=True)
 def chatroom(request, room=None):
     if room is None:
         default_room = chat.models.Room.objects.values_list(

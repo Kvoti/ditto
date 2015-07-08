@@ -23,7 +23,7 @@
 		    {% navitem "evaluation" url _("Evaluation") %}
 		{% endif %}
 		
-		{% if perms.configuration.create_chatroom %}    
+		{% if perms.chat.configure_chatroom %}    
 		    {% url 'ditto:chatroom_config' as url %}
 		    {% navitem "chatroom_config" url _("Chatrooms") %}
 		{% endif %}
