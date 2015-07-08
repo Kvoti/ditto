@@ -1,6 +1,8 @@
 var React = require('react');
 var UserProfileStore = require('../stores/UserProfileStore');
 
+var aboutRoleURL = '/' + DITTO.tenant + '/about/';
+
 function getStateFromStores() {
     return {
         userProfiles: UserProfileStore.get(),
@@ -28,7 +30,7 @@ var Role = React.createClass({
 	} else {
 	    roleName = '-'
 	}
-	return <span className="role">{roleName}</span>;
+	return <a href={aboutRoleURL + '#' + roleName}>{roleName}</a>;
     },
 
     _onChange: function() {

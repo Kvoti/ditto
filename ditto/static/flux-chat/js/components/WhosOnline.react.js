@@ -3,11 +3,11 @@ var WhosOnlineStore = require('../stores/WhosOnlineStore');
 var UserProfileStore = require('../stores/UserProfileStore');
 var Avatar = require('./Avatar.react');
 var MessageLink = require('../../../js/components/MessageLink.jsx');
+var Role = require('./Role.react');
 
 function getStateFromStores() {
     return {
         whosOnline: WhosOnlineStore.get(),
-        userProfiles: UserProfileStore.get(),
     };
 }
 
@@ -26,32 +26,31 @@ var WhosOnline = React.createClass({
 
     render: function () {
         var avatars = this.state.whosOnline.map((user, i) => {
-            var profile = this.state.userProfiles[user];
             // TODO defaulting to showing 'Member' is only needed until we sort out setting user role and avatar on account activation
             if (this.props.stacked) { // TODO maybe make a separate component for chatroom presence?
                 return (
-                        <MessageLink from={DITTO.user} to={user} key={user}>
-                        <div style={{height: 50, display: 'table'}}>
+                        <div style={{height: 50, display: 'table'}} key={user}>
                         <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
+                        <MessageLink from={DITTO.user} to={user}>
                         <Avatar user={user} size={30} link={false} />
+                        </MessageLink>
                         </div>
                         <div style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: 5}}>
-                        <b>{user}</b> <i>[{profile ? profile.role : 'Member' }]</i>
+                        <b>{user}</b> <i>[<Role user={user} />]</i>
                         </div>
                         </div>
-                        </MessageLink>
                 );
             }
             return (
-                    <MessageLink from={DITTO.user} to={user} key={user}>
-                    <div className="whosOnlineItem">
+                    <div className="whosOnlineItem" key={user}>
+                    <MessageLink from={DITTO.user} to={user}>
                     <Avatar user={user} link={false}/>
+                    </MessageLink>
                     <small>
                     <p className="username">{user}</p>
-                    <p><i>[{profile ? profile.role : 'Member' }]</i></p>
+                    <p><i>[<Role user={user}/>]</i></p>
                     </small>
                     </div>
-                    </MessageLink>
             );
         });
 	return (
