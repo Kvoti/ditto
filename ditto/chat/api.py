@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url, include
 from django.contrib.auth.models import Group, Permission
-from rest_framework import routers, serializers, viewsets, generics, mixins, response, status, views
+from rest_framework import routers, serializers, viewsets, generics, mixins, response, status, views, permissions
 
 from users.models import User
 
@@ -106,12 +106,24 @@ class UpdateSlotSerializer(serializers.ModelSerializer):
 
 
 #TODO class ValidateSlotMixin
+
+
+class ChatPermissions(permissions.DjangoModelPermissions):
+    perms_map = {
+        'GET': [],
+        'OPTIONS': [],
+        'HEAD': [],
+        'POST': ['chat.configure_chatroom'],
+        'PUT': ['chat.configure_chatroom'],
+        'PATCH': ['chat.configure_chatroom'],
+        'DELETE': ['chat.configure_chatroom'],
+    }
     
     
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = models.Room.objects.all()
     serializer_class = RoomSerializer
-    #permission_classes  #TODO admin only?
+    permission_classes = [ChatPermissions]
     
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -121,8 +133,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     
 class SlotViewSet(viewsets.ModelViewSet):
     queryset = models.Slot.objects.all()
-    # serializer_class = SlotSerializer
-    #permission_classes  #TODO admin only?
+    permission_classes = [ChatPermissions]
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
