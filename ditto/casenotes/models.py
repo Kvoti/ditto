@@ -1,5 +1,7 @@
 from django.db import models
 
+import tickets.models
+
 
 class CaseNoteQuerySet(models.QuerySet):
     def filter_for_viewer(self, viewer):
@@ -23,11 +25,6 @@ class CaseNote(models.Model):
         'auth.Group', related_name="case_notes", blank=True)
     shared_with_users = models.ManyToManyField(
         'users.User', related_name="shared_case_notes", blank=True)
-    assigned_to = models.ForeignKey(
-        'users.User', related_name="assigned_case_notes",
-        null=True, blank=True
-    )
-    resolved = models.BooleanField(default=False)
     title = models.CharField(max_length=100)
     text = models.TextField()
 
@@ -37,3 +34,7 @@ class CaseNote(models.Model):
         permissions = (
             ('view_casenote', 'Can view case notes'),
         )
+
+    def save(self, *args, **kwargs):
+        super(CaseNote, self).save(*args, **kwargs)
+        tickets.models.Ticket.objects.create_ticket(self)

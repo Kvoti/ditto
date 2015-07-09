@@ -66,6 +66,7 @@ class Common(Configuration):
         'dittoforms',
         'signup',
         'casenotes',
+        'tickets',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -18,8 +18,6 @@ class CaseNoteSerializer(serializers.ModelSerializer):
             'created_at',
             'shared_with_roles',
             'shared_with_users',
-            'assigned_to',
-            'resolved',
             'title',
             'text'
         )
