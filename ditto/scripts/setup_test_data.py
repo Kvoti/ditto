@@ -53,9 +53,11 @@ def run():
     
 
 def setup_guest_passwords():
-    global GUEST_PASSWORDS
+    global GUEST_PASSWORDS, DEFAULT_PASSWORD
     if 'GUEST_PASSWORDS' in os.environ:
         GUEST_PASSWORDS = os.environ['GUEST_PASSWORDS'].split()
+        # prob ok to reuse the same password for any extra test users?
+        DEFAULT_PASSWORD = GUEST_PASSWORDS[0]
     else:
         GUEST_PASSWORDS = None
         
@@ -93,6 +95,9 @@ def setup_features():
 
 def setup_default_roles():
     for group in core.DEFAULT_ROLES:
+        group, _ = Group.objects.get_or_create(name=group)
+    # TODO split out the kvoti example network stuff
+    for group in ['Adviser', 'Counsellor']:
         group, _ = Group.objects.get_or_create(name=group)
         
 
@@ -132,6 +137,8 @@ def setup_admin_users():
 def setup_members():
     for name in ['mark', 'sarah', 'ross', 'emma']:
         _create_user(name, core.MEMBER_ROLE)
+    for i in range(1, 4):
+        _create_user('member%s' % i, core.MEMBER_ROLE)
         
 
 def _create_user(username, group_name):
@@ -141,7 +148,10 @@ def _create_user(username, group_name):
         defaults={'email': '%s@example.com' % username})
     if created:
         if 'GUEST_PASSWORDS' in os.environ:
-            password = GUEST_PASSWORDS.pop()
+            try:
+                password = GUEST_PASSWORDS.pop()
+            except IndexError:
+                password = DEFAULT_PASSWORD
         else:
             password = 'x'
         user.set_password(password)
