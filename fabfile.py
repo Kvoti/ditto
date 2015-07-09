@@ -2,7 +2,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
-from fabric.api import env, cd, run, shell_env, sudo, hosts, execute
+from fabric.api import env, cd, run, shell_env, sudo, hosts, execute, settings
 from fabric.colors import green
 
 env.hosts = ['134.213.147.235']
@@ -23,7 +23,8 @@ def deploy():
     run('apachectl graceful')
     for line in changes.splitlines():
         print green(line)
-    execute(email, changes)
+    with settings(warn_only=True):
+        execute(email, changes)
     
 
 def builddb():
