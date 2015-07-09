@@ -139,6 +139,11 @@ def setup_members():
         _create_user(name, core.MEMBER_ROLE)
     for i in range(1, 4):
         _create_user('member%s' % i, core.MEMBER_ROLE)
+    for user, role in [
+            ['adviser', 'Adviser'],
+            ['counsellor', 'Counsellor']
+    ]:
+        _create_user(user, role)
         
 
 def _create_user(username, group_name):
