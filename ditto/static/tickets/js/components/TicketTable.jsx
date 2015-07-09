@@ -2,6 +2,7 @@ var React = require('react/addons');
 var FixedDataTable = require('fixed-data-table');
 var utils = require('../../../configuration/js/utils');
 var strftime = require('strftime');
+var BS = require('react-bootstrap');
 import {get, post} from "../../../js/request";
 
 var update = React.addons.update;
@@ -14,7 +15,8 @@ var TicketTable = React.createClass({
 
     getInitialState () {
 	return {
-	    dataList: []
+	    dataList: [],
+	    showModal: false,
 	}
     },
 
@@ -65,12 +67,32 @@ var TicketTable = React.createClass({
 
     _renderDate (ISODateString) {
 	var date = utils.ISODateStringToDate(ISODateString);
-	// 8/07/2015 | 3.35PM
 	return strftime('%d/%m/%Y | %I:%M%p', date);
+    },
+
+    _renderTitle (title, key, ticket, rowIndex) {
+	return (
+	    <a onClick={this._showCaseNote.bind(this, rowIndex)}>{title}</a>
+	);
     },
     
     render () {
+	var showing = this.state.showModal !== false;
+	var title, text;
+	if (showing) {
+	    title = this.state.dataList[this.state.showModal].case_note.title;
+	    text = this.state.dataList[this.state.showModal].case_note.text;
+	}
 	return (
+	    <div>
+	    <BS.Modal show={showing} onHide={this._closeCaseNote}>
+            <BS.ModalHeader closeButton>
+            <BS.ModalTitle>{title}</BS.ModalTitle>
+            </BS.ModalHeader>
+            <BS.ModalBody>
+		{text}
+	    </BS.ModalBody>
+	    </BS.Modal>
 	    <Table
 		    rowHeight={50}
 		    rowGetter={this._rowGetter}
@@ -95,6 +117,7 @@ var TicketTable = React.createClass({
 			width={150}
 			dataKey="title"
 			cellDataGetter={this._cellDataGetter}
+			cellRenderer={this._renderTitle}
 			/>
 		<Column
 			label="CREATED AT"
@@ -115,6 +138,7 @@ var TicketTable = React.createClass({
 			cellRenderer={this._renderStatus}
 			/>
 	    </Table>
+	    </div>
 	);
     },
 
@@ -136,6 +160,14 @@ var TicketTable = React.createClass({
 	);
     },
 
+    _showCaseNote (rowIndex) {
+	this.setState({showModal: rowIndex});
+    },
+
+    _closeCaseNote () {
+	this.setState({showModal: false});
+    }
+	
 });
 
 module.exports = TicketTable;
