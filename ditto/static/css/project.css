@@ -697,3 +697,11 @@ footer {
     display: inline-block;
     vertical-align: middle;
 }
+.ticket-heading {
+    background-image: url(../images/icons/ticket.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+    margin: 0;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}

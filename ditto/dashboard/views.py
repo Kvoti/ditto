@@ -24,7 +24,7 @@ def tickets(request):
         'Request for help',
         'Comment moderation',
     ]
-    return _tickets(request, types)
+    return _tickets(request, types, 'Tickets')
 
 
 @admin_required
@@ -37,10 +37,10 @@ def safeguarding(request):
         'Ban',
         'Warning',
     ]
-    return _tickets(request, types)
+    return _tickets(request, types, 'Safeguarding')
 
 
-def _tickets(request, types):
+def _tickets(request, types, section):
     users = User.objects.all()
     tickets = []
     date = datetime.datetime(2015, 7, 8, 15, 30)
@@ -53,5 +53,6 @@ def _tickets(request, types):
             created=date
         ))
     return render(request, 'dashboard/tickets.html', {
-        'tickets': tickets
+        'tickets': tickets,
+        'section': section,
     })
