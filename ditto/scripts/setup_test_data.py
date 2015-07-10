@@ -78,7 +78,8 @@ def setup_features():
             ]),
             ('casenotes', 'Case notes', [
                 ('add_casenote', 'Can add case notes'),
-                ('view_casenote', 'Can view case notes')
+                ('view_casenote', 'Can view case notes'),
+                ('manage_casenote', 'Can manage case notes')
             ]),
     ):
         feature, _ = configuration.models.Feature.objects.get_or_create(
