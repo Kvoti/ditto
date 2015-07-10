@@ -1,6 +1,7 @@
 import datetime
 import random
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
@@ -15,7 +16,7 @@ class DashView(NavMixin, TemplateView):
     nav = ['dashboard']
 
     
-@admin_required
+@login_required  # TODO permission?
 def tickets(request):
     types = [
         'Blog moderation',

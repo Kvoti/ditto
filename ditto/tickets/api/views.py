@@ -23,8 +23,10 @@ def claim(request, pk):
 
 @api_view(['POST'])
 def resolve(request, pk):
-    ticket = get_object_or_404(models.Ticket.objects.unresolved(),
-                               pk=pk)
-    ticket.resolve()
+    ticket = get_object_or_404(
+        request.user.assigned_tickets.unresolved(),
+        pk=pk
+    )
+    ticket.resolve(request.user)
     # TODO what message to return here?
     return response.Response('Ticket resolved')

@@ -2,7 +2,7 @@ var React = require('react/addons');
 var FixedDataTable = require('fixed-data-table');
 var utils = require('../../../configuration/js/utils');
 var strftime = require('strftime');
-var BS = require('react-bootstrap');
+var Modal = require('react-bootstrap/lib/Modal');
 import {get, post} from "../../../js/request";
 
 var update = React.addons.update;
@@ -52,7 +52,7 @@ var TicketTable = React.createClass({
     },
     
     _renderStatus (isResolved, key, ticket, rowIndex) {
-	if (!ticket.assigned_to || isResolved) {
+	if (!ticket.assigned_to || ticket.assigned_to !== DITTO.user || isResolved) {
 	    return String(isResolved);
 	} else {
 	    return (
@@ -85,59 +85,59 @@ var TicketTable = React.createClass({
 	}
 	return (
 	    <div>
-	    <BS.Modal show={showing} onHide={this._closeCaseNote}>
-            <BS.ModalHeader closeButton>
-            <BS.ModalTitle>{title}</BS.ModalTitle>
-            </BS.ModalHeader>
-            <BS.ModalBody>
-		{text}
-	    </BS.ModalBody>
-	    </BS.Modal>
-	    <Table
-		    rowHeight={50}
-		    rowGetter={this._rowGetter}
-		    rowsCount={this.state.dataList.length}
-	            width={900}
-	            maxHeight={600}
-		    headerHeight={50}>
-		<Column
-			label="CLIENT"
-			width={150}
-			dataKey="client"
-			cellDataGetter={this._cellDataGetter}
-			/>
-		<Column
-			label="PROFESSIONAL"
-			width={150}
-			dataKey="author"
-			cellDataGetter={this._cellDataGetter}
-			/>
-		<Column
-			label="TITLE"
-			width={150}
-			dataKey="title"
-			cellDataGetter={this._cellDataGetter}
-			cellRenderer={this._renderTitle}
-			/>
-		<Column
-			label="CREATED AT"
-			width={150}
-	                dataKey="created_at"
-	                cellRenderer={this._renderDate}
-			/>
-		<Column
-			label="ASSIGNED TO"
-			width={150}
-			dataKey="assigned_to"
-			cellRenderer={this._renderAssignee}
-			/>
-		<Column
-			label="RESOLVED?"
-			width={150}
-			dataKey="is_resolved"
-			cellRenderer={this._renderStatus}
-			/>
-	    </Table>
+		<Modal show={showing} onHide={this._closeCaseNote}>
+		    <Modal.Header closeButton>
+			<Modal.Title>{title}</Modal.Title>
+		    </Modal.Header>
+		    <Modal.Body>
+			{text}
+		    </Modal.Body>
+		</Modal>
+		<Table
+			rowHeight={50}
+			rowGetter={this._rowGetter}
+			rowsCount={this.state.dataList.length}
+			width={900}
+			maxHeight={600}
+			headerHeight={50}>
+		    <Column
+			    label="CLIENT"
+			    width={150}
+			    dataKey="client"
+			    cellDataGetter={this._cellDataGetter}
+			    />
+		    <Column
+			    label="PROFESSIONAL"
+			    width={150}
+			    dataKey="author"
+			    cellDataGetter={this._cellDataGetter}
+			    />
+		    <Column
+			    label="TITLE"
+			    width={150}
+			    dataKey="title"
+			    cellDataGetter={this._cellDataGetter}
+			    cellRenderer={this._renderTitle}
+			    />
+		    <Column
+			    label="CREATED AT"
+			    width={150}
+	                    dataKey="created_at"
+	                    cellRenderer={this._renderDate}
+			    />
+		    <Column
+			    label="ASSIGNED TO"
+			    width={150}
+			    dataKey="assigned_to"
+			    cellRenderer={this._renderAssignee}
+			    />
+		    <Column
+			    label="RESOLVED?"
+			    width={150}
+			    dataKey="is_resolved"
+			    cellRenderer={this._renderStatus}
+			    />
+		</Table>
 	    </div>
 	);
     },
@@ -167,7 +167,7 @@ var TicketTable = React.createClass({
     _closeCaseNote () {
 	this.setState({showModal: false});
     }
-	
+    
 });
 
 module.exports = TicketTable;

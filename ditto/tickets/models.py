@@ -2,6 +2,8 @@ from django.db import models
 
 
 class TicketManager(models.Manager):
+    use_for_related_fields = True
+    
     def create_ticket(self, case_note):
         return self.create(
             case_note=case_note
@@ -37,10 +39,12 @@ class Ticket(models.Model):
         self.assigned_to = assign_to
         self.save()
 
-    def resolve(self):
+    def resolve(self, user):
         if self.is_resolved:
             raise ValueError("Ticket already resolved")
         elif not self.assigned_to:
             raise ValueError("Ticket is unassigned")
+        elif user != self.assigned_to:
+            raise ValueError("Ticket is claimed by another user")
         self.is_resolved = True
         self.save()
