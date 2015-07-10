@@ -2,8 +2,8 @@ var React = require('react/addons');
 var FixedDataTable = require('fixed-data-table');
 var utils = require('../../../configuration/js/utils');
 var strftime = require('strftime');
-var Modal = require('react-bootstrap/lib/Modal');
 import {get, post} from "../../../js/request";
+import TicketViewer from './TicketViewer.jsx';
 
 var update = React.addons.update;
 var Table = FixedDataTable.Table;
@@ -16,7 +16,7 @@ var TicketTable = React.createClass({
     getInitialState () {
 	return {
 	    dataList: [],
-	    showModal: false,
+	    showingTicket: null,
 	}
     },
 
@@ -37,34 +37,6 @@ var TicketTable = React.createClass({
 	return row.case_note[key];
     },
 
-    _renderAssignee (assignee, key, ticket, rowIndex) {
-	if (assignee) {
-	    return assignee;
-	} else {
-	    return (
-		<button
-			onClick={this._claim.bind(this, ticket, rowIndex)}
-			className="btn btn-success"
-			>Claim
-		</button>
-	    );
-	}
-    },
-    
-    _renderStatus (isResolved, key, ticket, rowIndex) {
-	if (!ticket.assigned_to || ticket.assigned_to !== DITTO.user || isResolved) {
-	    return String(isResolved);
-	} else {
-	    return (
-		<button
-			onClick={this._resolve.bind(this, ticket, rowIndex)}
-			className="btn btn-success"
-			>Resolve
-		</button>
-	    );
-	}
-    },
-
     _renderDate (ISODateString) {
 	var date = utils.ISODateStringToDate(ISODateString);
 	return strftime('%d/%m/%Y | %I:%M%p', date);
@@ -77,72 +49,96 @@ var TicketTable = React.createClass({
     },
     
     render () {
-	var showing = this.state.showModal !== false;
-	var title, text;
-	if (showing) {
-	    title = this.state.dataList[this.state.showModal].case_note.title;
-	    text = this.state.dataList[this.state.showModal].case_note.text;
-	}
 	return (
 	    <div>
-		<Modal show={showing} onHide={this._closeCaseNote}>
-		    <Modal.Header closeButton>
-			<Modal.Title>{title}</Modal.Title>
-		    </Modal.Header>
-		    <Modal.Body>
-			{text}
-		    </Modal.Body>
-		</Modal>
-		<Table
-			rowHeight={50}
-			rowGetter={this._rowGetter}
-			rowsCount={this.state.dataList.length}
-			width={900}
-			maxHeight={600}
-			headerHeight={50}>
-		    <Column
-			    label="CLIENT"
-			    width={150}
-			    dataKey="client"
-			    cellDataGetter={this._cellDataGetter}
-			    />
-		    <Column
-			    label="PROFESSIONAL"
-			    width={150}
-			    dataKey="author"
-			    cellDataGetter={this._cellDataGetter}
-			    />
-		    <Column
-			    label="TITLE"
-			    width={150}
-			    dataKey="title"
-			    cellDataGetter={this._cellDataGetter}
-			    cellRenderer={this._renderTitle}
-			    />
-		    <Column
-			    label="CREATED AT"
-			    width={150}
-	                    dataKey="created_at"
-	                    cellRenderer={this._renderDate}
-			    />
-		    <Column
-			    label="ASSIGNED TO"
-			    width={150}
-			    dataKey="assigned_to"
-			    cellRenderer={this._renderAssignee}
-			    />
-		    <Column
-			    label="RESOLVED?"
-			    width={150}
-			    dataKey="is_resolved"
-			    cellRenderer={this._renderStatus}
-			    />
-		</Table>
+		{this.state.showingTicket === null ?
+		 <Table
+		 rowHeight={50}
+		 rowGetter={this._rowGetter}
+		 rowsCount={this.state.dataList.length}
+		 width={900}
+		 maxHeight={600}
+		 headerHeight={50}>
+		 <Column
+		 label="CLIENT"
+		 width={150}
+		 dataKey="client"
+		 cellDataGetter={this._cellDataGetter}
+		 />
+		 <Column
+		 label="PROFESSIONAL"
+		 width={150}
+		 dataKey="author"
+		 cellDataGetter={this._cellDataGetter}
+		 />
+		 <Column
+		 label="TITLE"
+		 width={150}
+		 dataKey="title"
+		 cellDataGetter={this._cellDataGetter}
+		 cellRenderer={this._renderTitle}
+		 />
+		 <Column
+		 label="CREATED AT"
+		 width={150}
+		 dataKey="created_at"
+		 cellRenderer={this._renderDate}
+		 />
+		 <Column
+		 label="ASSIGNED TO"
+		 width={150}
+		 dataKey="assigned_to"
+		 />
+		 <Column
+		 label="RESOLVED?"
+		 width={150}
+		 dataKey="is_resolved"
+		 />
+		 </Table>
+		 : null}
+		 {this.state.showingTicket !== null ?
+		  <div>
+		  <TicketViewer ticket={this.state.dataList[this.state.showingTicket]} />
+		  <button
+		  className="btn btn-default"
+		  onClick={this._closeCaseNote}
+		  >
+		  Close
+		  </button>
+		  {this._isResolvable(this.state.showingTicket) ?
+		      <button
+		      className="btn btn-success"
+		      onClick={this._resolve.bind(this, this.state.showingTicket)}
+		      >
+		      Resolve
+		      </button>
+		      : null}
+		  {this._isClaimable(this.state.showingTicket) ?
+		      <button
+		      className="btn btn-success"
+		      onClick={this._claim.bind(this, this.state.showingTicket)}
+		      >
+		      Claim
+		      </button>
+		      : null}
+		  </div>
+		  : null}
 	    </div>
 	);
     },
 
-    _claim (ticket, index) {
+    _isClaimable (index) {
+	var ticket = this.state.dataList[index];
+	return !ticket.assigned_to;
+    },
+
+    _isResolvable (index) {
+	var ticket = this.state.dataList[index];
+	return ticket.assigned_to === DITTO.user && !ticket.is_resolved;
+    },
+    
+    _claim (index) {
+	var ticket = this.state.dataList[index];
 	var change = {};
 	change[index] = {assigned_to: {$set: DITTO.user}};
 	// as usual optimistically update the ui then fire off the ajax request
@@ -151,7 +147,8 @@ var TicketTable = React.createClass({
 	);
     },
     
-    _resolve (ticket, index) {
+    _resolve (index) {
+	var ticket = this.state.dataList[index];
 	var change = {};
 	change[index] = {is_resolved: {$set: true}};
 	// as usual optimistically update the ui then fire off the ajax request
@@ -161,11 +158,11 @@ var TicketTable = React.createClass({
     },
 
     _showCaseNote (rowIndex) {
-	this.setState({showModal: rowIndex});
+	this.setState({showingTicket: rowIndex});
     },
 
     _closeCaseNote () {
-	this.setState({showModal: false});
+	this.setState({showingTicket: null});
     }
     
 });
