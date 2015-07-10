@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, response, status
+from rest_framework import generics, response
 from rest_framework.decorators import api_view
 
 from .. import models
