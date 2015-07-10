@@ -33,6 +33,7 @@ class CaseNote(models.Model):
     class Meta:
         permissions = (
             ('view_casenote', 'Can view case notes'),
+            ('manage_casenote', 'Can manage case notes'),
         )
 
     def save(self, *args, **kwargs):

@@ -9,11 +9,32 @@ class TicketManager(models.Manager):
             case_note=case_note
         )
 
+
+class TicketQuerySet(models.QuerySet):
     def unclaimed(self):
         return self.filter(assigned_to__isnull=True)
 
+    def manageable(self, user):
+        if user.has_perm('casenotes.manage_casenote'):
+            # No filtering necessary as user has perm to manage all
+            # case note tickets
+            return self
+        else:
+            return self._filter_shared_case_notes(user)
+
+    def claimable(self, user):
+        return self.manageable(user).unclaimed()
+    
     def unresolved(self):
         return self.filter(is_resolved=False)
+
+    def _filter_shared_case_notes(self, user):
+        # TODO this duplicates filtering logic in casenotes app but not
+        # sure how to make this DRY
+        query = models.Q(case_note__shared_with_users=user)
+        for group in user.groups.all():
+            query |= models.Q(case_note__shared_with_roles=group)
+        return self.filter(query)
         
         
 class Ticket(models.Model):
@@ -31,11 +52,16 @@ class Ticket(models.Model):
     # might turn out to raise its own problems. Let's see...
     case_note = models.OneToOneField('casenotes.CaseNote', related_name="tickets")
 
-    objects = TicketManager()
+    objects = TicketManager.from_queryset(TicketQuerySet)()
     
     def claim(self, assign_to):
         if self.assigned_to:
             raise ValueError("Ticket already claimed")
+        else:
+            try:
+                self.objects.claimable(assign_to).get(pk=self.pk)
+            except self.DoesNotExist:
+                raise ValueError("Ticket cannot be claimed by this user")
         self.assigned_to = assign_to
         self.save()
 

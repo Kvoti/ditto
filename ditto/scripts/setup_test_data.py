@@ -117,6 +117,8 @@ def setup_permissions():
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='view_casenote')
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
+    perm = Permission.objects.get(codename='manage_casenote')
+    Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='guest')
     Group.objects.get(name=core.GUEST_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='can_chat')

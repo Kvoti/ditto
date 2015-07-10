@@ -8,14 +8,17 @@ from . import serializers
 
 class TicketList(generics.ListAPIView):
     serializer_class = serializers.ViewTicketSerializer
-    queryset = models.Ticket.objects.all()
     #TODO permission_classes
 
+    def get_queryset(self):
+        return models.Ticket.objects.manageable(self.request.user)
+        
 
 @api_view(['POST'])
 def claim(request, pk):
-    ticket = get_object_or_404(models.Ticket.objects.unclaimed(),
-                               pk=pk)
+    ticket = get_object_or_404(
+        models.Ticket.objects.claimable(request.user),
+        pk=pk)
     ticket.claim(request.user)
     # TODO what message to return here?
     return response.Response('Ticket claimed')
