@@ -59,7 +59,7 @@ class Ticket(models.Model):
             raise ValueError("Ticket already claimed")
         else:
             try:
-                self.objects.claimable(assign_to).get(pk=self.pk)
+                self.__class__.objects.claimable(assign_to).get(pk=self.pk)
             except self.DoesNotExist:
                 raise ValueError("Ticket cannot be claimed by this user")
         self.assigned_to = assign_to
