@@ -144,7 +144,7 @@ Array.prototype.forEach.call(inputs, (el) => {
 var tickets = document.getElementById('tickets');
 if (tickets) {
     React.render(
-        <TicketTable />,
+        TicketTable,
         tickets
     );
 }

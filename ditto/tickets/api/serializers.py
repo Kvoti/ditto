@@ -21,6 +21,7 @@ class ViewTicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Ticket
         fields = (
+            'id',
             'claim_url',
             'resolve_url',
             'created_at',

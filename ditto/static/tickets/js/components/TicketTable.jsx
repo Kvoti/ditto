@@ -2,6 +2,9 @@ var React = require('react/addons');
 var FixedDataTable = require('fixed-data-table');
 var utils = require('../../../configuration/js/utils');
 var strftime = require('strftime');
+import { Router, Route, Link } from 'react-router';
+import { history } from 'react-router/lib/BrowserHistory';
+
 import {get, post} from "../../../js/request";
 import TicketViewer from './TicketViewer.jsx';
 
@@ -16,7 +19,6 @@ var TicketTable = React.createClass({
     getInitialState () {
 	return {
 	    dataList: [],
-	    showingTicket: null,
 	}
     },
 
@@ -44,14 +46,19 @@ var TicketTable = React.createClass({
 
     _renderTitle (title, key, ticket, rowIndex) {
 	return (
-	    <a onClick={this._showCaseNote.bind(this, rowIndex)}>{title}</a>
+	    <Link to={'/di/dashboard/tickets/' + ticket.id + '/'}>{title}</Link>
 	);
     },
     
     render () {
+	var showingTicket;
+	if (this.props.params.id !== undefined) {
+	    showingTicket = this.state.dataList.find(
+		t => t.id == this.props.params.id);
+	}
 	return (
 	    <div>
-		{this.state.showingTicket === null ?
+		{!showingTicket ?
 		 <Table
 		 rowHeight={50}
 		 rowGetter={this._rowGetter}
@@ -96,27 +103,27 @@ var TicketTable = React.createClass({
 		 />
 		 </Table>
 		 : null}
-		 {this.state.showingTicket !== null ?
+		 {showingTicket ?
 		  <div>
-		  <TicketViewer ticket={this.state.dataList[this.state.showingTicket]} />
-		  <button
+		  <TicketViewer ticket={showingTicket} />
+		  <Link
 		  className="btn btn-default"
-		  onClick={this._closeCaseNote}
+		  to='/di/dashboard/tickets/'
 		  >
 		  Close
-		  </button>
-		  {this._isResolvable(this.state.showingTicket) ?
+		  </Link>
+		  {this._isResolvable(showingTicket) ?
 		      <button
 		      className="btn btn-success"
-		      onClick={this._resolve.bind(this, this.state.showingTicket)}
+		      onClick={this._resolve.bind(this, showingTicket)}
 		      >
 		      Resolve
 		      </button>
 		      : null}
-		  {this._isClaimable(this.state.showingTicket) ?
+		  {this._isClaimable(showingTicket) ?
 		      <button
 		      className="btn btn-success"
-		      onClick={this._claim.bind(this, this.state.showingTicket)}
+		      onClick={this._claim.bind(this, showingTicket)}
 		      >
 		      Claim
 		      </button>
@@ -127,13 +134,11 @@ var TicketTable = React.createClass({
 	);
     },
 
-    _isClaimable (index) {
-	var ticket = this.state.dataList[index];
+    _isClaimable (ticket) {
 	return !ticket.assigned_to;
     },
 
-    _isResolvable (index) {
-	var ticket = this.state.dataList[index];
+    _isResolvable (ticket) {
 	return ticket.assigned_to === DITTO.user && !ticket.is_resolved;
     },
     
@@ -157,14 +162,18 @@ var TicketTable = React.createClass({
 	);
     },
 
-    _showCaseNote (rowIndex) {
-	this.setState({showingTicket: rowIndex});
-    },
-
-    _closeCaseNote () {
-	this.setState({showingTicket: null});
-    }
-    
 });
 
-module.exports = TicketTable;
+// declare our routes and their hierarchy
+// TODO would like to split out the table and the viewer
+// but not quite sure how as the claim/resolve buttons belong
+// to the table (as the viewer is just that, a viewer)
+// TODO can I use relative paths here?
+var router = (
+    <Router history={history} >
+	<Route name="tickets" path="/di/dashboard/tickets/" handler={TicketTable}/>
+	<Route name="ticket" path="/di/dashboard/tickets/:id/" handler={TicketTable}/>
+    </Router>
+);
+
+module.exports = router;
