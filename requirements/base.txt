@@ -2,7 +2,7 @@
 django==1.7.4
 
 # Configuration
-django-configurations==0.8
+git+https://github.com/jezdez/django-configurations#egg=django-configurations
 django-secure==1.0
 django-cache-url==0.8.0
 dj-database-url==0.3.0
