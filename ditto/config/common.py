@@ -44,7 +44,6 @@ class Common(Configuration):
         'floppyforms',
         # TODO remove crispy forms: floppy forms seems a better choice as forms are controlled from the template not python
         'crispy_forms',  # Form layouts
-        'avatar',  # for user avatars
         'allauth',  # registration
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
@@ -89,12 +88,6 @@ class Common(Configuration):
         'sesame.middleware.AuthenticationMiddleware',
     )
     # END MIDDLEWARE CONFIGURATION
-
-    # MIGRATIONS CONFIGURATION
-    MIGRATION_MODULES = {
-        'sites': 'contrib.sites.migrations'
-    }
-    # END MIGRATIONS CONFIGURATION
 
     # DEBUG
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
@@ -298,7 +291,3 @@ class Common(Configuration):
     # END LOGGING CONFIGURATION
 
     # Your common stuff: Below this line define 3rd party library settings
-    MIGRATION_MODULES = {
-        'auth': 'core.migrations'
-    }
-    

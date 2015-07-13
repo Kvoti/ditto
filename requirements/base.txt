@@ -1,5 +1,5 @@
 # Bleeding edge Django
-django==1.7.4
+django==1.8.3
 
 # Configuration
 git+https://github.com/jezdez/django-configurations#egg=django-configurations
@@ -21,7 +21,7 @@ Pillow==2.6.0
 
 # For user registration, either via email or social
 # Well-built with regular release cycles!
-django-allauth==0.18.0
+django-allauth==0.21.0
 
 # For the persistance stores
 MySQL-python==1.2.5
@@ -29,9 +29,6 @@ MySQL-python==1.2.5
 # Unicode slugification
 unicode-slugify==0.1.1
 django-autoslug==1.7.2
-
-# Useful things
-django-avatar==2.0
 
 # Time zones support
 pytz==2014.7
