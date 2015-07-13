@@ -68,8 +68,16 @@ def _patch_table_names():
     import sys
     _meta = sys.modules['django.db.models.options'].Options
     _meta.db_table = _DBTable()
+    # Changes in django 1.8 mean we need to patch the cached_col
+    # property on Field so it *doesn't* cache
+    # TODO we REALLY need a proper multitenant solution!
+    _field = sys.modules['django.db.models.fields'].Field
+    def not_cached_col(self):
+        from django.db.models.expressions import Col
+        return Col(self.model._meta.db_table, self)
+    _field.cached_col = property(not_cached_col)
 
-        
+    
 def _main():
     """Context manager to allow access to main database tables when
     current tenant may not be main.
