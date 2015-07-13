@@ -57,3 +57,8 @@ def _tickets(request, types, section):
         'tickets': tickets,
         'section': section,
     })
+
+
+@admin_required
+def users(request):
+    return render(request, 'dashboard/users.html')

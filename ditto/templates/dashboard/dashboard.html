@@ -29,7 +29,8 @@
         {% block sidenav %}
 	    {% url "ditto:tickets" as url %}
             {% navitem "tickets" url _("Tickets") %}
-            {% navitem "usermgmt" "#" _("User Management") %}
+	    {% url "ditto:user_mgmt" as url %}
+            {% navitem "usermgmt" url _("User Management") %}
 	    {% url "ditto:safeguarding" as url %}
             {% navitem "safeguarding" url _("Safeguarding") %}
             {% navitem "reports" "#" _("Reports") %}

@@ -18,6 +18,7 @@ var SettingsRouteActionCreators = require('../../configuration/js/actions/RouteA
 var CaseNotes = require('../../casenotes/js/components/CaseNotes.jsx');
 var UserAutocomplete = require('../../js/components/UserAutocomplete.jsx');
 var TicketTable = require('../../tickets/js/components/TicketTable.jsx');
+var UserTable = require('../../users/js/components/UserTable.jsx');
 
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
@@ -146,6 +147,14 @@ if (tickets) {
     React.render(
         TicketTable,
         tickets
+    );
+}
+
+var users = document.getElementById('user-mgmt');
+if (users) {
+    React.render(
+        UserTable,
+        users
     );
 }
 
