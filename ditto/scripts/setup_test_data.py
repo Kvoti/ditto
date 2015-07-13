@@ -15,6 +15,7 @@ django.setup()
 ####################
 
 import os
+import random
 
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
@@ -50,6 +51,7 @@ def run():
     setup_reg_form()
     setup_chat_conf()
     setup_case_notes()
+    setup_sessions()
     
 
 def setup_guest_passwords():
@@ -217,6 +219,20 @@ def setup_case_notes():
             text="Case note %s" % i
         )
 
+
+def setup_sessions():
+    for i in range(20):
+        session = chat.models.Session.objects.create(
+            session_id='session%s' % (i + 1)
+        )
+        user = random.choice(User.objects.all())
+        chat.models.SessionRating.objects.create(
+            user=user,
+            rating=3,
+            session=session
+        )
+        
+    
 if __name__ == '__main__':
     run()
     

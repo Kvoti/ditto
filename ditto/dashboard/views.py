@@ -1,10 +1,13 @@
 import datetime
 import random
 
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Case, When, IntegerField
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+import chat.models
 from core.views.decorators import admin_required
 from core.views.mixins import NavMixin
 from users.models import User
@@ -62,3 +65,18 @@ def _tickets(request, types, section):
 @admin_required
 def users(request):
     return render(request, 'dashboard/users.html')
+
+
+@admin_required
+def reports(request):
+    counts = {
+        role.name: Sum(
+            Case(When(user__groups=role, then=1),
+                 output_field=IntegerField())
+        )
+        for role in Group.objects.all()
+    }
+    sessions = chat.models.SessionRating.objects.aggregate(**counts)
+    return render(request, 'dashboard/reports.html', {
+        'sessions': sessions
+    })

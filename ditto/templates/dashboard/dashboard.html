@@ -33,7 +33,8 @@
             {% navitem "usermgmt" url _("User Management") %}
 	    {% url "ditto:safeguarding" as url %}
             {% navitem "safeguarding" url _("Safeguarding") %}
-            {% navitem "reports" "#" _("Reports") %}
+	    {% url "ditto:reports" as url %}
+            {% navitem "reports" url _("Reports") %}
         {% endblock %}
         {% endm %}
         <p>SHORTCUTS</p>

@@ -15,4 +15,7 @@ urlpatterns = patterns('',
     url(r'^dashboard/safeguarding/$',
         views.safeguarding,
         name="safeguarding"),
+    url(r'^dashboard/reports/$',
+        views.reports,
+        name="reports"),
 )
