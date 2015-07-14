@@ -3,7 +3,7 @@ import random
 
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Case, When, IntegerField
+from django.db.models import Sum, Case, When, IntegerField, Avg, F, FloatField
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
@@ -80,6 +80,11 @@ def reports(request):
             Case(When(user__groups=role, rating__isnull=False, then=1),
                  output_field=IntegerField())
         )
+        counts['%s_avg_rating' % role.name] = Avg(
+            Case(When(user__groups=role,
+                      rating__isnull=False, then=F('rating')),
+                 output_field=FloatField())
+        )
     sessions = chat.models.SessionRating.objects.aggregate(**counts)
     users = User.objects.aggregate(**_role_counts('groups'))
     case_notes = casenotes.models.CaseNote.objects.aggregate(
@@ -89,8 +94,8 @@ def reports(request):
         'reports': [
             {
                 'heading': 'Sessions',
-                'columns': ['Role', '', 'Completed'],
-                'data': _rows(sessions, 'complete')
+                'columns': ['Role', '', 'Completed', 'Average rating'],
+                'data': _rows(sessions, 'complete', 'avg_rating')
             },
             {
                 'heading': 'Registrations',
