@@ -7,6 +7,7 @@ from django.db.models import Sum, Case, When, IntegerField
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+import casenotes.models
 import chat.models
 from core.views.decorators import admin_required
 from core.views.mixins import NavMixin
@@ -69,14 +70,37 @@ def users(request):
 
 @admin_required
 def reports(request):
-    counts = {
+    sessions = chat.models.SessionRating.objects.aggregate(
+        **_role_counts('user__groups')
+    )
+    users = User.objects.aggregate(**_role_counts('groups'))
+    case_notes = casenotes.models.CaseNote.objects.aggregate(
+        **_role_counts('author__groups')
+    )
+    return render(request, 'dashboard/reports.html', {
+        'reports': [
+            {
+                'heading': 'Sessions',
+                'data': sessions
+            },
+            {
+                'heading': 'Registrations',
+                'data': users
+            },
+            {
+                'heading': 'Case notes',
+                'data': case_notes
+            },
+        ]
+    })
+
+
+def _role_counts(role_relation):
+    return {
         role.name: Sum(
-            Case(When(user__groups=role, then=1),
+            Case(When(**{role_relation: role, 'then': 1}),
                  output_field=IntegerField())
         )
         for role in Group.objects.all()
     }
-    sessions = chat.models.SessionRating.objects.aggregate(**counts)
-    return render(request, 'dashboard/reports.html', {
-        'sessions': sessions
-    })
+    

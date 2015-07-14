@@ -3,14 +3,16 @@
 {% block dash-content %}
     <div class="well">
 	<h2 class="ticket-heading">Reports</h2>
-	<h3>Sessions by role</h3>
-	<table class="table table-striped">
-	    {% for role, count in sessions.items %}
-	    <tr>
-		<td>{{ role }}</td>
-		<td>{{ count }}</td>
-	    </tr>
-	    {% endfor %}
-	</table>
+	{% for table in reports %}
+	    <h3>{{ table.heading }}</h3>
+	    <table class="table table-striped">
+		{% for role, count in table.data.items %}
+		    <tr>
+			<td>{{ role }}</td>
+			<td>{{ count }}</td>
+		    </tr>
+		{% endfor %}
+	    </table>
+	{% endfor %}
     </div>
 {% endblock %}
