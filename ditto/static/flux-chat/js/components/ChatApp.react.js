@@ -32,6 +32,10 @@ var ChatApp = React.createClass({
         ConnectionStore.addChangeListener(this._onChange);
     },
     
+    componentWillReceiveProps (nextProps) {
+        RouteActionCreators.changePrivateChat(nextProps.location.pathname);
+    },
+    
     componentWillUnmount: function() {
         ConnectionStore.removeChangeListener(this._onChange);
     },

@@ -49,7 +49,7 @@ var ThreadSection = React.createClass({
                 key={thread.id}
                 thread={thread}
                 currentThreadID={this.state.currentThreadID}
-		threadType={this.state.threadType + "s"}
+		threadType={this.state.threadType}
                     />
             );
         }, this);
@@ -65,7 +65,7 @@ var ThreadSection = React.createClass({
                 <ul className="nav nav-tabs">
                 <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}>
                 {this.state.currentChatID ?
-                 <Link to={urls.thread(this.state.currentChatID)}>My chats</Link> :
+                 <Link to={urls.message(this.state.currentChatID)}>My chats</Link> :
                  <Link to={urls.messages()}>My chats</Link>}
                  
                 </li>
@@ -82,7 +82,7 @@ var ThreadSection = React.createClass({
                 {threadListItems}
             </div>
 		{this.state.threadType === ThreadStore.session && this.state.currentSessionID ? <Link className="btn btn-primary" to={urls.sessions()}>New session</Link> : null }
-	    {this.state.threadType !== ThreadStore.session && this.state.currentChatID ? <Link className="btn btn-primary" to={urls.messages}>New message</Link> : null }
+	    {this.state.threadType !== ThreadStore.session && this.state.currentChatID ? <Link className="btn btn-primary" to={urls.messages()}>New message</Link> : null }
                 </div>
         );
     },

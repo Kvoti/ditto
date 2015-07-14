@@ -19,7 +19,7 @@ module.exports = {
         return _fullUrl('messages/');
     },
 
-    thread (threadID) {
+    message (threadID) {
         return _fullUrl('messages/' + threadID + '/');
     },
 

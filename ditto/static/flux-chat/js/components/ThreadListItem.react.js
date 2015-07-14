@@ -7,9 +7,9 @@ var Status = require('./Status.react');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
 var LeftRightAlign = require('../../../js/components/LeftRightAlign.jsx');
 var ReactPropTypes = React.PropTypes;
-var Router = require('react-router');
-var Link = Router.Link;
-var Navigation = Router.Navigation;
+var urls = require('../utils/urlUtils');
+
+import { Link } from 'react-router';
 
 var ThreadListItem = React.createClass({
 
@@ -27,7 +27,7 @@ var ThreadListItem = React.createClass({
       <Link className={cx({
           'list-group-item': true,
           'active': thread.id === this.props.currentThreadID
-      })} to={this.props.threadType} params={{id: thread.id}}>
+      })} to={urls[this.props.threadType](thread.id)}>
 	    <p>{this.props.thread.name}</p>
             <LeftRightAlign>
             <p><b>{contact}</b> <em>[<Status user={contact} />]</em></p>

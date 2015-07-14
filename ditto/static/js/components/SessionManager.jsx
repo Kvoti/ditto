@@ -2,9 +2,10 @@ var ChatThreadActionCreators = require('../../flux-chat/js/actions/ChatThreadAct
 var React = require('react');
 var UserAutocomplete = require('./UserAutocomplete.jsx');
 var ThreadStore = require('../../flux-chat/js/stores/ThreadStore');
-var Router = require('react-router');
-var Navigation = Router.Navigation;
 var SessionRating = require('./SessionRating.jsx');
+var urls = require('../../flux-chat/js/utils/urlUtils');
+
+import { Navigation } from 'react-router';
 
 function getStateFromStores() {
     return {
@@ -115,8 +116,8 @@ var SessionCreator = React.createClass({
 	    threadID = 'session:' + threadID;
 	}
 	this.transitionTo(
-	    this.state.threadType + 's',  // TODO aargh, fix this session vs sessions crap!
-	    {id: threadID});
+	    urls[this.state.threadType](threadID)
+	);
         this.setState({
 	    text: '',
 	    user: null,
