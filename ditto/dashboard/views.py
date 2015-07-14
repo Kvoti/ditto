@@ -97,18 +97,17 @@ def reports(request):
     pms = chat.models.PrivateMessage.objects
     if settings.DEBUG:
         pms = pms.using('chat')
-    private_messages = pms.aggregate(
-        **{
-            role.name: Sum(
-                Case(When(
-                    user__user_name__in=list(User.objects.filter(
-                        groups=role).values_list('username', flat=True)),
-                    then=1),
+    counts = {}
+    for role in Group.objects.all():
+        usernames_in_group = list(User.objects.filter(
+            groups=role).values_list('username', flat=True))
+        if usernames_in_group:
+            counts[role.name] = Sum(
+                Case(When(user__user_name__in=usernames_in_group,
+                          then=1),
                      output_field=IntegerField())
             )
-            for role in Group.objects.all()
-        }
-    )
+    private_messages = pms.aggregate(**counts)
     return render(request, 'dashboard/reports.html', {
         'reports': [
             {
@@ -151,7 +150,8 @@ def _rows(data, *keys):
 
 
 def _columns(data, role, *keys):
-    yield data[role]
-    if keys:
-        for key in keys:
-            yield data['%s_%s' % (role, key)]
+    if role in data:
+        yield data[role]
+        if keys:
+            for key in keys:
+                yield data['%s_%s' % (role, key)]
