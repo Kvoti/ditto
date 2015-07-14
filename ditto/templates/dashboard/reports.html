@@ -4,6 +4,13 @@
     <div class="well">
 	<h2 class="ticket-heading">Reports</h2>
 	<h3>Sessions by role</h3>
-	{{ sessions }}
+	<table class="table table-striped">
+	    {% for role, count in sessions.items %}
+	    <tr>
+		<td>{{ role }}</td>
+		<td>{{ count }}</td>
+	    </tr>
+	    {% endfor %}
+	</table>
     </div>
 {% endblock %}
