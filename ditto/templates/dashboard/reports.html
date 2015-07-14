@@ -6,10 +6,17 @@
 	{% for table in reports %}
 	    <h3>{{ table.heading }}</h3>
 	    <table class="table table-striped">
-		{% for role, count in table.data.items %}
+		<tr>
+		    {% for col in table.columns %}
+			<th>{{ col }}</th>
+		    {% endfor %}
+		</tr>
+		{% for role, cols in table.data %}
 		    <tr>
 			<td>{{ role }}</td>
-			<td>{{ count }}</td>
+			{% for col in cols %}
+			    <td>{{ col }}</td>
+			{% endfor %}
 		    </tr>
 		{% endfor %}
 	    </table>

@@ -70,9 +70,17 @@ def users(request):
 
 @admin_required
 def reports(request):
-    sessions = chat.models.SessionRating.objects.aggregate(
-        **_role_counts('user__groups')
-    )
+    counts = {}
+    for role in Group.objects.all():
+        counts[role.name] = Sum(
+            Case(When(user__groups=role, then=1),
+                 output_field=IntegerField())
+        )
+        counts['%s_complete' % role.name] = Sum(
+            Case(When(user__groups=role, rating__isnull=False, then=1),
+                 output_field=IntegerField())
+        )
+    sessions = chat.models.SessionRating.objects.aggregate(**counts)
     users = User.objects.aggregate(**_role_counts('groups'))
     case_notes = casenotes.models.CaseNote.objects.aggregate(
         **_role_counts('author__groups')
@@ -81,15 +89,18 @@ def reports(request):
         'reports': [
             {
                 'heading': 'Sessions',
-                'data': sessions
+                'columns': ['Role', '', 'Completed'],
+                'data': _rows(sessions, 'complete')
             },
             {
                 'heading': 'Registrations',
-                'data': users
+                'columns': ['Role', ''],
+                'data': _rows(users)
             },
             {
                 'heading': 'Case notes',
-                'data': case_notes
+                'columns': ['Role', ''],
+                'data': _rows(case_notes)
             },
         ]
     })
@@ -103,4 +114,15 @@ def _role_counts(role_relation):
         )
         for role in Group.objects.all()
     }
-    
+
+
+def _rows(data, *keys):
+    for role in Group.objects.values_list('name', flat=True):
+        yield role, _columns(data, role, *keys)
+
+
+def _columns(data, role, *keys):
+    yield data[role]
+    if keys:
+        for key in keys:
+            yield data['%s_%s' % (role, key)]
