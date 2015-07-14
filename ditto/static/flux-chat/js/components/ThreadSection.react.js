@@ -5,8 +5,9 @@ var ThreadStore = require('../stores/ThreadStore');
 var UnreadThreadStore = require('../stores/UnreadThreadStore');
 var FluidHeightMixin = require('../../../js/mixins/FluidHeightMixin.jsx');
 var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
-var Router = require('react-router');
-var Link = Router.Link;
+var urls = require('../utils/urlUtils');
+
+import { Link } from 'react-router';
 
 function getStateFromStores() {
     return {
@@ -64,14 +65,14 @@ var ThreadSection = React.createClass({
                 <ul className="nav nav-tabs">
                 <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}>
                 {this.state.currentChatID ?
-                 <Link to="messages" params={{id: this.state.currentChatID}}>My chats</Link> :
-                 <Link to="messagesHome">My chats</Link>}
+                 <Link to={urls.thread(this.state.currentChatID)}>My chats</Link> :
+                 <Link to={urls.messages()}>My chats</Link>}
                  
                 </li>
                 <li role="presentation" className={this.state.threadType === ThreadStore.session ? 'active' : ''}>
                 {this.state.currentSessionID ?
-                 <Link to="sessions" params={{id: this.state.currentSessionID}}>My sessions</Link> :
-                 <Link to="sessionsHome">My sessions</Link>}
+                 <Link to={urls.session(this.state.currentSessionID)}>My sessions</Link> :
+                 <Link to={urls.sessions()}>My sessions</Link>}
                 </li>
                  </ul>
                 <div className="thread-count">
@@ -80,8 +81,8 @@ var ThreadSection = React.createClass({
                 <div className="list-group">
                 {threadListItems}
             </div>
-		{this.state.threadType === ThreadStore.session && this.state.currentSessionID ? <Link className="btn btn-primary" to="sessionsHome">New session</Link> : null }
-		{this.state.threadType !== ThreadStore.session && this.state.currentChatID ? <Link className="btn btn-primary" to="messagesHome">New message</Link> : null }
+		{this.state.threadType === ThreadStore.session && this.state.currentSessionID ? <Link className="btn btn-primary" to={urls.sessions()}>New session</Link> : null }
+	    {this.state.threadType !== ThreadStore.session && this.state.currentChatID ? <Link className="btn btn-primary" to={urls.messages}>New message</Link> : null }
                 </div>
         );
     },

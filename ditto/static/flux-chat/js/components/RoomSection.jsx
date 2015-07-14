@@ -2,9 +2,9 @@ var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
 var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
 var cx = require('react/lib/cx');
-var Router = require('react-router');
-var Link = Router.Link;
-var Navigation = Router.Navigation;
+var urls = require('../utils/urlUtils');
+
+import { Link } from 'react-router';
 
 function getStateFromStores() {
     return {
@@ -14,7 +14,6 @@ function getStateFromStores() {
 }
 
 var RoomSection = React.createClass({
-    mixins: [Navigation],
     
     getInitialState: function() {
         return getStateFromStores();
@@ -32,7 +31,7 @@ var RoomSection = React.createClass({
         var roomListItems = this.state.rooms.map(room => {
 	    var roomID = room.split('@')[0];
 	    return (
-		<Link key={roomID} className="list-group-item" to="chatroom" params={{id: roomID}}>{room}</Link>
+		<Link key={roomID} className="list-group-item" to={urls.chatroom(roomID)}>{room}</Link>
 	    );
         });
         return (
@@ -40,10 +39,6 @@ var RoomSection = React.createClass({
 		<div className="list-group">
                     {roomListItems}
 		</div>
-		<form onSubmit={this._createRoom}>
-		    <input type="text" placeholder="Enter room name" ref="roomName" />
-		    <input type="submit" value="Create room" />
-		</form>
 	    </div>
         );
     },
@@ -55,14 +50,6 @@ var RoomSection = React.createClass({
         this.setState(getStateFromStores());
     },
 
-    _createRoom: function (e) {
-	e.preventDefault();
-	var roomName = this.refs.roomName.getDOMNode().value;
-	this.refs.roomName.getDOMNode().value = '';
-	// TODO check room doesn't already exist
-	ChatThreadActionCreators.createRoom(roomName);
-	this.transitionTo('chatroom', {id: roomName});
-    }
 });
 
 module.exports = RoomSection;

@@ -171,8 +171,8 @@ var TicketTable = React.createClass({
 // TODO can I use relative paths here?
 var router = (
     <Router history={history} >
-	<Route name="tickets" path="/di/dashboard/tickets/" handler={TicketTable}/>
-	<Route name="ticket" path="/di/dashboard/tickets/:id/" handler={TicketTable}/>
+	<Route path="/di/dashboard/tickets/" component={TicketTable}/>
+	<Route path="/di/dashboard/tickets/:id/" component={TicketTable}/>
     </Router>
 );
 

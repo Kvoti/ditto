@@ -6,11 +6,11 @@ var ThreadStore = require('../stores/ThreadStore');
 var SetMyStatus = require('./SetMyStatus.react');
 var WhosOnline = require('./WhosOnline.react');
 var ChatConstants = require('../constants/ChatConstants');
-var Router = require('react-router');
-var Route = Router.Route;
-var RouteHandler = Router.RouteHandler;
-var Navigation = Router.Navigation;
 var SessionManager = require('../../../js/components/SessionManager.jsx');
+var RouteActionCreators = require('../actions/RouteActionCreators.js');
+
+import { Router, Route } from 'react-router';
+import { history } from 'react-router/lib/BrowserHistory';
 
 function getStateFromStores() {
     return {
@@ -19,16 +19,19 @@ function getStateFromStores() {
 }
 
 var ChatApp = React.createClass({
-    mixins: [Navigation],
-    
+
     getInitialState: function() {
         return getStateFromStores();
     },
 
+    componentWillMount () {
+        RouteActionCreators.changePrivateChat(this.props.location.pathname);
+    },
+    
     componentDidMount: function() {
         ConnectionStore.addChangeListener(this._onChange);
     },
-
+    
     componentWillUnmount: function() {
         ConnectionStore.removeChangeListener(this._onChange);
     },
@@ -72,25 +75,15 @@ var ChatApp = React.createClass({
 
 });
 
-// TODO this is just cut and paste from the hacky routing stuff for the chatrooms
-var App = React.createClass({
-    render () {
-	return (
-	    <div>
-		<RouteHandler/>
-	    </div>
-	)
-    }
-});
 
 // declare our routes and their hierarchy
 var routes = (
-    <Route handler={App}>
-	<Route name="messagesHome" path="/di/messages/" handler={ChatApp}/>
-	<Route name="messages" path="/di/messages/:id/" handler={ChatApp}/>
-	<Route name="sessionsHome" path="/di/sessions/" handler={ChatApp}/>
-	<Route name="sessions" path="/di/sessions/:id/" handler={ChatApp}/>
-    </Route>
+    <Router history={history}>
+	<Route path="/di/messages/" component={ChatApp}/>
+	<Route path="/di/messages/:id/" component={ChatApp}/>
+	<Route path="/di/sessions/" component={ChatApp}/>
+	<Route path="/di/sessions/:id/" component={ChatApp}/>
+    </Router>
 );
 
 module.exports = routes;

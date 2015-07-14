@@ -12,9 +12,6 @@ var ChatModule = require('../../js/components/ChatModule.jsx');
 var EvaluationSettings = require('../../configuration/js/components/EvaluationSettings.jsx');
 var ChatroomSettings = require('../../configuration/js/components/ChatroomSettings.jsx');
 var FormBuilder = require('../../formbuilder/js/components/FormBuilder.jsx');
-var Router = require('react-router')
-var RouteActionCreators = require('../../flux-chat/js/actions/RouteActionCreators.js');
-var SettingsRouteActionCreators = require('../../configuration/js/actions/RouteActionCreators.js');
 var CaseNotes = require('../../casenotes/js/components/CaseNotes.jsx');
 var UserAutocomplete = require('../../js/components/UserAutocomplete.jsx');
 var TicketTable = require('../../tickets/js/components/TicketTable.jsx');
@@ -67,10 +64,7 @@ if (chatModule) {
 
 var chatrooms = document.getElementById('chatrooms');
 if (chatrooms) {
-    Router.run(ChatRoomApp, Router.HistoryLocation, (Root, state) => {
-        React.render(<Root/>, chatrooms);
-        RouteActionCreators.changeChatroom(state.path);
-    });
+    React.render(ChatRoomApp, chatrooms);
 }
 
 var whosOnline = document.getElementById('presence');
@@ -83,10 +77,7 @@ if (whosOnline) {
 
 var chatApp = document.getElementById('react');
 if (chatApp) {
-    Router.run(ChatApp, Router.HistoryLocation, (Root, state) => {
-        React.render(<Root/>, chatApp);
-        RouteActionCreators.changePrivateChat(state.path);
-    });
+    React.render(ChatApp, chatApp);
 }
 
 var evaluationSettings = document.getElementById('evaluation');
@@ -99,11 +90,7 @@ if (evaluationSettings) {
 
 var chatroomSettings = document.getElementById('chatroomsettings');
 if (chatroomSettings) {
-
-    Router.run(ChatroomSettings, Router.HistoryLocation, (Root, state) => {
-        React.render(<Root/>, chatroomSettings);
-        SettingsRouteActionCreators.changeChatroom(state.path);
-    });
+    React.render(ChatroomSettings, chatroomSettings);
 }
 
 var formBuilder = document.getElementById('formbuilder');

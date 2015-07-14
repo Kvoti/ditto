@@ -113,9 +113,9 @@ var UserTable = React.createClass({
 // TODO can I split out the table and viewer component?
 var router = (
     <Router history={history} >
-	<Route name="users" path="/di/dashboard/users/" handler={UserTable}/>
-	<Route name="user" path="/di/dashboard/users/:username/" handler={UserTable}/>
-	{/* TODO <Route name="user" path="/di/dashboard/users/:id/" handler={UserViewer}/> ? */}
+	<Route path="/di/dashboard/users/" component={UserTable}/>
+	<Route path="/di/dashboard/users/:username/" component={UserTable}/>
+	{/* TODO <Route path="/di/dashboard/users/:id/" component={UserViewer}/> ? */}
     </Router>
 );
 

@@ -9,10 +9,11 @@ var WhosOnline = require('./WhosOnline.react');
 var RoomSection = require('./RoomSection.jsx');
 var ChatConstants = require('../constants/ChatConstants');
 var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
-var Router = require('react-router');
-var Route = Router.Route;
-var RouteHandler = Router.RouteHandler;
-var Navigation = Router.Navigation;
+var RouteActionCreators = require('../actions/RouteActionCreators.js');
+var urls = require('../utils/urlUtils');
+
+import { Router, Route, Navigation } from 'react-router';
+import { history } from 'react-router/lib/BrowserHistory';
 
 function getStateFromStores() {
     return {
@@ -23,10 +24,13 @@ function getStateFromStores() {
 }
 
 var ChatRoomApp = React.createClass({
-    mixins: [Navigation],
     
     getInitialState: function() {
         return getStateFromStores();
+    },
+    
+    componentWillMount () {
+        RouteActionCreators.changeChatroom(this.props.location.pathname);
     },
 
     componentDidMount: function() {
@@ -98,16 +102,6 @@ var ChatRoomApp = React.createClass({
 
 });
 
-var App = React.createClass({
-    render () {
-	return (
-	    <div>
-		<RouteHandler/>
-	    </div>
-	)
-    }
-});
-
 // TODO this is a bit of a hack here too. Want
 //     /chatroom/
 // to redirect to /chatroom/<mainChatroom>/
@@ -139,7 +133,7 @@ var DefaultChatroom = React.createClass({
 	    //     {messages: MessageStore.getForChatroom(this.props.params.chatroom)}
 	    //
 	    setTimeout(() => {
-		this.transitionTo('chatroom', {id: Strophe.getNodeFromJid(rooms[0])})
+		this.transitionTo(urls.chatroom(Strophe.getNodeFromJid(rooms[0])));
 	    }, 0);
 	}
     },
@@ -150,10 +144,10 @@ var DefaultChatroom = React.createClass({
 
 // declare our routes and their hierarchy
 var routes = (
-    <Route handler={App}>
-	<Route path="/di/chatroom/" handler={DefaultChatroom}/>
-	<Route name="chatroom" path="/di/chatroom/:id/" handler={ChatRoomApp}/>
-    </Route>
+    <Router history={history}> 
+	<Route path="/di/chatroom/" component={DefaultChatroom}/>
+	<Route path="/di/chatroom/:id/" component={ChatRoomApp}/>
+    </Router>
 );
 
 module.exports = routes;

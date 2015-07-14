@@ -10,12 +10,13 @@ var API = require('../utils/SettingsWebAPIUtils');
 var RoomStore = require('../stores/RoomStore');
 var Alert = require('react-bootstrap/lib/Alert');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
+var RouteActionCreators = require('../actions/RouteActionCreators');
 var assign = require('object-assign');
 var _ = require('lodash');
-var Router = require('react-router');
-var Route = Router.Route;
-var RouteHandler = Router.RouteHandler;
-var Navigation = Router.Navigation;
+var urls = require('../../../flux-chat/js/utils/urlUtils');
+
+import { Router, Route, Link, Navigation } from 'react-router';
+import { history } from 'react-router/lib/BrowserHistory';
 
 function getStateFromStores () {
     return {
@@ -37,11 +38,19 @@ var ChatroomSettings = React.createClass({
 	}, initial);
     },
     
+    componentWillMount () {
+        RouteActionCreators.changeChatroom(this.props.location.pathname);
+    },
+
     componentDidMount () {
 	// TODO api batching probably useful here
 	API.loadChatrooms();
 	API.loadSlots();
         RoomStore.addChangeListener(this._onChange);
+    },
+    
+    componentWillReceiveProps (nextProps) {
+        RouteActionCreators.changeChatroom(nextProps.location.pathname);
     },
 
     componentWillUnmount () {
@@ -112,7 +121,7 @@ var ChatroomSettings = React.createClass({
     },
 
     _changeRoom (slug) {
-	this.transitionTo("chatrooms", {id: slug});
+	this.transitionTo(urls.chatroomConfig(slug));
     },
     
     _addChatroom () {
@@ -166,22 +175,11 @@ var ChatroomSettings = React.createClass({
     }
 });
 
-// TODO this is just cut and paste from the hacky routing stuff for the chatrooms
-var App = React.createClass({
-    render () {
-	return (
-	    <div>
-		<RouteHandler/>
-	    </div>
-	)
-    }
-});
-
 // declare our routes and their hierarchy
 var routes = (
-    <Route handler={App}>
-	<Route name="chatrooms" path="/di/config/chatroom/:id/" handler={ChatroomSettings} ignoreScrollBehavior/>
-    </Route>
+    <Router history={history} >
+	<Route path="/di/config/chatroom/:id/" component={ChatroomSettings} ignoreScrollBehavior/>
+    </Router>
 );
 
 module.exports = routes;
