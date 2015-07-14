@@ -1,6 +1,7 @@
 import datetime
 import random
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Case, When, IntegerField, Avg, F, FloatField
@@ -90,6 +91,24 @@ def reports(request):
     case_notes = casenotes.models.CaseNote.objects.aggregate(
         **_role_counts('author__groups')
     )
+    # TODO this will BLOW UP HORRIBLY for a large number of users
+    # Eventually we'll probably need to do offline processing of the django
+    # and chat dbs so we can efficiently query private messages
+    pms = chat.models.PrivateMessage.objects
+    if settings.DEBUG:
+        pms = pms.using('chat')
+    private_messages = pms.aggregate(
+        **{
+            role.name: Sum(
+                Case(When(
+                    user__user_name__in=list(User.objects.filter(
+                        groups=role).values_list('username', flat=True)),
+                    then=1),
+                     output_field=IntegerField())
+            )
+            for role in Group.objects.all()
+        }
+    )
     return render(request, 'dashboard/reports.html', {
         'reports': [
             {
@@ -106,6 +125,11 @@ def reports(request):
                 'heading': 'Case notes',
                 'columns': ['Role', ''],
                 'data': _rows(case_notes)
+            },
+            {
+                'heading': 'Private messages',
+                'columns': ['Role', ''],
+                'data': _rows(private_messages)
             },
         ]
     })

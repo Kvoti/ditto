@@ -151,3 +151,22 @@ class SessionRating(models.Model):
 
     class Meta:
         unique_together = ('session', 'user')
+
+
+# Unmanaged models for mongooseim's message archive (MAM) tables
+class MAMUser(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user_name = models.CharField(max_length=200)
+    
+    class Meta:
+        managed = False
+        db_table = 'mam_user'
+        
+    
+class PrivateMessage(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(MAMUser, related_name='private_messages')
+    
+    class Meta:
+        managed = False
+        db_table = 'mam_message'

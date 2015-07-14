@@ -55,7 +55,10 @@ class _DBTable(object):
     def __get__(self, obj, objtype):
         orig = getattr(obj, '_db_table', '')
         if orig:
-            return '%s%s' % (self._table_prefix, orig)
+            if not orig.startswith('mam_'):
+                return '%s%s' % (self._table_prefix, orig)
+            else:
+                return orig
         else:
             return ''
 
