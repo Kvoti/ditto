@@ -47,7 +47,33 @@ class BasicInfoForm(forms.ModelForm):
 class RoleForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ('name', 'description')
+        fields = ('name',)
+
+    def __init__(self, *args, **kwargs):
+        super(RoleForm, self).__init__(*args, **kwargs)
+        # import ipdb; ipdb.set_trace()
+        try:
+            initial = self.instance.description.text
+        except models.GroupDescription.DoesNotExist:
+            initial = ""
+        self.fields['description'] = forms.CharField(
+            initial=initial,
+            widget=forms.Textarea(),
+            required=False
+        )
+
+    def save(self, *args, **kwargs):
+        super(RoleForm, self).save(*args, **kwargs)
+        try:
+            description = self.instance.description
+        except models.GroupDescription.DoesNotExist:
+            models.GroupDescription.objects.create(
+                group=self.instance,
+                text=self.cleaned_data['description']
+            )
+        else:
+            description.text = self.cleaned_data['description']
+            description.save()
 
 
 class BaseRoleFormSet(forms.models.BaseModelFormSet):
