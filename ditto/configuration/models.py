@@ -109,7 +109,10 @@ class RegForm(models.Model):
     form = models.ForeignKey('dittoforms.FormSpec')
 
 
-# Patch the Group model to add description instead of adding
-# another model with a one to one field
-from django.contrib.auth.models import Group
-Group.add_to_class('description', models.TextField(blank=True))
+# Note would like to just add a 'description' field to auth.Group but
+# modifying external apps is tricky. It seemed to work until upgrading
+# to Django 1.8. Decided then it was best not to hack things and just
+# live with having to add a new table.
+class GroupDescription(models.Model):
+    group = models.OneToOneField('auth.Group', related_name="description")
+    text = models.TextField(blank=True)
