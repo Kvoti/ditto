@@ -51,6 +51,9 @@ class User(AbstractUser):
 # thought about form building some more.
 class UserDatumManager(models.Manager):
     def create_custom_data(self, user, data):
+        # TODO fix saving multiple choices
+        # (with postgres could save as array field. with mysql will have to
+        # save a UserDatum per choice and account for that when querying)
         self.bulk_create([
             UserDatum(
                 user=user,
