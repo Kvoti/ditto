@@ -8,7 +8,7 @@ import core
 from dittoforms.models import FormSpec
 from dittoforms.utils import FormFromSpecMixin
 from multitenancy import tenant
-from users.models import User
+from users.models import User, UserDatum
 
 
 class SignupForm(FormFromSpecMixin, forms.Form):
@@ -25,6 +25,11 @@ class SignupForm(FormFromSpecMixin, forms.Form):
             self.save_submission(self.spec, user)
             user.groups.add(self.role)
 
+    def save_submission(self, spec, user):
+        data = {name: self.cleaned_data[name]
+                for name in spec.get_flat_field_names()}
+        UserDatum.objects.create_custom_data(user, data)
+                
 
 class InviteForm(forms.Form):
     error_messages = {

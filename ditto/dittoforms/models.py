@@ -11,6 +11,7 @@ Previously, with qanda, we had some tables to store fields and answers
 in a reasonably structured way but not sure it's worth it/better.
 
 """
+import json
 from django.db import models
 
 
@@ -19,6 +20,19 @@ class FormSpec(models.Model):
     # TODO version = models...
     spec = models.TextField(blank=False)  # TODO JSON field?
 
+    def get_flat_field_names(self):
+        spec = json.loads(self.spec)
+        for item in spec:
+            if 'fields' in item:
+                # group of fields
+                # TODO form config should probably separate out UI stuff like field grouping
+                # from field definitions (we'll do this when changing over to use the
+                # new version of the formbuilder that's decoupled from the settings)
+                for field_spec in item['fields']:
+                    yield field_spec['name']
+            else:
+                yield item['name']
+    
 
 class FormSubmission(models.Model):
     form = models.ForeignKey(FormSpec, related_name="submissions")
