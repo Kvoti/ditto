@@ -32,6 +32,25 @@ class FormSpec(models.Model):
                     yield field_spec['name']
             else:
                 yield item['name']
+
+    def get_choice_fields(self):
+        spec = json.loads(self.spec)
+        return self._get_choice_fields(spec)
+
+    def _get_choice_fields(self, spec):
+        fields = []
+        for item in spec:
+            if 'fields' in item:
+                # field group so recursively extract choice field fields
+                # (TODO at some point we'll decouple layout from field definition)
+                fields.extend(self._get_choice_fields(item['fields']))
+            else:
+                if ('on' in item and
+                    item['on'] and
+                    'options' in item and
+                    'multiple' not in item):
+                    fields.append(item)
+        return fields
     
 
 class FormSubmission(models.Model):

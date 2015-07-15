@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 
 import casenotes.models
 import chat.models
+import dittoforms.models
 from core.views.decorators import admin_required
 from core.views.mixins import NavMixin
 from users.models import User
@@ -73,6 +74,7 @@ def users(request):
 def reports(request):
     return render(request, 'dashboard/reports.html', {
         'reports': [
+            _custom_registration_data(),
             _sessions(),
             _users(),
             _case_notes(),
@@ -150,6 +152,40 @@ def _private_messages():
     }
 
 
+def _custom_registration_data():
+    # TODO handle fact we might have different forms for each role
+    form_spec = dittoforms.models.FormSpec.objects.all()[0]
+    ######
+    # TODO handle field types other than single choice
+    custom_choice_fields = form_spec.get_choice_fields()
+    ######
+    counts = {}
+    col_headings = ['Role']
+    col_keys = []
+    for choice_field in custom_choice_fields:
+        for choice in choice_field['options']:
+            key = '%s_%s' % (choice_field['name'], choice)
+            col_keys.append(key)
+            col_headings.append('%s - %s' % (choice_field['name'], choice))
+            for role in Group.objects.all():
+                counts['%s_%s' % (role.name, key)] = Sum(
+                    Case(
+                        When(
+                            groups=role,
+                            custom_data__field_name=choice_field['name'],
+                            custom_data__field_value=choice,
+                            then=1
+                        ),
+                        output_field=IntegerField())
+                )
+    data = User.objects.aggregate(**counts)
+    return {
+        'heading': 'Custom registration data',
+        'columns': col_headings,
+        'data': _rows(data, *col_keys)
+    }
+    
+
 def _role_counts(role_relation):
     return {
         role.name: Sum(
@@ -168,6 +204,6 @@ def _rows(data, *keys):
 def _columns(data, role, *keys):
     if role in data:
         yield data[role]
-        if keys:
-            for key in keys:
-                yield data['%s_%s' % (role, key)]
+    if keys:
+        for key in keys:
+            yield data['%s_%s' % (role, key)]
