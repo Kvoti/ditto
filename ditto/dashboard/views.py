@@ -71,6 +71,17 @@ def users(request):
 
 @admin_required
 def reports(request):
+    return render(request, 'dashboard/reports.html', {
+        'reports': [
+            _sessions(),
+            _users(),
+            _case_notes(),
+            _private_messages(),
+        ]
+    })
+
+
+def _sessions():
     counts = {}
     for role in Group.objects.all():
         counts[role.name] = Sum(
@@ -87,10 +98,34 @@ def reports(request):
                  output_field=FloatField())
         )
     sessions = chat.models.SessionRating.objects.aggregate(**counts)
+    return {
+        'heading': 'Sessions',
+        'columns': ['Role', '', 'Completed', 'Average rating'],
+        'data': _rows(sessions, 'complete', 'avg_rating')
+    }
+
+
+def _users():
     users = User.objects.aggregate(**_role_counts('groups'))
+    return {
+        'heading': 'Registrations',
+        'columns': ['Role', ''],
+        'data': _rows(users)
+    }
+
+
+def _case_notes():
     case_notes = casenotes.models.CaseNote.objects.aggregate(
         **_role_counts('author__groups')
     )
+    return {
+        'heading': 'Case notes',
+        'columns': ['Role', ''],
+        'data': _rows(case_notes)
+    }
+
+
+def _private_messages():
     # TODO this will BLOW UP HORRIBLY for a large number of users
     # Eventually we'll probably need to do offline processing of the django
     # and chat dbs so we can efficiently query private messages
@@ -108,30 +143,11 @@ def reports(request):
                      output_field=IntegerField())
             )
     private_messages = pms.aggregate(**counts)
-    return render(request, 'dashboard/reports.html', {
-        'reports': [
-            {
-                'heading': 'Sessions',
-                'columns': ['Role', '', 'Completed', 'Average rating'],
-                'data': _rows(sessions, 'complete', 'avg_rating')
-            },
-            {
-                'heading': 'Registrations',
-                'columns': ['Role', ''],
-                'data': _rows(users)
-            },
-            {
-                'heading': 'Case notes',
-                'columns': ['Role', ''],
-                'data': _rows(case_notes)
-            },
-            {
-                'heading': 'Private messages',
-                'columns': ['Role', ''],
-                'data': _rows(private_messages)
-            },
-        ]
-    })
+    return {
+        'heading': 'Private messages',
+        'columns': ['Role', ''],
+        'data': _rows(private_messages)
+    }
 
 
 def _role_counts(role_relation):
