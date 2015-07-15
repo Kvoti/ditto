@@ -293,6 +293,6 @@ class Common(Configuration):
 
     # Your common stuff: Below this line define 3rd party library settings
     WEBPACK_LOADER = {
-        'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, '../webpack-stats.json'),
+        'BUNDLE_DIR_NAME': 'dist/',
+        'STATS_FILE': os.path.join(BASE_DIR, '../webpack-stats-prod.json'),
     }

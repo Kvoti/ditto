@@ -6,8 +6,10 @@ Local Configurations
 - Uses console backend for emails
 - Use Django Debug Toolbar
 '''
+import os
+
 from configurations import values
-from .common import Common
+from .common import Common, BASE_DIR
 
 
 class Local(Common):
@@ -67,3 +69,8 @@ class Local(Common):
     #     'level': 'DEBUG',
     #     'handlers': ['console'],
     # }
+
+    WEBPACK_LOADER = {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, '../webpack-stats.json'),
+    }
