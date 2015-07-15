@@ -36,3 +36,5 @@ production-vars.py
 .vagrant
 
 webpack-stats.json
+# ignore locally generated development webpack bundles
+ditto/static/bundles/
