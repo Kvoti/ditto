@@ -140,10 +140,15 @@ def setup_admin_users():
 
 
 def setup_members():
-    for name in ['mark', 'sarah', 'ross', 'emma']:
-        _create_user(name, core.MEMBER_ROLE)
+    for name, gender in [
+            ('mark', 'Male'),
+            ('sarah', 'Female'),
+            ('ross', 'Male'),
+            ('emma', 'Female'),
+    ]:
+        _create_user(name, core.MEMBER_ROLE, gender)
     for i in range(1, 4):
-        _create_user('member%s' % i, core.MEMBER_ROLE)
+        _create_user('member%s' % i, core.MEMBER_ROLE, 'Female')
     for user, role in [
             ['adviser', 'Adviser'],
             ['counsellor', 'Counsellor']
@@ -151,7 +156,7 @@ def setup_members():
         _create_user(user, role)
         
 
-def _create_user(username, group_name):
+def _create_user(username, group_name, gender=None):
     user, created = User.objects.get_or_create(username=username)
     user.emailaddress_set.get_or_create(
         verified=1,
@@ -166,6 +171,9 @@ def _create_user(username, group_name):
             password = 'x'
         user.set_password(password)
         user.save()
+        if gender is not None:
+            user.custom_data.create(field_name="Gender",
+                                    field_value=gender)
     user.groups.add(Group.objects.get(name=group_name))
 
 
