@@ -34,3 +34,5 @@ node_modules/
 production-vars.py
 
 .vagrant
+
+webpack-stats.json

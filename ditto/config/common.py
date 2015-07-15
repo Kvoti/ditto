@@ -49,7 +49,8 @@ class Common(Configuration):
         'allauth.socialaccount',  # registration
         'django_extensions',
         'sesame',
-        'rest_framework'
+        'rest_framework',
+        'webpack_loader',
     )
 
     # Apps specific for this project go here.
@@ -291,3 +292,7 @@ class Common(Configuration):
     # END LOGGING CONFIGURATION
 
     # Your common stuff: Below this line define 3rd party library settings
+    WEBPACK_LOADER = {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, '../webpack-stats.json'),
+    }
