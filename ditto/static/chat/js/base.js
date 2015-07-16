@@ -3,7 +3,7 @@ var ChatApp = require('../../flux-chat/js/components/ChatApp.react');
 var ChatRoomApp = require('../../flux-chat/js/components/ChatRoomApp.jsx');
 var ChatWebAPIUtils = require('../../flux-chat/js/utils/ChatWebAPIUtils');
 var SettingsWebAPIUtils = require('../../configuration/js/utils/SettingsWebAPIUtils');
-var Avatar = require('../../flux-chat/js/components/Avatar.react.js');
+var AvatarContainer = require('../../flux-chat/js/components/AvatarContainer.react.js');
 var Status = require('../../flux-chat/js/components/Status.react.js');
 var AvatarPicker = require('../../js/components/AvatarPicker.jsx');
 var WhosOnline = require('../../flux-chat/js/components/WhosOnline.react');
@@ -36,7 +36,7 @@ var user = Strophe.getNodeFromJid(chatConf.me);
 var avatar = document.getElementById('nav-avatar');
 if (avatar) {
     React.render(
-        <Avatar user={user} />, avatar
+        <AvatarContainer username={user} />, avatar
     );
 }
 // TODO not sure whether to have a single bundle.js or make different
