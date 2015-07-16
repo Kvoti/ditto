@@ -22,7 +22,7 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loaders: ['react-hot', "babel-loader?optional[]=es7.comprehensions&optional[]=es7.classProperties"],
+                loaders: ['react-hot', "babel-loader?optional[]=es7.comprehensions&optional[]=es7.classProperties&optional[]=es7.objectRestSpread"],
             }
         ]
     },
