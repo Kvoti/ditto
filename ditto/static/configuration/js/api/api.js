@@ -1,21 +1,21 @@
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
+var urls = require('../../../flux-chat/js/utils/urlUtils');
+
+import { get, post } from '../../../js/request';
 
 module.exports = {
 
     getRegFormSettings: function (role) {
-        $.get(
-            '/di/forms/api/' + role + '/',
-            function (res) {
-                console.log(res);
+        get(urls.api.forms(role))
+            .done(res => {
                 SettingsActionCreators.receiveRegFormSettings(role, res);
-            }
-        );
+            });
     },
 
     updateRegFormSettings: function (role, settings) {
-        $.post(  // or put?
-            '/di/forms/api/' + role + '/',
-            JSON.stringify(settings)
+        put( // or put?
+            urls.api.forms(role),
+            settings
         );
     }
 }

@@ -45,6 +45,10 @@ module.exports = {
             return _fullUrl('api/roles/');
         },
 
+        forms (roleName) {
+            return _fullUrl('forms/api/' + roleName + '/');
+        },
+        
         chatrooms () {
             return _fullUrl('api/chat/rooms/');
         },
