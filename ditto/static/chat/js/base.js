@@ -20,14 +20,17 @@ var UserTable = require('../../users/js/components/UserTable.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
-ChatWebAPIUtils.connect(
-    chatConf.server,
-    chatConf.me,
-    chatConf.password,
-    chatConf.nick
-);	
+if (chatConf.me) {
+    ChatWebAPIUtils.connect(
+        chatConf.server,
+        chatConf.me,
+        chatConf.password,
+        chatConf.nick
+    );	
 
-SettingsWebAPIUtils.loadRoles();
+    // TODO should only load this on settings page(s)
+    SettingsWebAPIUtils.loadRoles();
+}
 
 var user = Strophe.getNodeFromJid(chatConf.me);
 React.render(

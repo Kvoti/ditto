@@ -22,13 +22,16 @@ def chat_config(context, other=None, extra=None):
     else:
         signer = Signer()
         password = signer.sign(user.username)
-    me = '%s@%s' % (user.username, chat_host)
+    if user.is_authenticated():
+        me = _resource('%s@%s' % (user.username, chat_host))
+    else:
+        me = ""
     try:
         role = user.groups.all()[0].name
     except IndexError:
         role = '-'
     conf = {
-        'me': _resource(me),
+        'me': me,
         'role': role,
         'nick': user.username,
         'server': server,
