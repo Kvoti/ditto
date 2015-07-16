@@ -2,6 +2,7 @@ function _fullUrl(part) {
     return '/' + DITTO.tenant + '/' + part;
 }
 
+// TODO be nice to be DRY and compute this from django's url config
 module.exports = {
     startSession: function () {
 	return _fullUrl('ratings/');
@@ -38,4 +39,27 @@ module.exports = {
     chatroomConfig (roomID) {
         return _fullUrl('config/chatroom/' + roomID + '/');
     },
+
+    api: {
+        roles () {
+            return _fullUrl('api/roles/');
+        },
+
+        chatrooms () {
+            return _fullUrl('api/chat/rooms/');
+        },
+        
+        chatroom (roomID) {
+            return this.chatrooms() + roomID + '/';
+        },
+
+        slots () {
+            return _fullUrl('api/chat/slots/');
+        },
+        
+        slot (slotID) {
+            return this.slots() + slotID + '/';
+        }
+    }
+
 }
