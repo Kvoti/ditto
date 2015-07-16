@@ -17,6 +17,32 @@ var UserAutocomplete = require('../../js/components/UserAutocomplete.jsx');
 var TicketTable = require('../../tickets/js/components/TicketTable.jsx');
 var UserTable = require('../../users/js/components/UserTable.jsx');
 
+
+// Playing around with API handling to replace stuff in urlUtils.api and SettingsWebAPIUtils
+import apiFactory, { list, detail, create } from '../../js/api';
+
+let api = apiFactory(
+    {
+         chatrooms: {
+            url: 'chat/rooms/',
+            actions: [list, create]
+         }
+     }   
+);
+
+import serverActions from '../../js/serverActions';
+
+let actions = serverActions(
+    {
+         chatrooms: {
+            url: 'chat/rooms/',
+            actions: [list, create]
+         }
+     }   
+);
+
+//////////////////////////////////////////////////
+
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
