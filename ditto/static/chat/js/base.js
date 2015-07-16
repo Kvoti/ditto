@@ -33,11 +33,12 @@ if (chatConf.me) {
 }
 
 var user = Strophe.getNodeFromJid(chatConf.me);
-React.render(
-    <Avatar user={user} />,
-    document.getElementById('nav-avatar')
-);
-
+var avatar = document.getElementById('nav-avatar');
+if (avatar) {
+    React.render(
+        <Avatar user={user} />, avatar
+    );
+}
 // TODO not sure whether to have a single bundle.js or make different
 // bundles for different pages that have different bits of chat
 // on/off. A single file with conditional bits is easiest for now
