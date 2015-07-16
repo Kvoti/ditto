@@ -178,7 +178,7 @@ var ChatroomSettings = React.createClass({
 // declare our routes and their hierarchy
 var routes = (
     <Router history={history} >
-	<Route path="/di/config/chatroom/:id/" component={ChatroomSettings} ignoreScrollBehavior/>
+	<Route path={urls.chatroomConfig(':id')} component={ChatroomSettings} ignoreScrollBehavior/>
     </Router>
 );
 

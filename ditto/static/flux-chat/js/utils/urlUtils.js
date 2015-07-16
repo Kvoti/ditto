@@ -3,6 +3,8 @@ function _fullUrl(part) {
 }
 
 // TODO be nice to be DRY and compute this from django's url config
+// TODO but if not doing that at least factor this down as most urls follow the same
+// pattern (and ones that don't probably should)
 module.exports = {
     startSession: function () {
 	return _fullUrl('ratings/');
@@ -32,14 +34,34 @@ module.exports = {
         return _fullUrl('sessions/' + threadID + '/');
     },
 
+    chatrooms () {
+        return _fullUrl('chatroom/');
+    },
+    
     chatroom (roomID) {
-        return _fullUrl('chatroom/' + roomID + '/');
+        return this.chatrooms() + roomID + '/';
     },
 
     chatroomConfig (roomID) {
         return _fullUrl('config/chatroom/' + roomID + '/');
     },
 
+    tickets () {
+        return _fullUrl('dashboard/tickets/');
+    },
+    
+    ticket (ticketID) {
+        return this.tickets() + ticketID + '/';
+    },
+    
+    users () {
+        return _fullUrl('dashboard/users/');
+    },
+    
+    user (userID) {
+        return this.users() + userID + '/';
+    },
+    
     api: {
         roles () {
             return _fullUrl('api/roles/');
@@ -63,7 +85,24 @@ module.exports = {
         
         slot (slotID) {
             return this.slots() + slotID + '/';
+        },
+        
+        tickets () {
+            return _fullUrl('api/tickets/');
+        },
+        
+        ticket (ticketID) {
+            return this.tickets() + ticketID + '/';
+        },
+        
+        users () {
+            return _fullUrl('api/users/');
+        },
+        
+        user (userID) {
+            return this.users() + userID + '/';
         }
+        
     }
 
 }

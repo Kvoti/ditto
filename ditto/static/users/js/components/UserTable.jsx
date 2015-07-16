@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var FixedDataTable = require('fixed-data-table');
 var utils = require('../../../configuration/js/utils');
+var urls = require('../../../flux-chat/js/utils/urlUtils');
 import { Router, Route, Link } from 'react-router';
 import { history } from 'react-router/lib/BrowserHistory';
 
@@ -18,8 +19,6 @@ var update = React.addons.update;
 var Table = FixedDataTable.Table;
 var Column = FixedDataTable.Column;
 
-var usersURL = '/' + DITTO.tenant + '/api/users/';
-
 var UserTable = React.createClass({
 
     getInitialState () {
@@ -29,7 +28,7 @@ var UserTable = React.createClass({
     },
 
     componentDidMount () {
-	get(usersURL)
+	get(urls.api.users())
 	    .done(res => {
 		if (this.isMounted()) {
 		    this.setState({dataList: res});
@@ -45,7 +44,7 @@ var UserTable = React.createClass({
     _renderUsername (username, key, user, rowIndex) {
 	// TODO need to escape username for use in url?
 	return (
-	    <Link to={'/di/dashboard/users/' + username + '/'}>{username}</Link>
+	    <Link to={urls.user(username)}>{username}</Link>
 	);
     },
     
@@ -98,7 +97,7 @@ var UserTable = React.createClass({
 		  <UserViewer user={showingUser} />
 		  <Link
 		  className="btn btn-default"
-		  to='/di/dashboard/users/'
+		  to={urls.users()}
 		  >
 		  Close
 	    </Link>
@@ -113,9 +112,9 @@ var UserTable = React.createClass({
 // TODO can I split out the table and viewer component?
 var router = (
     <Router history={history} >
-	<Route path="/di/dashboard/users/" component={UserTable}/>
-	<Route path="/di/dashboard/users/:username/" component={UserTable}/>
-	{/* TODO <Route path="/di/dashboard/users/:id/" component={UserViewer}/> ? */}
+	<Route path={urls.users()} component={UserTable}/>
+	<Route path={urls.user(":username")} component={UserTable}/>
+	{/* TODO <Route path={urls.user(":username")} component={UserViewer}/> ? */}
     </Router>
 );
 

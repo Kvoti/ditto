@@ -145,8 +145,8 @@ var DefaultChatroom = React.createClass({
 // declare our routes and their hierarchy
 var routes = (
     <Router history={history}> 
-	<Route path="/di/chatroom/" component={DefaultChatroom}/>
-	<Route path="/di/chatroom/:id/" component={ChatRoomApp}/>
+	<Route path={urls.chatrooms()} component={DefaultChatroom}/>
+	<Route path={urls.chatroom(":id")} component={ChatRoomApp}/>
     </Router>
 );
 

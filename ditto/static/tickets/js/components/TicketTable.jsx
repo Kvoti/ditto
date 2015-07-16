@@ -2,6 +2,8 @@ var React = require('react/addons');
 var FixedDataTable = require('fixed-data-table');
 var utils = require('../../../configuration/js/utils');
 var strftime = require('strftime');
+var urls = require('../../../flux-chat/js/utils/urlUtils');
+
 import { Router, Route, Link } from 'react-router';
 import { history } from 'react-router/lib/BrowserHistory';
 
@@ -12,8 +14,6 @@ var update = React.addons.update;
 var Table = FixedDataTable.Table;
 var Column = FixedDataTable.Column;
 
-var ticketsURL = '/' + DITTO.tenant + '/api/tickets/';
-
 var TicketTable = React.createClass({
 
     getInitialState () {
@@ -23,7 +23,7 @@ var TicketTable = React.createClass({
     },
 
     componentDidMount () {
-	get(ticketsURL)
+	get(urls.api.tickets())
 	    .done(res => {
 		this.setState({dataList: res});
 	    });
@@ -46,7 +46,7 @@ var TicketTable = React.createClass({
 
     _renderTitle (title, key, ticket, rowIndex) {
 	return (
-	    <Link to={'/di/dashboard/tickets/' + ticket.id + '/'}>{title}</Link>
+	    <Link to={urls.ticket(ticket.id)}>{title}</Link>
 	);
     },
     
@@ -108,7 +108,7 @@ var TicketTable = React.createClass({
 		  <TicketViewer ticket={showingTicket} />
 		  <Link
 		  className="btn btn-default"
-		  to='/di/dashboard/tickets/'
+		  to={urls.tickets()}
 		  >
 		  Close
 		  </Link>
@@ -171,8 +171,8 @@ var TicketTable = React.createClass({
 // TODO can I use relative paths here?
 var router = (
     <Router history={history} >
-	<Route path="/di/dashboard/tickets/" component={TicketTable}/>
-	<Route path="/di/dashboard/tickets/:id/" component={TicketTable}/>
+	<Route path={urls.tickets()} component={TicketTable}/>
+	<Route path={urls.ticket(":id")} component={TicketTable}/>
     </Router>
 );
 

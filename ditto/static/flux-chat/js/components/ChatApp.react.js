@@ -8,6 +8,7 @@ var WhosOnline = require('./WhosOnline.react');
 var ChatConstants = require('../constants/ChatConstants');
 var SessionManager = require('../../../js/components/SessionManager.jsx');
 var RouteActionCreators = require('../actions/RouteActionCreators.js');
+var urls = require('../utils/urlUtils');
 
 import { Router, Route } from 'react-router';
 import { history } from 'react-router/lib/BrowserHistory';
@@ -83,10 +84,10 @@ var ChatApp = React.createClass({
 // declare our routes and their hierarchy
 var routes = (
     <Router history={history}>
-	<Route path="/di/messages/" component={ChatApp}/>
-	<Route path="/di/messages/:id/" component={ChatApp}/>
-	<Route path="/di/sessions/" component={ChatApp}/>
-	<Route path="/di/sessions/:id/" component={ChatApp}/>
+	<Route path={urls.messages()} component={ChatApp}/>
+	<Route path={urls.message(":id")} component={ChatApp}/>
+        <Route path={urls.sessions()} component={ChatApp}/>
+	<Route path={urls.session(":id")} component={ChatApp}/>
     </Router>
 );
 
