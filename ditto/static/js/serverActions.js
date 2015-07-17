@@ -74,17 +74,23 @@ function makeConstants(endpoint, action) {
 function makeAction(api, action) {
     let key = action.toUpperCase();
     return function (...args) {
-        api[action](...args)
+        let call = api[action](...args)
             .done(res => {
-                dispatch(this[`${key}_SUCCESS`]);
+                dispatch(this[`${key}_SUCCESS`], res);
             })
             .fail(res => {
                 dispatch(this[`${key}_FAILURE`]);
             })
         dispatch(this[key]);
+        return call;
     };
 }
 
-function dispatch (action) {
+var dispatcher = require('../flux-chat/js/dispatcher/ChatAppDispatcher');
+function dispatch (action, payload) {
+    dispatcher.dispatch({
+        type: action,
+        items: payload
+    });
     console.log('dispatched', action);
 }
