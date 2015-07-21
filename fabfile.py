@@ -2,7 +2,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 
-from fabric.api import env, cd, run, shell_env, sudo, hosts, execute, settings
+from fabric.api import env, cd, run, shell_env, sudo, hosts, execute, settings, local
 from fabric.colors import green
 
 env.hosts = ['134.213.147.235']
@@ -11,7 +11,17 @@ env.key_filename = '~/.ssh/id_di'
 env.forward_agent = True
 
 
-def deploy():
+def deploy(js=False):
+    if js:
+        # TODO automatically figure out if produciton build needs updated
+        # (we don't run webpack watch with produciton settings as that
+        # generates files for intermediate states. We only want to run it
+        # once before deployment)
+        local('./node_modules/.bin/webpack -p --config webpack.prod.config.js')
+        local('git add webpack-stats-prod.json ditto/static/dist')
+        # TODO if last commit isn't pushed we could --amend and avoid
+        # the extra commit
+        local('git commit -m "Update production assets"')
     with cd('/srv/venv/ditto'):
         run('git fetch')
         changes = run('git log ..origin/master --oneline --no-color --reverse > /tmp/log; cat /tmp/log')
