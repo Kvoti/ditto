@@ -18,10 +18,18 @@ var CaseNoteEditor = React.createClass({
     render () {
 	return (
 	    <div>
-		<Validate isRequired={true} id="title">
+		<Validate
+			isRequired={true}
+			id="title"
+			messages={{isRequired: 'Please enter a title'}}
+			>
 		    <input className="form-control" placeholder="Enter note title" value={this.state.title} onChange={this._updateSharing.bind(this, 'title')} />
 		</Validate>
-		<Validate isRequired={true} id="text">
+		<Validate
+			isRequired={true}
+			id="text"
+			messages={{isRequired: 'Please enter a description'}}
+			>
 		    <textarea className="form-control" placeholder="Enter note text" value={this.state.text} onChange={this._updateSharing.bind(this, 'text')} />
 		</Validate>
 		<p>Select any roles and/or users you want to share this note with.</p>

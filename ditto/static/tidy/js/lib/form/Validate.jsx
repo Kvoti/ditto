@@ -14,6 +14,7 @@
 // TODO support all form input elements
 // TODO figure out form-level validation
 // TODO doesn't work if using LinkedStateMixin
+// TODO not sure way of accessing child props is proper react
 
 import classNames from 'classnames';
 import React from 'react';
@@ -24,10 +25,17 @@ export default class Validate extends React.Component {
 	id: React.PropTypes.string.isRequired,
 	isRequired: React.PropTypes.bool,
 	typingDelay: React.PropTypes.number,
+	messages: React.PropTypes.shape({
+	    isRequired: React.PropTypes.string
+	}),
     }
     
     static defaultProps = {
-	typingDelay: 300  // ms
+	typingDelay: 300,  // ms
+	// TODO how to merge any overridden messages
+	messages: {
+	    isRequired: 'Please enter a value',
+	}
     }
     
     state = {
@@ -72,7 +80,7 @@ export default class Validate extends React.Component {
 		{clone}
 		{validationIcon ? <span className={glyphClassNames} aria-hidden="true"></span> : null}
 		{validationIcon ? <span id={aria} className="sr-only">({validationStatus})</span> : null}
-		{this.state.errors && this.state.errors.map(e => <p className="help-block">{e}</p>)}
+		{this.state.errors && this.state.errors.map((e) => <p key={e[0]} className="help-block">{e[1]}</p>)}
 	    </div>
 	);
     }
@@ -114,9 +122,13 @@ export default class Validate extends React.Component {
     _validate (value) {
 	let errors = [];
 	if (this.props.isRequired && value === "") {
-	    errors.push('Please enter a value');
+	    errors.push(['isRequired', this._errorMsg('isRequired')]);
 	}
 	return errors;
+    }
+
+    _errorMsg (key) {
+	return this.props.messages[key];
     }
 }
 
