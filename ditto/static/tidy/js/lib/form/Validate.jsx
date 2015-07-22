@@ -11,6 +11,7 @@
 // (Note: looked at newforms but seemed very complicated. Possibly a better library
 // out there but this simple wrapping approach works for now)
 
+// TODO make validation state accessible outside component so parent can tell if, say, all inputs are valid
 // TODO support all form input elements
 // TODO figure out form-level validation
 // TODO doesn't work if using LinkedStateMixin
