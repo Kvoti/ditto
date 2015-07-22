@@ -15,6 +15,7 @@
 // TODO figure out form-level validation
 // TODO doesn't work if using LinkedStateMixin
 // TODO not sure way of accessing child props is proper react
+// TODO integrate with browser validation? (at least pass through props that html5 supports => better accessibility?)
 
 import classNames from 'classnames';
 import React from 'react';
@@ -24,6 +25,7 @@ export default class Validate extends React.Component {
 	// TODO only require id if wrapped component doesn't have one
 	id: React.PropTypes.string.isRequired,
 	isRequired: React.PropTypes.bool,
+	maxWords: React.PropTypes.number,  // TODO positive int
 	typingDelay: React.PropTypes.number,
 	messages: React.PropTypes.shape({
 	    isRequired: React.PropTypes.string
@@ -35,6 +37,7 @@ export default class Validate extends React.Component {
 	// TODO how to merge any overridden messages
 	messages: {
 	    isRequired: 'Please enter a value',
+	    maxWords: limit => `Please enter at most ${limit} words`,
 	}
     }
     
@@ -120,9 +123,17 @@ export default class Validate extends React.Component {
     }
 	    
     _validate (value) {
+	console.log('validating', value);
 	let errors = [];
 	if (this.props.isRequired && value === "") {
 	    errors.push(['isRequired', this._errorMsg('isRequired')]);
+	}
+	if (this.props.maxWords && value !== "") {
+	    let words = value.trim().split(/\s+/);
+	    console.log('word count', words.length);
+	    if (words.length > this.props.maxWords) {
+		errors.push(['maxWords', this._errorMsg('maxWords')(this.props.maxWords)]);
+	    }
 	}
 	return errors;
     }
@@ -131,4 +142,3 @@ export default class Validate extends React.Component {
 	return this.props.messages[key];
     }
 }
-

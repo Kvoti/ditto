@@ -19,16 +19,16 @@ var CaseNoteEditor = React.createClass({
 	return (
 	    <div>
 		<Validate
-			isRequired={true}
 			id="title"
+			isRequired={true}
 			messages={{isRequired: 'Please enter a title'}}
 			>
 		    <input className="form-control" placeholder="Enter note title" value={this.state.title} onChange={this._updateSharing.bind(this, 'title')} />
 		</Validate>
 		<Validate
+	                id="text"
 			isRequired={true}
-			id="text"
-			messages={{isRequired: 'Please enter a description'}}
+			maxWords={150}
 			>
 		    <textarea className="form-control" placeholder="Enter note text" value={this.state.text} onChange={this._updateSharing.bind(this, 'text')} />
 		</Validate>
@@ -38,7 +38,7 @@ var CaseNoteEditor = React.createClass({
 			onChangeUsers={this._updateSharing.bind(this, 'shareUsers')}
 	                selectedRoles={this.state.shareRoles}
 			users={this.state.shareUsers}
-		/>
+			/>
 		<p>
 		    <button
 			    className="btn btn-success"
