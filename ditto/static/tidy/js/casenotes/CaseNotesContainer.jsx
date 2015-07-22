@@ -3,18 +3,17 @@ import { connect, Provider } from 'redux/react';
 import { createRedux } from 'redux';
 
 import CaseNotes from './CaseNotes.jsx';
-import CaseNotesStore from './CaseNotesStore';
-import CaseNoteActions from './CaseNoteActions';
+import API from '../API';
 
-const redux = createRedux(CaseNotesStore);
+const redux = createRedux(API.reducers);
 
 @connect(state => ({
-    caseNotes: state && state.caseNotes
+    caseNotes: state && state.casenotes
 }))
 class CaseNotesContainer extends React.Component {
 
     componentDidMount () {
-	this.props.dispatch(CaseNoteActions.casenotes.list());
+	this.props.dispatch(API.actions.casenotes.list());
     }
     
     render () {
@@ -28,8 +27,7 @@ class CaseNotesContainer extends React.Component {
     }
     
     _saveNote (title, text, shareWithUsers, shareWithRoles) {
-	// TODO maybe neater if action creator creates object?
-	this.props.dispatch(CaseNoteActions.casenotes.create({
+	this.props.dispatch(API.actions.casenotes.create({
 	    client: this.props.client,
 	    title: title,
 	    text: text,

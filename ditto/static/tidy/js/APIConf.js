@@ -1,4 +1,4 @@
-import * as actions from '../lib/APIActions';
+import * as actions from './lib/APIActions';
 
 const APIConf = {
     casenotes: {
