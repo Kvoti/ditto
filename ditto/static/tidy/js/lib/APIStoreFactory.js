@@ -17,7 +17,7 @@ export default function APIStoreFactory (APIConf, endpoint) {
             return _replaceItem(state, 'pendingID', action.pendingID, item);
 
         } else if (action.type === actions.CREATE_FAILURE) {
-            item = _getItem(state, 'pendingID', actions.pendingID);
+            item = _getItem(state, 'pendingID', action.pendingID);
             item.status = itemStatus.failed;
             return _replaceItem(state, 'pendingID', action.pendingID, item);
 

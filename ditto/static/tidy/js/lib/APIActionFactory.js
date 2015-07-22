@@ -67,8 +67,9 @@ function makeAction(API, action) {
                 .done(res => {
                     dispatch(_action(this[`${key}_SUCCESS`], res, pendingID));
                 })
-                .fail(res => {
-                    dispatch(_action(this[`${key}_FAILURE`], res, pendingID));
+                .fail((jqXHR, textStatus, error) => {
+                    console.log(jqXHR, textStatus, error);
+                    dispatch(_action(this[`${key}_FAILURE`], textStatus, pendingID));
                 })
             return dispatch(_action(this[key], payload, pendingID));
         }
@@ -86,5 +87,6 @@ function _action (action, payload, pendingID) {
 
 function _pendingID () {
     pendingID += 1;
+    console.log('pendingID', pendingID);
     return pendingID;
 }
