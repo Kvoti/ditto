@@ -8,22 +8,6 @@ from . import models
 
 class CaseNoteSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(slug_field='username', read_only=True)
-    client = serializers.SlugRelatedField(slug_field='username', read_only=True)
-    
-    class Meta:
-        model = models.CaseNote
-        fields = (
-            'author',
-            'client',
-            'created_at',
-            'shared_with_roles',
-            'shared_with_users',
-            'title',
-            'text'
-        )
-
-
-class CreateCaseNoteSerializer(serializers.ModelSerializer):
     client = serializers.SlugRelatedField(slug_field='username',
                                           # TODO can we restrict to clients?
                                           queryset=User.objects.all()
@@ -43,26 +27,25 @@ class CreateCaseNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CaseNote
         fields = (
+            'id',
+            'author',
             'client',
+            'created_at',
             'shared_with_roles',
             'shared_with_users',
             'title',
             'text'
         )
-
+        read_only_fields = ('id', 'author', 'created_at')
+        
 
 class CaseNotesList(generics.ListCreateAPIView):
     queryset = models.CaseNote.objects.none()  # required for model perms
+    serializer_class = CaseNoteSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('client__username',)
     permission_classes = [permissions.DjangoModelPermissions]
     
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return CreateCaseNoteSerializer
-        else:
-            return CaseNoteSerializer
-
     def get_queryset(self):
         return models.CaseNote.objects.filter_for_viewer(self.request.user)
 
