@@ -16,29 +16,6 @@ var CaseNotes = require('../../casenotes/js/components/CaseNotes.jsx');
 var UserAutocomplete = require('../../js/components/UserAutocomplete.jsx');
 var TicketTable = require('../../tickets/js/components/TicketTable.jsx');
 var UserTable = require('../../users/js/components/UserTable.jsx');
-
-
-// Playing around with API handling to replace stuff in urlUtils.api and SettingsWebAPIUtils
-import apiFactory, { list, detail, create } from '../../js/api';
-import serverActions from '../../js/serverActions';
-import APIStore from '../../js/APIStore';
-var ChatAppDispatcher = require('../../flux-chat/js/dispatcher/ChatAppDispatcher');
-
-let APIConf =     {
-         chatrooms: {
-            url: 'chat/rooms/',
-            actions: [list, create]
-         }
-};
-
-let api = apiFactory(APIConf);
-let actions = serverActions(APIConf);
-let store = new APIStore(APIConf, 'chatrooms', ChatAppDispatcher);
-
-actions.chatrooms.list()
-    .done(() => console.log(store.getAll()));
-//////////////////////////////////////////////////
-
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
