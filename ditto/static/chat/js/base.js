@@ -75,7 +75,7 @@ if (changeAvatar) {
 var profileAvatar = document.getElementById('profile-avatar');
 if (profileAvatar) {
     React.render(
-            <Avatar user={hackGetClient()} size={150} />,
+            <AvatarContainer username={hackGetClient()} size={150} />,
         profileAvatar
     );
 }
