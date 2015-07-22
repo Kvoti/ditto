@@ -1,3 +1,5 @@
+import Validate from '../lib/form/Validate.jsx';
+
 var React = require('react/addons');
 var RoleAndUserSelect = require('../../../configuration/js/components/RoleAndUserSelect.jsx');
 
@@ -16,8 +18,12 @@ var CaseNoteEditor = React.createClass({
     render () {
 	return (
 	    <div>
-		<input className="form-control" placeholder="Enter note title" valueLink={this.linkState('title')} />
-		<textarea className="form-control" placeholder="Enter note text" valueLink={this.linkState('text')} />
+		<Validate isRequired={true} id="title">
+		    <input className="form-control" placeholder="Enter note title" value={this.state.title} onChange={this._updateSharing.bind(this, 'title')} />
+		</Validate>
+		<Validate isRequired={true} id="text">
+		    <textarea className="form-control" placeholder="Enter note text" value={this.state.text} onChange={this._updateSharing.bind(this, 'text')} />
+		</Validate>
 		<p>Select any roles and/or users you want to share this note with.</p>
 		<RoleAndUserSelect
 			onChangeRoles={this._updateSharing.bind(this, 'shareRoles')}
@@ -65,5 +71,6 @@ var CaseNoteEditor = React.createClass({
     }
 
 });
+
 
 module.exports = CaseNoteEditor;
