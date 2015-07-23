@@ -47,7 +47,8 @@ class CaseNotesList(generics.ListCreateAPIView):
     permission_classes = [permissions.DjangoModelPermissions]
     
     def get_queryset(self):
-        return models.CaseNote.objects.filter_for_viewer(self.request.user)
+        return models.CaseNote.objects.filter_for_viewer(
+            self.request.user).order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
