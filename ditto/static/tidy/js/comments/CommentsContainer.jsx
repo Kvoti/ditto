@@ -21,8 +21,8 @@ export default class CommentsContainer extends React.Component {
     render () {
 	return (
 	    <div>
-		{this.state.comments.map(c => <Comment key={c.id} comment={c} />)}
 		<CommentForm onSubmit={this._onSubmit} />
+		{this.state.comments.map(c => <Comment key={c.id} comment={c} />)}
 	    </div>
 	);
     }

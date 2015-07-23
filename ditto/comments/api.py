@@ -21,7 +21,7 @@ class CommentSerializer(serializers.ModelSerializer):
 def create_comment(request):
     if request.method == 'GET':
         serializer = CommentSerializer(
-            Comment.objects.all(),  # TODO filter for current object!
+            Comment.objects.all().order_by('-submit_date'),  # TODO filter for current object!
             many=True
         )
         return Response(serializer.data)
@@ -37,7 +37,7 @@ def create_comment(request):
             # list when a new comment is submitted (until and unless we use
             # pubsub for real time updates)
             serializer = CommentSerializer(
-                Comment.objects.all(),  # TODO filter for current object!
+                Comment.objects.all().order_by('-submit_date'),  # TODO filter for current object!
                 many=True
             )
             return Response(serializer.data)

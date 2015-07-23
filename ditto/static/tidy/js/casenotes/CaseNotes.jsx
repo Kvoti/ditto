@@ -5,7 +5,6 @@ import itemStatus from '../lib/itemStatus';
 import commonPropTypes from './commonPropTypes';
 import CaseNotesViewer from './CaseNotesViewer.jsx';
 import CaseNoteEditor from './CaseNoteEditor.jsx';
-import CommentsContainer from '../comments/CommentsContainer.jsx';
 
 export default class CaseNotes extends React.Component {
     static propTypes = {
@@ -19,9 +18,8 @@ export default class CaseNotes extends React.Component {
     
     render () {
 	return (
-	    <TabbedArea defaultActiveKey={1} bsStyle="tabs">
+	    <TabbedArea defaultActiveKey={2} bsStyle="tabs">
 		<TabPane tab="New note" eventKey={1}>
-		    <CommentsContainer />
 		    {this.props.caseNotes.map(note => {
 			console.log(note.title, note.status);
 			if (note.status === itemStatus.pending) {
