@@ -18,7 +18,7 @@ export default class CaseNotes extends React.Component {
     
     render () {
 	return (
-	    <TabbedArea defaultActiveKey={1} bsStyle="tabs">
+	    <TabbedArea defaultActiveKey={2} bsStyle="tabs">
 		<TabPane tab="New note" eventKey={1}>
 		    {this.props.caseNotes.map(note => {
 			console.log(note.title, note.status);
