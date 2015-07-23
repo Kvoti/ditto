@@ -46,6 +46,18 @@ export default class Validate extends React.Component {
 	value: this.props.children.props.value,
 	errors: null
     }
+
+    componentWillReceiveProps (nextProps) {
+	let initialValue = nextProps.children.props.value;
+	let errors = null;
+	if (initialValue != "") {
+	    errors = this._validate(initialValue);
+	}
+	this.setState({
+	    value: initialValue,
+	    errors,
+	});
+    }
     
     render () {
 	let validationStatus;
@@ -93,7 +105,7 @@ export default class Validate extends React.Component {
 	let value = e.target.value;
 	// Only validate immediately if *re-editing* a value
 	// TODO or editing an *initially valid* value
-	if (this.state.wasBlurred) {
+	if (this.state.wasBlurred || this.props.children.props.value != "") {
 	    this.setState({
 		value: value,
 	    }, this._pendValidation.bind(this, value));
