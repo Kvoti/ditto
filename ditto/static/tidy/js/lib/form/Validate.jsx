@@ -11,7 +11,6 @@
 // (Note: looked at newforms but seemed very complicated. Possibly a better library
 // out there but this simple wrapping approach works for now)
 
-// TODO make validation state accessible outside component so parent can tell if, say, all inputs are valid
 // TODO support all form input elements
 // TODO figure out form-level validation
 // TODO doesn't work if using LinkedStateMixin
@@ -27,6 +26,7 @@ export default class Validate extends React.Component {
 	id: React.PropTypes.string.isRequired,
 	isRequired: React.PropTypes.bool,
 	maxWords: React.PropTypes.number,  // TODO positive int
+	onChange: React.PropTypes.func,
 	typingDelay: React.PropTypes.number,
 	messages: React.PropTypes.shape({
 	    isRequired: React.PropTypes.string
@@ -136,7 +136,6 @@ export default class Validate extends React.Component {
     }
 	    
     _validate (value) {
-	console.log('validating', value);
 	let errors = [];
 	if (this.props.isRequired && value === "") {
 	    errors.push(['isRequired', this._errorMsg('isRequired')]);
@@ -148,9 +147,16 @@ export default class Validate extends React.Component {
 		errors.push(['maxWords', this._errorMsg('maxWords')(this.props.maxWords)]);
 	    }
 	}
+	if (this._isValidationStateChanged(errors)) {
+	    this.props.onChange && this.props.onChange(!errors.length);
+	}
 	return errors;
     }
 
+    _isValidationStateChanged (newErrors) {
+	return this.state.errors === null || !newErrors.length !== !this.state.errors.length;
+    }
+    
     _errorMsg (key) {
 	return this.props.messages[key];
     }
