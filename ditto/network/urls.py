@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'', include('dashboard.urls')),
     url(r'^forms/', include('dittoforms.urls')),
 
+    url(r'^api/comments/', include('comments.api')),
     url(r'^api/tickets/', include('tickets.api')),
     url(r'^api/users/', include('users.api')),
     url(r'^api/casenotes/', include('casenotes.api')),

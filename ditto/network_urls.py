@@ -26,5 +26,6 @@ urlpatterns = patterns('',
 
     # Your stuff: custom urls go here
     url(r'', include('network.urls', namespace="ditto")),
+    url(r'', include('django_comments.urls')),
 
 )

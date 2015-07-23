@@ -51,6 +51,7 @@ class Common(Configuration):
         'sesame',
         'rest_framework',
         'webpack_loader',
+        'django_comments',
     )
 
     # Apps specific for this project go here.

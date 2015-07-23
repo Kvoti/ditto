@@ -157,7 +157,11 @@ def setup_members():
         
 
 def _create_user(username, group_name, gender=None):
-    user, created = User.objects.get_or_create(username=username)
+    user, created = User.objects.get_or_create(
+        username=username,
+        # this email here only needed for django_comments
+        defaults={'email': '%s@example.com' % username}
+    )
     user.emailaddress_set.get_or_create(
         verified=1,
         defaults={'email': '%s@example.com' % username})

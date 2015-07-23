@@ -6,7 +6,11 @@ export default class Comment extends React.Component {
     render () {
 	return (
 	    <dl>
-		<dt>{this.props.comment.author}</dt>
+		<dt>by:</dt>
+		<dd>{this.props.comment.user}</dd>
+		<dt>on:</dt>
+		<dd>{this.props.comment.submit_date}</dd>
+		<dt>comment:</dt>
 		<dd>{this.props.comment.comment}</dd>
 	    </dl>
 	);

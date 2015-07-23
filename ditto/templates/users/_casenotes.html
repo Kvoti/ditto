@@ -1,9 +1,19 @@
 {% extends "skin/accordion_panel.html" %}
+{% load comments %}
 
 {% block title %}
 CASE NOTES
 {% endblock %}
 
 {% block body %}
+    {% get_comment_form for casenotes.casenote 1 as form %}
+    <script>
+        var commentFormData = {};
+    {% for field in form %}
+    {% if field.value %}
+	    commentFormData.{{ field.name }} = '{{ field.value }}';
+        {% endif %}
+        {% endfor %}
+    </script>
     <section id="casenotes"></section>
 {% endblock %}
