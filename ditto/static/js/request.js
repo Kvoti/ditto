@@ -1,8 +1,8 @@
 // Util functions for making ajax requests
 // (using jquery for now but will probably replace with superagent at some point)
 
-export function get (url) {
-    return $.get(url);
+export function get (url, params) {
+    return $.get(url, params);
 }
 
 export function post (url, payload) {
