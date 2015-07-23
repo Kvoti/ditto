@@ -18,9 +18,16 @@ var TimeAgo = React.createClass({
     
     render: function () {
 	var when = this.props.when;
+        try {
+            when = when.toISOString();
+        } catch (e) {
+            if (!e instanceof TypeError) {
+                throw (e);
+            }
+        }
 	var delta = timeago(when);
 	return (
-	    <time dateTime={when.toISOString()}>{delta}</time>
+	    <time dateTime={when}>{delta}</time>
 	);
     }
 });
