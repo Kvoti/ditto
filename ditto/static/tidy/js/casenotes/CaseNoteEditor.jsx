@@ -11,7 +11,11 @@ var CaseNoteEditor = React.createClass({
 	    text: this.props.initialText || "",
 	    title: this.props.initialText || "",
 	    shareRoles: this.props.initialShareRoles || [],
-	    shareUsers: this.props.initialShareUsers || []
+	    shareUsers: this.props.initialShareUsers || [],
+	    isValid: {
+		title: false,
+		text: false
+	    }
 	};
     },
     
@@ -22,6 +26,7 @@ var CaseNoteEditor = React.createClass({
 			id="title"
 			isRequired={true}
 			messages={{isRequired: 'Please enter a title'}}
+			onChange={this._updateValidation.bind(this, 'title')}
 			>
 		    <input className="form-control" placeholder="Enter note title" value={this.state.title} onChange={this._updateSharing.bind(this, 'title')} />
 		</Validate>
@@ -29,6 +34,7 @@ var CaseNoteEditor = React.createClass({
 	                id="text"
 			isRequired={true}
 			maxWords={150}
+			onChange={this._updateValidation.bind(this, 'text')}
 			>
 		    <textarea className="form-control" placeholder="Enter note text" value={this.state.text} onChange={this._updateSharing.bind(this, 'text')} />
 		</Validate>
@@ -42,7 +48,7 @@ var CaseNoteEditor = React.createClass({
 		<p>
 		    <button
 			    className="btn btn-success"
-			    disabled={!this.state.text || !this.state.title}
+			    disabled={!this.state.isValid.title ||!this.state.isValid.text}
 			    onClick={this._onSave}
 			    >save</button>
 		    <button
@@ -61,6 +67,14 @@ var CaseNoteEditor = React.createClass({
 	var update = {};
 	update[key] = value;
 	this.setState(update);
+    },
+
+    _updateValidation (key, value) {
+	let validationFlags = this.state.isValid;
+	let currentValue = validationFlags[key];
+	console.log('update validation', key, currentValue, value);
+	validationFlags[key] = value;
+	this.setState({isValid: validationFlags});
     },
 
     _onSave () {
