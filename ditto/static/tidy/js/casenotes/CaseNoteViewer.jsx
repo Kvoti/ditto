@@ -21,7 +21,7 @@ export default class CaseNoteViewer extends React.Component {
 		    <dd>{ this.props.caseNote.text }</dd>
 		</dl>
 		<h3>Comments</h3>
-		<CommentsContainer />
+		<CommentsContainer contentType="casenote" objectID={this.props.caseNote.id} />
 	    </div>
 	    
 	);
