@@ -22,6 +22,7 @@ def deploy(js=False):
         # TODO if last commit isn't pushed we could --amend and avoid
         # the extra commit
         local('git commit -m "Update production assets"')
+        local('git push')
     with cd('/srv/venv/ditto'):
         run('git fetch')
         changes = run('git log ..origin/master --oneline --no-color --reverse > /tmp/log; cat /tmp/log')
