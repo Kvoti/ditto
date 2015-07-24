@@ -6,10 +6,11 @@ export default class CommentForm extends React.Component {
     render () {
 	return (
 	    <form onSubmit={this._onSubmit}>
-		<label>Comment:
-		    <textarea ref="text"/>
-		    <input type="submit" />
-		</label>
+		<div className="form-group">
+		    <label forHtml="comment">Add Comment:</label>
+		    <textarea className="form-control" id="comment" ref="text"/>
+		    <input className="btn btn-success" type="submit" />
+		</div>
 	    </form>
 	);
     }

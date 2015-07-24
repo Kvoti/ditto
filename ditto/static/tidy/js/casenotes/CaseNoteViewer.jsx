@@ -12,13 +12,13 @@ export default class CaseNoteViewer extends React.Component {
 	    <div>
 		<dl>
 		    <dt>Author:</dt>
-		    <dd>{ this.props.caseNote.author }</dd>
+		    <dd>{this.props.caseNote.author}</dd>
 		    <dt>On:</dt>
-		    <dd>{ this.props.caseNote.created_at }</dd>
+		    <dd><TimeAgo when={this.props.caseNote.created_at}/></dd>
 		    <dt>Title:</dt>
-		    <dd>{ this.props.caseNote.title }</dd>
+		    <dd>{this.props.caseNote.title}</dd>
 		    <dt>Note:</dt>
-		    <dd>{ this.props.caseNote.text }</dd>
+		    <dd>{this.props.caseNote.text}</dd>
 		</dl>
 		<h3>Comments</h3>
 		<CommentsContainer contentType="casenote" objectID={this.props.caseNote.id} />
