@@ -32,14 +32,21 @@ class CommentList(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('content_type__model', 'object_pk')
-    
+
+    def create(self, *args, **kwargs):
+        response = super(CommentList, self).create(*args, **kwargs)
+        all_comments = Comment.objects.for_model(
+            self.comment.content_object).order_by('-submit_date')
+        serializer = CommentSerializer(
+            all_comments, many=True)
+        response.data = serializer.data
+        return response
+        
     def perform_create(self, serializer):
-        serializer.save(
+        self.comment = serializer.save(
             user=self.request.user,
             site=Site.objects.get_current(),
         )
-
-    # TODO customise create response to list all case notes
 
 
 from django.conf.urls import patterns, url

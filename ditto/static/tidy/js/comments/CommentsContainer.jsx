@@ -44,7 +44,7 @@ export default class CommentsContainer extends React.Component {
 		content_type: this.props.contentType,
 	    }
 	).done(res => {
-	    this.setState({comments: [res]});
+	    this.setState({comments: res});
 	}).fail(() => {
 	    alert('error saving comment');
 	});
