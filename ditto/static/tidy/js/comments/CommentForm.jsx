@@ -34,5 +34,6 @@ export default class CommentForm extends React.Component {
     _onSubmit = (e) => {
 	e.preventDefault();
 	this.props.onSubmit(this.state.comment);
+	this.setState({comment: ""});
     }
 }
