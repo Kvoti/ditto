@@ -107,7 +107,7 @@ if (formBuilder) {
 var caseNotes = document.getElementById('casenotes');
 if (caseNotes) {
     React.render(
-        <CaseNotes client={hackGetClient()} />,
+        <CaseNotes />,
         caseNotes
     );
 }

@@ -26,7 +26,7 @@ urlpatterns = patterns('',
                        
     # URL pattern for the UserDetailView
     url(
-        regex=r'^(?P<username>[\w.@+-]+)/$',
+        regex=r'^(?P<username>[\w.@+-]+)/(?:\d+/)?$',
         view=views.UserDetailView.as_view(),
         name='detail'
     ),

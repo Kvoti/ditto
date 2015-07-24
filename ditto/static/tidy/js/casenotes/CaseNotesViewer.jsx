@@ -1,19 +1,18 @@
 import React from 'react';
 import { Table, Column } from 'fixed-data-table';
+import { Link } from 'react-router';
 import TimeAgo from '../../../flux-chat/js/components/TimeAgo.react';
+import url from 'url';
 
 import CaseNoteViewer from './CaseNoteViewer.jsx';
 import commonPropTypes from './commonPropTypes';
 
 export default class CaseNotesViewer extends React.Component {
     static propTypes = {
-	caseNotes: commonPropTypes.caseNotes
+	caseNotes: commonPropTypes.caseNotes.isRequired,
+	showNote: React.PropTypes.number,
     }
 
-    state = {
-	showing: null,
-    }
-    
     _rowGetter = (index) => {
 	return this.props.caseNotes[index];
     }
@@ -22,19 +21,24 @@ export default class CaseNotesViewer extends React.Component {
 	return <TimeAgo when={dateTime} />;
     }
 
-    _renderTitle = (title, key, user, rowIndex) => {
+    _renderTitle = (title, key, caseNote, rowIndex) => {
 	return (
-	    <a onClick={this._show.bind(this, rowIndex)}>{title}</a>
+	    <Link to={_absPath(`../${caseNote.client}/${caseNote.id}/`)}>{title}</Link>
 	);
     }
     
     render () {
+	let showing;
+	if (this.props.showNote !== undefined) {
+	    showing = this.props.caseNotes.find(
+		c => c.id == this.props.showNote);
+	}
 	return (
 	    <div>
-		{this.state.showing !== null ?
+		{showing ?
 		 <div>
-		 <button onClick={this._unShow} className="btn btn-default">Back</button>
-		 <CaseNoteViewer caseNote={this.props.caseNotes[this.state.showing]}/>
+		 <Link to={_absPath('../')} className="btn btn-default">Back</Link>
+		 <CaseNoteViewer caseNote={showing} />
 		 </div>
 		:
 		<Table
@@ -72,12 +76,10 @@ export default class CaseNotesViewer extends React.Component {
 	);
     }
 
-    _show (index) {
-	this.setState({showing: index});
-    }
-    
-    _unShow = () => {
-	this.setState({showing: null});
-    }
-	
+}
+
+// TODO this seems hacky. Better way to have relative urls work with react-router?
+function _absPath(relativePath) {
+    let pathname = url.parse(window.location.href).pathname;
+    return url.resolve(pathname, relativePath);
 }

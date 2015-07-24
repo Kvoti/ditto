@@ -22,6 +22,7 @@
     "strophe-plugins": "^0.1.2",
     "timeago": "^0.2.0",
     "underscore": "^1.8.3",
+    "url": "^0.10.3",
     "visibilityjs": "^1.2.1"
   },
   "devDependencies": {

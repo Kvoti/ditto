@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect, Provider } from 'redux/react';
 import { createRedux } from 'redux';
+import { Router, Route } from 'react-router';
+import { history } from 'react-router/lib/BrowserHistory';
 
 import CaseNotes from './CaseNotes.jsx';
 import API from '../API';
@@ -21,6 +23,7 @@ class CaseNotesContainer extends React.Component {
 	return (
 	    <CaseNotes
 		    caseNotes={caseNotes}
+		    showNote={parseInt(this.props.params.id, 10)}
 		    dispatch={dispatch}
 		    onSave={this._saveNote.bind(this)} />
 	);
@@ -28,7 +31,7 @@ class CaseNotesContainer extends React.Component {
     
     _saveNote (title, text, shareWithUsers, shareWithRoles) {
 	this.props.dispatch(API.actions.casenotes.create({
-	    client: this.props.client,
+	    client: this.props.params.client,
 	    title: title,
 	    text: text,
 	    shared_with_roles: shareWithRoles,
@@ -38,14 +41,29 @@ class CaseNotesContainer extends React.Component {
 }
 
 // TODO this is boilerplatey
-export default class App {
+
+// declare our routes and their hierarchy
+// TODO can I use relative paths here?
+// TODO can I split out the table and viewer component?
+function renderRoutes () {
+    return (
+	<Router history={history}>
+	    <Route path="/di/users/" ignoreScrollBehavior={true}>
+		<Route path=":client/" component={CaseNotesContainer} ignoreScrollBehavior={true}/>
+		<Route path=":client/:id/" component={CaseNotesContainer} ignoreScrollBehavior={true}/>
+	    </Route>
+	</Router>
+    );
+}
+
+class App extends React.Component {
   render() {
     return (
       <Provider redux={redux} >
-        {() =>
-          <CaseNotesContainer {...this.props} />
-        }
+        {renderRoutes}
       </Provider>
     );
   }
 }
+
+export default App;

@@ -8,6 +8,7 @@ import CaseNoteEditor from './CaseNoteEditor.jsx';
 
 export default class CaseNotes extends React.Component {
     static propTypes = {
+	showNote: React.PropTypes.number,
 	caseNotes: commonPropTypes.caseNotes,
 	onSave: React.PropTypes.func.isRequired,
     }
@@ -37,7 +38,7 @@ export default class CaseNotes extends React.Component {
 		</TabPane>
 		<TabPane tab="View case history" eventKey={2}>
 		    {!this.props.caseNotes ? "Loading..." :
-		     <CaseNotesViewer caseNotes={this.props.caseNotes} />
+		     <CaseNotesViewer caseNotes={this.props.caseNotes} showNote={this.props.showNote}/>
 		     }
 		     <input type="search" placeholder="Search" />
 		</TabPane>
