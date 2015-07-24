@@ -38,11 +38,11 @@ function _fullUrl (part, id) {
 
 const _API = {
     
-    [actions.list]: (url) => {
-        return get(_fullUrl(url));
+    [actions.list]: (url, params) => {
+        return get(_fullUrl(url), params);
     },
-    [actions.retrieve]: (url, id) => {
-        return get(_fullUrl(url, id));
+    [actions.retrieve]: (url, id, params) => {
+        return get(_fullUrl(url, id), params);
     },
     [actions.create]: (url, conf) => {
         return post(_fullUrl(url), conf);
