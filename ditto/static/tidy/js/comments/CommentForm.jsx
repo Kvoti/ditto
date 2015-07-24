@@ -1,15 +1,31 @@
 import React from 'react';
+import Validate from '../lib/form/Validate.jsx';
 
 export default class CommentForm extends React.Component {
-    // TODO static propTypes
+    static propTypes = {
+	onSubmit: React.PropTypes.func.isRequired,
+    }
 
+    state = {
+	comment: ""
+    }
+    
     render () {
 	return (
 	    <form onSubmit={this._onSubmit}>
 		<div className="form-group">
-		    <label forHtml="comment">Add Comment:</label>
-		    <textarea className="form-control" id="comment" ref="text"/>
-		    <input className="btn btn-success" type="submit" />
+		    <Validate isRequired={true} id="comment">
+			<textarea
+				className="form-control"
+				ref="text"
+				value={this.state.comment}
+				onChange={v => this.setState({comment: v})}
+				/>
+		    </Validate>
+		    <input
+			    className="btn btn-success"
+			    disabled={!this.state.comment}
+			    type="submit" />
 		</div>
 	    </form>
 	);
@@ -17,7 +33,6 @@ export default class CommentForm extends React.Component {
 
     _onSubmit = (e) => {
 	e.preventDefault();
-	let value = React.findDOMNode(this.refs.text).value;
-	this.props.onSubmit(value);
+	this.props.onSubmit(this.state.comment);
     }
 }
