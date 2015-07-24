@@ -15,7 +15,9 @@ const redux = createRedux(API.reducers);
 class CaseNotesContainer extends React.Component {
 
     componentDidMount () {
-	this.props.dispatch(API.actions.casenotes.list());
+	this.props.dispatch(API.actions.casenotes.list(
+	    {client__username: this.props.params.client}
+	));
     }
     
     render () {
