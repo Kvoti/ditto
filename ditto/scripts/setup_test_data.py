@@ -64,10 +64,10 @@ def setup_guest_passwords():
         GUEST_PASSWORDS = None
         
 
-def setup_site(name='KVOTI.TECHNOLOGY'):
+def setup_site(name='Kvoti', domain='kvoti.technology'):
     site = Site.objects.get_current()
     site.name = name
-    domain = 'localhost:8000' if settings.DEBUG else site.name.lower()
+    domain = 'localhost:8000' if settings.DEBUG else domain
     site.domain = domain
     site.save()
 
@@ -190,7 +190,7 @@ def setup_tenants():
         is_configured=True,
     )
     if not multitenancy.tenant.is_main():
-        setup_site(name='Kvoti')
+        setup_site()
 
 
 def setup_reg_form():

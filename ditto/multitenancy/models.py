@@ -40,4 +40,4 @@ class Tenant(models.Model):
             # Do the Site import here to avoid messing up the
             # monkeypatching of _meta.db_table
             from django.contrib.sites.models import Site
-            return 'http://%s/%s/' % (Site.objects.get_current(), self.slug)
+            return 'http://%s/%s/' % (Site.objects.get_current().domain, self.slug)
