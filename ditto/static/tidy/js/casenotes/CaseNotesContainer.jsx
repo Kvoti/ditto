@@ -5,9 +5,9 @@ import { Router, Route } from 'react-router';
 import { history } from 'react-router/lib/BrowserHistory';
 
 import CaseNotes from './CaseNotes.jsx';
-import API from '../API';
+import flux from '../flux';
 
-const redux = createRedux(API.reducers);
+const redux = createRedux(flux.reducers);
 
 @connect(state => ({
     caseNotes: state && state.casenotes
@@ -15,7 +15,7 @@ const redux = createRedux(API.reducers);
 class CaseNotesContainer extends React.Component {
 
     componentDidMount () {
-	this.props.dispatch(API.actions.casenotes.list(
+	this.props.dispatch(flux.actionCreators.casenotes.list(
 	    {client__username: this.props.params.client}
 	));
     }
@@ -32,7 +32,7 @@ class CaseNotesContainer extends React.Component {
     }
     
     _saveNote (title, text, shareWithUsers, shareWithRoles) {
-	this.props.dispatch(API.actions.casenotes.create({
+	this.props.dispatch(flux.actionCreators.casenotes.create({
 	    client: this.props.params.client,
 	    title: title,
 	    text: text,
