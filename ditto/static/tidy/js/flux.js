@@ -1,5 +1,5 @@
-import Flux from './lib/FluxForAPI';
+import Flux from 'redux-rest/src/reduxRest';
 import APIConf from './APIConf';
 
-const flux = new Flux(DITTO.tenant, APIConf);
+const flux = new Flux(APIConf);
 export default flux;

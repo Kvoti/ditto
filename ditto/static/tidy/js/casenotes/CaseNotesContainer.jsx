@@ -10,7 +10,7 @@ import flux from '../flux';
 const redux = createRedux(flux.reducers);
 
 @connect(state => ({
-    caseNotes: state && state.casenotes
+    caseNotes: state.casenotes_items
 }))
 class CaseNotesContainer extends React.Component {
 
