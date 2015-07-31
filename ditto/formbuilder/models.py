@@ -121,7 +121,8 @@ class Question(models.Model):
             ('form', 'order'),
             ('form', 'question'),
         )
-
+        ordering = ('order',)
+    
 
 class Text(Question):
     is_multiline = models.BooleanField(default=False)
@@ -167,6 +168,7 @@ class Option(models.Model):
             ('question', 'order'),
             ('question', 'text')
         )
+        ordering = ('order',)
 
 
 class ScoreGroup(Question):
@@ -191,6 +193,7 @@ class ScoreGroupItem(models.Model):
             ('question', 'order'),
             ('question', 'text'),
         )
+        ordering = ('order',)
 
 
 class ScoreLabel(models.Model):
@@ -203,6 +206,7 @@ class ScoreLabel(models.Model):
             ('question', 'order'),
             ('question', 'label'),
         )
+        ordering = ('order',)
 
 
 class Score(models.Model):
