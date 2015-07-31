@@ -42,3 +42,4 @@ djangorestframework==3.1.2
 django-filter==0.10.0
 django-webpack-loader==0.1.2.1
 django-contrib-comments==1.6.1
+tabulate==0.7.5
