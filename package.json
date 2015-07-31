@@ -9,6 +9,7 @@
     "keymirror": "^0.1.1",
     "lodash": "^3.6.0",
     "object-assign": "^2.0.0",
+    "object-walk": "^0.1.1",
     "react": "^0.13.1",
     "react-bootstrap": "^0.23.7",
     "react-components": "^0.2.0",

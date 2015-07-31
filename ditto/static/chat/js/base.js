@@ -19,6 +19,10 @@ var UserTable = require('../../users/js/components/UserTable.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
+
+import camelCaseify from '../../tidy/js/lib/camelCaseify';
+window.cc = camelCaseify;
+
 if (chatConf.me) {
     ChatWebAPIUtils.connect(
         chatConf.server,
