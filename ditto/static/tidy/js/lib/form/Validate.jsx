@@ -16,6 +16,7 @@
 // TODO doesn't work if using LinkedStateMixin
 // TODO not sure way of accessing child props is proper react
 // TODO integrate with browser validation? (at least pass through props that html5 supports => better accessibility?)
+// TODO probably want to allow passing in validators <Validate validators={[maxLength, minLength]}>
 
 import classNames from 'classnames';
 import React from 'react';
