@@ -20,7 +20,7 @@ export default class Form extends React.Component {
           return (
             <div>
             {this._renderQuestion(q, i, editing)}
-            {this._renderEditButton(i, editing)}
+            {this._renderEditButton(i)}
             </div>
           );
          })}
@@ -40,8 +40,8 @@ export default class Form extends React.Component {
     );
   }
 
-  _renderEditButton(index, editingIndex) {
-    if (editingIndex === null && editingIndex !== index) {
+  _renderEditButton(index) {
+    if (this.state.editing === null) {
       return (
         <button
                 className="btn btn-default"
