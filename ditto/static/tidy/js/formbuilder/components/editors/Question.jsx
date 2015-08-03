@@ -14,6 +14,7 @@ export default class Question extends React.Component {
     super(props);
     this.state = {
       config: this._copyProps(),
+      isValid: false,
       isCancelling: false
     };
   }
@@ -38,7 +39,10 @@ export default class Question extends React.Component {
           <label>
             Enter question text:
           </label>
-          <Validate isRequired={true}>
+          <Validate
+                  isRequired={true}
+                  onChange={isValid => this.setState({isValid})}
+                  >
             <input
                     className="form-control"
                     autoFocus={true}
@@ -66,7 +70,7 @@ export default class Question extends React.Component {
   }
 
   _renderSave() {
-    if (this._isChanged()) { // TODO && isValid()!!
+    if (this._isChanged() && this.state.isValid) {
       return (
         <button
                 className="btn btn-success"
