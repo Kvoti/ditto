@@ -21,6 +21,14 @@ import classNames from 'classnames';
 import React from 'react';
 
 export default class Validate extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: this.props.children.props.value,
+      errors: null
+    };
+  }
+
   static propTypes = {
     // TODO only require id if wrapped component doesn't have one
     id: React.PropTypes.string.isRequired,
@@ -42,11 +50,12 @@ export default class Validate extends React.Component {
     }
   }
 
-  state = {
-    value: this.props.children.props.value,
-    errors: null
+  componentDidMount() {
+    this.setState(
+      {errors: this._validate(this.state.value)}
+    );
   }
-
+  
   componentWillReceiveProps(nextProps) {
     let initialValue = nextProps.children.props.value;
     let errors = null;
