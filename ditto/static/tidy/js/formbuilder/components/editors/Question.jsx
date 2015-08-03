@@ -49,11 +49,29 @@ export default class Question extends React.Component {
           />
         </div>
         {editor ? React.createElement(editor, this.editorProps) : null}
-        {this._renderCancel()}
+        {this._renderSave()} {this._renderCancel()}
       </div>
     );
   }
 
+  _renderSave() {
+    if (this._isChanged()) { // TODO && isValid()!!
+      return (
+        <button
+                className="btn btn-success"
+                onClick={this._save}
+                >
+          Save
+        </button>
+      );
+    }
+    return null;
+  }
+
+  _save = () => {
+    this.props.onSave(this.state.config);
+  }
+  
   _renderCancel() {
     if (!this.state.isCancelling) {
       return (

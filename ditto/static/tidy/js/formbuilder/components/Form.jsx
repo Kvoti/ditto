@@ -1,19 +1,22 @@
 import React from 'react';
 import Question from './Question';
+import _ from 'lodash';  // TODO switch to ImmutableJS?
 
 export default class Form extends React.Component {
-  state = {
-    editing: null
+  constructor(props) {
+    super(props);
+    this.state = {
+      editing: null,
+      config: _.cloneDeep(this.props)
+    };
   }
   
   render() {
-    console.log(this.props);
     let editing = this.state.editing;
-    console.log('editing', editing);
     return (
       <div>
-        <h1>{this.props.title}</h1>
-        {this.props.questions.map((q, i) => {
+        <h1>{this.state.config.title}</h1>
+        {this.state.config.questions.map((q, i) => {
           return (
             <div>
             {this._renderQuestion(q, i, editing)}
@@ -29,8 +32,9 @@ export default class Form extends React.Component {
     return (
       <Question
               key={question.id}
-              isEditable={editingIndex === index}
               {...question}
+              isEditable={editingIndex === index}
+              onSave={this._saveQuestion}
               onCancel={this._cancelEdit}
       />
     );
@@ -52,6 +56,14 @@ export default class Form extends React.Component {
   
   _editQuestion(index) {
     this.setState({editing: index});
+  }
+
+  _saveQuestion = (newConfig) => {
+    var change = {
+      config: {questions: {[this.state.editing]: {$set: newConfig}}},
+      editing: {$set: null}
+    };
+    this.setState(React.addons.update(this.state, change));
   }
   
   _cancelEdit = () => {
