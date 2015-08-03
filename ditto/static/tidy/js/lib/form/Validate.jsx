@@ -59,7 +59,7 @@ export default class Validate extends React.Component {
   componentWillReceiveProps(nextProps) {
     let initialValue = nextProps.children.props.value;
     let errors = null;
-    if (initialValue !== '') {
+    if (initialValue !== '' || this.state.errors.length) {
       errors = this._validate(initialValue);
     }
     this.setState({
