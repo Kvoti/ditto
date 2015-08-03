@@ -19,7 +19,7 @@ var UserTable = require('../../users/js/components/UserTable.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
-import FormContainer from '../../tidy/js/formbuilder/components/viewers/FormContainer';
+import FormContainer from '../../tidy/js/formbuilder/components/FormContainer';
 
 import camelCaseify from '../../tidy/js/lib/camelCaseify';
 window.cc = camelCaseify;

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { get } from '../../../../../js/request';
+import { get } from '../../../../js/request';
 import Form from './Form';
-import camelCaseify from '../../../lib/camelCaseify';
+import camelCaseify from '../../lib/camelCaseify';
 
 const APIURL = '/di/api/formbuilder/';
 
