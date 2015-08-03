@@ -1,9 +1,10 @@
 import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
+import TextEditor from './Text';
+
 export default class Question extends React.Component {
   static defaultProps = {
-    type: React.PropTypes.oneOf(['text', 'choice', 'scoregroup']),
     question: '',
     isRequired: false
   }
@@ -22,7 +23,14 @@ export default class Question extends React.Component {
 
   render() {
     let editor;
-    let { type, question, isRequired, ...editorProps } = this.props;
+    let editorProps;
+    if (this.state.config.text) {
+      editor = TextEditor;
+      editorProps = {
+        ...this.state.config.text,
+        update: this._update.bind(this, 'text')
+      };
+    }
     return (
       <div style={{border: '1px solid black'}}>
         <div className="form-group">
@@ -48,7 +56,7 @@ export default class Question extends React.Component {
                   onChange={this._update.bind(this, 'isRequired')}
           />
         </div>
-        {editor ? React.createElement(editor, this.editorProps) : null}
+        {editor ? React.createElement(editor, editorProps) : null}
         {this._renderSave()} {this._renderCancel()}
       </div>
     );
@@ -103,9 +111,22 @@ export default class Question extends React.Component {
     );
   }
   
-  _update(field, e) {
-    let value = e.target.value;
-    let change = {config: {[field]: {$set: value}}};
+  _update() {
+    let args = Array.from(arguments);
+    let e = args.pop();
+    let value;
+    if (e.target.checked !== undefined) {
+      value = e.target.checked;
+    } else {
+      value = e.target.value;
+    }
+    let change = {config: {}};
+    let tmp = change.config;
+    args.forEach(key => {
+      tmp[key] = {};
+      tmp = tmp[key];
+    });
+    tmp['$set'] = value;
     let newState = React.addons.update(this.state, change);
     this.setState(newState);
   }

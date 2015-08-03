@@ -1,71 +1,53 @@
 import React from 'react';
-import BaseEditor from './BaseEditor';
 
-export default class Text extends BaseEditor {
+export default class Text extends React.Component {
   static defaultProps = {
-    question: '',
-    isRequired: false
+    maxChars: null,
+    maxWords: null,
+    isMultiLine: false
   }
 
   render() {
     return (
-      <div style={{border: '1px solid black'}}>
+      <div>
         <div className="form-group">
           <label>
-            Enter question text:
+            Max characters
           </label>
           <input
                   className="form-control"
-                  autoFocus={true}
-                  type="text"
-                  value={this.state.config.question}
-                  onChange={this._update.bind(this, 'question')}
+                  type="number"
+                  value={this.props.maxChars}
+                  onChange={this._update.bind(this, 'maxChars')}
           />
         </div>
         <div className="form-group">
           <label>
-            Is required?
+            Max words
+          </label>
+          <input
+                  className="form-control"
+                  type="number"
+                  value={this.props.maxWords}
+                  onChange={this._update.bind(this, 'maxWords')}
+          />
+        </div>
+        <div className="form-group">
+          <label>
+            Is mult-line?
           </label>
           <input
                   className="form-control"
                   type="checkbox"
-                  value={this.state.config.isRequired}
-                  onChange={this._update.bind(this, 'isRequired')}
+                  checked={this.props.isMultiLine}
+                  onChange={this._update.bind(this, 'isMultiLine')}
           />
         </div>
-        {this._renderCancel()}
       </div>
     );
   }
 
-  _renderCancel() {
-    if (!this.state.isCancelling) {
-      return (
-        <button
-                className="btn btn-default"
-                onClick={this._cancelOrConfirm}
-                >
-          Cancel
-        </button>
-      );
-    }
-    return (
-      <div>
-        <p>You have unsaved changes, are you sure you want to cancel?</p>
-        <button
-                className="btn btn-danger"
-                onClick={this._cancel}
-                >
-          Yes
-        </button>
-        {' '}
-        <button
-                className="btn btn-success"
-                onClick={this._cancelCancel}
-                >
-          No
-        </button>
-      </div>
-    );
+  _update(key, e) {
+    this.props.update(key, e);
   }
 }
