@@ -114,8 +114,9 @@ export default class Question extends React.Component {
   _update() {
     let args = Array.from(arguments);
     let e = args.pop();
+    console.log(e);
     let value;
-    if (e.target.checked !== undefined) {
+    if (e.target.type === 'checkbox' || e.target.type === 'radio') {
       value = e.target.checked;
     } else {
       value = e.target.value;
