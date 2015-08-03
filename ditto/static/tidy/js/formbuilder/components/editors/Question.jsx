@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
+import Validate from '../../../lib/form/Validate';
 import TextEditor from './Text';
 
 export default class Question extends React.Component {
@@ -37,13 +38,15 @@ export default class Question extends React.Component {
           <label>
             Enter question text:
           </label>
-          <input
-                  className="form-control"
-                  autoFocus={true}
-                  type="text"
-                  value={this.state.config.question}
-                  onChange={this._update.bind(this, 'question')}
-          />
+          <Validate isRequired={true}>
+            <input
+                    className="form-control"
+                    autoFocus={true}
+                    type="text"
+                    value={this.state.config.question}
+                    onChange={this._update.bind(this, 'question')}
+            />
+          </Validate>
         </div>
         <div className="form-group">
           <label>
