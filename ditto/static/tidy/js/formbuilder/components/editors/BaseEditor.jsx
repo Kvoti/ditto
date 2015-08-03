@@ -23,7 +23,7 @@ export default class BaseEditor extends React.Component {
     this.setState({config: this._copyProps()});
   }
 
-  _confirmCancel = () => {
+  _cancelOrConfirm = () => {
     if (this._isChanged()) {
       let change = {isCancelling: {$set: true}};
       this.setState(

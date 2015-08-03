@@ -33,33 +33,39 @@ export default class Text extends BaseEditor {
                   onChange={this._update.bind(this, 'isRequired')}
           />
         </div>
-        {!this.state.isCancelling ?
-         <button
-         className="btn btn-warning"
-         onClick={this._confirmCancel}
-         >
-         Cancel
-         </button>
-         :
-         <div>
-         <p>You have unsaved changes, are you sure you want to cancel?</p>
-         <button
-         className="btn btn-danger"
-         onClick={this._cancel}
-         >
-         Yes
-         </button>
-         <button
-         className="btn btn-success"
-         onClick={this._cancelCancel}
-         >
-         No
-         </button>
-         </div>
-         }
+        {this._renderCancel()}
       </div>
     );
   }
 
-  
+  _renderCancel() {
+    if (!this.state.isCancelling) {
+      return (
+        <button
+                className="btn btn-default"
+                onClick={this._cancelOrConfirm}
+                >
+          Cancel
+        </button>
+      );
+    }
+    return (
+      <div>
+        <p>You have unsaved changes, are you sure you want to cancel?</p>
+        <button
+                className="btn btn-danger"
+                onClick={this._cancel}
+                >
+          Yes
+        </button>
+        {' '}
+        <button
+                className="btn btn-success"
+                onClick={this._cancelCancel}
+                >
+          No
+        </button>
+      </div>
+    );
+  }
 }
