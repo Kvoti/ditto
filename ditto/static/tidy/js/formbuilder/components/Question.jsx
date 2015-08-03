@@ -2,20 +2,20 @@ import React from 'react';
 import Text from './viewers/Text';
 import Choice from './viewers/Choice';
 import ScoreGroup from './viewers/ScoreGroup';
-// TODO neater to have Text.Editor and Text.Viewer?
-import TextEditor from './editors/Text';
+import QuestionEditor from './editors/Question';
 
 export default class Question extends React.Component {
   static propTypes = {
     isEditable: React.PropTypes.bool
   }
-  
+
   render() {
-    console.log('isEditable', this.props.isEditable);
     const { text, choice, scoregroup } = this.props;
     let component = Text;
-    if (text) {
-      component = this.props.isEditable ? TextEditor : Text;
+    if (this.props.isEditable) {
+      component = QuestionEditor;
+    } else if (text) {
+      component = Text;
     } else if (choice) {
       component = Choice;
     } else if (scoregroup) {
