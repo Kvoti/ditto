@@ -19,40 +19,42 @@ export default class ScoreGroup extends React.Component {
   }
 
   render() {
-    const scoreLabels = this.props.scoregroup.labels.map((label, i) => {
-      const classes = classNames({
-        'col-md-1': true,
-        'col-md-offset-3': i === 0
-      });
-      return (
-        <div key={label} className={classes}>{label}</div>
-      );
-    });
-    const items = this.props.scoregroup.items.map((question, i) => {
-      const scoreInputs = scoreLabels.map(() => {
-        return (
-          <div className="col-md-1">
-            <input name={question.text} type="radio" />
-          </div>
-        );
-      });
-      return (
-        <div className="row">
-          <div className="col-md-3">{question.text}</div>
-          {scoreInputs}
-        </div>
-      );
-    });
     return (
       <div>
         <p>
           {this.props.question}{this.props.isRequired ? '*' : ''}
         </p>
         <div className="row">
-          {scoreLabels}
+          {this.props.scoregroup.labels.map((label, i) => {
+            return (
+              <div key={label} className={this._labelClass(i)}>{label}</div>
+            );
+           })}
         </div>
-        {items}
+        {this.props.scoregroup.items.map(item => {
+          return (
+            <div className="row">
+            <div className="col-md-3">
+            {item.text}
+            </div>
+            {this.props.scoregroup.labels.map(() => {
+              return (
+                <div className="col-md-1">
+                <input name={item.text} type="radio" />
+                </div>
+              );
+            })}
+            </div>
+            );
+         })}
       </div>
     );
+  }
+
+  _labelClass(i) {
+    return classNames({
+      'col-md-1': true,
+      'col-md-offset-3': i === 0
+    });
   }
 }
