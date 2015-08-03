@@ -52,7 +52,7 @@ export default class Question extends React.Component {
           <input
                   className="form-control"
                   type="checkbox"
-                  value={this.state.config.isRequired}
+                  checked={this.state.config.isRequired}
                   onChange={this._update.bind(this, 'isRequired')}
           />
         </div>
