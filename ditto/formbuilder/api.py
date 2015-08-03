@@ -58,6 +58,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Question
         fields = (
+            'id',
             'question',
             'is_required',
             'text',

@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { get } from '../../../js/request';
+import { get } from '../../../../../js/request';
 import Form from './Form';
+import camelCaseify from '../../../lib/camelCaseify';
 
 const APIURL = '/di/api/formbuilder/';
 
@@ -10,17 +11,19 @@ export default class FormContainer extends React.Component {
      } */
 
   state = {
-    form: undefined
+    forms: undefined
   }
 
   componentDidMount() {
     get(APIURL)
       .done(res => {
-        this.setState({form: res});
+        camelCaseify(res);
+        this.setState({forms: res});
       });
   }
 
   render() {
-    return <Form {...this.state.form}/>;
+    console.log(this.state);
+    return this.state.forms ? <Form {...this.state.forms[0]}/> : null;
   }
 }

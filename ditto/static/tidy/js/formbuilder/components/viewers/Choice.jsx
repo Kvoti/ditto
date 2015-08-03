@@ -2,9 +2,11 @@ import React from 'react';
 
 export default class Choice extends React.Component {
   static propTypes = {
-    questionText: React.PropTypes.string.isRequired,
-    choices: React.PropTypes.arrayOf(
-      React.PropTypes.string).isRequired,
+    question: React.PropTypes.string.isRequired,
+    choice: React.PropTypes.shape({
+      options: React.PropTypes.arrayOf(
+        React.PropTypes.string).isRequired
+    }),
     isMultiple: React.PropTypes.bool,
     isRequired: React.PropTypes.bool,
     hasOther: React.PropTypes.bool,
@@ -14,11 +16,11 @@ export default class Choice extends React.Component {
   render() {
     let other;
     const type = this.props.isMultiple ? 'checkbox' : 'radio';
-    const options = this.props.choices.map(option => {
+    const options = this.props.choice.options.map(option => {
       return (
         <li key={option}>
           <label>
-            <input type={type} name={this.props.questionText} />
+            <input type={type} name={this.props.question} />
             {option}
           </label>
         </li>
@@ -34,7 +36,7 @@ export default class Choice extends React.Component {
     }
     return (
       <div>
-        <p>{this.props.questionText}{this.props.isRequired ? ' *' : ''}</p>
+        <p>{this.props.question}{this.props.isRequired ? ' *' : ''}</p>
         <ul>
           {options}
         </ul>

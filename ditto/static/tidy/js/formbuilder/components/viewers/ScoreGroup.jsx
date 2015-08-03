@@ -1,35 +1,35 @@
 import React from 'react';
+import classNames from 'classnames';
 
 export default class ScoreGroup extends React.Component {
 
   static propTypes = {
-    questionText: React.PropTypes.string.isRequired,
+    question: React.PropTypes.string.isRequired,
     isRequired: React.PropTypes.bool,
-    // TODO validate score labels and values are same length
-    scores: React.PropTypes.arrayOf(
-      React.PropTypes.shape(React.PropTypes.string),
-    ).isRequired,
-    questions: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        text: React.PropTypes.string,
-        scores: React.PropTypes.arrayOf(React.PropTypes.number)
-      })
-    )
+    scoregroup: React.PropTypes.shape({
+      labels: React.PropTypes.arrayOf(React.PropTypes.string),
+      items: React.PropTypes.arrayOf(
+        React.PropTypes.shape({
+          text: React.PropTypes.string.isRequired,
+          // TODO validate score labels and values are same length
+          scores: React.PropTypes.arrayOf(React.PropTypes.number).isRequired
+        }).isRequired
+      ).isRequired
+    }).isRequired
   }
 
   render() {
-    const scores = this.props.scores || [];
-    const scoreLabels = scores.map((score, i) => {
-      const classes = React.addons.classSet({
+    const scoreLabels = this.props.scoregroup.labels.map((label, i) => {
+      const classes = classNames({
         'col-md-1': true,
         'col-md-offset-3': i === 0
       });
       return (
-        <div className={classes}>{score.label}</div>
+        <div key={label} className={classes}>{label}</div>
       );
     });
-    const questions = this.props.questions.map((question, i) => {
-      const scoreInputs = scores.map(score => {
+    const items = this.props.scoregroup.items.map((question, i) => {
+      const scoreInputs = scoreLabels.map(() => {
         return (
           <div className="col-md-1">
             <input name={question.text} type="radio" />
@@ -46,12 +46,12 @@ export default class ScoreGroup extends React.Component {
     return (
       <div>
         <p>
-          {this.props.questionText}{this.props.isRequired ? '*' : ''}
+          {this.props.question}{this.props.isRequired ? '*' : ''}
         </p>
         <div className="row">
           {scoreLabels}
         </div>
-        {questions}
+        {items}
       </div>
     );
   }

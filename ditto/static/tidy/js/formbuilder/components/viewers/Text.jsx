@@ -3,7 +3,7 @@ import React from 'react';
 export default class Text extends React.Component {
 
   static propTypes = {
-    questionText: React.PropTypes.string.isRequired,
+    question: React.PropTypes.string.isRequired,
     isRequired: React.PropTypes.bool
   }
 
@@ -11,7 +11,7 @@ export default class Text extends React.Component {
     return (
       <p>
         <label>
-          {this.props.questionText}{this.props.isRequired ? '*' : ''}
+          {this.props.question}?{this.props.isRequired ? ' *' : ' '}
           <input type="text" />
         </label>
       </p>
