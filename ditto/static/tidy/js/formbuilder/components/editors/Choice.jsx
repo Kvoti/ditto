@@ -16,7 +16,7 @@ export default class Choice extends React.Component {
     onChangeOption: PropTypes.func.isRequired,
     onToggleHasOther: PropTypes.func.isRequired,
     onChangeOtherText: PropTypes.func.isRequired,
-    onChangeValidation: PropTypes.func.isRequired
+    onChangeOptionValidation: PropTypes.func.isRequired
   }
 
   static defaultProps = {
