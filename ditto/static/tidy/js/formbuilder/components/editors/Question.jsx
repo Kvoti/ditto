@@ -34,8 +34,9 @@ export default class Question extends React.Component {
       editor = TextEditor;
       editorProps = {
           ...this.state.config.text,
-        // TODO replace this with onChangeMaxWords etc.
-        update: this._update.bind(this, 'text')
+        onChangeMaxChars: this._update.bind(this, 'text', 'maxChars'),
+        onChangeMaxWords: this._update.bind(this, 'text', 'maxChars'),
+        onToggleIsMultiline: this._update.bind(this, 'text', 'isMultiline')
       };
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;

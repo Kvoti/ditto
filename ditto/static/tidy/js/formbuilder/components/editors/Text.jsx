@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 export default class Text extends React.Component {
+  static propTypes = {
+    maxChars: PropTypes.number,
+    maxWords: PropTypes.number,
+    isMultiline: PropTypes.bool,
+    onChangeMaxChars: PropTypes.func,
+    onChangeMaxWords: PropTypes.func,
+    onToggleIsMultiline: PropTypes.func
+  }
+
   static defaultProps = {
     maxChars: null,
     maxWords: null,
-    isMultiLine: false
+    isMultiline: false
   }
 
   render() {
@@ -18,7 +27,7 @@ export default class Text extends React.Component {
                   className="form-control"
                   type="number"
                   value={this.props.maxChars}
-                  onChange={this._update.bind(this, 'maxChars')}
+                  onChange={this.props.onChangeMaxChars}
           />
         </div>
         <div className="form-group">
@@ -29,7 +38,7 @@ export default class Text extends React.Component {
                   className="form-control"
                   type="number"
                   value={this.props.maxWords}
-                  onChange={this._update.bind(this, 'maxWords')}
+                  onChange={this.props.onChangeMaxWords}
           />
         </div>
         <div className="form-group">
@@ -39,15 +48,11 @@ export default class Text extends React.Component {
           <input
                   className="form-control"
                   type="checkbox"
-                  checked={this.props.isMultiLine}
-                  onChange={this._update.bind(this, 'isMultiLine')}
+                  checked={this.props.isMultiline}
+                  onChange={this.props.onToggleIsMultiline}
           />
         </div>
       </div>
     );
-  }
-
-  _update(key, e) {
-    this.props.update(key, e);
   }
 }
