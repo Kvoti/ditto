@@ -14,10 +14,17 @@ export default class Choice extends React.Component {
   }
 
   render() {
-    const type = this.props.isMultiple ? 'checkbox' : 'radio';
+    const type = this.props.choice.isMultiple ? 'checkbox' : 'radio';
     return (
       <div>
-        <p>{this.props.question}{this.props.isRequired ? ' *' : ''}</p>
+        <p>
+          {this.props.question}
+          {this.props.choice.isMultiple ?
+           <small> (You can select more than one)</small>
+           : null
+           }
+           {this.props.isRequired ? ' *' : ''}
+        </p>
         <ul>
           {this.props.choice.options.map(option => {
             return (
@@ -28,7 +35,7 @@ export default class Choice extends React.Component {
               </label>
               </li>
             );
-          })}
+           })}
         </ul>
         {this.props.hasOther ?
          (
