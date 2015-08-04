@@ -35,30 +35,34 @@ export default class Question extends React.Component {
       editor = TextEditor;
       editorProps = {
           ...this.state.config.text,
-        onChangeMaxChars: this._update.bind(this, 'text', 'maxChars'),
-        onChangeMaxWords: this._update.bind(this, 'text', 'maxChars'),
-        onToggleIsMultiline: this._update.bind(this, 'text', 'isMultiline')
+        onChangeMaxChars: this._set.bind(this, 'text', 'maxChars'),
+        onChangeMaxWords: this._set.bind(this, 'text', 'maxChars'),
+        onToggleIsMultiline: this._set.bind(this, 'text', 'isMultiline')
       };
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;
       editorProps = {
         ...this.state.config.choice,
-        onAddOption: this._addOption,
-        onRemoveOption: this._removeOption,
-        onChangeOption: this._updateOption,
+        onAddOption: this._add.bind(this, 'choice', 'option'),
+        onRemoveOption: this._remove.bind(this, 'choice', 'option'),
+        onChangeOption: this._setOption, // TODO
         onChangeOptionValidation: this._updateOptionValidation,
-        onToggleIsMultiple: this._toggleIsMultiple,
+        onToggleIsMultiple: this._toggleIsMultiple, // TODO this.toggle('isMultiple')
         onToggleHasOther: this._toggleHasOther,
-        onChangeOtherText: this._update.bind(this, 'choice', 'otherText')
+        onChangeOtherText: this._set.bind(this, 'choice', 'otherText')
       };
     } else if (this.state.config.scoregroup) {
       editor = ScoreGroupEditor;
       editorProps = {
           ...this.state.config.scoregroup,
         // TODO *ton* of callbacks to go here
-        onAddLabel: this._addLabel,
-        onRemoveLabel: this._removeLabel,
-        onChangeLabel: this._update.bind(this, 'scoregroup', 'labels')
+        // TODO *infer* these callbacks from schema!?
+        onAddLabel: this._add.bind(this, 'scoregroup', 'labels'),
+        onRemoveLabel: this._remove.bind(this, 'scoregroup', 'labels'),
+        onChangeLabel: this._set.bind(this, 'scoregroup', 'labels'),
+        onAddItem: this._add.bind(this, 'scoregroup', 'items'),
+        onRemoveItem: this._remove.bind(this, 'scoregroup', 'items'),
+        onChangeItem: this._set.bind(this, 'scoregroup', 'items.text')
       };
     }
     return (
@@ -76,7 +80,7 @@ export default class Question extends React.Component {
                     autoFocus={true}
                     type="text"
                     value={this.state.config.question}
-                    onChange={this._update.bind(this, 'question')}
+                    onChange={this._set.bind(this, 'question')}
             />
           </Validate>
         </div>
@@ -88,7 +92,7 @@ export default class Question extends React.Component {
                   className="form-control"
                   type="checkbox"
                   checked={this.state.config.isRequired}
-                  onChange={this._update.bind(this, 'isRequired')}
+                  onChange={this._set.bind(this, 'isRequired')}
           />
         </div>
         {editor ? React.createElement(editor, editorProps) : null}
@@ -146,26 +150,6 @@ export default class Question extends React.Component {
     );
   }
   
-  _update() {
-    let args = Array.from(arguments);
-    let e = args.pop();
-    let value;
-    if (e.target.type === 'checkbox' || e.target.type === 'radio') {
-      value = e.target.checked;
-    } else {
-      value = e.target.value;
-    }
-    let change = {config: {}};
-    let tmp = change.config;
-    args.forEach(key => {
-      tmp[key] = {};
-      tmp = tmp[key];
-    });
-    tmp['$set'] = value;
-    let newState = React.addons.update(this.state, change);
-    this.setState(newState);
-  }
-
   _cancelOrConfirm = () => {
     if (this._isChanged()) {
       let change = {isCancelling: {$set: true}};
@@ -231,21 +215,6 @@ export default class Question extends React.Component {
     this.setState(React.addons.update(this.state, changes));
   }
   
-  _updateOption = (index, value) => {
-    let changes = {config: {choice: {options: {[index]: {$set: value}}}}};
-    this.setState(React.addons.update(this.state, changes));
-  }
-
-  _addOption = (value) => {
-    let changes = {config: {choice: {options: {$push: [value]}}}};
-    this.setState(React.addons.update(this.state, changes));
-  }
-
-  _removeOption = (index) => {
-    let changes = {config: {choice: {options: {$splice: [[index, 1]]}}}};
-    this.setState(React.addons.update(this.state, changes));
-  }
-
   _updateOptionValidation = (index, isValid) => {
     let changes = {validation: {options: {[index]: {$set: isValid}}}};
     this.setState(state => {
@@ -254,18 +223,56 @@ export default class Question extends React.Component {
   }
   /* ---------------------------------------------------------------------- */
 
-  // Handlers for ScoreGroup editing
-  // (Same as above, not quite sure where this logic belongs)
-  _addLabel = (value) => {
-    console.log(...arguments);
-    let changes = {config: {scoregroup: {labels: {$push: [value]}}}};
-    this.setState(React.addons.update(this.state, changes));
+  // Generic state changing functions
+  _set(...args) {
+    let [path, e] = this._getChangePath(args);
+    let value;
+    if (e.target.type === 'checkbox' || e.target.type === 'radio') {
+      value = e.target.checked;
+    } else {
+      value = e.target.value;
+    }
+    let secondLast = path[path.length - 2];
+    if (secondLast.includes && secondLast.includes('.')) {
+      // hack needing generalised here
+      let [before, after] = secondLast.split('.');
+      path[path.length - 2] = before;
+      path.push(after);
+    }
+    const change = this._getChangeSpec(path, '$set', value);
+    const newState = React.addons.update(this.state, change);
+    this.setState(newState);
   }
 
-  _removeLabel = (index) => {
-    let changes = {config: {scoregroup: {labels: {$splice: [[index, 1]]}}}};
-    this.setState(React.addons.update(this.state, changes));
+  _add = (...args) => {
+    let [path, value] = this._getChangePath(args);
+    const change = this._getChangeSpec(path, '$push', [value]);
+    const newState = React.addons.update(this.state, change);
+    this.setState(newState);
   }
-  /* ---------------------------------------------------------------------- */
-  
+
+  _remove = (...args) => {
+    let [path, index] = this._getChangePath(args);
+    const change = this._getChangeSpec(path, '$splice', [[index, 1]]);
+    const newState = React.addons.update(this.state, change);
+    this.setState(newState);
+  }
+
+  // TODO toggle
+
+  _getChangePath(args) {
+    const last = args.pop();
+    return [args, last];
+  }
+
+  _getChangeSpec(path, operation, value) {
+    const change = {config: {}};
+    let tmp = change.config;
+    path.forEach(key => {
+      tmp[key] = {};
+      tmp = tmp[key];
+    });
+    tmp[operation] = value;
+    return change;
+  }
 }
