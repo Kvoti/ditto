@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 export default class Text extends React.Component {
 
   static propTypes = {
-    question: React.PropTypes.string.isRequired,
-    isRequired: React.PropTypes.bool
+    question: PropTypes.string.isRequired,
+    isRequired: PropTypes.bool,
+    text: PropTypes.shape({
+      maxChars: PropTypes.number,
+      maxWords: PropTypes.number,
+      isMultiline: PropTypes.bool
+    })
   }
 
   render() {
@@ -12,7 +17,11 @@ export default class Text extends React.Component {
       <p>
         <label>
           {this.props.question}?{this.props.isRequired ? ' *' : ' '}
-          <input type="text" />
+          {this.props.text.isMultiline ?
+           <textarea/>
+           :
+           <input type="text" />
+           }
         </label>
       </p>
     );
