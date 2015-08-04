@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, TabbedArea, TabPane } from 'react-bootstrap/lib';
-import itemStatus from 'redux-rest/src/itemStatus';
+import { itemStatus } from 'redux-rest';
 
 import commonPropTypes from './commonPropTypes';
 import CaseNotesViewer from './CaseNotesViewer.jsx';
