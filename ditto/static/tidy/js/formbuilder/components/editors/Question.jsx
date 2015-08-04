@@ -45,7 +45,9 @@ export default class Question extends React.Component {
         onRemoveOption: this._removeOption,
         onChangeOption: this._updateOption,
         onChangeOptionValidation: this._updateOptionValidation,
-        onToggleIsMultiple: this._toggleIsMultiple
+        onToggleIsMultiple: this._toggleIsMultiple,
+        onToggleHasOther: this._toggleHasOther,
+        onChangeOtherText: this._update.bind(this, 'choice', 'otherText')
       };
     }
     return (
@@ -212,6 +214,12 @@ export default class Question extends React.Component {
     this.setState(React.addons.update(this.state, changes));
   }
 
+  _toggleHasOther = () => {
+    const hasOther = !this.state.config.choice.hasOther;
+    const changes = {config: {choice: {hasOther: {$set: hasOther}}}};
+    this.setState(React.addons.update(this.state, changes));
+  }
+  
   _updateOption = (index, value) => {
     let changes = {config: {choice: {options: {[index]: {$set: value}}}}};
     this.setState(React.addons.update(this.state, changes));

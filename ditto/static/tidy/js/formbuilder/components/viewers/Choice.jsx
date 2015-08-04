@@ -3,14 +3,14 @@ import React from 'react';
 export default class Choice extends React.Component {
   static propTypes = {
     question: React.PropTypes.string.isRequired,
+    isRequired: React.PropTypes.bool,
     choice: React.PropTypes.shape({
       options: React.PropTypes.arrayOf(
-        React.PropTypes.string).isRequired
-    }),
-    isMultiple: React.PropTypes.bool,
-    isRequired: React.PropTypes.bool,
-    hasOther: React.PropTypes.bool,
-    otherText: React.PropTypes.string
+        React.PropTypes.string).isRequired,
+      isMultiple: React.PropTypes.bool,
+      hasOther: React.PropTypes.bool,
+      otherText: React.PropTypes.string
+    })
   }
 
   render() {
@@ -37,10 +37,10 @@ export default class Choice extends React.Component {
             );
            })}
         </ul>
-        {this.props.hasOther ?
+        {this.props.choice.hasOther ?
          (
            <label>
-           {this.props.otherText || 'Other'}:{' '}
+           {this.props.choice.otherText || 'Other'}:{' '}
            <input type="text" />
            </label>
          ) : null}
