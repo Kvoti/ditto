@@ -53,19 +53,47 @@ export default class ScoreGroup extends React.Component {
         />
         <h3>Items</h3>
         {this.props.items.map((item, index) => {
-          return <TextItem
-                         name="item"
-                         id={index}
-                         value={item.text}
-                         onChange={this.props.onChangeItem}
-                         onRemove={() => this.props.onRemoveItem(index)}
-                         onValidationChange={(index, isValid) => {}}
-                 />;
+          return (
+            <div>
+            <TextItem
+                    name="item"
+                    id={index}
+                    value={item.text}
+                    onChange={this.props.onChangeItem}
+                    onRemove={() => this.props.onRemoveItem(index)}
+                    onValidationChange={(index, isValid) => {}}
+            />
+            {this._renderScores(item, index)}
+            </div>
+          );
         })}
       <AddButton
               name="item"
-              onClick={() => this.props.onAddItem({text: '', scores: []})}
+              onClick={() => this.props.onAddItem({
+                       text: '',
+                       scores: this.props.labels.map((l, i) => i)
+                       })}
       />
+      </div>
+    );
+  }
+
+  _renderScores = (item, index) => {
+    return (
+      <div className="row">
+        {item.scores.map((score, i) => {
+          return <div className="col-md-1">
+          <label>{this.props.labels[i]}</label>
+          <Validate isRequired={true}>
+          <input
+          type="text"
+          className="form-control"
+          value={score}
+          onChange={(e) => this.props.onChangeScore(index, i, e)}
+          />
+          </Validate>
+          </div>;
+         })}
       </div>
     );
   }

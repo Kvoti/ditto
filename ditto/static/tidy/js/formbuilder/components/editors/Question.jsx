@@ -6,6 +6,8 @@ import TextEditor from './Text';
 import ChoiceEditor from './Choice';
 import ScoreGroupEditor from './ScoreGroup';
 
+const arg = '__arg__';
+
 export default class Question extends React.Component {
   static defaultProps = {
     question: '',
@@ -35,21 +37,21 @@ export default class Question extends React.Component {
       editor = TextEditor;
       editorProps = {
           ...this.state.config.text,
-        onChangeMaxChars: this._set.bind(this, 'text', 'maxChars'),
-        onChangeMaxWords: this._set.bind(this, 'text', 'maxChars'),
-        onToggleIsMultiline: this._set.bind(this, 'text', 'isMultiline')
+        onChangeMaxChars: this._set.bind(this, ['text', 'maxChars']),
+        onChangeMaxWords: this._set.bind(this, ['text', 'maxChars']),
+        onToggleIsMultiline: this._set.bind(this, ['text', 'isMultiline'])
       };
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;
       editorProps = {
         ...this.state.config.choice,
-        onAddOption: this._add.bind(this, 'choice', 'option'),
-        onRemoveOption: this._remove.bind(this, 'choice', 'option'),
+        onAddOption: this._add.bind(this, ['choice', 'option']),
+        onRemoveOption: this._remove.bind(this, ['choice', 'option']),
         onChangeOption: this._setOption, // TODO
         onChangeOptionValidation: this._updateOptionValidation,
         onToggleIsMultiple: this._toggleIsMultiple, // TODO this.toggle('isMultiple')
         onToggleHasOther: this._toggleHasOther,
-        onChangeOtherText: this._set.bind(this, 'choice', 'otherText')
+        onChangeOtherText: this._set.bind(this, ['choice', 'otherText'])
       };
     } else if (this.state.config.scoregroup) {
       editor = ScoreGroupEditor;
@@ -57,12 +59,13 @@ export default class Question extends React.Component {
           ...this.state.config.scoregroup,
         // TODO *ton* of callbacks to go here
         // TODO *infer* these callbacks from schema!?
-        onAddLabel: this._add.bind(this, 'scoregroup', 'labels'),
-        onRemoveLabel: this._remove.bind(this, 'scoregroup', 'labels'),
-        onChangeLabel: this._set.bind(this, 'scoregroup', 'labels'),
-        onAddItem: this._add.bind(this, 'scoregroup', 'items'),
-        onRemoveItem: this._remove.bind(this, 'scoregroup', 'items'),
-        onChangeItem: this._set.bind(this, 'scoregroup', 'items.text')
+        onAddLabel: this._add.bind(this, ['scoregroup', 'labels']),
+        onRemoveLabel: this._remove.bind(this, ['scoregroup', 'labels']),
+        onChangeLabel: this._set.bind(this, ['scoregroup', 'labels']),
+        onAddItem: this._add.bind(this, ['scoregroup', 'items']),
+        onRemoveItem: this._remove.bind(this, ['scoregroup', 'items']),
+        onChangeItem: this._set.bind(this, ['scoregroup', 'items', arg, 'text']),
+        onChangeScore: this._set.bind(this, ['scoregroup', 'items', arg, 'scores', arg])
       };
     }
     return (
@@ -232,13 +235,6 @@ export default class Question extends React.Component {
     } else {
       value = e.target.value;
     }
-    let secondLast = path[path.length - 2];
-    if (secondLast.includes && secondLast.includes('.')) {
-      // hack needing generalised here
-      let [before, after] = secondLast.split('.');
-      path[path.length - 2] = before;
-      path.push(after);
-    }
     const change = this._getChangeSpec(path, '$set', value);
     const newState = React.addons.update(this.state, change);
     this.setState(newState);
@@ -261,10 +257,26 @@ export default class Question extends React.Component {
   // TODO toggle
 
   _getChangePath(args) {
+    console.log('path', args);
+    let path = args[0];
     const last = args.pop();
-    return [args, last];
+    const params = args.slice(1);
+    console.log(path, params, last);
+    path = this._replaceParamsInPath(path, params);
+    return [path, last];
   }
 
+  _replaceParamsInPath(path, params) {
+    return path.map(part => {
+      if (part === arg) {
+        let replacement = params[0];
+        params = params.slice(1);
+        return replacement;
+      }
+      return part;
+    });
+  }
+  
   _getChangeSpec(path, operation, value) {
     const change = {config: {}};
     let tmp = change.config;
@@ -273,6 +285,7 @@ export default class Question extends React.Component {
       tmp = tmp[key];
     });
     tmp[operation] = value;
+    console.log('change', change);
     return change;
   }
 }
