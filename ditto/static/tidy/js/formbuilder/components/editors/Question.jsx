@@ -4,6 +4,7 @@ import _ from 'lodash';  // TODO switch to ImmutableJS?
 import Validate from '../../../lib/form/Validate';
 import TextEditor from './Text';
 import ChoiceEditor from './Choice';
+import ScoreGroupEditor from './ScoreGroup';
 
 export default class Question extends React.Component {
   static defaultProps = {
@@ -49,6 +50,15 @@ export default class Question extends React.Component {
         onToggleIsMultiple: this._toggleIsMultiple,
         onToggleHasOther: this._toggleHasOther,
         onChangeOtherText: this._update.bind(this, 'choice', 'otherText')
+      };
+    } else if (this.state.config.scoregroup) {
+      editor = ScoreGroupEditor;
+      editorProps = {
+          ...this.state.config.scoregroup,
+        // TODO *ton* of callbacks to go here
+        onAddLabel: this._addLabel,
+        onRemoveLabel: this._removeLabel,
+        onChangeLabel: this._update.bind(this, 'scoregroup', 'labels')
       };
     }
     return (
@@ -243,4 +253,19 @@ export default class Question extends React.Component {
     });
   }
   /* ---------------------------------------------------------------------- */
+
+  // Handlers for ScoreGroup editing
+  // (Same as above, not quite sure where this logic belongs)
+  _addLabel = (value) => {
+    console.log(...arguments);
+    let changes = {config: {scoregroup: {labels: {$push: [value]}}}};
+    this.setState(React.addons.update(this.state, changes));
+  }
+
+  _removeLabel = (index) => {
+    let changes = {config: {scoregroup: {labels: {$splice: [[index, 1]]}}}};
+    this.setState(React.addons.update(this.state, changes));
+  }
+  /* ---------------------------------------------------------------------- */
+  
 }
