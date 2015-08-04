@@ -3,6 +3,7 @@ import _ from 'lodash';  // TODO switch to ImmutableJS?
 
 import Validate from '../../../lib/form/Validate';
 import TextEditor from './Text';
+import ChoiceEditor from './Choice';
 
 export default class Question extends React.Component {
   static defaultProps = {
@@ -14,7 +15,10 @@ export default class Question extends React.Component {
     super(props);
     this.state = {
       config: this._copyProps(),
-      isValid: false,
+      validation: {
+        question: null,
+        options: []
+      },
       isCancelling: false
     };
   }
@@ -29,8 +33,19 @@ export default class Question extends React.Component {
     if (this.state.config.text) {
       editor = TextEditor;
       editorProps = {
-        ...this.state.config.text,
+          ...this.state.config.text,
+        // TODO replace this with onChangeMaxWords etc.
         update: this._update.bind(this, 'text')
+      };
+    } else if (this.state.config.choice) {
+      editor = ChoiceEditor;
+      editorProps = {
+        ...this.state.config.choice,
+        onAddOption: this._addOption,
+        onRemoveOption: this._removeOption,
+        onChangeOption: this._updateOption,
+        onChangeOptionValidation: this._updateOptionValidation,
+        onToggleIsMultiple: this._toggleIsMultiple
       };
     }
     return (
@@ -41,7 +56,7 @@ export default class Question extends React.Component {
           </label>
           <Validate
                   isRequired={true}
-                  onChange={isValid => this.setState({isValid})}
+                  onChange={this._updateQuestionValidation}
                   >
             <input
                     className="form-control"
@@ -70,7 +85,7 @@ export default class Question extends React.Component {
   }
 
   _renderSave() {
-    if (this._isChanged() && this.state.isValid) {
+    if (this._isChanged() && this._isValid()) {
       return (
         <button
                 className="btn btn-success"
@@ -121,7 +136,6 @@ export default class Question extends React.Component {
   _update() {
     let args = Array.from(arguments);
     let e = args.pop();
-    console.log(e);
     let value;
     if (e.target.type === 'checkbox' || e.target.type === 'radio') {
       value = e.target.checked;
@@ -166,4 +180,58 @@ export default class Question extends React.Component {
     );
   }
 
+  _isValid() {
+    return (
+      this.state.validation.options.every(v => v) &&
+      this.state.validation.question
+    );
+  }
+
+  _updateQuestionValidation = (isValid) => {
+    this.setState(state => {
+      let changes = {validation: {question: {$set: isValid}}};
+      return React.addons.update(state, changes);
+    });
+  }
+
+  // Handlers for Choice options
+  // Feels wrong to put them here as the Choice component should surely
+  // know how to manage the options state?
+  // But letting Choice change this component's state feels wrong. Though
+  // you could argue Choice is really just a private component so it's fine.
+  // See this is where a base class would work well as Choice would inherit
+  // the management of the common 'question' and 'isRequired' fields and add
+  // its own management of the options. Not really sure how to do the equivalent
+  // cleanly with composition as you have state in two places.
+  // Going the Flux(redux) route really just means moving these functions to
+  // a store(reducer), though it does bring the state back to one place and
+  // possibly nullifies the argument for inheritance?
+  _toggleIsMultiple = () => {
+    const isMultiple = !this.state.config.choice.isMultiple;
+    const changes = {config: {choice: {isMultiple: {$set: isMultiple}}}};
+    this.setState(React.addons.update(this.state, changes));
+  }
+
+  _updateOption = (index, value) => {
+    let changes = {config: {choice: {options: {[index]: {$set: value}}}}};
+    this.setState(React.addons.update(this.state, changes));
+  }
+
+  _addOption = (value) => {
+    let changes = {config: {choice: {options: {$push: [value]}}}};
+    this.setState(React.addons.update(this.state, changes));
+  }
+
+  _removeOption = (index) => {
+    let changes = {config: {choice: {options: {$splice: [[index, 1]]}}}};
+    this.setState(React.addons.update(this.state, changes));
+  }
+
+  _updateOptionValidation = (index, isValid) => {
+    let changes = {validation: {options: {[index]: {$set: isValid}}}};
+    this.setState(state => {
+      return React.addons.update(state, changes);
+    });
+  }
+  /* ---------------------------------------------------------------------- */
 }
