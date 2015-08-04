@@ -64,7 +64,7 @@ export default class ScoreGroup extends React.Component {
         })}
       <AddButton
               name="item"
-              onClick={() => this.props.onAddItem('')}
+              onClick={() => this.props.onAddItem({text: '', scores: []})}
       />
       </div>
     );
