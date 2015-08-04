@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 import Validate from '../../../lib/form/Validate';
 import TextItem from './TextItem';
+import AddButton from './AddButton';
 
 export default class ScoreGroup extends React.Component {
 
@@ -36,54 +37,36 @@ export default class ScoreGroup extends React.Component {
     return (
       <div>
         <h3>Labels</h3>
-        {this.props.labels.map(this._renderLabel)}
-	<p>
-          <Button onClick={() => this.props.onAddLabel('')}
-                  bsStyle='success'
-                  ariaLabel='Add label'
-                  title='Add label'
-                  >
-            <Glyphicon glyph="plus" />
-          </Button>
-        </p>
+        {this.props.labels.map((label, index) => {
+          return <TextItem
+          name="label"
+          id={index}
+          value={label}
+          onChange={this.props.onChangeLabel}
+          onRemove={() => { this.props.onRemoveLabel(index); }}
+          onValidationChange={(index, isValid) => {}}
+          />;
+         })}
+        <AddButton
+                name="label"
+                onClick={() => this.props.onAddLabel('')}
+        />
         <h3>Items</h3>
-        {this.props.items.map(this._renderItem)}
-	<p>
-          <Button onClick={() => this.props.onAddItem('')}
-                  bsStyle='success'
-                  ariaLabel='Add item'
-                  title='Add item'
-                  >
-            <Glyphicon glyph="plus" />
-          </Button>
-        </p>
-      </div>
-    );
-  }
-
-  _renderLabel = (label, index) => {
-    return (
-      <TextItem
-              name="label"
-              id={index}
-              value={label}
-              onChange={this.props.onChangeLabel}
-              onRemove={() => { this.props.onRemoveLabel(index); }}
-              onValidationChange={(index, isValid) => {}}
-      />
-    );
-  }
-
-  _renderItem = (item, index) => {
-    return (
-      <TextItem
+        {this.props.items.map((item, index) => {
+          return <TextItem
+                         name="item"
+                         id={index}
+                         value={item.text}
+                         onChange={this.props.onChangeItem}
+                         onRemove={() => this.props.onRemoveItem(index)}
+                         onValidationChange={(index, isValid) => {}}
+                 />;
+        })}
+      <AddButton
               name="item"
-              id={index}
-              value={item.text}
-              onChange={this.props.onChangeItem}
-              onRemove={() => this.props.onRemoveItem(index)}
-              onValidationChange={(index, isValid) => {}}
+              onClick={() => this.props.onAddItem('')}
       />
+      </div>
     );
   }
 }
