@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 import Validate from '../../../lib/form/Validate';
+import TextItem from './TextItem';
 
 export default class ScoreGroup extends React.Component {
 
@@ -16,7 +17,10 @@ export default class ScoreGroup extends React.Component {
     ).isRequired,
     onAddLabel: PropTypes.func.isRequired,
     onRemoveLabel: PropTypes.func.isRequired,
-    onChangeLabel: PropTypes.func.isRequired
+    onChangeLabel: PropTypes.func.isRequired,
+    onAddItem: PropTypes.func.isRequired,
+    onRemoveItem: PropTypes.func.isRequired,
+    onChangeItem: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -42,41 +46,44 @@ export default class ScoreGroup extends React.Component {
             <Glyphicon glyph="plus" />
           </Button>
         </p>
+        <h3>Items</h3>
+        {this.props.items.map(this._renderItem)}
+	<p>
+          <Button onClick={() => this.props.onAddItem('')}
+                  bsStyle='success'
+                  ariaLabel='Add item'
+                  title='Add item'
+                  >
+            <Glyphicon glyph="plus" />
+          </Button>
+        </p>
       </div>
     );
   }
 
-  // TODO almost identical to Choice._renderChoice, factor out to util?
   _renderLabel = (label, index) => {
     return (
-      <div className="form-group">
-        <div className="input-group">
-          <Validate
-                  isRequired={true}
-                  onChange={this._updateLabelValidation.bind(this, index)}
-                  >
-            <input
-                    className="form-control"
-                    type='text'
-                    onChange={(e) => this.props.onChangeLabel(index, e)}
-                    value={label}
-            />
-        </Validate>
-        <span className="input-group-btn">
-        <Button onClick={() => this.props.onRemoveLabel(index)}
-                bsStyle='danger'
-                ariaLabel='Remove label'
-                title='Remove label'
-                >
-          <Glyphicon glyph="remove" />
-        </Button>
-        </span>
-      </div>
-      </div>
+      <TextItem
+              name="label"
+              id={index}
+              value={label}
+              onChange={this.props.onChangeLabel}
+              onRemove={() => { this.props.onRemoveLabel(index); }}
+              onValidationChange={(index, isValid) => {}}
+      />
     );
   }
 
-  _updateLabelValidation() {
-
+  _renderItem = (item, index) => {
+    return (
+      <TextItem
+              name="item"
+              id={index}
+              value={item.text}
+              onChange={this.props.onChangeItem}
+              onRemove={() => this.props.onRemoveItem(index)}
+              onValidationChange={(index, isValid) => {}}
+      />
+    );
   }
 }
