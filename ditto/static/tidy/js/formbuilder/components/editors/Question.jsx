@@ -37,21 +37,21 @@ export default class Question extends React.Component {
       editor = TextEditor;
       editorProps = {
           ...this.state.config.text,
-        onChangeMaxChars: this._set.bind(this, ['text', 'maxChars']),
-        onChangeMaxWords: this._set.bind(this, ['text', 'maxWords']),
-        onChangeIsMultiline: this._set.bind(this, ['text', 'isMultiline'])
+        onChangeMaxChars: this._set.bind(this, ['config', 'text', 'maxChars']),
+        onChangeMaxWords: this._set.bind(this, ['config', 'text', 'maxWords']),
+        onChangeIsMultiline: this._set.bind(this, ['config', 'text', 'isMultiline'])
       };
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;
       editorProps = {
         ...this.state.config.choice,
-        onAddOption: this._add.bind(this, ['choice', 'options']),
-        onRemoveOption: this._remove.bind(this, ['choice', 'options']),
-        onChangeOption: this._set.bind(this, ['choice', 'options']),
-        onChangeOptionValidation: this._updateOptionValidation,
-        onChangeIsMultiple: this._set.bind(this, ['choice', 'isMultiple']),
-        onChangeHasOther: this._set.bind(this, ['choice', 'hasOther']),
-        onChangeOtherText: this._set.bind(this, ['choice', 'otherText'])
+        onAddOption: this._add.bind(this, ['config', 'choice', 'options']),
+        onRemoveOption: this._remove.bind(this, ['config', 'choice', 'options']),
+        onChangeOption: this._set.bind(this, ['config', 'choice', 'options']),
+        onChangeOptionValidation: this._set.bind(this, ['validation', 'options']),
+        onChangeIsMultiple: this._set.bind(this, ['config', 'choice', 'isMultiple']),
+        onChangeHasOther: this._set.bind(this, ['config', 'choice', 'hasOther']),
+        onChangeOtherText: this._set.bind(this, ['config', 'choice', 'otherText'])
       };
     } else if (this.state.config.scoregroup) {
       editor = ScoreGroupEditor;
@@ -59,13 +59,13 @@ export default class Question extends React.Component {
           ...this.state.config.scoregroup,
         // TODO *ton* of callbacks to go here
         // TODO *infer* these callbacks from schema!?
-        onAddLabel: this._add.bind(this, ['scoregroup', 'labels']),
-        onRemoveLabel: this._remove.bind(this, ['scoregroup', 'labels']),
-        onChangeLabel: this._set.bind(this, ['scoregroup', 'labels']),
-        onAddItem: this._add.bind(this, ['scoregroup', 'items']),
-        onRemoveItem: this._remove.bind(this, ['scoregroup', 'items']),
-        onChangeItem: this._set.bind(this, ['scoregroup', 'items', arg, 'text']),
-        onChangeScore: this._set.bind(this, ['scoregroup', 'items', arg, 'scores'])
+        onAddLabel: this._add.bind(this, ['config', 'scoregroup', 'labels']),
+        onRemoveLabel: this._remove.bind(this, ['config', 'scoregroup', 'labels']),
+        onChangeLabel: this._set.bind(this, ['config', 'scoregroup', 'labels']),
+        onAddItem: this._add.bind(this, ['config', 'scoregroup', 'items']),
+        onRemoveItem: this._remove.bind(this, ['config', 'scoregroup', 'items']),
+        onChangeItem: this._set.bind(this, ['config', 'scoregroup', 'items', arg, 'text']),
+        onChangeScore: this._set.bind(this, ['config', 'scoregroup', 'items', arg, 'scores'])
       };
     }
     return (
@@ -76,14 +76,14 @@ export default class Question extends React.Component {
           </label>
           <Validate
                   isRequired={true}
-                  onChange={this._updateQuestionValidation}
+                  onChange={this._set.bind(this, ['validation', 'question'])}
                   >
             <input
                     className="form-control"
                     autoFocus={true}
                     type="text"
                     value={this.state.config.question}
-                    onChange={this._set.bind(this, ['question'])}
+                    onChange={this._set.bind(this, ['config', 'question'])}
             />
           </Validate>
         </div>
@@ -181,51 +181,31 @@ export default class Question extends React.Component {
   }
 
   _isValid() {
+    console.log(this.state.validation);
     return (
       this.state.validation.options.every(v => v) &&
       this.state.validation.question
     );
   }
 
-  _updateQuestionValidation = (isValid) => {
-    this.setState(state => {
-      let changes = {validation: {question: {$set: isValid}}};
-      return React.addons.update(state, changes);
-    });
-  }
-
-  // Handlers for Choice options
-  // Feels wrong to put them here as the Choice component should surely
-  // know how to manage the options state?
-  // But letting Choice change this component's state feels wrong. Though
-  // you could argue Choice is really just a private component so it's fine.
-  // See this is where a base class would work well as Choice would inherit
-  // the management of the common 'question' and 'isRequired' fields and add
-  // its own management of the options. Not really sure how to do the equivalent
-  // cleanly with composition as you have state in two places.
-  // Going the Flux(redux) route really just means moving these functions to
-  // a store(reducer), though it does bring the state back to one place and
-  // possibly nullifies the argument for inheritance?
-  _updateOptionValidation = (index, isValid) => {
-    let changes = {validation: {options: {[index]: {$set: isValid}}}};
-    this.setState(state => {
-      return React.addons.update(state, changes);
-    });
-  }
-  /* ---------------------------------------------------------------------- */
-
   // Generic state changing functions
+  // Really these are linkState on steroids, allowing to update nested state on changes
+  // Probably belong in library code as generic
   _set(...args) {
     let [path, e] = this._getChangePath(args);
     let value;
-    if (e.target.type === 'checkbox' || e.target.type === 'radio') {
+    if (!e.target) {
+      value = e;
+    } else if (e.target.type === 'checkbox' || e.target.type === 'radio') {
       value = e.target.checked;
     } else {
       value = e.target.value;
     }
     const change = this._getChangeSpec(path, '$set', value);
-    const newState = React.addons.update(this.state, change);
-    this.setState(newState);
+    console.log('change', change);
+    this.setState((state) => {
+      return React.addons.update(state, change);
+    });
   }
 
   _add = (...args) => {
@@ -269,8 +249,8 @@ export default class Question extends React.Component {
   }
   
   _getChangeSpec(path, operation, value) {
-    const change = {config: {}};
-    let tmp = change.config;
+    const change = {};
+    let tmp = change;
     path.forEach(key => {
       tmp[key] = {};
       tmp = tmp[key];
