@@ -39,7 +39,7 @@ export default class Question extends React.Component {
           ...this.state.config.text,
         onChangeMaxChars: this._set.bind(this, ['text', 'maxChars']),
         onChangeMaxWords: this._set.bind(this, ['text', 'maxWords']),
-        onToggleIsMultiline: this._set.bind(this, ['text', 'isMultiline'])
+        onChangeIsMultiline: this._set.bind(this, ['text', 'isMultiline'])
       };
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;
@@ -49,8 +49,8 @@ export default class Question extends React.Component {
         onRemoveOption: this._remove.bind(this, ['choice', 'options']),
         onChangeOption: this._set.bind(this, ['choice', 'options']),
         onChangeOptionValidation: this._updateOptionValidation,
-        onToggleIsMultiple: this._toggleIsMultiple, // TODO this.toggle('isMultiple')
-        onToggleHasOther: this._toggleHasOther,
+        onChangeIsMultiple: this._set.bind(this, ['choice', 'isMultiple']),
+        onChangeHasOther: this._set.bind(this, ['choice', 'hasOther']),
         onChangeOtherText: this._set.bind(this, ['choice', 'otherText'])
       };
     } else if (this.state.config.scoregroup) {
@@ -206,18 +206,6 @@ export default class Question extends React.Component {
   // Going the Flux(redux) route really just means moving these functions to
   // a store(reducer), though it does bring the state back to one place and
   // possibly nullifies the argument for inheritance?
-  _toggleIsMultiple = () => {
-    const isMultiple = !this.state.config.choice.isMultiple;
-    const changes = {config: {choice: {isMultiple: {$set: isMultiple}}}};
-    this.setState(React.addons.update(this.state, changes));
-  }
-
-  _toggleHasOther = () => {
-    const hasOther = !this.state.config.choice.hasOther;
-    const changes = {config: {choice: {hasOther: {$set: hasOther}}}};
-    this.setState(React.addons.update(this.state, changes));
-  }
-  
   _updateOptionValidation = (index, isValid) => {
     let changes = {validation: {options: {[index]: {$set: isValid}}}};
     this.setState(state => {

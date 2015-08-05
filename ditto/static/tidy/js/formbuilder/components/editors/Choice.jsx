@@ -10,11 +10,11 @@ export default class Choice extends React.Component {
     hasOther: React.PropTypes.bool,
     otherText: React.PropTypes.string,
     ////////////////////////////////////////////////////////////////////////////////
-    onToggleIsMultiple: PropTypes.func.isRequired,
+    onChangeIsMultiple: PropTypes.func.isRequired,
     onAddOption: PropTypes.func.isRequired,
     onRemoveOption: PropTypes.func.isRequired,
     onChangeOption: PropTypes.func.isRequired,
-    onToggleHasOther: PropTypes.func.isRequired,
+    onChangeHasOther: PropTypes.func.isRequired,
     onChangeOtherText: PropTypes.func.isRequired,
     onChangeOptionValidation: PropTypes.func.isRequired
   }
@@ -35,7 +35,7 @@ export default class Choice extends React.Component {
                   className="form-control"
                   type="checkbox"
                   checked={this.props.isMultiple}
-                  onChange={this.props.onToggleIsMultiple}
+                  onChange={this.props.onChangeIsMultiple}
           />
         </div>
         <div>
@@ -58,7 +58,7 @@ export default class Choice extends React.Component {
                   className="form-control"
                   type="checkbox"
                   checked={this.props.hasOther}
-                  onChange={this.props.onToggleHasOther}
+                  onChange={this.props.onChangeHasOther}
           />
         </div>
         <div className="form-group">

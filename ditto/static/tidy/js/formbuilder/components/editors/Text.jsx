@@ -7,7 +7,7 @@ export default class Text extends React.Component {
     isMultiline: PropTypes.bool,
     onChangeMaxChars: PropTypes.func,
     onChangeMaxWords: PropTypes.func,
-    onToggleIsMultiline: PropTypes.func
+    onChangeIsMultiline: PropTypes.func
   }
 
   static defaultProps = {
@@ -49,7 +49,7 @@ export default class Text extends React.Component {
                   className="form-control"
                   type="checkbox"
                   checked={this.props.isMultiline}
-                  onChange={this.props.onToggleIsMultiline}
+                  onChange={this.props.onChangeIsMultiline}
           />
         </div>
       </div>
