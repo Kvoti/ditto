@@ -107,7 +107,7 @@ export default class Choice extends React.Component {
   }
 
   _updateOption(index, e) {
-    this.props.onChangeOption(index, e.target.value);
+    this.props.onChangeOption(index, e);
   }
 
   _addOption = () => {

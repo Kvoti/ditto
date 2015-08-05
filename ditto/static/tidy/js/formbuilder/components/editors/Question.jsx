@@ -45,9 +45,9 @@ export default class Question extends React.Component {
       editor = ChoiceEditor;
       editorProps = {
         ...this.state.config.choice,
-        onAddOption: this._add.bind(this, ['choice', 'option']),
-        onRemoveOption: this._remove.bind(this, ['choice', 'option']),
-        onChangeOption: this._setOption, // TODO
+        onAddOption: this._add.bind(this, ['choice', 'options']),
+        onRemoveOption: this._remove.bind(this, ['choice', 'options']),
+        onChangeOption: this._set.bind(this, ['choice', 'options']),
         onChangeOptionValidation: this._updateOptionValidation,
         onToggleIsMultiple: this._toggleIsMultiple, // TODO this.toggle('isMultiple')
         onToggleHasOther: this._toggleHasOther,
@@ -65,7 +65,7 @@ export default class Question extends React.Component {
         onAddItem: this._add.bind(this, ['scoregroup', 'items']),
         onRemoveItem: this._remove.bind(this, ['scoregroup', 'items']),
         onChangeItem: this._set.bind(this, ['scoregroup', 'items', arg, 'text']),
-        onChangeScore: this._set.bind(this, ['scoregroup', 'items', arg, 'scores', arg])
+        onChangeScore: this._set.bind(this, ['scoregroup', 'items', arg, 'scores'])
       };
     }
     return (
@@ -267,7 +267,8 @@ export default class Question extends React.Component {
   }
 
   _replaceParamsInPath(path, params) {
-    return path.map(part => {
+    console.log('replacing', path, params);
+    let replaced = path.map(part => {
       if (part === arg) {
         let replacement = params[0];
         params = params.slice(1);
@@ -275,6 +276,8 @@ export default class Question extends React.Component {
       }
       return part;
     });
+    console.log('replaced', replaced, 'remaining', params);
+    return replaced.concat(params);
   }
   
   _getChangeSpec(path, operation, value) {
