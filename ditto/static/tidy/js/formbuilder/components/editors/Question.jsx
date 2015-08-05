@@ -38,7 +38,7 @@ export default class Question extends React.Component {
       editorProps = {
           ...this.state.config.text,
         onChangeMaxChars: this._set.bind(this, ['text', 'maxChars']),
-        onChangeMaxWords: this._set.bind(this, ['text', 'maxChars']),
+        onChangeMaxWords: this._set.bind(this, ['text', 'maxWords']),
         onToggleIsMultiline: this._set.bind(this, ['text', 'isMultiline'])
       };
     } else if (this.state.config.choice) {
@@ -83,7 +83,7 @@ export default class Question extends React.Component {
                     autoFocus={true}
                     type="text"
                     value={this.state.config.question}
-                    onChange={this._set.bind(this, 'question')}
+                    onChange={this._set.bind(this, ['question'])}
             />
           </Validate>
         </div>
@@ -95,7 +95,7 @@ export default class Question extends React.Component {
                   className="form-control"
                   type="checkbox"
                   checked={this.state.config.isRequired}
-                  onChange={this._set.bind(this, 'isRequired')}
+                  onChange={this._set.bind(this, ['isRequired'])}
           />
         </div>
         {editor ? React.createElement(editor, editorProps) : null}
