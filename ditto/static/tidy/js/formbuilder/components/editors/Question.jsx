@@ -1,7 +1,8 @@
 import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
-import Validate from '../../../lib/form/Validate';
+import ValidatedControl from '../../../lib/form/ValidatedControl';
+import ValidationStatus from '../../../lib/form/ValidationStatus';
 import TextEditor from './Text';
 import ChoiceEditor from './Choice';
 import ScoreGroupEditor from './ScoreGroup';
@@ -18,8 +19,17 @@ export default class Question extends React.Component {
     this.state = {
       config: this._copyProps(),
       validation: {
-        question: null,
-        options: []
+        question: {
+          validated: this.props.question,
+          required: false
+        },
+        options: this.props.choice.options.map(o => {
+          return {
+            validated: o,
+            required: false,
+            duplicated: false
+          };
+        })
       },
       isCancelling: false
     };
@@ -43,11 +53,12 @@ export default class Question extends React.Component {
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;
       editorProps = {
-        ...this.state.config.choice,
+          ...this.state.config.choice,
+        validation: this.state.validation,
         onAddOption: state.add.bind(this, ['config', 'choice', 'options']),
         onRemoveOption: state.remove.bind(this, ['config', 'choice', 'options']),
         onChangeOption: state.set.bind(this, ['config', 'choice', 'options']),
-        onChangeOptionValidation: state.set.bind(this, ['validation', 'options']),
+        onChangeOptionValidation: this._validateOption,
         onChangeIsMultiple: state.set.bind(this, ['config', 'choice', 'isMultiple']),
         onChangeHasOther: state.set.bind(this, ['config', 'choice', 'hasOther']),
         onChangeOtherText: state.set.bind(this, ['config', 'choice', 'otherText'])
@@ -66,24 +77,34 @@ export default class Question extends React.Component {
         onChangeScore: state.set.bind(this, ['config', 'scoregroup', 'items', state.Arg, 'scores'])
       };
     }
+    let errors = [];
+    if (this.state.validation.question.validated) {
+      if (this.state.validation.question.required) {
+        errors.push('This field is required');
+      }
+    } else {
+      errors = null;
+    }
     return (
       <div style={{border: '1px solid black'}}>
         <div className="form-group">
-          <label>
-            Enter question text:
-          </label>
-          <Validate
-                  isRequired={true}
-                  onChange={state.set.bind(this, ['validation', 'question'])}
+          <ValidationStatus
+                  label="Enter question text:"
+                  errors={errors}
                   >
-            <input
-                    className="form-control"
-                    autoFocus={true}
-                    type="text"
-                    value={this.state.config.question}
-                    onChange={state.set.bind(this, ['config', 'question'])}
-            />
-          </Validate>
+            <ValidatedControl
+                    validate={this._validate}
+                    immediate={this.state.validation.question.validated || this.state.config.question}
+                    >
+              <input
+                      className="form-control"
+                      autoFocus={true}
+                      type="text"
+                      value={this.state.config.question}
+                      onChange={state.set.bind(this, ['config', 'question'])}
+              />
+            </ValidatedControl>
+          </ValidationStatus>
         </div>
         <div className="form-group">
           <label>
@@ -102,6 +123,58 @@ export default class Question extends React.Component {
     );
   }
 
+  _validate = () => {
+    this.setState(state => {
+      console.log(state.config.question);
+      let change;
+      if (!state.config.question) {
+        change = {validation: {question: {
+          required: {$set: true},
+          validated: {$set: true}
+        }}};
+      } else {
+        change = {validation: {question: {
+          required: {$set: false},
+          validated: {$set: true}
+        }}};
+      }
+      return React.addons.update(state, change);
+    });
+  }
+
+  _validateOption = (index) => {
+    this.setState(state => {
+      let change;
+      if (!state.config.choice.options[index]) {
+        change = {validation: {options: {[index]: {
+          required: {$set: true},
+          validated: {$set: true},
+        }}}};
+      } else {
+        change = {validation: {options: {[index]: {
+          required: {$set: false},
+          validated: {$set: true},
+        }}}};
+      }
+      let seen = {};
+      state.config.choice.options.forEach((o, i) => {
+        console.log('comparing', o, seen);
+        if (!change.validation.options[i]) {
+          change.validation.options[i] = {};
+        }
+        if (seen[o]) {
+          console.log('duped');
+          change.validation.options[i].duplicated = {$set: true};
+        } else {
+          change.validation.options[i].duplicated = {$set: false};
+        }
+        seen[o] = 1;
+      });
+      console.log(change);
+      return React.addons.update(state, change);
+    });
+  }
+  
   _renderSave() {
     if (this._isChanged() && this._isValid()) {
       return (

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
-import Validate from '../../../lib/form/Validate';
+import ValidatedControl from '../../../lib/form/ValidatedControl';
+import ValidationStatus from '../../../lib/form/ValidationStatus';
 
 export default class Choice extends React.Component {
   static propTypes = {
@@ -79,31 +80,43 @@ export default class Choice extends React.Component {
 
   // TODO use TextItem here
   _renderOption = (option, index) => {
+    let errors = [];
+    if (this.props.validation.options[index].required) {
+      errors.push('This field is required');
+    }
+    if (this.props.validation.options[index].duplicated) {
+      errors.push('Cannot have duplicates');
+    }
     return (
       <div className="form-group">
         <div className="input-group">
-          <Validate
-                  isRequired={true}
-                  onChange={this._updateOptionValidation.bind(this, index)}
+          <ValidationStatus
+                  label="Option"
+                  errors={errors}
                   >
-            <input
-                    className="form-control"
-                    type='text'
-                    onChange={this._updateOption.bind(this, index)}
-                    value={option}
-            />
-        </Validate>
-        <span className="input-group-btn">
-        <Button onClick={this._removeOption.bind(index)}
-                  ref={'option' + index}
-                bsStyle='danger'
-                ariaLabel='Remove option'
-                title='Remove option'
-                >
-          <Glyphicon glyph="remove" />
-        </Button>
-        </span>
-      </div>
+            <ValidatedControl
+                    validate={this._updateOptionValidation.bind(this, index)}
+                    immediate={this.props.validation.options[index].validated}
+                    >
+              <input
+                      className="form-control"
+                      type='text'
+                      onChange={this._updateOption.bind(this, index)}
+                      value={option}
+              />
+            </ValidatedControl>
+          </ValidationStatus>
+          <span className="input-group-btn">
+            <Button onClick={this._removeOption.bind(index)}
+                    ref={'option' + index}
+                    bsStyle='danger'
+                    ariaLabel='Remove option'
+                    title='Remove option'
+                    >
+              <Glyphicon glyph="remove" />
+            </Button>
+          </span>
+        </div>
       </div>
     );
   }
@@ -120,7 +133,7 @@ export default class Choice extends React.Component {
     this.props.onRemoveOption(index);
   }
 
-  _updateOptionValidation(index, isValid) {
-    this.props.onChangeOptionValidation(index, isValid);
+  _updateOptionValidation(index) {
+    this.props.onChangeOptionValidation(index);
   }
 }
