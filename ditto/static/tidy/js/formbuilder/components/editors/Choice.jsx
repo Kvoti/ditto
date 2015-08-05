@@ -39,7 +39,7 @@ export default class Choice extends React.Component {
           />
         </div>
         <div>
-          {this.props.options.map(this._renderChoice)}
+          {this.props.options.map(this._renderOption)}
         </div>
 	<p>
           <Button onClick={this._addOption}
@@ -77,7 +77,8 @@ export default class Choice extends React.Component {
     );
   }
 
-  _renderChoice = (choice, index) => {
+  // TODO use TextItem here
+  _renderOption = (option, index) => {
     return (
       <div className="form-group">
         <div className="input-group">
@@ -89,14 +90,15 @@ export default class Choice extends React.Component {
                     className="form-control"
                     type='text'
                     onChange={this._updateOption.bind(this, index)}
-                    value={choice}
+                    value={option}
             />
         </Validate>
         <span className="input-group-btn">
         <Button onClick={this._removeOption.bind(index)}
+                  ref={'option' + index}
                 bsStyle='danger'
-                ariaLabel='Remove choice'
-                title='Remove choice'
+                ariaLabel='Remove option'
+                title='Remove option'
                 >
           <Glyphicon glyph="remove" />
         </Button>
