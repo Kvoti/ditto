@@ -593,13 +593,6 @@ footer {
 }
 /*************/
 
-/* For some reason inline forms have no spacing between elements
-*  TODO figure out why!
-*/
-.form-inline .form-group, .form-inline button {
-    margin-right: 5px;
-}
-
 /* Product overview carousel */
 #overview-carousel {
     width: 959px;
@@ -704,4 +697,10 @@ footer {
     margin: 0;
     padding-top: 20px;
     padding-bottom: 10px;
+}
+
+.form-horizontal .form-inline .form-group {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 15px;
 }
