@@ -18,7 +18,7 @@ export default class Form extends React.Component {
         <h1>{this.state.config.title}</h1>
         {this.state.config.questions.map((q, i) => {
           return (
-            <div>
+            <div key={q.id}>
             {this._renderQuestion(q, i, editing)}
             {this._renderEditButton(i)}
             </div>
