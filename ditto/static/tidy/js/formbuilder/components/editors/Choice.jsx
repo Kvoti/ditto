@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 import ValidatedControl from '../../../lib/form/ValidatedControl';
-import ValidationStatus from '../../../lib/form/ValidationStatus';
+import Row from './Row';
+import InputGroup from './InputGroup';
 
 export default class Choice extends React.Component {
   static propTypes = {
@@ -28,20 +29,17 @@ export default class Choice extends React.Component {
   render() {
     return (
       <div>
-        <div className="form-group">
+        <Row>
           <label>
             Is multiple?
           </label>
           <input
-                  className="form-control"
                   type="checkbox"
                   checked={this.props.isMultiple}
                   onChange={this.props.onChangeIsMultiple}
           />
-        </div>
-        <div>
-          {this.props.options.map(this._renderOption)}
-        </div>
+        </Row>
+        {this.props.options.map(this._renderOption)}
 	<p>
           <Button onClick={this.props.onAddOption}
                   bsStyle='success'
@@ -51,54 +49,48 @@ export default class Choice extends React.Component {
             <Glyphicon glyph="plus" />
           </Button>
         </p>
-        <div className="form-group">
+        <Row>
           <label>
             Has other?
           </label>
           <input
-                  className="form-control"
                   type="checkbox"
                   checked={this.props.hasOther}
                   onChange={this.props.onChangeHasOther}
           />
-        </div>
-        <div className="form-group">
+        </Row>
+        <Row>
           <label>
             Enter 'other' text:
           </label>
           <input
-                  className="form-control"
                   disabled={!this.props.hasOther}
                   type="text"
                   value={this.props.otherText}
                   onChange={this.props.onChangeOtherText}
           />
-        </div>
+        </Row>
       </div>
     );
   }
 
-  // TODO use TextItem here
   _renderOption = (option, index) => {
     return (
-      <div className="form-group">
-        <div className="input-group">
-          <ValidationStatus
-                  label="Option"
-                  errors={this.props.errors[index]}
+      <Row
+              errors={this.props.errors[index]}
+              >
+        <label>Option</label>
+        <InputGroup>
+          <ValidatedControl
+                  validate={this._updateOptionValidation.bind(this, index)}
+                  immediate={this.props.errors[index] !== null}
                   >
-            <ValidatedControl
-                    validate={this._updateOptionValidation.bind(this, index)}
-                    immediate={this.props.errors[index] !== null}
-                    >
-              <input
-                      className="form-control"
-                      type='text'
-                      onChange={this._updateOption.bind(this, index)}
-                      value={option}
-              />
-            </ValidatedControl>
-          </ValidationStatus>
+            <input
+                    type='text'
+                    onChange={this._updateOption.bind(this, index)}
+                    value={option}
+            />
+          </ValidatedControl>
           <span className="input-group-btn">
             <Button onClick={this._removeOption.bind(index)}
                     ref={'option' + index}
@@ -109,8 +101,8 @@ export default class Choice extends React.Component {
               <Glyphicon glyph="remove" />
             </Button>
           </span>
-        </div>
-      </div>
+        </InputGroup>
+      </Row>
     );
   }
 

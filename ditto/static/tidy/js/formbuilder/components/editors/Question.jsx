@@ -2,11 +2,11 @@ import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
 import ValidatedControl from '../../../lib/form/ValidatedControl';
-import ValidationStatus from '../../../lib/form/ValidationStatus';
 import TextEditor from './Text';
 import ChoiceEditor from './Choice';
 import ScoreGroupEditor from './ScoreGroup';
 import * as state from '../../../lib/state';
+import Row from './Row';
 
 export default class Question extends React.Component {
   static defaultProps = {
@@ -22,17 +22,19 @@ export default class Question extends React.Component {
         question: {
           validated: this.props.question,
           required: false
-        },
-        options: this.props.choice.options.map(o => {
-          return {
-            validated: o,
-            required: false,
-            duplicated: false
-          };
-        })
+        }
       },
       isCancelling: false
     };
+    if (this.props.choice) {
+      this.state.validation.options = this.props.choice.options.map(o => {
+        return {
+          validated: o,
+          required: false,
+          duplicated: false
+        };
+      });
+    }
   }
 
   _copyProps() {
@@ -45,7 +47,7 @@ export default class Question extends React.Component {
     if (this.state.config.text) {
       editor = TextEditor;
       editorProps = {
-          ...this.state.config.text,
+            ...this.state.config.text,
         onChangeMaxChars: state.set.bind(this, ['config', 'text', 'maxChars']),
         onChangeMaxWords: state.set.bind(this, ['config', 'text', 'maxWords']),
         onChangeIsMultiline: state.set.bind(this, ['config', 'text', 'isMultiline'])
@@ -53,7 +55,7 @@ export default class Question extends React.Component {
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;
       editorProps = {
-          ...this.state.config.choice,
+            ...this.state.config.choice,
         errors: this._optionErrors(),
         onAddOption: this._addOption,
         onRemoveOption: this._removeOption,
@@ -66,7 +68,7 @@ export default class Question extends React.Component {
     } else if (this.state.config.scoregroup) {
       editor = ScoreGroupEditor;
       editorProps = {
-          ...this.state.config.scoregroup,
+            ...this.state.config.scoregroup,
         // TODO *infer* these callbacks from schema!?
         onAddLabel: state.add.bind(this, ['config', 'scoregroup', 'labels']),
         onRemoveLabel: state.remove.bind(this, ['config', 'scoregroup', 'labels']),
@@ -79,37 +81,31 @@ export default class Question extends React.Component {
     }
     let errors = this._questionErrors();
     return (
-      <div style={{border: '1px solid black'}}>
-        <div className="form-group">
-          <ValidationStatus
-                  label="Enter question text:"
-                  errors={errors}
+      <div style={{border: '1px solid black'}} className="form-horizontal">
+        <Row errors={errors}>
+          <label>Question text</label> 
+          <ValidatedControl
+                  validate={this._validateQuestion}
+                  immediate={this.state.validation.question.validated || this.state.config.question}
                   >
-            <ValidatedControl
-                    validate={this._validateQuestion}
-                    immediate={this.state.validation.question.validated || this.state.config.question}
-                    >
-              <input
-                      className="form-control"
-                      autoFocus={true}
-                      type="text"
-                      value={this.state.config.question}
-                      onChange={state.set.bind(this, ['config', 'question'])}
-              />
-            </ValidatedControl>
-          </ValidationStatus>
-        </div>
-        <div className="form-group">
+            <input
+                    autoFocus={true}
+                    type="text"
+                    value={this.state.config.question}
+                    onChange={state.set.bind(this, ['config', 'question'])}
+            />
+          </ValidatedControl>
+        </Row>
+        <Row>
           <label>
             Is required?
           </label>
           <input
-                  className="form-control"
                   type="checkbox"
                   checked={this.state.config.isRequired}
                   onChange={state.set.bind(this, ['isRequired'])}
           />
-        </div>
+        </Row>
         {editor ? React.createElement(editor, editorProps) : null}
         {this._renderSave()} {this._renderCancel()}
       </div>
@@ -193,31 +189,31 @@ export default class Question extends React.Component {
   }
 
   /* **********************************************************************
-  // All the state changing and validation stuff here
-  // Screaming to be refactored.
-  //
-  // In the limit could all be inferred from configuration like:
-  //
-  //     {
-  //       question: {
-  //         type: 'text',
-  //         required: true,
-  //         maxLength: 100,
-  //       },
-  //       isRequired: {
-  //         type: boolean
-  //       },
-  //       options: {
-  //         type: 'list',
-  //         maxLength: 10,
-  //         unique: true,
-  //         item: {
-  //           type: 'text',
-  //           required: true
-  //         }
-  //       }
-  //     }
-  ********************************************************************** */
+     // All the state changing and validation stuff here
+     // Screaming to be refactored.
+     //
+     // In the limit could all be inferred from configuration like:
+     //
+     //     {
+     //       question: {
+     //         type: 'text',
+     //         required: true,
+     //         maxLength: 100,
+     //       },
+     //       isRequired: {
+     //         type: boolean
+     //       },
+     //       options: {
+     //         type: 'list',
+     //         maxLength: 10,
+     //         unique: true,
+     //         item: {
+     //           type: 'text',
+     //           required: true
+     //         }
+     //       }
+     //     }
+   ********************************************************************** */
   _validateQuestion = () => {
     this.setState(state => {
       console.log(state.config.question);

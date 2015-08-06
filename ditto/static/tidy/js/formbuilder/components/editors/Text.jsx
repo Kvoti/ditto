@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Row from './Row';
 
 export default class Text extends React.Component {
   static propTypes = {
@@ -19,39 +20,36 @@ export default class Text extends React.Component {
   render() {
     return (
       <div>
-        <div className="form-group">
+        <Row>
           <label>
             Max characters
           </label>
           <input
-                  className="form-control"
                   type="number"
                   value={this.props.maxChars}
                   onChange={this.props.onChangeMaxChars}
           />
-        </div>
-        <div className="form-group">
+        </Row>
+        <Row>
           <label>
             Max words
           </label>
           <input
-                  className="form-control"
                   type="number"
                   value={this.props.maxWords}
                   onChange={this.props.onChangeMaxWords}
           />
-        </div>
-        <div className="form-group">
+        </Row>
+        <Row>
           <label>
             Is mult-line?
           </label>
           <input
-                  className="form-control"
                   type="checkbox"
                   checked={this.props.isMultiline}
                   onChange={this.props.onChangeIsMultiline}
           />
-        </div>
+        </Row>
       </div>
     );
   }

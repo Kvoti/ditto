@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Button, Glyphicon } from 'react-bootstrap';
-import Validate from '../../../lib/form/Validate';
+import Row from './Row';
 import TextItem from './TextItem';
 import AddButton from './AddButton';
 
@@ -63,7 +62,9 @@ export default class ScoreGroup extends React.Component {
                     onRemove={() => this.props.onRemoveItem(index)}
                     onValidationChange={(index, isValid) => {}}
             />
+            <div className="form-inline">
             {this._renderScores(item, index)}
+            </div>
             </div>
           );
         })}
@@ -79,22 +80,16 @@ export default class ScoreGroup extends React.Component {
   }
 
   _renderScores = (item, index) => {
-    return (
-      <div className="row">
-        {item.scores.map((score, i) => {
-          return <div className="col-md-1">
+    return item.scores.map((score, i) => {
+          return <div className="form-group">
           <label>{this.props.labels[i]}</label>
-          <Validate isRequired={true}>
           <input
           type="text"
           className="form-control"
           value={score}
           onChange={(e) => this.props.onChangeScore(index, i, e)}
           />
-          </Validate>
           </div>;
-         })}
-      </div>
-    );
+    });
   }
 }
