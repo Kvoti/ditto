@@ -10,7 +10,6 @@ export default class ValidationStatus extends React.Component {
   }
 
   static propTypes = {
-    label: PropTypes.string.isRequired,
     errors: PropTypes.arrayOf(PropTypes.string)
   }
 
