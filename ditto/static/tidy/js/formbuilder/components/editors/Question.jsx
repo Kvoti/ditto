@@ -54,7 +54,7 @@ export default class Question extends React.Component {
       editor = ChoiceEditor;
       editorProps = {
           ...this.state.config.choice,
-        validation: this.state.validation,
+        errors: this._optionErrors(),
         onAddOption: this._addOption,
         onRemoveOption: state.remove.bind(this, ['config', 'choice', 'options']),
         onChangeOption: state.set.bind(this, ['config', 'choice', 'options']),
@@ -77,14 +77,7 @@ export default class Question extends React.Component {
         onChangeScore: state.set.bind(this, ['config', 'scoregroup', 'items', state.Arg, 'scores'])
       };
     }
-    let errors = [];
-    if (this.state.validation.question.validated) {
-      if (this.state.validation.question.required) {
-        errors.push('This field is required');
-      }
-    } else {
-      errors = null;
-    }
+    let errors = this._questionErrors();
     return (
       <div style={{border: '1px solid black'}}>
         <div className="form-group">
@@ -93,7 +86,7 @@ export default class Question extends React.Component {
                   errors={errors}
                   >
             <ValidatedControl
-                    validate={this._validate}
+                    validate={this._validateQuestion}
                     immediate={this.state.validation.question.validated || this.state.config.question}
                     >
               <input
@@ -123,70 +116,6 @@ export default class Question extends React.Component {
     );
   }
 
-  _validate = () => {
-    this.setState(state => {
-      console.log(state.config.question);
-      let change;
-      if (!state.config.question) {
-        change = {validation: {question: {
-          required: {$set: true},
-          validated: {$set: true}
-        }}};
-      } else {
-        change = {validation: {question: {
-          required: {$set: false},
-          validated: {$set: true}
-        }}};
-      }
-      return React.addons.update(state, change);
-    });
-  }
-
-  _validateOption = (index) => {
-    this.setState(state => {
-      let change;
-      if (!state.config.choice.options[index]) {
-        change = {validation: {options: {[index]: {
-          required: {$set: true},
-          validated: {$set: true},
-        }}}};
-      } else {
-        change = {validation: {options: {[index]: {
-          required: {$set: false},
-          validated: {$set: true},
-        }}}};
-      }
-      let seen = {};
-      state.config.choice.options.forEach((o, i) => {
-        console.log('comparing', o, seen);
-        if (!change.validation.options[i]) {
-          change.validation.options[i] = {};
-        }
-        if (seen[o]) {
-          console.log('duped');
-          change.validation.options[i].duplicated = {$set: true};
-        } else {
-          change.validation.options[i].duplicated = {$set: false};
-        }
-        seen[o] = 1;
-      });
-      console.log(change);
-      return React.addons.update(state, change);
-    });
-  }
-
-  _addOption = () => {
-    let change = {
-      config: {choice: {options: {$push: ['']}}},
-      validation: {options: {$push: [{
-        validated: false,
-        required: false,
-        duplicated: false
-      }]}}
-    };
-    this.setState(state => React.addons.update(state, change));
-  }
-    
   _renderSave() {
     if (this._isChanged() && this._isValid()) {
       return (
@@ -263,6 +192,109 @@ export default class Question extends React.Component {
     );
   }
 
+  /* **********************************************************************
+  // All the state changing and validation stuff here
+  // Screaming to be refactored.
+  //
+  // In the limit could all be inferred from configuration like:
+  //
+  //     {
+  //       question: {
+  //         type: 'text',
+  //         required: true,
+  //         maxLength: 100,
+  //       },
+  //       isRequired: {
+  //         type: boolean
+  //       },
+  //       options: {
+  //         type: 'list',
+  //         maxLength: 10,
+  //         unique: true,
+  //         item: {
+  //           type: 'text',
+  //           required: true
+  //         }
+  //       }
+  //     }
+  ********************************************************************** */
+  _validateQuestion = () => {
+    this.setState(state => {
+      console.log(state.config.question);
+      let change;
+      if (!state.config.question) {
+        change = {validation: {question: {
+          required: {$set: true},
+          validated: {$set: true}
+        }}};
+      } else {
+        change = {validation: {question: {
+          required: {$set: false},
+          validated: {$set: true}
+        }}};
+      }
+      return React.addons.update(state, change);
+    });
+  }
+
+  _validateOption = (index) => {
+    this.setState(state => {
+      let change;
+      if (!state.config.choice.options[index]) {
+        change = {validation: {options: {[index]: {
+          required: {$set: true},
+          validated: {$set: true},
+        }}}};
+      } else {
+        change = {validation: {options: {[index]: {
+          required: {$set: false},
+          validated: {$set: true},
+        }}}};
+      }
+      let seen = {};
+      state.config.choice.options.forEach((o, i) => {
+        console.log('comparing', o, seen);
+        if (!change.validation.options[i]) {
+          change.validation.options[i] = {};
+        }
+        if (seen[o]) {
+          console.log('duped');
+          change.validation.options[i].duplicated = {$set: true};
+        } else {
+          change.validation.options[i].duplicated = {$set: false};
+        }
+        seen[o] = 1;
+      });
+      console.log(change);
+      return React.addons.update(state, change);
+    });
+  }
+
+  _questionErrors() {
+    let errors = [];
+    if (this.state.validation.question.validated) {
+      if (this.state.validation.question.required) {
+        errors = ['This field is required'];
+      }
+    } else {
+      errors = null;
+    }
+    return errors;
+  }
+
+  _optionErrors() {
+    return this.state.config.choice.options.map((o, index) => {
+      let errors = this.state.validation.options[index].validated ? [] : null;
+      if (this.state.validation.options[index].required) {
+        errors.push('This field is required');
+      }
+      if (this.state.validation.options[index].duplicated) {
+        errors.push('Cannot have duplicates');
+      }
+      return errors;
+    });
+  }
+
   _isValid() {
     console.log(this.state.validation);
     return (
@@ -270,4 +302,17 @@ export default class Question extends React.Component {
       this.state.validation.options.every(o => o.validated && !(o.required || o.duplicated))
     );
   }
+
+  _addOption = () => {
+    let change = {
+      config: {choice: {options: {$push: ['']}}},
+      validation: {options: {$push: [{
+        validated: false,
+        required: false,
+        duplicated: false
+      }]}}
+    };
+    this.setState(state => React.addons.update(state, change));
+  }
+
 }

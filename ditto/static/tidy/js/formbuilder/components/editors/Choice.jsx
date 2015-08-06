@@ -80,23 +80,16 @@ export default class Choice extends React.Component {
 
   // TODO use TextItem here
   _renderOption = (option, index) => {
-    let errors = this.props.validation.options[index].validated ? [] : null;
-    if (this.props.validation.options[index].required) {
-      errors.push('This field is required');
-    }
-    if (this.props.validation.options[index].duplicated) {
-      errors.push('Cannot have duplicates');
-    }
     return (
       <div className="form-group">
         <div className="input-group">
           <ValidationStatus
                   label="Option"
-                  errors={errors}
+                  errors={this.props.errors[index]}
                   >
             <ValidatedControl
                     validate={this._updateOptionValidation.bind(this, index)}
-                    immediate={this.props.validation.options[index].validated}
+                    immediate={this.props.errors[index] !== null}
                     >
               <input
                       className="form-control"
