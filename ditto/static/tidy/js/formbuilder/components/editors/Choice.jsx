@@ -43,10 +43,10 @@ export default class Choice extends React.Component {
           {this.props.options.map(this._renderOption)}
         </div>
 	<p>
-          <Button onClick={this._addOption}
+          <Button onClick={this.props.onAddOption}
                   bsStyle='success'
-                  ariaLabel='Add choice'
-                  title='Add choice'
+                  ariaLabel='Add option'
+                  title='Add option'
                   >
             <Glyphicon glyph="plus" />
           </Button>
@@ -80,7 +80,7 @@ export default class Choice extends React.Component {
 
   // TODO use TextItem here
   _renderOption = (option, index) => {
-    let errors = [];
+    let errors = this.props.validation.options[index].validated ? [] : null;
     if (this.props.validation.options[index].required) {
       errors.push('This field is required');
     }
@@ -123,10 +123,6 @@ export default class Choice extends React.Component {
 
   _updateOption(index, e) {
     this.props.onChangeOption(index, e);
-  }
-
-  _addOption = () => {
-    this.props.onAddOption('');
   }
 
   _removeOption = (index) => {

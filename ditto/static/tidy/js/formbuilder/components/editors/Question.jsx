@@ -55,7 +55,7 @@ export default class Question extends React.Component {
       editorProps = {
           ...this.state.config.choice,
         validation: this.state.validation,
-        onAddOption: state.add.bind(this, ['config', 'choice', 'options']),
+        onAddOption: this._addOption,
         onRemoveOption: state.remove.bind(this, ['config', 'choice', 'options']),
         onChangeOption: state.set.bind(this, ['config', 'choice', 'options']),
         onChangeOptionValidation: this._validateOption,
@@ -174,7 +174,19 @@ export default class Question extends React.Component {
       return React.addons.update(state, change);
     });
   }
-  
+
+  _addOption = () => {
+    let change = {
+      config: {choice: {options: {$push: ['']}}},
+      validation: {options: {$push: [{
+        validated: false,
+        required: false,
+        duplicated: false
+      }]}}
+    };
+    this.setState(state => React.addons.update(state, change));
+  }
+    
   _renderSave() {
     if (this._isChanged() && this._isValid()) {
       return (
@@ -254,8 +266,8 @@ export default class Question extends React.Component {
   _isValid() {
     console.log(this.state.validation);
     return (
-      this.state.validation.question &&
-      this.state.validation.options.every(o => o)
+      this.state.validation.question.validated && !this.state.validation.question.required &&
+      this.state.validation.options.every(o => o.validated && !(o.required || o.duplicated))
     );
   }
 }
