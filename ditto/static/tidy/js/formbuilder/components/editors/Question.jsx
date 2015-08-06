@@ -56,7 +56,7 @@ export default class Question extends React.Component {
           ...this.state.config.choice,
         errors: this._optionErrors(),
         onAddOption: this._addOption,
-        onRemoveOption: state.remove.bind(this, ['config', 'choice', 'options']),
+        onRemoveOption: this._removeOption,
         onChangeOption: state.set.bind(this, ['config', 'choice', 'options']),
         onChangeOptionValidation: this._validateOption,
         onChangeIsMultiple: state.set.bind(this, ['config', 'choice', 'isMultiple']),
@@ -315,4 +315,11 @@ export default class Question extends React.Component {
     this.setState(state => React.addons.update(state, change));
   }
 
+  _removeOption = (index) => {
+    let change = {
+      config: {choice: {options: {$splice: [[index, 1]]}}},
+      validation: {options: {$splice: [[index, 1]]}}
+    };
+    this.setState(state => React.addons.update(state, change));
+  }
 }
