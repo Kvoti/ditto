@@ -15,7 +15,7 @@ export default class Validate extends React.Component {
   }
   
   static defaultProps = {
-    typingDelay: 1000  // ms
+    typingDelay: 300  // ms
   }
 
   render() {
