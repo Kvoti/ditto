@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
-import Row from './Row';
 import TextItem from './TextItem';
 import AddButton from './AddButton';
+import ValidatedControl from '../../../lib/form/ValidatedControl';
+import Row from './Row';
 
 export default class ScoreGroup extends React.Component {
 
@@ -38,42 +39,39 @@ export default class ScoreGroup extends React.Component {
         <h3>Labels</h3>
         {this.props.labels.map((label, index) => {
           return <TextItem
+          errors={this.props.errors.labels[index]}
           name="label"
           id={index}
           value={label}
           onChange={this.props.onChangeLabel}
           onRemove={() => { this.props.onRemoveLabel(index); }}
-          onValidationChange={(index, isValid) => {}}
+          onValidationChange={() => this.props.onChangeLabelValidation(index)}
           />;
          })}
         <AddButton
                 name="label"
-                onClick={() => this.props.onAddLabel('')}
+                onClick={this.props.onAddLabel}
         />
         <h3>Items</h3>
         {this.props.items.map((item, index) => {
           return (
             <div>
             <TextItem
+                    errors={this.props.errors.items[index]}
                     name="item"
                     id={index}
                     value={item.text}
                     onChange={this.props.onChangeItem}
                     onRemove={() => this.props.onRemoveItem(index)}
-                    onValidationChange={(index, isValid) => {}}
+                    onValidationChange={() => this.props.onChangeItemValidation(index)}
             />
-            <div className="form-inline">
             {this._renderScores(item, index)}
-            </div>
             </div>
           );
         })}
       <AddButton
               name="item"
-              onClick={() => this.props.onAddItem({
-                       text: '',
-                       scores: this.props.labels.map((l, i) => i)
-                       })}
+              onClick={this.props.onAddItem}
       />
       </div>
     );
@@ -81,15 +79,22 @@ export default class ScoreGroup extends React.Component {
 
   _renderScores = (item, index) => {
     return item.scores.map((score, i) => {
-          return <div className="form-group">
+      return (
+        <Row
+                errors={this.props.errors[`scores${index}`][i]}
+                >
           <label>{this.props.labels[i]}</label>
-          <input
-          type="text"
-          className="form-control"
-          value={score}
-          onChange={(e) => this.props.onChangeScore(index, i, e)}
-          />
-          </div>;
+          <ValidatedControl
+                  validate={() => this.props.onChangeScoreValidation(index, i)}
+                  >
+            <input
+                    type="text"
+                    value={score}
+                    onChange={(e) => this.props.onChangeScore(index, i, e)}
+            />
+          </ValidatedControl>
+        </Row>
+      );
     });
   }
 }

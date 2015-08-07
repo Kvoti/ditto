@@ -18,23 +18,9 @@ export default class Question extends React.Component {
     super(props);
     this.state = {
       config: this._copyProps(),
-      validation: {
-        question: {
-          validated: this.props.question,
-          required: false
-        }
-      },
       isCancelling: false
-    };
-    if (this.props.choice) {
-      this.state.validation.options = this.props.choice.options.map(o => {
-        return {
-          validated: o,
-          required: false,
-          duplicated: false
-        };
-      });
     }
+    this.state.validation = this._initValidation();
   }
 
   _copyProps() {
@@ -70,13 +56,17 @@ export default class Question extends React.Component {
       editorProps = {
             ...this.state.config.scoregroup,
         // TODO *infer* these callbacks from schema!?
-        onAddLabel: state.add.bind(this, ['config', 'scoregroup', 'labels']),
-        onRemoveLabel: state.remove.bind(this, ['config', 'scoregroup', 'labels']),
+        errors: this._scoreGroupErrors(),
+        onAddLabel: this._addLabel,
+        onRemoveLabel: this._removeLabel,
         onChangeLabel: state.set.bind(this, ['config', 'scoregroup', 'labels']),
-        onAddItem: state.add.bind(this, ['config', 'scoregroup', 'items']),
-        onRemoveItem: state.remove.bind(this, ['config', 'scoregroup', 'items']),
+        onAddItem: this._addItem,
+        onRemoveItem: this._removeItem,
         onChangeItem: state.set.bind(this, ['config', 'scoregroup', 'items', state.Arg, 'text']),
-        onChangeScore: state.set.bind(this, ['config', 'scoregroup', 'items', state.Arg, 'scores'])
+        onChangeScore: state.set.bind(this, ['config', 'scoregroup', 'items', state.Arg, 'scores', state.Arg]),
+        onChangeLabelValidation: this._validateLabel,
+        onChangeItemValidation: this._validateItem,
+        onChangeScoreValidation: this._validateScore
       };
     }
     let errors = this._questionErrors();
@@ -214,6 +204,51 @@ export default class Question extends React.Component {
      //       }
      //     }
    ********************************************************************** */
+  _initValidation() {
+    const validation = {
+      question: {
+        validated: this.props.question,
+        required: false
+      }
+    };
+    if (this.props.choice) {
+      validation.options = this.props.choice.options.map(o => {
+        return {
+          validated: o,
+          required: false,
+          duplicated: false
+        };
+      });
+    }
+    if (this.props.scoregroup) {
+      validation.labels = this.props.scoregroup.labels.map(o => {
+        return {
+          validated: o,
+          required: false,
+          duplicated: false
+        };
+      });
+      validation.items = this.props.scoregroup.items.map(o => {
+        return {
+          validated: o,
+          required: false,
+          duplicated: false
+        };
+      });
+      this.props.scoregroup.items.forEach((item, i) => {
+        validation[`scores${i}`] = [];
+        item.scores.forEach(score => {
+          validation[`scores${i}`].push({
+            validated: score === 0 || score,
+            required: false,
+            duplicated: false
+          });
+        });
+      });
+    }
+    return validation;
+  }
+
   _validateQuestion = () => {
     this.setState(state => {
       console.log(state.config.question);
@@ -234,34 +269,101 @@ export default class Question extends React.Component {
   }
 
   _validateOption = (index) => {
+    this._validateCollectionItem('choice', 'options', index);
+  }
+  
+  _validateLabel = (index) => {
+    this._validateCollectionItem('scoregroup', 'labels', index);
+  }
+
+  _validateItem = (index) => {
+    this._validateCollectionItem('scoregroup', 'items', index, item => item.text);
+  }
+
+  _validateScore = (itemIndex, scoreIndex) => {
+    console.log('validating score', itemIndex, scoreIndex);
+    let validationKey = `scores${itemIndex}`;
+    this.__validateScore('scoregroup', 'items', itemIndex, scoreIndex);
+  }
+
+  __validateScore = (item, collection, index, subIndex) => {
+    console.log('updating validation', ...arguments);
     this.setState(state => {
       let change;
-      if (!state.config.choice.options[index]) {
-        change = {validation: {options: {[index]: {
+      let member = state.config[item][collection][index]['scores'][subIndex];
+      if (member === undefined || member === null || member === '') {
+        change = {validation: {[`scores${index}`]: {[subIndex]: {
           required: {$set: true},
-          validated: {$set: true},
+          validated: {$set: true}
         }}}};
       } else {
-        change = {validation: {options: {[index]: {
+        change = {validation: {[`scores${index}`]: {[subIndex]: {
           required: {$set: false},
-          validated: {$set: true},
+          validated: {$set: true}
         }}}};
       }
       let seen = {};
-      state.config.choice.options.forEach((o, i) => {
+      state.config[item][collection][index]['scores'].forEach((o, i) => {
+        let validationKey = `scores${index}`;
         console.log('comparing', o, seen);
-        if (!change.validation.options[i]) {
-          change.validation.options[i] = {};
+        if (!change.validation[validationKey][i]) {
+          change.validation[validationKey][i] = {};
         }
-        if (seen[o]) {
+        if (seen.hasOwnProperty(o)) {
           console.log('duped');
-          change.validation.options[i].duplicated = {$set: true};
+          change.validation[validationKey][i].duplicated = {$set: true};
         } else {
-          change.validation.options[i].duplicated = {$set: false};
+          change.validation[validationKey][i].duplicated = {$set: false};
         }
         seen[o] = 1;
       });
-      console.log(change);
+      console.log('updating validation', change);
+      return React.addons.update(state, change);
+    });
+  }
+  
+  _validateCollectionItem = (item, collection, index, getter, validationKey) => {
+    console.log('updating validation', ...arguments);
+    this.setState(state => {
+      if (validationKey === undefined) {
+        validationKey = collection;
+      }
+      let change;
+      let member = state.config[item][collection][index];
+      console.log('member', item, collection, index, member);
+      if (getter) {
+        member = getter(member);
+      }
+      console.log('member', item, collection, index, member);
+      if (member === undefined || member === null || member === '') {
+        change = {validation: {[validationKey]: {[index]: {
+          required: {$set: true},
+          validated: {$set: true}
+        }}}};
+      } else {
+        change = {validation: {[validationKey]: {[index]: {
+          required: {$set: false},
+          validated: {$set: true}
+        }}}};
+      }
+      let seen = {};
+      state.config[item][collection].forEach((o, i) => {
+        if (getter) {
+          o = getter(o);
+        }
+        console.log('comparing', o, seen);
+        if (!change.validation[validationKey][i]) {
+          change.validation[validationKey][i] = {};
+        }
+        if (seen.hasOwnProperty(o)) {
+          console.log('duped');
+          change.validation[validationKey][i].duplicated = {$set: true};
+        } else {
+          change.validation[validationKey][i].duplicated = {$set: false};
+        }
+        seen[o] = 1;
+      });
+      console.log('updating validation', change);
       return React.addons.update(state, change);
     });
   }
@@ -279,12 +381,28 @@ export default class Question extends React.Component {
   }
 
   _optionErrors() {
-    return this.state.config.choice.options.map((o, index) => {
-      let errors = this.state.validation.options[index].validated ? [] : null;
-      if (this.state.validation.options[index].required) {
+    return this._collectionErrors('choice', 'options');
+  }
+  
+  _scoreGroupErrors() {
+    let errors = {
+      labels: this._collectionErrors('labels'),
+      items: this._collectionErrors('items')
+    };
+    this.state.config.scoregroup.labels.map((l, i) => {
+      errors[`scores${i}`] = this._collectionErrors(`scores${i}`);
+    });
+    return errors;
+  }
+  
+  _collectionErrors(collection) {
+    console.log('collectionErrors', ...arguments);
+    return this.state.validation[collection].map((o, index) => {
+      let errors = this.state.validation[collection][index].validated ? [] : null;
+      if (this.state.validation[collection][index].required) {
         errors.push('This field is required');
       }
-      if (this.state.validation.options[index].duplicated) {
+      if (this.state.validation[collection][index].duplicated) {
         errors.push('Cannot have duplicates');
       }
       return errors;
@@ -295,14 +413,43 @@ export default class Question extends React.Component {
     console.log(this.state.validation);
     return (
       this.state.validation.question.validated && !this.state.validation.question.required &&
-      this.state.validation.options.every(o => o.validated && !(o.required || o.duplicated))
+      (this.state.validation.options && this.state.validation.options.every(o => o.validated && !(o.required || o.duplicated))) ||
+      (this.state.validation.labels && this.state.validation.labels.every(o => o.validated && !(o.required || o.duplicated))) &&
+      (this.state.validation.items && this.state.validation.items.every(o => o.validated && !(o.required || o.duplicated)))
     );
   }
 
   _addOption = () => {
+    this._add('choice', 'options', '');
+  }
+
+  _removeOption = (index) => {
+    this._remove('choice', 'options', index);
+  }
+
+  _addLabel = () => {
+    this._add('scoregroup', 'labels', '');
+  }
+
+  _removeLabel = (index) => {
+    this._remove('scoregroup', 'labels', index);
+  }
+
+  _addItem = () => {
+    this._add('scoregroup', 'items', {
+      text: '',
+      scores: this.state.scoregroup.labels.map((l, i) => i)
+    });
+  }
+
+  _removeItem = (index) => {
+    this._remove('scoregroup', 'items', index);
+  }
+  
+  _add = (item, collection, member) => {
     let change = {
-      config: {choice: {options: {$push: ['']}}},
-      validation: {options: {$push: [{
+      config: {[item]: {[collection]: {$push: [member]}}},
+      validation: {[collection]: {$push: [{
         validated: false,
         required: false,
         duplicated: false
@@ -311,11 +458,12 @@ export default class Question extends React.Component {
     this.setState(state => React.addons.update(state, change));
   }
 
-  _removeOption = (index) => {
+  _remove = (item, collection, index) => {
     let change = {
-      config: {choice: {options: {$splice: [[index, 1]]}}},
-      validation: {options: {$splice: [[index, 1]]}}
+      config: {[item]: {[collection]: {$splice: [[index, 1]]}}},
+      validation: {[collection]: {$splice: [[index, 1]]}}
     };
     this.setState(state => React.addons.update(state, change));
   }
+
 }
