@@ -175,7 +175,15 @@ export class ShapeManager {
     this.question.set(this.path, {});
   }
 
+  init(values) {
+    return this._set(values, 'init');
+  }
+
   set(values) {
+    return this._set(values, 'set');
+  }
+
+  _set(values, method) {
     this.question.set(this.path, {});
     for (let k in values) {
       if (values.hasOwnProperty(k)) {
@@ -186,9 +194,18 @@ export class ShapeManager {
         if (this.chain[k] === undefined) {
           this.chain[k] = new ItemManager(this.question, this, path, k, this.args[k]);
         }
-        this.chain[k].set(values[k]);
+        this.chain[k][method](values[k]);
       }
     }
+  }
+
+  _validate() {
+    for (let k in this) {
+      if (this.hasOwnProperty(k) && this[k] instanceof ItemManager && this[k].isBound) {
+        this[k]._validate();
+      }
+    }
+    this.errors = [];
   }
 }
 
