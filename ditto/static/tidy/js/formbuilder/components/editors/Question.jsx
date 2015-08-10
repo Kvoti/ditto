@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
-import ValidatedControl from '../../../lib/form/ValidatedControl';
+import DelayedControl from '../../../lib/form/DelayedControl';
 import TextEditor from './Text';
 import ChoiceEditor from './Choice';
 import ScoreGroupEditor from './ScoreGroup';
@@ -74,7 +74,7 @@ export default class Question extends React.Component {
       <div style={{border: '1px solid black'}} className="form-horizontal">
         <Row errors={errors}>
           <label>Question text</label> 
-          <ValidatedControl
+          <DelayedControl
                   validate={this._validateQuestion}
                   immediate={this.state.validation.question.validated || this.state.config.question}
                   >
@@ -84,7 +84,7 @@ export default class Question extends React.Component {
                     value={this.state.config.question}
                     onChange={state.set.bind(this, ['config', 'question'])}
             />
-          </ValidatedControl>
+          </DelayedControl>
         </Row>
         <Row>
           <label>

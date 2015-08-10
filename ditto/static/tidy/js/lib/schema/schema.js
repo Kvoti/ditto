@@ -30,13 +30,22 @@ export class StringManager {
     this.options = options;
   }
 
+  init(value) {
+    this._set(value);
+  }
+
   set(value) {
-    // if (typeof(value) !== 'string') {
-    //   throw new Error('Value must be a string');
-    // }
-    // if (this.options.maxLength !== undefined && value.length > this.options.maxLength) {
-    //   throw new Error('String is too long');
-    // }
+    console.log('setting string', value, this.question.pendNextChange);
+    if (!this.question.pendNextChange) {
+      this.isBound = true;
+    }
+    return this._set(value);
+  }
+  
+  _set(value) {
+    if (typeof value !== 'string') {
+      throw new Error('Value must be a string');
+    }
     return this.question.set(this.path, value);
   }
 
@@ -47,7 +56,26 @@ export class StringManager {
   getPending() {
     return this.question.getPending(this.path);
   }
-  
+
+  get errors() {
+    return this._errors;
+  }
+
+  _validate() {
+    const value = this.get();
+    let errors = [];
+    if (!this.isBound) {  // probably needs to recurse down!?
+      this._errors = errors;
+      return;
+    }
+    if (this.options.isRequired && value === '') {
+      errors.push('This field is required');
+    }
+    if (this.options.maxLength !== undefined && value.length > this.options.maxLength) {
+      errors.push('String is too long');
+    }
+    this._errors = errors;
+  }
 }
 
 export function array(item, options) {
@@ -77,7 +105,15 @@ export class ArrayManager {
     this.question.set(this.path, []);
   }
 
+  init(values) {
+    return this._set(values, 'init');
+  }
+
   set(values) {
+    return this._set(values, 'set');
+  }
+    
+  _set(values, method) {
     try {
       if (values.push === undefined) {
         throw new Error();
@@ -92,13 +128,40 @@ export class ArrayManager {
         this[i] = new ArrayItemManager(this.question, this, path, i, this.item);
       }
       this.chain[i] = this[i];
-      this[i].set(v);
+      this[i][method](v);
     });
+    return this.question;
   }
 
-  validate() {
+  _validate() {
+    let errors = [];
+    for (let k in this) {
+      if (this.hasOwnProperty(k) && this[k] instanceof ArrayItemManager && this[k].isBound) {
+        let item = this[k];
+        // TODO should gather items first, then do uniqueness check
+        item._validate();
+        let others = this._getBoundOthers(item.name);
+        for (let i = 0; i < others.length; i += 1) {
+          if (_.isEqual(item.get(), others[i])) {
+            errors.push('Items must be unique');
+            break;
+          }
+        }
+      }
+    }
+    this.errors = errors;
+  }
 
-
+  _getBoundOthers(index) {
+    let items = [];
+    for (let i = 0; i < index; i += 1) {
+      this[i]._validate();
+      if (this[i].isBound && this[i].errors.length === 0) {
+        items.push(this[i].get());
+      }
+    }
+    console.log('others', index, items);
+    return items;
   }
 }
 
@@ -138,26 +201,59 @@ export class ArrayItemManager {
     this.name = name;
   }
 
+  init(value) {
+    return this.item.init(value);
+  }
+  
   set(value) {
-    this.item.set(value);
+    return this.item.set(value);
+  }
+
+  get() {
+    return this.item.get();
+  }
+  
+  getPending() {
+    return this.item.getPending();
+  }
+
+  get isBound() {
+    return this.item.isBound;
+  }
+
+  _validate() {
+    return this.item._validate();
+  }
+  
+  get errors() {
+    return this.item.errors || []; // TODO not sure why need || clause here
   }
 }
 
 export class Question {
-  constructor(schema) {
+  constructor(schema, { initial = {}, data = {} }) {
     this.state = {};
     this.pendNextChange = false;
     this.pendingChange = null;
     schema(this);
+    for (let k in this) {
+      if (this.hasOwnProperty(k) && this[k] && this[k]._validate !== undefined) {
+        if (data.hasOwnProperty(k)) {
+          this[k].set(data[k]);
+        }
+        if (initial.hasOwnProperty(k)) {
+          this[k].init(initial[k]);
+        }
+      }
+    }
   }
 
   set(path, value) {
     if (this.pendNextChange) {
-      if (this.pendingChange) {
+      if (this.pendingChange && !_.isEqual(path, this.pendingChange.path)) {
         throw new Error('Cannot pend more than one change');
       }
       this.pendingChange = { path, value };
-      return this;
     } else {
       if (this.pendingChange &&
           !_.isEqual(path, this.pendingChange.path)) {
@@ -167,6 +263,10 @@ export class Question {
       this.pendingChange = null;
       this.pendNextChange = false;
     }
+    if (this.component) {
+      this.setState({question: this.state});
+    }
+    return this;
   }
   
   _set(path, value) {
@@ -175,6 +275,7 @@ export class Question {
       state = state[p];
     });
     state[path[path.length - 1]] = value;
+    this._validate();
   }
 
   get(path) {
@@ -186,7 +287,7 @@ export class Question {
   }
 
   getPending(path, value) {
-    if (_.isEqual(path, this.pendingChange.path)) {
+    if (this.pendingChange && _.isEqual(path, this.pendingChange.path)) {
       return this.pendingChange.value;
     }
     return null;
@@ -205,4 +306,11 @@ export class Question {
     //return this;
   }
 
+  _validate() {
+    for (let k in this) {
+      if (this.hasOwnProperty(k) && this[k] && this[k]._validate !== undefined) {
+        this[k]._validate();
+      }
+    }
+  }
 }

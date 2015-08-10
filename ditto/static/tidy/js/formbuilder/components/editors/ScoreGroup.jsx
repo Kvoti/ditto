@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import TextItem from './TextItem';
 import AddButton from './AddButton';
-import ValidatedControl from '../../../lib/form/ValidatedControl';
+import DelayedControl from '../../../lib/form/DelayedControl';
 import Row from './Row';
 
 export default class ScoreGroup extends React.Component {
@@ -84,7 +84,7 @@ export default class ScoreGroup extends React.Component {
                 errors={this.props.errors[`scores${index}`][i]}
                 >
           <label>{this.props.labels[i]}</label>
-          <ValidatedControl
+          <DelayedControl
                   validate={() => this.props.onChangeScoreValidation(index, i)}
                   >
             <input
@@ -92,7 +92,7 @@ export default class ScoreGroup extends React.Component {
                     value={score}
                     onChange={(e) => this.props.onChangeScore(index, i, e)}
             />
-          </ValidatedControl>
+          </DelayedControl>
         </Row>
       );
     });

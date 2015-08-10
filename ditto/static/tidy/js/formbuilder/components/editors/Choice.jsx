@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
-import ValidatedControl from '../../../lib/form/ValidatedControl';
+import DelayedControl from '../../../lib/form/DelayedControl';
 import Row from './Row';
 import InputGroup from './InputGroup';
 
@@ -81,7 +81,7 @@ export default class Choice extends React.Component {
               >
         <label>Option</label>
         <InputGroup>
-          <ValidatedControl
+          <DelayedControl
                   validate={this._updateOptionValidation.bind(this, index)}
                   immediate={this.props.errors[index] !== null}
                   >
@@ -90,7 +90,7 @@ export default class Choice extends React.Component {
                     onChange={this._updateOption.bind(this, index)}
                     value={option}
             />
-          </ValidatedControl>
+          </DelayedControl>
           <span className="input-group-btn">
             <Button onClick={this._removeOption.bind(index)}
                     ref={'option' + index}

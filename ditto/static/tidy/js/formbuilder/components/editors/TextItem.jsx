@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 import Row from './Row';
 import InputGroup from './InputGroup';
-import ValidatedControl from '../../../lib/form/ValidatedControl';
+import DelayedControl from '../../../lib/form/DelayedControl';
 
 export default class TextItem extends React.Component {
   static propTypes = {
@@ -19,7 +19,7 @@ export default class TextItem extends React.Component {
       <Row errors={this.props.errors}>
         <label>{name}</label>
         <InputGroup>
-          <ValidatedControl
+          <DelayedControl
                   validate={() => this.props.onValidationChange(this.props.id)}
                   immediate={this.props.errors !== null}
                   >
@@ -28,7 +28,7 @@ export default class TextItem extends React.Component {
                     onChange={(e) => this.props.onChange(this.props.id, e)}
                     value={this.props.value}
             />
-          </ValidatedControl>
+          </DelayedControl>
           <span className="input-group-btn">
             <Button onClick={() => this.props.onRemove(this.props.id)}
                     bsStyle='danger'

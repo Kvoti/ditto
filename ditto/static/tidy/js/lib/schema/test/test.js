@@ -2,7 +2,7 @@ import expect from 'expect';
 import * as s from '../schema';
 
 describe('StringManager', () => {
-  describe('#_set()', () => {
+  describe('#set()', () => {
     it('should set the internal state', () => {
       let spec = s.question({
         text: s.string()
@@ -11,6 +11,26 @@ describe('StringManager', () => {
       q.text.set('hello world');
       expect(q.state.text).toBe('hello world');
     });
+
+    it('should check the value is a string', () => {
+      let spec = s.question({
+        text: s.string()
+      });
+      let q = new s.Question(spec);
+      expect(() => q.text.set({})).toThrow(/must be a string/);
+    });
+
+    it('should have an error if the string is too long', () => {
+      let spec = s.question({
+        text: s.string({maxLength: 5})
+      });
+      let q = new s.Question(spec);
+      q.text.set('hello world');
+      expect(q.text.errors.length).toBe(1);
+      expect(q.text.errors[0]).toEqual('String is too long');
+      
+    });
+    
   });
 
   describe('#get()', () => {
