@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export function question(parts) {
   return function _question(question) {
     let path = [];
@@ -35,8 +37,17 @@ export class StringManager {
     // if (this.options.maxLength !== undefined && value.length > this.options.maxLength) {
     //   throw new Error('String is too long');
     // }
-    this.question.set(this.path, value);
+    return this.question.set(this.path, value);
   }
+
+  get() {
+    return this.question.get(this.path);
+  }
+
+  getPending() {
+    return this.question.getPending(this.path);
+  }
+  
 }
 
 export function array(item, options) {
@@ -120,11 +131,9 @@ export class ShapeManager {
 
 export class ArrayItemManager {
   constructor(question, chain, path, name, item) {
-    console.log('array item', ...arguments);
     this.question = question,
     this.chain = chain;
     this.path = path;
-    console.log('name', name);
     this.item = item(question, this, path);
     this.name = name;
   }
@@ -134,64 +143,66 @@ export class ArrayItemManager {
   }
 }
 
-class Question {
+export class Question {
   constructor(schema) {
     this.state = {};
+    this.pendNextChange = false;
+    this.pendingChange = null;
     schema(this);
   }
 
   set(path, value) {
-    console.log('setting', path, value);
-    // Hierachical
+    if (this.pendNextChange) {
+      if (this.pendingChange) {
+        throw new Error('Cannot pend more than one change');
+      }
+      this.pendingChange = { path, value };
+      return this;
+    } else {
+      if (this.pendingChange &&
+          !_.isEqual(path, this.pendingChange.path)) {
+        throw new Error('Cannot change other state while change is pending');
+      }
+      this._set(path, value);
+      this.pendingChange = null;
+      this.pendNextChange = false;
+    }
+  }
+  
+  _set(path, value) {
     let state = this.state;
     path.slice(0, path.length - 1).forEach(p => {
       state = state[p];
     });
     state[path[path.length - 1]] = value;
   }
+
+  get(path) {
+    let state = this.state;
+    path.forEach(p => {
+      state = state[p];
+    });
+    return state;
+  }
+
+  getPending(path, value) {
+    if (_.isEqual(path, this.pendingChange.path)) {
+      return this.pendingChange.value;
+    }
+    return null;
+  }
+  
+  pend() {
+    if (this.pendNextChange) {
+      throw new Error('Already pending');
+    }
+    this.pendNextChange = true;
+    return this;
+  }
+
+  unpend() {
+    this.pendNextChange = false;
+    //return this;
+  }
+
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
-let scoreGroupSpec = question({
-  labels: array(
-    string({maxLength: 10})
-  ),
-
-  items: array(
-    shape({
-      text: string(),
-      scores: array(
-        string(),
-        {
-          unique: true
-        }
-      )
-    })
-  )
-});
-
-
-let q = new Question(scoreGroupSpec);
-//q.labels.set(['Enter question text']);
-q.items.set([{text: 'bloggs', scores: [1, 2, 3]}]);
-
-window.q = q;
-
-// q.items.errors
-// q.items[1].errors
-// q.items[1].text.errors
-
-/*
-
-
-
-q.items.set().pend
-
-q.items[0].text.set('new').pend
-
-pend doesn't trigger validation
-
-
-*/
-
