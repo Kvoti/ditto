@@ -1,16 +1,5 @@
 import _ from 'lodash';
 
-export function question(parts) {
-  return function _question(question) {
-    let path = [];
-    for (let k in parts) {
-      if (parts.hasOwnProperty(k)) {
-        parts[k](question, question, path.concat([k]));
-      }
-    }
-  };
-}
-
 export function string(options={}) {
   if (options.isRequired === undefined) {
     options.isRequired = false;
@@ -252,7 +241,14 @@ export class Question {
     this.state = {};
     this.pendNextChange = false;
     this.pendingChange = null;
-    schema(this);
+
+    let path = [];
+    for (let k in schema) {
+      if (schema.hasOwnProperty(k)) {
+        schema[k](this, this, path.concat([k]));
+      }
+    }
+
     for (let k in this) {
       if (this.hasOwnProperty(k) && this[k] && this[k]._validate !== undefined) {
         if (data.hasOwnProperty(k)) {

@@ -11,7 +11,7 @@ export default class Form extends React.Component {
       texts: ['', '', '']
     };
     this.q = new schema.Question(
-      schema.question({
+      {
         texts: schema.array(
           schema.string({
             maxLength: 10,
@@ -21,10 +21,10 @@ export default class Form extends React.Component {
             unique: true
           }
         )
-      }),
+      },
       {initial: this.state}
     );
-  }    
+  }
   
   render() {
     return (
