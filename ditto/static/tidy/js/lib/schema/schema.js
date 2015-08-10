@@ -125,7 +125,7 @@ export class ArrayManager {
     values.forEach((v, i) => {
       let path = this.path.concat([i]);
       if (this[i] === undefined) {
-        this[i] = new ArrayItemManager(this.question, this, path, i, this.item);
+        this[i] = new ItemManager(this.question, this, path, i, this.item);
       }
       this.chain[i] = this[i];
       this[i][method](v);
@@ -136,7 +136,7 @@ export class ArrayManager {
   _validate() {
     let errors = [];
     for (let k in this) {
-      if (this.hasOwnProperty(k) && this[k] instanceof ArrayItemManager && this[k].isBound) {
+      if (this.hasOwnProperty(k) && this[k] instanceof ItemManager && this[k].isBound) {
         let item = this[k];
         // TODO should gather items first, then do uniqueness check
         item._validate();
@@ -184,7 +184,7 @@ export class ShapeManager {
         }
         let path = this.path.concat([k]);
         if (this.chain[k] === undefined) {
-          this.chain[k] = new ArrayItemManager(this.question, this, path, k, this.args[k]);
+          this.chain[k] = new ItemManager(this.question, this, path, k, this.args[k]);
         }
         this.chain[k].set(values[k]);
       }
@@ -192,7 +192,7 @@ export class ShapeManager {
   }
 }
 
-export class ArrayItemManager {
+export class ItemManager {
   constructor(question, chain, path, name, item) {
     this.question = question,
     this.chain = chain;
