@@ -38,4 +38,15 @@ export function bool(options={}) {
   };
 }
 
+export function integer(options={}) {
+  if (options.isRequired === undefined) {
+    options.isRequired = false;
+  }
+  return function _string(question, chain, basePath) {
+    let name = basePath[basePath.length - 1];
+    chain[name] = new managers.IntegerManager(question, basePath, options);
+    return chain[name];
+  };
+}
+
 export * from './Question';
