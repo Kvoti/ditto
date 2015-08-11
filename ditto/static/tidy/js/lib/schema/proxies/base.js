@@ -49,6 +49,9 @@ export class BaseItemManager {
       return;
     }
     this.errors = this._validateBoundValue();
+    if (this.options.validate) {
+      this.errors = this.errors.concat(this.options.validate.apply(this));
+    }
   }
 
   _checkValue() {
