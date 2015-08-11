@@ -29,7 +29,7 @@ export default class ValidatedInput extends React.Component {
     let aria = `inputStatus-${this.props.id}`;
     return (
       <div>
-        <input {...inputProps}/>
+        {this.props.children}
         {validationIcon ? <span className={glyphClassNames} aria-hidden="true"></span> : null}
         {validationIcon ? <span id={aria} className="sr-only">({validationStatus})</span> : null}
         {this.props.errors && this.props.errors.map((e) => <p key={e} className="help-block">{e}</p>)}
