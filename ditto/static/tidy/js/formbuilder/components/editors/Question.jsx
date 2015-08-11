@@ -30,7 +30,7 @@ export default class Question extends React.Component {
     let textQuestion = new schema.Question(textSchema, {data: this.props});
     this.state = {
       config: this._copyProps(),
-      question: textQuestion.serialize(),
+      question: textQuestion.toState(),
       isCancelling: false
     };
     this.state.validation = this._initValidation();
@@ -43,8 +43,11 @@ export default class Question extends React.Component {
   render() {
     let editor;
     let editorProps;
-    let textQuestion = schema.Question.fromComponentState(
-      textSchema, this);
+    let textQuestion = schema.Question.fromState(
+      textSchema,
+      this.state.question,
+      (newState) => this.setState({question: newState})
+    );
     if (this.state.config.text) {
       editor = TextEditor;
       editorProps = {

@@ -1,13 +1,13 @@
 import _ from 'lodash';
 
 export class Question {
-  constructor(schema, { initial = {}, data = {}, component }) {
+  constructor(schema, { initial = {}, data = {},  onChange}) {
     this.questionSpec = {};
     this.pendNextChange = false;
     this.pendingChange = null;
     this.isBound = {};
     this.errors = {};
-    this.component = component;
+    this.onChange = onChange;
 
     let path = [];
     for (let k in schema) {
@@ -28,14 +28,14 @@ export class Question {
     }
   }
 
-  static fromComponentState(schema, component) {
-    let initial = component.state.question.questionSpec;
+  static fromState(schema, state, onChange) {
+    let initial = state.questionSpec;
     let question = new Question(schema, {initial: initial});
-    question.pendNextChange = component.state.question.pendNextChange;
-    question.pendingChange = component.state.question.pendingChange;
-    question.isBound = component.state.question.isBound;
-    question.errors =  component.state.question.errors;
-    question.component = component;
+    question.pendNextChange = state.pendNextChange;
+    question.pendingChange = state.pendingChange;
+    question.isBound = state.isBound;
+    question.errors = state.errors;
+    question.onChange = onChange;
     return question;
   }
   
@@ -55,17 +55,13 @@ export class Question {
       this.pendingChange = null;
       this.pendNextChange = false;
     }
-    if (this.component) {
-      // TODO how state is updated should be pluggable?
-      this.component.setState({
-        // TODO shouldn't assume this key name
-        question: this.serialize()
-      });
+    if (this.onChange) {
+      this.onChange(this.toState());
     }
     return this;
   }
 
-  serialize() {
+  toState() {
     return {
       questionSpec: this.questionSpec,
       pendNextChange: this.pendNextChange,
