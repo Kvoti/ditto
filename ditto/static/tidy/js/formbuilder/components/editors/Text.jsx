@@ -21,12 +21,12 @@ export default class Text extends React.Component {
     console.log('text props', this.props);
     return (
       <div>
-        <Row>
+        <Row errors={this.props.errors}>
           <label>
             Max characters
           </label>
           <input
-                  type="number"
+                  type="text"
                   value={this.props.maxChars}
                   onChange={(e) => this.props.onChangeMaxChars(e.target.value)}
           />

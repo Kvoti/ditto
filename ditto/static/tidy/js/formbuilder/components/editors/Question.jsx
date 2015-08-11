@@ -13,7 +13,7 @@ const textSchema = {
   isRequired: schema.bool(),
   text: schema.shape({
     isMultiline: schema.bool(),
-    maxChars: schema.string(),
+    maxChars: schema.integer({max: 100}),
     maxWords: schema.string()
   })
 };
@@ -62,7 +62,8 @@ export default class Question extends React.Component {
         onChangeIsMultiline: (v) => {
           console.log('clicked!');
           questionConfig.text.isMultiline.set(v);
-        }
+        },
+        errors: questionConfig.text.maxChars.errors
       };
     } else {
       return null;
