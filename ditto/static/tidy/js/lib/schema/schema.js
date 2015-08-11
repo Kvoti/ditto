@@ -1,5 +1,4 @@
 import * as managers from './proxies';
-export * from './Question';
 
 export function array(item, options) {
   return function _array(question, chain, basePath) {
@@ -38,3 +37,5 @@ export function bool(options={}) {
     return chain[name];
   };
 }
+
+export * from './Question';

@@ -29,16 +29,21 @@ export class BaseItemManager {
     return this.question.getPending(this.path);
   }
 
+  set errors(errors) {
+    return this.question._setErrors(this.path, errors);
+
+  }
+  
   get errors() {
-    return this._errors;
+    return this.question._getErrors(this.path);
   }
 
   _validate() {
     if (!this.isBound) {
-      this._errors = [];
+      this.errors = [];
       return;
     }
-    this._errors = this._validateBoundValue();
+    this.errors = this._validateBoundValue();
   }
 
   _checkValue() {
@@ -47,5 +52,13 @@ export class BaseItemManager {
 
   _validateBoundValue() {
     throw new Error('Subclass must implement _validateBoundValue method');
+  }
+
+  set isBound(value) {
+    this.question._setIsBound(this.path, value);
+  }
+
+  get isBound() {
+    return this.question._getIsBound(this.path);
   }
 }

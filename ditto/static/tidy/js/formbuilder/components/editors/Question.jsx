@@ -7,6 +7,17 @@ import ChoiceEditor from './Choice';
 import ScoreGroupEditor from './ScoreGroup';
 import * as state from '../../../lib/state';
 import Row from './Row';
+import * as schema from '../../../lib/schema/schema';
+
+const textSchema = {
+  question: schema.string({isRequired: true, maxLength: 3}),
+  isRequired: schema.bool(),
+  text: schema.shape({
+    isMultiline: schema.bool(),
+    maxChars: schema.string(),
+    maxWords: schema.string()
+  })
+};
 
 export default class Question extends React.Component {
   static defaultProps = {
@@ -16,10 +27,12 @@ export default class Question extends React.Component {
 
   constructor(props) {
     super(props);
+    let textQuestion = new schema.Question(textSchema, {data: this.props});
     this.state = {
       config: this._copyProps(),
+      question: textQuestion.serialize(),
       isCancelling: false
-    }
+    };
     this.state.validation = this._initValidation();
   }
 
@@ -30,13 +43,15 @@ export default class Question extends React.Component {
   render() {
     let editor;
     let editorProps;
+    let textQuestion = schema.Question.fromComponentState(
+      textSchema, this);
     if (this.state.config.text) {
       editor = TextEditor;
       editorProps = {
             ...this.state.config.text,
-        onChangeMaxChars: state.set.bind(this, ['config', 'text', 'maxChars']),
-        onChangeMaxWords: state.set.bind(this, ['config', 'text', 'maxWords']),
-        onChangeIsMultiline: state.set.bind(this, ['config', 'text', 'isMultiline'])
+        onChangeMaxChars: (v) => textQuestion.text.maxChars.set(v),
+        onChangeMaxWords: (v) => textQuestion.text.maxWords.set(v),
+        onChangeIsMultiline: (v) => textQuestion.text.isMultiline.set(v)
       };
     } else if (this.state.config.choice) {
       editor = ChoiceEditor;
@@ -69,20 +84,20 @@ export default class Question extends React.Component {
         onChangeScoreValidation: this._validateScore
       };
     }
-    let errors = this._questionErrors();
+    console.log('question errors', textQuestion.question.errors);
     return (
       <div style={{border: '1px solid black'}} className="form-horizontal">
-        <Row errors={errors}>
+        <Row errors={textQuestion.question.errors}>
           <label>Question text</label> 
           <DelayedControl
-                  validate={this._validateQuestion}
-                  immediate={this.state.validation.question.validated || this.state.config.question}
+                  immediate={textQuestion.question.isBound}
+                  onChange={(v) => textQuestion.question.set(v)}
+                  onPendingChange={(v) => textQuestion.pend().question.set(v)}
                   >
             <input
                     autoFocus={true}
                     type="text"
-                    value={this.state.config.question}
-                    onChange={state.set.bind(this, ['config', 'question'])}
+                    value={textQuestion.question.getPending() || textQuestion.question.get()}
             />
           </DelayedControl>
         </Row>
@@ -251,7 +266,6 @@ export default class Question extends React.Component {
 
   _validateQuestion = () => {
     this.setState(state => {
-      console.log(state.config.question);
       let change;
       if (!state.config.question) {
         change = {validation: {question: {
@@ -281,13 +295,11 @@ export default class Question extends React.Component {
   }
 
   _validateScore = (itemIndex, scoreIndex) => {
-    console.log('validating score', itemIndex, scoreIndex);
     let validationKey = `scores${itemIndex}`;
     this.__validateScore('scoregroup', 'items', itemIndex, scoreIndex);
   }
 
   __validateScore = (item, collection, index, subIndex) => {
-    console.log('updating validation', ...arguments);
     this.setState(state => {
       let change;
       let member = state.config[item][collection][index]['scores'][subIndex];
@@ -305,36 +317,30 @@ export default class Question extends React.Component {
       let seen = {};
       state.config[item][collection][index]['scores'].forEach((o, i) => {
         let validationKey = `scores${index}`;
-        console.log('comparing', o, seen);
         if (!change.validation[validationKey][i]) {
           change.validation[validationKey][i] = {};
         }
         if (seen.hasOwnProperty(o)) {
-          console.log('duped');
           change.validation[validationKey][i].duplicated = {$set: true};
         } else {
           change.validation[validationKey][i].duplicated = {$set: false};
         }
         seen[o] = 1;
       });
-      console.log('updating validation', change);
       return React.addons.update(state, change);
     });
   }
   
   _validateCollectionItem = (item, collection, index, getter, validationKey) => {
-    console.log('updating validation', ...arguments);
     this.setState(state => {
       if (validationKey === undefined) {
         validationKey = collection;
       }
       let change;
       let member = state.config[item][collection][index];
-      console.log('member', item, collection, index, member);
       if (getter) {
         member = getter(member);
       }
-      console.log('member', item, collection, index, member);
       if (member === undefined || member === null || member === '') {
         change = {validation: {[validationKey]: {[index]: {
           required: {$set: true},
@@ -351,33 +357,18 @@ export default class Question extends React.Component {
         if (getter) {
           o = getter(o);
         }
-        console.log('comparing', o, seen);
         if (!change.validation[validationKey][i]) {
           change.validation[validationKey][i] = {};
         }
         if (seen.hasOwnProperty(o)) {
-          console.log('duped');
           change.validation[validationKey][i].duplicated = {$set: true};
         } else {
           change.validation[validationKey][i].duplicated = {$set: false};
         }
         seen[o] = 1;
       });
-      console.log('updating validation', change);
       return React.addons.update(state, change);
     });
-  }
-
-  _questionErrors() {
-    let errors = [];
-    if (this.state.validation.question.validated) {
-      if (this.state.validation.question.required) {
-        errors = ['This field is required'];
-      }
-    } else {
-      errors = null;
-    }
-    return errors;
   }
 
   _optionErrors() {
@@ -396,7 +387,6 @@ export default class Question extends React.Component {
   }
   
   _collectionErrors(collection) {
-    console.log('collectionErrors', ...arguments);
     return this.state.validation[collection].map((o, index) => {
       let errors = this.state.validation[collection][index].validated ? [] : null;
       if (this.state.validation[collection][index].required) {
@@ -410,7 +400,6 @@ export default class Question extends React.Component {
   }
 
   _isValid() {
-    console.log(this.state.validation);
     return (
       this.state.validation.question.validated && !this.state.validation.question.required &&
       (this.state.validation.options && this.state.validation.options.every(o => o.validated && !(o.required || o.duplicated))) ||
