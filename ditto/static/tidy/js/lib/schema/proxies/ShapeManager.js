@@ -26,10 +26,11 @@ export class ShapeManager {
           throw new Error(`Key '${k}' is not valid for object '${this.name}'`);
         }
         let path = this.path.concat([k]);
-        if (this.chain[k] === undefined) {
-          this.chain[k] = new MemberManager(this.question, this, path, k, this.args[k]);
+        if (this[k] === undefined) {
+          this[k] = new MemberManager(this.question, this, path, k, this.args[k]);
         }
-        this.chain[k][method](values[k]);
+        this.chain[k] = this[k];
+        this[k][method](values[k]);
       }
     }
   }
