@@ -28,6 +28,22 @@ export class Question {
     }
   }
 
+  isChanged(original) {
+    console.log('checking changes');
+    return !_.isEqual(this.quesitonSpec, original);
+  }
+
+  isValid() {
+    for (let path in this.errors) {
+      if (this.errors.hasOwnProperty(path)) {
+        if (this.errors[path].length) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
   static fromState(schema, state, onChange) {
     let initial = state.questionSpec;
     let question = new Question(schema, {initial: initial});
@@ -92,11 +108,9 @@ export class Question {
     if (this.pendingChange && _.isEqual(path, this.pendingChange.path)) {
       return this.pendingChange.value;
     }
-    return null;
   }
 
   pend() {
-    console.log('start pend');
     if (this.pendNextChange) {
       throw new Error('Already pending');
     }

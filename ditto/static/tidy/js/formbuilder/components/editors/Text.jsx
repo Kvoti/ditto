@@ -18,6 +18,7 @@ export default class Text extends React.Component {
   }
 
   render() {
+    console.log('text props', this.props);
     return (
       <div>
         <Row>
@@ -27,7 +28,7 @@ export default class Text extends React.Component {
           <input
                   type="number"
                   value={this.props.maxChars}
-                  onChange={this.props.onChangeMaxChars}
+                  onChange={(e) => this.props.onChangeMaxChars(e.target.value)}
           />
         </Row>
         <Row>
@@ -37,7 +38,7 @@ export default class Text extends React.Component {
           <input
                   type="number"
                   value={this.props.maxWords}
-                  onChange={this.props.onChangeMaxWords}
+                  onChange={(e) => this.props.onChangeMaxWords(e.target.value)}
           />
         </Row>
         <Row>
@@ -47,7 +48,7 @@ export default class Text extends React.Component {
           <input
                   type="checkbox"
                   checked={this.props.isMultiline}
-                  onChange={this.props.onChangeIsMultiline}
+                  onChange={(e) => this.props.onChangeIsMultiline(e.target.checked)}
           />
         </Row>
       </div>

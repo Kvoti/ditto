@@ -29,6 +29,11 @@ export class BaseItemManager {
     return this.question.getPending(this.path);
   }
 
+  getPendingOrCurrent() {
+    let pending = this.getPending();
+    return pending !== undefined ? pending : this.get();
+  }
+  
   set errors(errors) {
     return this.question._setErrors(this.path, errors);
 
