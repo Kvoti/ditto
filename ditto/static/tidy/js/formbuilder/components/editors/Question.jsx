@@ -14,7 +14,15 @@ const textSchema = {
   text: schema.shape({
     isMultiline: schema.bool(),
     maxChars: schema.integer({max: 100}),
-    maxWords: schema.string()
+    maxWords: schema.string({
+      validate: function () {
+        let errors = [];
+        if (!this.question.text.isMultiline.get() && this.get()) {
+          errors.push("Can't specify max words if question is not multiline");
+        }
+        return errors;
+      }
+    })
   })
 };
 
@@ -63,7 +71,10 @@ export default class Question extends React.Component {
           console.log('clicked!');
           questionConfig.text.isMultiline.set(v);
         },
-        errors: questionConfig.text.maxChars.errors
+        errors: {
+          maxChars: questionConfig.text.maxChars.errors,
+          maxWords: questionConfig.text.maxWords.errors
+        }
       };
     } else {
       return null;
