@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import * as schema from '../../../lib/schema/schema';
 
 export const textQuestion = {
@@ -48,7 +49,16 @@ export const scoreGroupQuestion = {
           schema.integer({isRequired: true}),
           {unique: true}
         )
-      })
+      }),
+      {
+        validate: function() {
+          let texts = [for (i of this.get()) i.text];
+          if (!_.isEqual(texts, _.unique(texts))) {
+            this.addError('Must be unique');
+          }
+          return [];
+        }
+      }
       //{unique: ['text']} ??
     )
   })
