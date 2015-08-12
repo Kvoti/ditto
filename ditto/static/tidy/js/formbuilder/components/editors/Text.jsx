@@ -19,9 +19,10 @@ export default class Text extends React.Component {
 
   render() {
     console.log('text props', this.props);
+    //disabled={!this.props.isMultiline}
     return (
       <div>
-        <Row errors={this.props.errors}>
+        <Row errors={this.props.maxChars ? this.props.errors.maxChars : null}>
           <label>
             Max characters
           </label>
@@ -31,7 +32,7 @@ export default class Text extends React.Component {
                   onChange={(e) => this.props.onChangeMaxChars(e.target.value)}
           />
         </Row>
-        <Row>
+        <Row errors={this.props.maxWords ? this.props.errors.maxWords : null}>
           <label>
             Max words
           </label>
