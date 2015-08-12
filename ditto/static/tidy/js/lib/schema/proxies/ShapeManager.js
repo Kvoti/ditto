@@ -22,6 +22,15 @@ export class ShapeManager {
     return this.question.get(this.path);
   }
   
+  set errors(errors) {
+    return this.question._setErrors(this.path, errors);
+
+  }
+  
+  get errors() {
+    return this.question._getErrors(this.path);
+  }
+  
   _set(values, method) {
     this.question.set(this.path, {});
     for (let k in values) {
