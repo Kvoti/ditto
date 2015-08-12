@@ -15,7 +15,7 @@ const textSchema = {
     isMultiline: schema.bool(),
     maxChars: schema.integer({max: 100}),
     maxWords: schema.integer({
-      validate: function () {
+      validate: function validateMaxWords() {
         let errors = [];
         if (!this.question.text.isMultiline.get() && this.get()) {
           errors.push("Can't specify max words if question is not multiline");

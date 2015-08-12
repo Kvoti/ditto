@@ -29,18 +29,21 @@ export class Question {
   }
 
   isChanged(original) {
-    console.log('checking changes');
-    return !_.isEqual(this.quesitonSpec, original);
+    let result = !_.isEqual(this.questionSpec, original);
+    console.log('is changed', result, this.questionSpec, original);
+    return result;
   }
 
   isValid() {
     for (let path in this.errors) {
       if (this.errors.hasOwnProperty(path)) {
         if (this.errors[path].length) {
+          console.log('not valid', path, this.errors[path]);
           return false;
         }
       }
     }
+    console.log('valid');
     return true;
   }
   
