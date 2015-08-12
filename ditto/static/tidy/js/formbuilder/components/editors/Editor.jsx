@@ -32,11 +32,21 @@ export default class Question extends React.Component {
         this.setState({config: newState});
       }
     );
+    let viewer = React.createElement(this.props.viewer, question.questionSpec);
     return (
-      <div className="well form-horizontal">
-        <Renderer question={question} />
-        {this._renderSave(question)} {this._renderCancel(question)}
-      </div>
+        <div className="well form-horizontal">
+          <div className="row">
+            <div className="col-md-6">
+              <Renderer question={question} />
+            </div>
+            <div className="col-md-6">
+              {viewer}
+            </div>
+          </div>
+          <div className="row">
+            {this._renderSave(question)} {this._renderCancel(question)}
+          </div>
+        </div>
     );
   }
 

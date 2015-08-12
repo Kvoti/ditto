@@ -13,10 +13,11 @@ export default class Question extends React.Component {
   render() {
     const { text, choice, scoregroup } = this.props;
     const { isEditable, ...subProps } = this.props;
-    let component = Text;
+    let viewer;
+    let editor;
     let schema;
     if (this.props.isEditable) {
-      component = Editor;
+      editor = Editor;
       if (text) {
         schema = schemas.textQuestion;
       } else if (choice) {
@@ -24,13 +25,18 @@ export default class Question extends React.Component {
       } else if (scoregroup) {
         schema = schemas.scoreGroupQuestion;
       }
-    } else if (text) {
-      component = Text;
-    } else if (choice) {
-      component = Choice;
-    } else if (scoregroup) {
-      component = ScoreGroup;
     }
-    return React.createElement(component, {...subProps, schema: schema});
+    if (text) {
+      viewer = Text;
+    } else if (choice) {
+      viewer = Choice;
+    } else if (scoregroup) {
+      viewer = ScoreGroup;
+    }
+    if (editor) {
+      return React.createElement(editor, {...subProps, schema: schema, viewer: viewer});
+    } else {
+      return React.createElement(viewer, {...subProps, schema: schema, viewer: viewer});
+    }
   }
 }
