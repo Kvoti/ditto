@@ -3,7 +3,7 @@ import { BaseItemManager } from './base';
 export class StringManager extends BaseItemManager {
   _checkValue(value) {
     if (typeof value !== 'string') {
-      throw new Error('Value must be a string');
+      throw new Error(`Value must be a string: ${value}`);
     }
   }
 
