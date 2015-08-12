@@ -82,7 +82,7 @@ export default class Question extends React.Component {
     }
     console.log('question errors', questionConfig.question.errors);
     return (
-      <div style={{border: '1px solid black'}} className="form-horizontal">
+      <div className="well form-horizontal">
         <Row errors={questionConfig.question.errors}>
           <label>Question text</label> 
           <DelayedControl
