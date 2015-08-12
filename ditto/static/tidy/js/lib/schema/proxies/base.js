@@ -11,6 +11,7 @@ export class BaseItemManager {
 
   set(value) {
     if (!this.question.pendNextChange) {
+      //console.log('setting isBound', this.path, true);
       this.isBound = true;
     }
     return this._set(value);
@@ -59,6 +60,7 @@ export class BaseItemManager {
   }
 
   _validate() {
+//    console.log(this.path, this.isBound);
     if (!this.isBound) {
       this.errors = [];
       return;

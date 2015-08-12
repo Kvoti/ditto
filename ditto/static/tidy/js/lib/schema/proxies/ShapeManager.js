@@ -18,6 +18,10 @@ export class ShapeManager {
     return this._set(values, 'set');
   }
 
+  get() {
+    return this.question.get(this.path);
+  }
+  
   _set(values, method) {
     this.question.set(this.path, {});
     for (let k in values) {
@@ -37,7 +41,10 @@ export class ShapeManager {
 
   _validate() {
     for (let k in this) {
-      if (this.hasOwnProperty(k) && this[k] instanceof MemberManager && this[k].isBound) {
+      if (k === 'chain') {
+        continue;
+      }
+      if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
         this[k]._validate();
       }
     }

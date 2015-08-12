@@ -33,3 +33,23 @@ export const choiceQuestion = {
     otherText: schema.string()
   })
 };
+
+export const scoreGroupQuestion = {
+  question: schema.string({isRequired: true}),
+  isRequired: schema.bool(),
+  scoregroup: schema.shape({
+    labels: schema.array(
+      schema.string({isRequired: true})
+    ),
+    items: schema.array(
+      schema.shape({
+        text: schema.string({isRequired: true}),
+        scores: schema.array(
+          schema.integer({isRequired: true}),
+          {unique: true}
+        )
+      })
+      //{unique: ['text']} ??
+    )
+  })
+};

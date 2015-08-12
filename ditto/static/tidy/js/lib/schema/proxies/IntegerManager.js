@@ -10,7 +10,8 @@ export class IntegerManager extends BaseItemManager {
   _validateBoundValue() {
     let value = this.get();
     let errors = [];
-    if (this.options.isRequired && value !== null) {
+    //console.log('value', value);
+    if (this.options.isRequired && value === null) {
       errors.push('This field is required');
     }
     if (value !== null) {
@@ -23,6 +24,7 @@ export class IntegerManager extends BaseItemManager {
         }
       }
     }
+    //console.log('errors', errors);
     return errors;
   }
 }

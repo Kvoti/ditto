@@ -49,7 +49,7 @@ export default class Renderer extends React.Component {
     }
     if (part instanceof schemaTypes.StringManager) {
       let errors;
-      if (!part.errors.length && !part.isRequired && part.get() === '') {
+      if (!part.errors.length && !part.options.isRequired && part.get() === '') {
         errors = null;
       } else {
         errors = part.errors;
@@ -83,13 +83,20 @@ export default class Renderer extends React.Component {
       );
     }
     if (part instanceof schemaTypes.IntegerManager) {
+      let errors;
+      if (!part.errors.length && !part.options.isRequired && part.get() === null) {
+        errors = null;
+      } else {
+        errors = part.errors;
+      }
+      console.log(errors);
       return (
-        <Row key={name} errors={!part.isRequired && part.get() === null ? null : part.errors}>
+        <Row key={name} errors={errors}>
           <label>{this._toLabel(name)}</label>
           <DelayedControl
                   immediate={part.question.isBound}
-                  onChange={(v) => part.set(v || null)}
-                  onPendingChange={(v) => part.pend().set(v || null)}
+                  onChange={(v) => part.set(v === '' ? null : parseInt(v, 10))}
+                  onPendingChange={(v) => part.pend().set(v === '' ? null : parseInt(v, 10))}
                   >
             <input
                     type="text"

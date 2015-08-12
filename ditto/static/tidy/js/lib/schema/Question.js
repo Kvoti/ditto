@@ -30,7 +30,6 @@ export class Question {
 
   isChanged(original) {
     let result = !_.isEqual(this.questionSpec, original);
-    console.log('is changed', result, this.questionSpec, original);
     return result;
   }
 
@@ -38,12 +37,10 @@ export class Question {
     for (let path in this.errors) {
       if (this.errors.hasOwnProperty(path)) {
         if (this.errors[path].length) {
-          console.log('not valid', path, this.errors[path]);
           return false;
         }
       }
     }
-    console.log('valid');
     return true;
   }
   
@@ -130,6 +127,7 @@ export class Question {
   }
 
   _getIsBound(path) {
+    path = String(path);
     if (this.isBound.hasOwnProperty(path)) {
       return this.isBound[path];
     }
@@ -138,6 +136,7 @@ export class Question {
 
   _setIsBound(path, value) {
     this.isBound[path] = value;
+//    console.log(this.isBound);
   }
 
   _getErrors(path) {

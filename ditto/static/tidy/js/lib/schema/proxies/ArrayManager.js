@@ -48,11 +48,10 @@ export class ArrayManager {
       if (k === 'chain') {
         continue;
       }
-      if (this.hasOwnProperty(k) && this[k] instanceof MemberManager && this[k].isBound) {
-        console.log('validating array member', this.path, k);
+      if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
         let item = this[k];
+        //console.log('comparing', this[k].get(), others);
         for (let i = 0; i < others.length; i += 1) {
-          console.log('comparing', others[i], item.get(), i, k, typeof k);
           if (i !== parseInt(k) && _.isEqual(item.get(), others[i])) {
             item.addError('Items must be unique');
             break;
@@ -79,14 +78,12 @@ export class ArrayManager {
         continue;
       }
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
-        console.log('validte', this.path, k);
         this[k]._validate();
 //        if (this[k].isBound && this[k].errors.length === 0) {
           items.push(this[k].get());
   //      }
       }
     }
-    console.log('others', items);
     return items;
   }
 }
