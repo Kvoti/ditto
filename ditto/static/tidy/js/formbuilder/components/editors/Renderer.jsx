@@ -18,9 +18,7 @@ export default class Renderer extends React.Component {
     let question = this.props.question;
     for (let key in question) {
       if (question.hasOwnProperty(key)) {
-        console.log('rendering', key);
         parts.push(this._renderPart(key, question[key]));
-        console.log('rendered', key);
       }
     }
     return (
@@ -31,24 +29,33 @@ export default class Renderer extends React.Component {
   }
 
   _renderPart(name, part) {
-    console.log('rendering', name);
-    if (part instanceof schemaTypes.ShapeManager) {
+    if (name === 'chain') {
+      return null;
+    }
+    if (part instanceof schemaTypes.ShapeManager || part instanceof schemaTypes.ArrayManager) {
       let parts = [];
       for (let k in part) {
-        if (part.hasOwnProperty(k)) {
+        if (part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
           parts.push(this._renderPart(k, part[k].item));
         }
       }
       return (
         <fieldset>
           <legend>{this._toLabel(name)}</legend>
+          {part.errors.map(e => <p>{e}</p>)}
           {parts}
         </fieldset>
       );
     }
     if (part instanceof schemaTypes.StringManager) {
+      let errors;
+      if (!part.errors.length && !part.isRequired && part.get() === '') {
+        errors = null;
+      } else {
+        errors = part.errors;
+      }
       return (
-        <Row key={name} errors={part.errors}>
+        <Row key={name} errors={errors}>
           <label>{this._toLabel(name)}</label>
           <DelayedControl
                   immediate={part.question.isBound}
@@ -76,7 +83,6 @@ export default class Renderer extends React.Component {
       );
     }
     if (part instanceof schemaTypes.IntegerManager) {
-      console.log(part.errors);
       return (
         <Row key={name} errors={!part.isRequired && part.get() === null ? null : part.errors}>
           <label>{this._toLabel(name)}</label>

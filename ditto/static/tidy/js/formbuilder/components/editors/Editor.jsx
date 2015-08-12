@@ -1,33 +1,14 @@
 import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
+import { Question as QuestionSchema } from '../../../lib/schema/schema';
 import Renderer from './Renderer';
-
-import * as schema from '../../../lib/schema/schema';
-
-const textSchema = {
-  question: schema.string({isRequired: true}),
-  isRequired: schema.bool(),
-  text: schema.shape({
-    isMultiline: schema.bool(),
-    maxChars: schema.integer({max: 100}),
-    maxWords: schema.integer({
-      validate: function validateMaxWords() {
-        let errors = [];
-        if (!this.question.text.isMultiline.get() && this.get()) {
-          errors.push("Can't specify max words if question is not multiline");
-        }
-        return errors;
-      }
-    })
-  })
-};
 
 export default class Question extends React.Component {
   constructor(props) {
     super(props);
-    let questionConfig = new schema.Question(
-      textSchema,
+    let questionConfig = new QuestionSchema(
+      props.schema,
       {
         data: this.props
       }
@@ -44,8 +25,8 @@ export default class Question extends React.Component {
   }
 
   render() {
-    let question = schema.Question.fromState(
-      textSchema,
+    let question = QuestionSchema.fromState(
+      this.props.schema,
       this.state.config,
       (newState) => {
         this.setState({config: newState});

@@ -3,7 +3,7 @@ import { BaseItemManager } from './base';
 export class BoolManager extends BaseItemManager {
   _checkValue(value) {
     if (typeof value !== 'boolean') {
-      throw new Error('Value must be a boolean');
+      throw new Error(`Value must be a boolean: ${this.path} ${value}`);
     }
   }
 

@@ -1,4 +1,4 @@
-export default class MemberManager {
+export class MemberManager {
   constructor(question, chain, path, name, item) {
     this.question = question;
     this.chain = chain;
@@ -33,5 +33,9 @@ export default class MemberManager {
 
   get errors() {
     return this.item.errors || []; // TODO not sure why need || clause here
+  }
+
+  addError(e) {
+    this.item.addError(e);
   }
 }

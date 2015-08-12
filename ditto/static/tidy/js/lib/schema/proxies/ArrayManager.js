@@ -1,4 +1,6 @@
-import MemberManager from './MemberManager';
+import _ from 'lodash';
+
+import { MemberManager } from './MemberManager';
 
 export class ArrayManager {
   constructor(question, chain, path, name, item, options) {
@@ -41,15 +43,18 @@ export class ArrayManager {
 
   _validate() {
     let errors = [];
+    let others = this._getBoundOthers();
     for (let k in this) {
+      if (k === 'chain') {
+        continue;
+      }
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager && this[k].isBound) {
+        console.log('validating array member', this.path, k);
         let item = this[k];
-        // TODO should gather items first, then do uniqueness check
-        item._validate();
-        let others = this._getBoundOthers(item.name);
         for (let i = 0; i < others.length; i += 1) {
-          if (_.isEqual(item.get(), others[i])) {
-            errors.push('Items must be unique');
+          console.log('comparing', others[i], item.get(), i, k, typeof k);
+          if (i !== parseInt(k) && _.isEqual(item.get(), others[i])) {
+            item.addError('Items must be unique');
             break;
           }
         }
@@ -57,16 +62,31 @@ export class ArrayManager {
     }
     this.errors = errors;
   }
+  
+  set errors(errors) {
+    return this.question._setErrors(this.path, errors);
 
-  _getBoundOthers(index) {
+  }
+  
+  get errors() {
+    return this.question._getErrors(this.path);
+  }
+
+  _getBoundOthers() {
     let items = [];
-    for (let i = 0; i < index; i += 1) {
-      this[i]._validate();
-      if (this[i].isBound && this[i].errors.length === 0) {
-        items.push(this[i].get());
+    for (let k in this) {
+      if (k === 'chain') {
+        continue;
+      }
+      if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
+        console.log('validte', this.path, k);
+        this[k]._validate();
+//        if (this[k].isBound && this[k].errors.length === 0) {
+          items.push(this[k].get());
+  //      }
       }
     }
-    console.log('others', index, items);
+    console.log('others', items);
     return items;
   }
 }

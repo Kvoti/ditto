@@ -46,7 +46,13 @@ export class BaseItemManager {
   get errors() {
     return this.question._getErrors(this.path);
   }
-  
+
+  addError(error) {
+    let errors = this.errors;
+    errors.push(error);
+    this.errors = errors;
+  }
+    
   _set(value) {
     this._checkValue(value);
     return this.question.set(this.path, value);

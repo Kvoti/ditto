@@ -1,4 +1,4 @@
-import MemberManager from './MemberManager';
+import { MemberManager } from './MemberManager';
 
 export class ShapeManager {
   constructor(question, chain, path, name, args) {
