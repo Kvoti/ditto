@@ -94,8 +94,8 @@ export default class Renderer extends React.Component {
           <label>{this._toLabel(name)}</label>
           <DelayedControl
                   immediate={part.question.isBound}
-                  onChange={(v) => part.set(v === '' ? null : parseInt(v, 10))}
-                  onPendingChange={(v) => part.pend().set(v === '' ? null : parseInt(v, 10))}
+                  onChange={(v) => part.set(this._toInt(v))}
+                  onPendingChange={(v) => part.pend().set(this._toInt(v))}
                   >
             <input
                     type="text"
@@ -108,6 +108,17 @@ export default class Renderer extends React.Component {
     return null;
   }
 
+  _toInt(value) {
+    if (value === '') {
+      return null;
+    }
+    let parsed = parseInt(value, 10);
+    if (isNaN(parsed)) {
+      return value;
+    }
+    return parsed;
+  }
+  
   _toLabel(name) {
     name = name.replace(/([A-Z])/, (m, p1) => ' ' + p1.toLowerCase());
     name = name.replace(/^([a-z])/, (m, p1) => ' ' + p1.toUpperCase());
