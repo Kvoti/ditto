@@ -1,6 +1,6 @@
 import * as managers from './proxies';
 
-export function array(item, options) {
+export function array(item, options={}) {
   return function _array(question, chain, basePath) {
     let name = basePath[basePath.length - 1];
     chain[name] = new managers.ArrayManager(question, chain, basePath, name, item, options);
