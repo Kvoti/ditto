@@ -41,6 +41,7 @@ export default class Question extends React.Component {
       }
     );
     this.state = {
+      origSpec: questionConfig.toState().questionSpec,
       config: questionConfig.toState(),
       isCancelling: false
     };
@@ -113,7 +114,7 @@ export default class Question extends React.Component {
   }
 
   _renderSave(questionConfig) {
-    if (questionConfig.isChanged(this.props) && questionConfig.isValid()) {
+    if (questionConfig.isChanged(this.state.origSpec) && questionConfig.isValid()) {
       return (
         <button
                 className="btn btn-success"
@@ -135,7 +136,7 @@ export default class Question extends React.Component {
       return (
         <button
                 className="btn btn-default"
-                onClick={questionConfig.isChanged(this.props) ? this._confirmCancel : this._cancel}
+                onClick={questionConfig.isChanged(this.state.origSpec) ? this._confirmCancel : this._cancel}
                 >
           Cancel
         </button>
