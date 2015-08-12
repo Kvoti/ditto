@@ -2,7 +2,7 @@ import React from 'react';
 import Text from './viewers/Text';
 import Choice from './viewers/Choice';
 import ScoreGroup from './viewers/ScoreGroup';
-import QuestionEditor from './editors/Question';
+import Editor from './editors/Editor';
 
 export default class Question extends React.Component {
   static propTypes = {
@@ -14,7 +14,7 @@ export default class Question extends React.Component {
     const { isEditable, ...subProps } = this.props;
     let component = Text;
     if (this.props.isEditable) {
-      component = QuestionEditor;
+      component = Editor;
     } else if (text) {
       component = Text;
     } else if (choice) {

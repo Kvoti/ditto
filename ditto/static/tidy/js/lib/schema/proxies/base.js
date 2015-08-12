@@ -16,15 +16,15 @@ export class BaseItemManager {
     return this._set(value);
   }
 
-  _set(value) {
-    this._checkValue(value);
-    return this.question.set(this.path, value);
-  }
-
   get() {
     return this.question.get(this.path);
   }
 
+  pend() {
+    this.question.pend();
+    return this;
+  }
+  
   getPending() {
     return this.question.getPending(this.path);
   }
@@ -32,6 +32,10 @@ export class BaseItemManager {
   getPendingOrCurrent() {
     let pending = this.getPending();
     return pending !== undefined ? pending : this.get();
+  }
+
+  get isBound() {
+    return this.question._getIsBound(this.path);
   }
   
   set errors(errors) {
@@ -41,6 +45,11 @@ export class BaseItemManager {
   
   get errors() {
     return this.question._getErrors(this.path);
+  }
+  
+  _set(value) {
+    this._checkValue(value);
+    return this.question.set(this.path, value);
   }
 
   _validate() {
@@ -64,9 +73,5 @@ export class BaseItemManager {
 
   set isBound(value) {
     this.question._setIsBound(this.path, value);
-  }
-
-  get isBound() {
-    return this.question._getIsBound(this.path);
   }
 }
