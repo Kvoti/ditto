@@ -10,15 +10,17 @@ export class IntegerManager extends BaseItemManager {
   _validateBoundValue() {
     let value = this.get();
     let errors = [];
-    if (this.options.isRequired && value === '') {
+    if (this.options.isRequired && value !== null) {
       errors.push('This field is required');
     }
-    let parsedValue = parseInt(value, 10);
-    if (isNaN(parsedValue)) {
-      errors.push('Please enter an integer');
-    } else {
-      if (this.options.max && value > this.options.max) {
-        errors.push(`Maximum allowed value is ${this.options.max}`);
+    if (value !== null) {
+      let parsedValue = parseInt(value, 10);
+      if (isNaN(parsedValue)) {
+        errors.push('Please enter an integer');
+      } else {
+        if (this.options.max && value > this.options.max) {
+          errors.push(`Maximum allowed value is ${this.options.max}`);
+        }
       }
     }
     return errors;
