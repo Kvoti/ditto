@@ -1,34 +1,15 @@
+import { BaseCollectionManager } from './base';
 import { MemberManager } from './MemberManager';
 
-export class ShapeManager {
+export class ShapeManager extends BaseCollectionManager {
   constructor(question, chain, path, name, args) {
+    super();
     this.question = question;
     this.chain = chain;
     this.path = path;
     this.name = name;
     this.args = args;
     this.question.set(this.path, {});
-  }
-
-  init(values) {
-    return this._set(values, 'init');
-  }
-
-  set(values) {
-    return this._set(values, 'set');
-  }
-
-  get() {
-    return this.question.get(this.path);
-  }
-  
-  set errors(errors) {
-    return this.question._setErrors(this.path, errors);
-
-  }
-  
-  get errors() {
-    return this.question._getErrors(this.path);
   }
   
   _set(values, method) {
@@ -49,13 +30,13 @@ export class ShapeManager {
   }
 
   _validate() {
-//    console.log('validating', this.path);
+    // console.log('validating', this.path);
     for (let k in this) {
       if (k === 'chain') {
         continue;
       }
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
-//        console.log('validating', this.path, k);
+        // console.log('validating', this.path, k);
         this[k]._validate();
       }
     }

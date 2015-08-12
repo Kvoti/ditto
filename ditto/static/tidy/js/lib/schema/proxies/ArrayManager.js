@@ -1,9 +1,11 @@
 import _ from 'lodash';
 
+import { BaseCollectionManager } from './base';
 import { MemberManager } from './MemberManager';
 
-export class ArrayManager {
+export class ArrayManager extends BaseCollectionManager {
   constructor(question, chain, path, name, item, options) {
+    super();
     this.question = question;
     this.chain = chain;
     this.path = path;
@@ -13,14 +15,6 @@ export class ArrayManager {
     this.question.set(this.path, []);
   }
 
-  init(values) {
-    return this._set(values, 'init');
-  }
-
-  set(values) {
-    return this._set(values, 'set');
-  }
-    
   _set(values, method) {
     try {
       if (values.push === undefined) {
@@ -60,15 +54,9 @@ export class ArrayManager {
       }
     }
     this.errors = errors;
-  }
-  
-  set errors(errors) {
-    return this.question._setErrors(this.path, errors);
-
-  }
-  
-  get errors() {
-    return this.question._getErrors(this.path);
+    if (this.options.validate) {
+      this.errors = this.errors.concat(this.options.validate.apply(this));
+    }
   }
 
   _getBoundOthers() {
