@@ -40,11 +40,13 @@ export class ShapeManager {
   }
 
   _validate() {
+//    console.log('validating', this.path);
     for (let k in this) {
       if (k === 'chain') {
         continue;
       }
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
+//        console.log('validating', this.path, k);
         this[k]._validate();
       }
     }

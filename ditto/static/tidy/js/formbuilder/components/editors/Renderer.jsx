@@ -32,6 +32,7 @@ export default class Renderer extends React.Component {
     if (name === 'chain') {
       return null;
     }
+    //console.log('rendering', name, part && part.path, part && part.errors);
     if (part instanceof schemaTypes.ShapeManager || part instanceof schemaTypes.ArrayManager) {
       let parts = [];
       for (let k in part) {
@@ -89,7 +90,6 @@ export default class Renderer extends React.Component {
       } else {
         errors = part.errors;
       }
-      console.log(errors);
       return (
         <Row key={name} errors={errors}>
           <label>{this._toLabel(name)}</label>

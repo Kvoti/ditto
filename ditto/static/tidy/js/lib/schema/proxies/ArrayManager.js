@@ -79,6 +79,7 @@ export class ArrayManager {
       }
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
         this[k]._validate();
+//        console.log('validating', this.path, k);
 //        if (this[k].isBound && this[k].errors.length === 0) {
           items.push(this[k].get());
   //      }
