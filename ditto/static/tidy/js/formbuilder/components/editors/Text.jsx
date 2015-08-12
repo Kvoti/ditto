@@ -19,7 +19,6 @@ export default class Text extends React.Component {
 
   render() {
     console.log('text props', this.props);
-    //disabled={!this.props.isMultiline}
     return (
       <div>
         <Row errors={this.props.maxChars ? this.props.errors.maxChars : null}>
@@ -32,16 +31,6 @@ export default class Text extends React.Component {
                   onChange={(e) => this.props.onChangeMaxChars(e.target.value || null)}
           />
         </Row>
-        <Row errors={this.props.maxWords ? this.props.errors.maxWords : null}>
-          <label>
-            Max words
-          </label>
-          <input
-                  type="number"
-                  value={this.props.maxWords}
-                  onChange={(e) => this.props.onChangeMaxWords(e.target.value || null)}
-          />
-        </Row>
         <Row>
           <label>
             Is mult-line?
@@ -50,6 +39,17 @@ export default class Text extends React.Component {
                   type="checkbox"
                   checked={this.props.isMultiline}
                   onChange={(e) => this.props.onChangeIsMultiline(e.target.checked)}
+          />
+        </Row>
+        <Row errors={this.props.maxWords ? this.props.errors.maxWords : null}>
+          <label>
+            Max words
+          </label>
+          <input
+                  disabled={!this.props.isMultiline}
+                  type="number"
+                  value={this.props.maxWords}
+                  onChange={(e) => this.props.onChangeMaxWords(e.target.value || null)}
           />
         </Row>
       </div>
