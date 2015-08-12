@@ -1,14 +1,13 @@
 import _ from 'lodash';
 
 export class Question {
-  constructor(schema, { initial = {}, data = {},  onChange}) {
+  constructor(schema, { initial, data,  onChange}) {
     this.questionSpec = {};
     this.pendNextChange = false;
     this.pendingChange = null;
     this.isBound = {};
     this.errors = {};
     this.onChange = onChange;
-
     let path = [];
     for (let k in schema) {
       if (schema.hasOwnProperty(k)) {
@@ -18,13 +17,17 @@ export class Question {
 
     for (let k in this) {
       if (this.hasOwnProperty(k) && this[k] && this[k]._validate !== undefined) {
-        if (data.hasOwnProperty(k)) {
+        if (data && data.hasOwnProperty(k)) {
           this[k].set(data[k]);
         }
-        if (initial.hasOwnProperty(k)) {
+        if (initial && initial.hasOwnProperty(k)) {
           this[k].init(initial[k]);
         }
       }
+    }
+    this.isInitialised = true;
+    if (data) {
+      this._validate();
     }
   }
 
@@ -93,7 +96,9 @@ export class Question {
       state = state[p];
     });
     state[path[path.length - 1]] = value;
-    this._validate();
+    if (this.isInitialised) {
+      this._validate();
+    }
   }
 
   get(path) {
