@@ -41,11 +41,10 @@ export default class Renderer extends React.Component {
         }
       }
       return (
-        <fieldset>
-          <legend>{this._toLabel(name)}</legend>
+        <div>
           {part.errors.map(e => <p>{e}</p>)}
           {parts}
-        </fieldset>
+        </div>
       );
     }
     if (part instanceof schemaTypes.StringManager) {
