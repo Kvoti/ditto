@@ -29,7 +29,7 @@ export default class Text extends React.Component {
           <input
                   type="text"
                   value={this.props.maxChars}
-                  onChange={(e) => this.props.onChangeMaxChars(e.target.value)}
+                  onChange={(e) => this.props.onChangeMaxChars(e.target.value || null)}
           />
         </Row>
         <Row errors={this.props.maxWords ? this.props.errors.maxWords : null}>
@@ -39,7 +39,7 @@ export default class Text extends React.Component {
           <input
                   type="number"
                   value={this.props.maxWords}
-                  onChange={(e) => this.props.onChangeMaxWords(e.target.value)}
+                  onChange={(e) => this.props.onChangeMaxWords(e.target.value || null)}
           />
         </Row>
         <Row>
