@@ -14,7 +14,7 @@ const textSchema = {
   text: schema.shape({
     isMultiline: schema.bool(),
     maxChars: schema.integer({max: 100}),
-    maxWords: schema.string({
+    maxWords: schema.integer({
       validate: function () {
         let errors = [];
         if (!this.question.text.isMultiline.get() && this.get()) {
