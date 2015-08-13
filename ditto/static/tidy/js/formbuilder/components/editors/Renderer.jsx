@@ -47,26 +47,30 @@ export default class Renderer extends React.Component {
           {parts.map((item, i) => {
             return (
               <div>
-                {item}
-                {part.canRemove && part.canRemove() ?
+              {item}
+              {part.canRemove && part.canRemove() ?
                 <button className="btn btn-danger btn-sm"
-                  onClick={() => part.remove(i)}
-                  >
-                  Remove
+                onClick={() => part.remove(i)}
+                >
+                Remove
                 </button>
                 : null}
               </div>
             );
-          })}
-          {part.canAdd && part.canAdd() ?
-           <button
-           className="btn btn-success"
-           onClick={(e) => part.add()}
-           >
-           Add
-           </button>
-          : null
-          }
+           })}
+              {part.canAdd && part.canAdd() ?
+               <div className="form-group">
+               <div className="col-md-offset-4">
+               <button
+               className="btn btn-success"
+               onClick={(e) => part.add()}
+               >
+               Add
+               </button>
+               </div>
+               </div>
+               : null
+               }
         </div>
       );
     }
