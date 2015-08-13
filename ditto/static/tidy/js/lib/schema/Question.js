@@ -154,4 +154,8 @@ export class Question {
   _setErrors(path, errors) {
     this.errors[path] = errors;
   }
+
+  _removeIsBound(path) {
+    delete this.isBound[path];
+  }
 }

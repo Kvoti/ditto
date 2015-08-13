@@ -43,4 +43,8 @@ export class MemberManager {
   addError(e) {
     this.item.addError(e);
   }
+
+  preRemove() {
+    this.item.preRemove();
+  }
 }

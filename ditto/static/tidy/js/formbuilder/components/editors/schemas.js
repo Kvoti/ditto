@@ -33,7 +33,8 @@ export const choiceQuestion = {
         unique: true,
         canAdd: true,
         maxLength: 5,
-        minLength: 1,
+        canRemove: true,
+        minLength: 2,
         empty: ''
       }
     ),

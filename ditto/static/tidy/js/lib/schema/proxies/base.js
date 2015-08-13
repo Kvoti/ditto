@@ -83,6 +83,10 @@ export class BaseItemManager extends BaseManager {
     }
     return this._set(value);
   }
+
+  preRemove() {
+    this.question._removeIsBound(this.path);
+  }
 }
 
 export class BaseCollectionManager extends BaseManager {

@@ -34,12 +34,35 @@ export class ArrayManager extends BaseCollectionManager {
     this._setIndex(array.length - 1, value, 'init');
   }
 
+  remove(index) {
+    console.log('removing', index);
+    // TODO details of storage should all live with Question as an array
+    // _might_ be stored as a real Array or an ImmutableJS array or object
+    // or something else entirely.
+    let array = this.get();
+    array.splice(index, 1);
+    // TODO does this leave isBound and errors to clean up?
+    this[index].preRemove();
+    this.set(array);
+  }
+  
   canAdd() {
     if (this.options.maxLength === undefined) {
       return true;
     }
     let length = this.get().length;
     return length < this.options.maxLength;
+  }
+
+  // TODO maybe these 'can' methods are UI things?
+  canRemove() {
+    let length = this.get().length;
+    if (length &&
+        (this.options.minLength === undefined ||
+         this.options.minLength < length)) {
+      return true;
+    }
+    return false;
   }
   
   _set(values, method) {

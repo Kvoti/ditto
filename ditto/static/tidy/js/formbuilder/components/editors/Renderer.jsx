@@ -36,14 +36,28 @@ export default class Renderer extends React.Component {
     if (part instanceof schemaTypes.ShapeManager || part instanceof schemaTypes.ArrayManager) {
       let parts = [];
       for (let k in part) {
-        if (part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
+        if (k !== 'chain' && part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
+          console.log('kkk', k);
           parts.push(this._renderPart(k, part[k].item));
         }
       }
       return (
         <div>
           {part.errors.map(e => <p>{e}</p>)}
-          {parts}
+          {parts.map((item, i) => {
+            return (
+              <div>
+                {item}
+                {part.canRemove && part.canRemove() ?
+                <button className="btn btn-danger btn-sm"
+                  onClick={() => part.remove(i)}
+                  >
+                  Remove
+                </button>
+                : null}
+              </div>
+            );
+          })}
           {part.canAdd && part.canAdd() ?
            <button
            className="btn btn-success"
