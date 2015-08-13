@@ -15,6 +15,33 @@ export class ArrayManager extends BaseCollectionManager {
     this.question.set(this.path, []);
   }
 
+  add(value) {
+    console.log('adding', value);
+    if (value === undefined) {
+      value = this.options.empty;
+      if (value === undefined) {
+        throw new Error("Can't add Array item with no 'empty' value");
+      }
+    }
+    // TODO details of storage should all live with Question as an array
+    // _might_ be stored as a real Array or an ImmutableJS array or object
+    // or something else entirely.
+    let array = this.get();
+    array.push(undefined);
+    if (array.length - 2 >= 0 && !this[array.length - 2].isBound) {
+      this[array.length - 2].isBound = true;
+    }
+    this._setIndex(array.length - 1, value, 'init');
+  }
+
+  canAdd() {
+    if (this.options.maxLength === undefined) {
+      return true;
+    }
+    let length = this.get().length;
+    return length < this.options.maxLength;
+  }
+  
   _set(values, method) {
     try {
       if (values.push === undefined) {
@@ -25,16 +52,20 @@ export class ArrayManager extends BaseCollectionManager {
     }
     this.question.set(this.path, []);
     values.forEach((v, i) => {
-      let path = this.path.concat([i]);
-      if (this[i] === undefined) {
-        this[i] = new MemberManager(this.question, this, path, i, this.item);
-      }
-      this.chain[i] = this[i];
-      this[i][method](v);
+      this._setIndex(i, v, method);
     });
     return this.question;
   }
 
+  _setIndex(i, v, method) {
+    let path = this.path.concat([i]);
+    if (this[i] === undefined) {
+      this[i] = new MemberManager(this.question, this, path, i, this.item);
+    }
+    this.chain[i] = this[i];
+    this[i][method](v);
+  }
+  
   _validate() {
     let errors = [];
     let others = this._getBoundOthers();
@@ -67,10 +98,10 @@ export class ArrayManager extends BaseCollectionManager {
       }
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
         this[k]._validate();
-//        console.log('validating', this.path, k);
-//        if (this[k].isBound && this[k].errors.length === 0) {
+        //        console.log('validating', this.path, k);
+        if (this[k].isBound && this[k].errors.length === 0) {
           items.push(this[k].get());
-  //      }
+        }
       }
     }
     return items;

@@ -24,9 +24,17 @@ export const choiceQuestion = {
   isRequired: schema.bool(),
   choice: schema.shape({
     options: schema.array(
-      schema.string({isRequired: true}),
+      schema.string({
+        isRequired: true
+        // TODO not sure if empty belongs here or level above (or can be either)
+        // empty: ''
+      }),
       {
-        unique: true
+        unique: true,
+        canAdd: true,
+        maxLength: 5,
+        minLength: 1,
+        empty: ''
       }
     ),
     isMultiple: schema.bool(),

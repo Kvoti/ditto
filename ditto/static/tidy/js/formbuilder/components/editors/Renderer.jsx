@@ -44,16 +44,26 @@ export default class Renderer extends React.Component {
         <div>
           {part.errors.map(e => <p>{e}</p>)}
           {parts}
+          {part.canAdd && part.canAdd() ?
+           <button
+           className="btn btn-success"
+           onClick={(e) => part.add()}
+           >
+           Add
+           </button>
+          : null
+          }
         </div>
       );
     }
     if (part instanceof schemaTypes.StringManager) {
       let errors;
-      if (!part.errors.length && !part.options.isRequired && part.get() === '') {
+      if (!part.isBound || !part.errors.length && !part.options.isRequired && part.get() === '') {
         errors = null;
       } else {
         errors = part.errors;
       }
+      console.log('string', part.get(), 'bound', part.isBound, part.errors);
       return (
         <Row key={name} errors={errors}>
           <label>{this._toLabel(name)}</label>

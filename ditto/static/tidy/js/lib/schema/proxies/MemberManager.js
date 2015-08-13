@@ -5,6 +5,7 @@ export class MemberManager {
     this.path = path;
     this.item = item(question, this, path);
     this.name = name;
+    this.options = this.item.options;
   }
 
   init(value) {
@@ -25,6 +26,10 @@ export class MemberManager {
 
   get isBound() {
     return this.item.isBound;
+  }
+  
+  set isBound(value) {
+    this.item.isBound = value;
   }
 
   _validate() {
