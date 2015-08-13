@@ -56,6 +56,9 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   canAdd() {
+    if (this.options.canAdd === undefined) {
+      return false;
+    }
     if (this.options.maxLength === undefined) {
       return true;
     }
