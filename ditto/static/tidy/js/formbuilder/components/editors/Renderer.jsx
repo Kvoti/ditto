@@ -3,6 +3,8 @@ import React, { PropTypes } from 'react';
 import * as schemaTypes from '../../../lib/schema/proxies';
 import DelayedControl from '../../../lib/form/DelayedControl';
 import Row from './Row';
+import InputGroup from './InputGroup';
+import { Button, Glyphicon } from 'react-bootstrap';
 
 export default class Renderer extends React.Component {
 
@@ -28,8 +30,12 @@ export default class Renderer extends React.Component {
     );
   }
 
-  _renderPart(name, part) {
-    if (name === 'chain') {
+  _renderPart(name, part, options) {
+    console.log('rendering', name);
+    if (!part instanceof schemaTypes.BaseManager) {
+      return null;
+    }
+    if (name === 'chain' || 'name' === 'item' && name === 'question') {
       return null;
     }
     //console.log('rendering', name, part && part.path, part && part.errors);
@@ -38,26 +44,17 @@ export default class Renderer extends React.Component {
       for (let k in part) {
         if (k !== 'chain' && part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
           console.log('kkk', k);
-          parts.push(this._renderPart(k, part[k].item));
+          let removeItem;
+          if (part.canRemove && part.canRemove()) {
+            removeItem = () => part.remove(k);
+          }
+          parts.push(this._renderPart(k, part[k].item, {removeItem}));
         }
       }
       return (
         <div>
           {part.errors.map(e => <p>{e}</p>)}
-          {parts.map((item, i) => {
-            return (
-              <div>
-              {item}
-              {part.canRemove && part.canRemove() ?
-                <button className="btn btn-danger btn-sm"
-                onClick={() => part.remove(i)}
-                >
-                Remove
-                </button>
-                : null}
-              </div>
-            );
-           })}
+          {parts}
               {part.canAdd && part.canAdd() ?
                <div className="form-group">
                <div className="col-md-offset-4">
@@ -85,16 +82,29 @@ export default class Renderer extends React.Component {
       return (
         <Row key={name} errors={errors}>
           <label>{this._toLabel(name)}</label>
-          <DelayedControl
-                  immediate={part.question.isBound}
-                  onChange={(v) => part.set(v)}
-                  onPendingChange={(v) => part.pend().set(v)}
-                  >
-            <input
-                    type="text"
-                    value={part.getPendingOrCurrent()}
-            />
-          </DelayedControl>
+          <InputGroup hasAddon={options && options.removeItem}>
+            <DelayedControl
+                    immediate={part.question.isBound}
+                    onChange={(v) => part.set(v)}
+                    onPendingChange={(v) => part.pend().set(v)}
+                    >
+              <input
+                      type="text"
+                      value={part.getPendingOrCurrent()}
+              />
+            </DelayedControl>
+            {options && options.removeItem ?
+            <span className="input-group-btn">
+              <Button onClick={options.removeItem}
+                      bsStyle='danger'
+                      ariaLabel={'Remove ' + name}
+                      title={'Remove ' + name}
+                      >
+                <Glyphicon glyph="remove" />
+              </Button>
+            </span>
+             : null }
+            </InputGroup>
         </Row>
       );
     }
