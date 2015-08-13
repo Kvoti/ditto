@@ -45,7 +45,16 @@ export class ArrayManager extends BaseCollectionManager {
     this[index].preRemove();
     this.set(array);
   }
-  
+
+  reorder(indices) {
+    let reordered = [];
+    indices.forEach((origIndex, index) => {
+      reordered.push(this[origIndex].get());
+      this[index].preRemove();
+    });
+    this.set(reordered);
+  }
+
   canAdd() {
     if (this.options.maxLength === undefined) {
       return true;
@@ -98,10 +107,10 @@ export class ArrayManager extends BaseCollectionManager {
       }
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
         let item = this[k];
-        //console.log('comparing', this[k].get(), others);
         for (let i = 0; i < others.length; i += 1) {
           if (i !== parseInt(k) && _.isEqual(item.get(), others[i])) {
             item.addError('Items must be unique');
+            console.log('comparing', this[k].get(), others);
             break;
           }
         }
@@ -122,7 +131,7 @@ export class ArrayManager extends BaseCollectionManager {
       if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
         this[k]._validate();
         //        console.log('validating', this.path, k);
-        if (this[k].isBound && this[k].errors.length === 0) {
+        if (this[k].isBound) {
           items.push(this[k].get());
         }
       }

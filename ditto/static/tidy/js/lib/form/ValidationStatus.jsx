@@ -26,7 +26,7 @@ export default class ValidationStatus extends React.Component {
       }
     );
     return (
-      <div className={wrapperClassNames}>
+      <div draggable={true} lassName={wrapperClassNames}>
         {this.props.children}
       </div>
     );

@@ -5,6 +5,7 @@ import DelayedControl from '../../../lib/form/DelayedControl';
 import Row from './Row';
 import InputGroup from './InputGroup';
 import { Button, Glyphicon } from 'react-bootstrap';
+import Sortable from 'react-components/Sortable';
 
 export default class Renderer extends React.Component {
 
@@ -31,10 +32,7 @@ export default class Renderer extends React.Component {
   }
 
   _renderPart(name, part, options) {
-    console.log('rendering', name);
-    if (!part instanceof schemaTypes.BaseManager) {
-      return null;
-    }
+//    console.log('rendering', name);
     if (name === 'chain' || 'name' === 'item' && name === 'question') {
       return null;
     }
@@ -43,18 +41,23 @@ export default class Renderer extends React.Component {
       let parts = [];
       for (let k in part) {
         if (k !== 'chain' && part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
-          console.log('kkk', k);
+//          console.log('kkk', k);
           let removeItem;
           if (part.canRemove && part.canRemove()) {
             removeItem = () => part.remove(k);
           }
-          parts.push(this._renderPart(k, part[k].item, {removeItem}));
+          parts.push(this._renderPart(k, part[k].item, {removeItem, itemIndex: k}));
         }
       }
       return (
         <div>
           {part.errors.map(e => <p>{e}</p>)}
-          {parts}
+          {part.options && part.options.canReorder ?
+          <Sortable
+                  components={parts}
+                  onReorder={components => part.reorder([for (c of components) c.props.index])}
+          /> :
+          parts }
               {part.canAdd && part.canAdd() ?
                <div className="form-group">
                <div className="col-md-offset-4">
@@ -78,9 +81,9 @@ export default class Renderer extends React.Component {
       } else {
         errors = part.errors;
       }
-      console.log('string', part.get(), 'bound', part.isBound, part.errors);
+//      console.log('string', part.get(), 'bound', part.isBound, part.errors);
       return (
-        <Row key={name} errors={errors}>
+        <Row key={name} errors={errors} index={options && options.itemIndex}>
           <label>{this._toLabel(name)}</label>
           <InputGroup hasAddon={options && options.removeItem}>
             <DelayedControl

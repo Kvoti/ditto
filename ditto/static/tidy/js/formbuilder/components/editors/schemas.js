@@ -35,7 +35,8 @@ export const choiceQuestion = {
         maxLength: 5,
         canRemove: true,
         minLength: 2,
-        empty: ''
+        empty: '',
+        canReorder: true
       }
     ),
     isMultiple: schema.bool(),
