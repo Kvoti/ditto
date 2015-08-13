@@ -6,7 +6,7 @@ export default class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      editing: 2,
+      editing: null,
       config: _.cloneDeep(this.props)
     };
   }
@@ -18,16 +18,20 @@ export default class Form extends React.Component {
         <h1>{this.state.config.title}</h1>
         {this.state.config.questions.map((q, i) => {
           return (
-            <div key={q.id}>
+            <div key={q.id} className="row">
+            <div className={editing === null ? 'col-md-6' : 'col-md-12'}>
+            <div className={editing === null ? 'well' : ''}>
             {this._renderQuestion(q, i, editing)}
             {this._renderEditButton(i)}
+            </div>
+            </div>
             </div>
           );
          })}
       </div>
     );
   }
-
+  
   _renderQuestion(question, index, editingIndex) {
     return (
       <Question

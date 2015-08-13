@@ -22,7 +22,7 @@ export default class Renderer extends React.Component {
       }
     }
     return (
-      <div>
+      <div className="well">
         {parts}
       </div>
     );

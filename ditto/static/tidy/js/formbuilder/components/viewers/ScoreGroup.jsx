@@ -20,41 +20,35 @@ export default class ScoreGroup extends React.Component {
 
   render() {
     return (
-      <div>
-        <p>
+      <table className="table table-striped" style={{width: 'auto'}}>
+        <caption>
           {this.props.question}{this.props.isRequired ? '*' : ''}
-        </p>
-        <div className="row">
+        </caption>
+        <tr>
+          <th></th>
           {this.props.scoregroup.labels.map((label, i) => {
             return (
-              <div key={label} className={this._labelClass(i)}>{label}</div>
+              <th key={label}>{label}</th>
             );
            })}
-        </div>
+        </tr>
         {this.props.scoregroup.items.map(item => {
           return (
-            <div className="row">
-            <div className="col-md-3">
+            <tr>
+            <td>
             {item.text}
-            </div>
+            </td>
             {this.props.scoregroup.labels.map(() => {
               return (
-                <div className="col-md-1">
+                <td>
                 <input name={item.text} type="radio" />
-                </div>
+                </td>
               );
             })}
-            </div>
+            </tr>
             );
          })}
-      </div>
+      </table>
     );
-  }
-
-  _labelClass(i) {
-    return classNames({
-      'col-md-1': true,
-      'col-md-offset-3': i === 0
-    });
   }
 }

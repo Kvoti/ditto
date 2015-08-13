@@ -14,16 +14,17 @@ export default class Text extends React.Component {
 
   render() {
     return (
-      <p>
+      <div className="form-group">
         <label>
           {this.props.question}?{this.props.isRequired ? ' *' : ' '}
-          {this.props.text.isMultiline ?
-           <textarea/>
-           :
-           <input type="text" />
-           }
         </label>
-      </p>
+        
+          {this.props.text.isMultiline ?
+           <textarea className="form-control" />
+           :
+           <input className="form-control" type="text" />
+           }
+      </div>
     );
   }
 }

@@ -35,8 +35,7 @@ export default class Question extends React.Component {
     }
     if (editor) {
       return React.createElement(editor, {...subProps, schema: schema, viewer: viewer});
-    } else {
-      return React.createElement(viewer, {...subProps, schema: schema, viewer: viewer});
     }
+    return React.createElement(viewer, subProps);
   }
 }

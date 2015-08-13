@@ -17,32 +17,34 @@ export default class Choice extends React.Component {
     const type = this.props.choice.isMultiple ? 'checkbox' : 'radio';
     return (
       <div>
-        <p>
-          {this.props.question}
-          {this.props.choice.isMultiple ?
-           <small> (You can select more than one)</small>
-           : null
-           }
-           {this.props.isRequired ? ' *' : ''}
-        </p>
-        <ul>
+        <div className="form-group">
+          <label>
+            {this.props.question}
+            {this.props.choice.isMultiple ?
+             <small> (You can select more than one)</small>
+             : null
+             }
+             {this.props.isRequired ? ' *' : ''}
+          </label>
+        </div>
           {this.props.choice.options.map(option => {
             return (
-              <li key={option}>
-              <label>
+              <div className={type}>
+              <label key={option}>
               <input type={type} name={this.props.question} />
-              {option}
+              {' '}{option}
               </label>
-              </li>
+              </div>
             );
            })}
-        </ul>
         {this.props.choice.hasOther ?
          (
+           <div className="form-group">
            <label>
            {this.props.choice.otherText || 'Other'}:{' '}
-           <input type="text" />
            </label>
+           <input className="form-control" type="text" />
+           </div>
          ) : null}
       </div>
     );
