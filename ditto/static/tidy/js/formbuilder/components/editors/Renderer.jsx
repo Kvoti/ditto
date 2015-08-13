@@ -1,9 +1,8 @@
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import * as schemaTypes from '../../../lib/schema/proxies';
 import DelayedControl from '../../../lib/form/DelayedControl';
-import Row from './Row';
-import InputGroup from './InputGroup';
 import { Button, Glyphicon } from 'react-bootstrap';
 import Sortable from 'react-components/Sortable';
 
@@ -11,16 +10,13 @@ export default class Renderer extends React.Component {
 
   static propTypes = {
     question: PropTypes.object
-    // Like fixedDataTable have *lots* of hooks to customise?
-    //rowRenderer: PropTypes.func,
-    //fieldRenderer: PropTypes.func,
   }
 
   render() {
     let parts = [];
     let question = this.props.question;
     for (let key in question) {
-      if (question.hasOwnProperty(key)) {
+      if (question.hasOwnProperty(key) && question[key] && question[key].pend) {
         parts.push(this._renderPart(key, question[key]));
       }
     }
@@ -32,118 +28,205 @@ export default class Renderer extends React.Component {
   }
 
   _renderPart(name, part, options) {
-//    console.log('rendering', name);
     if (name === 'chain' || 'name' === 'item' && name === 'question') {
       return null;
     }
-    //console.log('rendering', name, part && part.path, part && part.errors);
-    if (part instanceof schemaTypes.ShapeManager || part instanceof schemaTypes.ArrayManager) {
-      let parts = [];
-      for (let k in part) {
-        if (k !== 'chain' && part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
-//          console.log('kkk', k);
-          let removeItem;
-          if (part.canRemove && part.canRemove()) {
-            removeItem = () => part.remove(k);
-          }
-          parts.push(this._renderPart(k, part[k].item, {removeItem, itemIndex: k}));
+    if (!this._isLeaf(part)) {
+      return this._renderCollection(part, options);
+    }
+    return this._renderItem(part, name, options);
+  }
+  
+  _isLeaf(part) {
+    return (
+      !(part instanceof schemaTypes.ShapeManager) &&
+      !(part instanceof schemaTypes.ArrayManager)
+    );
+  }
+
+  _renderCollection(part, options) {
+    let parts = [];
+    for (let k in part) {
+      if (k !== 'chain' && part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
+        let removeItem;
+        if (part.canRemove && part.canRemove()) {
+          removeItem = () => part.remove(k);
         }
+        parts.push(this._renderPart(k, part[k].item, {
+	  removeItem,
+	  itemIndex: k,
+	  canReorder: part.options && part.options.canReorder
+	}));
       }
-      return (
-        <div>
-          {part.errors.map(e => <p>{e}</p>)}
-          {part.options && part.options.canReorder ?
-          <Sortable
-                  components={parts}
-                  onReorder={components => part.reorder([for (c of components) c.props.index])}
-          /> :
-          parts }
-              {part.canAdd && part.canAdd() ?
-               <div className="form-group">
-               <div className="col-md-offset-4">
-               <button
-               className="btn btn-success"
-               onClick={(e) => part.add()}
-               >
-               Add
-               </button>
-               </div>
-               </div>
-               : null
-               }
-        </div>
+    }
+    if (part.options && part.options.canReorder) {
+      parts = (
+        <Sortable
+                components={parts}
+                onReorder={components => part.reorder([for (c of components) c.props.index])}
+        />
       );
     }
+    return (
+      <div
+	      key={part.path}
+              draggable={options && options.canReorder}
+	      index={options && options.itemIndex}
+	      >
+	{parts}
+	<div className="col-md-offset-4">
+	  {this._renderAddButton(part)}
+	</div>
+      </div>
+    );
+  }
+
+  _renderItem(part, name, options) {
+    let errors = this._getItemErrors(part);
+    return (
+      <div
+	      key={part.path}
+              draggable={options && options.canReorder}
+              className={this._rowClassNames(errors)}
+	      index={options && options.itemIndex}
+              >
+        <label className="control-label col-md-4">
+          {this._toLabel(name)}
+        </label>
+        <div className="col-md-8">
+          {this._renderControl(part, name, options)}
+	  {this._renderErrors(errors)}
+	</div>
+      </div>
+    );
+  }
+  
+  _renderAddButton(part) {
+    if (part.canAdd && part.canAdd()) {
+      return (
+        <button
+		className="btn btn-success"
+		onClick={() => part.add()}
+		>
+          Add
+        </button>
+      );
+    }
+    return null;
+  }
+
+  _getItemErrors(item) {
+    if (item instanceof schemaTypes.StringManager &&
+      (!item.isBound ||
+       !item.errors.length && !item.options.isRequired && item.get() === '')
+    ) {
+      return null;
+    }
+    if (item instanceof schemaTypes.IntegerManager &&
+      (!item.errors.length && !item.options.isRequired && item.get() === null)) {
+	return null;
+    }
+    return item.errors;
+  }
+
+  _rowClassNames(errors) {
+    let validationStatus;
+    if (errors !== null) {
+      validationStatus = errors.length ? 'error' : 'success';
+    }
+    return classNames(
+      'form-group',
+      {
+        'has-feedback': validationStatus,
+        [`has-${validationStatus}`]: validationStatus
+      }
+    );
+  }
+
+  _renderValidation(errors) {
+    let validationIcon;
+    let validationStatus;
+    if (errors !== null) {
+      validationIcon = errors.length ? 'remove' : 'ok';
+      validationStatus = errors.length ? 'error' : 'success';
+    }
+    let glyphClassNames = classNames(
+      'glyphicon',
+      'form-control-feedback',
+      `glyphicon-${validationIcon}`
+    );
+    let aria = `inputStatus-${this.props.id}`;
+    return (
+      <span>
+        {validationIcon ? <span className={glyphClassNames} aria-hidden="true"></span> : null}
+        {validationIcon ? <span id={aria} className="sr-only">({validationStatus})</span> : null}
+      </span>
+    );
+  }
+
+  _renderErrors(errors) {
+    return errors && errors.map((e) => <p key={e} className="help-block">{e}</p>);
+  }
+  
+  _renderControl(part, name, options) {
     if (part instanceof schemaTypes.StringManager) {
-      let errors;
-      if (!part.isBound || !part.errors.length && !part.options.isRequired && part.get() === '') {
-        errors = null;
-      } else {
-        errors = part.errors;
-      }
-//      console.log('string', part.get(), 'bound', part.isBound, part.errors);
-      return (
-        <Row key={name} errors={errors} index={options && options.itemIndex}>
-          <label>{this._toLabel(name)}</label>
-          <InputGroup hasAddon={options && options.removeItem}>
-            <DelayedControl
-                    immediate={part.question.isBound}
-                    onChange={(v) => part.set(v)}
-                    onPendingChange={(v) => part.pend().set(v)}
-                    >
-              <input
-                      type="text"
-                      value={part.getPendingOrCurrent()}
-              />
-            </DelayedControl>
-            {options && options.removeItem ?
-            <span className="input-group-btn">
-              <Button onClick={options.removeItem}
-                      bsStyle='danger'
-                      ariaLabel={'Remove ' + name}
-                      title={'Remove ' + name}
-                      >
-                <Glyphicon glyph="remove" />
-              </Button>
-            </span>
-             : null }
-            </InputGroup>
-        </Row>
-      );
-    }
-    if (part instanceof schemaTypes.BoolManager) {
-      return (
-        <Row key={name}>
-          <label>{this._toLabel(name)}</label>
-          <input
-                  type="checkbox"
-                  onChange={(e) => part.set(e.target.checked)}
-                  checked={part.getPendingOrCurrent()}
-          />
-        </Row>
-      );
-    }
-    if (part instanceof schemaTypes.IntegerManager) {
-      let errors;
-      if (!part.errors.length && !part.options.isRequired && part.get() === null) {
-        errors = null;
-      } else {
-        errors = part.errors;
-      }
-      return (
-        <Row key={name} errors={errors}>
-          <label>{this._toLabel(name)}</label>
+      let errors = this._getItemErrors(part);
+      let control = (
+	<div style={{position: 'relative'}}>
           <DelayedControl
                   immediate={part.question.isBound}
-                  onChange={(v) => part.set(this._toInt(v))}
-                  onPendingChange={(v) => part.pend().set(this._toInt(v))}
+                  onChange={(v) => part.set(v)}
+                  onPendingChange={(v) => part.pend().set(v)}
                   >
             <input
+		    className="form-control"
                     type="text"
                     value={part.getPendingOrCurrent()}
             />
           </DelayedControl>
-        </Row>
+	  {this._renderValidation(errors)}
+	</div>
+      );
+      if (!options || !options.removeItem) {
+	return control;
+      }
+      return (
+        <div className='input-group'>
+	  {control}
+          <span className="input-group-btn">
+            <Button onClick={options.removeItem}
+                    bsStyle='danger'
+                    ariaLabel={'Remove ' + name}
+                    title={'Remove ' + name}
+                    >
+              <Glyphicon glyph="remove" />
+            </Button>
+          </span>
+        </div>
+      );
+    }
+    if (part instanceof schemaTypes.BoolManager) {
+      return (
+        <input
+                type="checkbox"
+                onChange={(e) => part.set(e.target.checked)}
+                checked={part.getPendingOrCurrent()}
+        />
+      );
+    }
+    if (part instanceof schemaTypes.IntegerManager) {
+      return (
+	<DelayedControl
+		immediate={part.question.isBound}
+		onChange={(v) => part.set(this._toInt(v))}
+		onPendingChange={(v) => part.pend().set(this._toInt(v))}
+		>
+          <input
+		  className="form-control"
+                  type="text"
+                  value={part.getPendingOrCurrent()}
+          />
+	</DelayedControl>
       );
     }
     return null;

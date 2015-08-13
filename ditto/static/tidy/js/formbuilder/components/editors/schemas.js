@@ -50,17 +50,35 @@ export const scoreGroupQuestion = {
   isRequired: schema.bool(),
   scoregroup: schema.shape({
     labels: schema.array(
-      schema.string({isRequired: true})
+      schema.string({isRequired: true}),
+      {
+        unique: true,
+        canAdd: true,
+        maxItems: 5,
+        minItems: 2,
+        canRemove: true,
+        canReorder: true,
+        empty: '',
+      }
     ),
     items: schema.array(
       schema.shape({
         text: schema.string({isRequired: true}),
         scores: schema.array(
           schema.integer({isRequired: true}),
-          {unique: true}
+          {
+            unique: true,
+            canReorder: true
+          }
         )
       }),
       {
+        canAdd: true,
+        maxItems: 10,
+        minItems: 1,
+        canRemove: true,
+        canReorder: true,
+        empty: {text: '', scores: []},  // TODO init scores properly
         validate: function() {
           let texts = [for (i of this.get()) i.text];
           if (!_.isEqual(texts, _.unique(texts))) {
