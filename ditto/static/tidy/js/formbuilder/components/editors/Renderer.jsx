@@ -5,9 +5,14 @@ import * as schemaTypes from '../../../lib/schema/proxies';
 import DelayedControl from '../../../lib/form/DelayedControl';
 import { Button, Glyphicon } from 'react-bootstrap';
 import Sortable from 'react-components/Sortable';
+import getID from '../../../lib/id';
 
 export default class Renderer extends React.Component {
-
+  constructor(props) {
+    super(props);
+    this.controlID = getID();
+  }
+  
   static propTypes = {
     question: PropTypes.object
   }
@@ -83,6 +88,7 @@ export default class Renderer extends React.Component {
 
   _renderItem(part, name, options) {
     let errors = this._getItemErrors(part);
+    let ID = this._getItemID(part);
     return (
       <div
 	      key={part.path}
@@ -90,7 +96,7 @@ export default class Renderer extends React.Component {
               className={this._rowClassNames(errors)}
 	      index={options && options.itemIndex}
               >
-        <label className="control-label col-md-4">
+        <label className="control-label col-md-4" htmlFor={ID}>
           {this._toLabel(name)}
         </label>
         <div className="col-md-8">
@@ -129,6 +135,10 @@ export default class Renderer extends React.Component {
     return item.errors;
   }
 
+  _getItemID(item) {
+    return `${this.controlID}${item.path}`;
+  }
+  
   _rowClassNames(errors) {
     let validationStatus;
     if (errors !== null) {
@@ -169,6 +179,7 @@ export default class Renderer extends React.Component {
   }
   
   _renderControl(part, name, options) {
+    let ID = this._getItemID(part);
     if (part instanceof schemaTypes.StringManager) {
       let errors = this._getItemErrors(part);
       let control = (
@@ -179,6 +190,7 @@ export default class Renderer extends React.Component {
                   onPendingChange={(v) => part.pend().set(v)}
                   >
             <input
+		    id={ID}
 		    className="form-control"
                     type="text"
                     value={part.getPendingOrCurrent()}
@@ -208,6 +220,7 @@ export default class Renderer extends React.Component {
     if (part instanceof schemaTypes.BoolManager) {
       return (
         <input
+		id={ID}
                 type="checkbox"
                 onChange={(e) => part.set(e.target.checked)}
                 checked={part.getPendingOrCurrent()}
@@ -222,6 +235,7 @@ export default class Renderer extends React.Component {
 		onPendingChange={(v) => part.pend().set(this._toInt(v))}
 		>
           <input
+		  id={ID}
 		  className="form-control"
                   type="text"
                   value={part.getPendingOrCurrent()}
