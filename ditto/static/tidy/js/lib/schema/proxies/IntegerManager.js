@@ -27,4 +27,9 @@ export class IntegerManager extends BaseItemManager {
     //console.log('errors', errors);
     return errors;
   }
+
+  isEmpty() {
+    return this.get() === null;
+  }
+
 }

@@ -47,4 +47,12 @@ export class MemberManager {
   preRemove() {
     this.item.preRemove();
   }
+
+  add(value) {
+    this.item.add(value);
+  }
+
+  isEmpty(value) {
+    return this.item.isEmpty();
+  }
 }

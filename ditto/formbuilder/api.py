@@ -38,9 +38,18 @@ class ScoreGroupItemSerializer(serializers.ModelSerializer):
         )
 
 
+class ScoreLableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ScoreLabel
+        fields = (
+            'label',
+            'default_score'
+        )
+
+        
 class ScoreGroupSerializer(serializers.ModelSerializer):
     items = ScoreGroupItemSerializer(many=True)
-    labels = serializers.SlugRelatedField(slug_field='label', read_only=True, many=True)
+    labels = ScoreLableSerializer(many=True)
 
     class Meta:
         model = models.ScoreGroup

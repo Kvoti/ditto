@@ -50,7 +50,10 @@ export const scoreGroupQuestion = {
   isRequired: schema.bool(),
   scoregroup: schema.shape({
     labels: schema.array(
-      schema.string({isRequired: true}),
+      schema.shape({
+        label: schema.string({isRequired: true}),
+        defaultScore: schema.integer({isRequired: true})
+      }),
       {
         unique: true,
         canAdd: true,
@@ -58,14 +61,33 @@ export const scoreGroupQuestion = {
         minItems: 2,
         canRemove: true,
         canReorder: true,
-        empty: '',
+        empty: {
+          label: '',
+          defaultScore: null
+        },
+        postAdd: function() {
+          // TODO schema API should support this better
+          for (let j in this.scoregroup.items) {
+            if (this.scoregroup.items[j].scores) {
+              this.scoregroup.items[j].scores.add(null);
+            }
+          }
+        },
+        validate: function() {
+          let labels = [for (i of this.get()) i.label];
+          console.log('labels', labels);
+          if (!_.isEqual(labels, _.unique(labels))) {
+            this.addError('Must be unique');
+          }
+          return [];
+        }
       }
     ),
     items: schema.array(
       schema.shape({
         text: schema.string({isRequired: true}),
         scores: schema.array(
-          schema.integer({isRequired: true}),
+          schema.integer(),
           {
             unique: true,
             canReorder: true

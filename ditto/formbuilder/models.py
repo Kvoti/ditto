@@ -68,12 +68,13 @@ class Form(models.Model):
                 question=score_group,
                 label=label,
                 order=i + 1,
+                default_score=default_scores[i]
             )
             for i, label in enumerate(labels)
         ]
         for i, item in enumerate(items):
             if isinstance(item, basestring):
-                scores = default_scores
+                scores = [None] * len(labels)
             else:
                 item, scores = item
             item = ScoreGroupItem.objects.create(
@@ -200,11 +201,13 @@ class ScoreLabel(models.Model):
     question = models.ForeignKey(ScoreGroup, related_name="labels")
     order = models.PositiveIntegerField()
     label = models.CharField(max_length="50")
+    default_score = models.IntegerField()
 
     class Meta:
         unique_together = (
             ('question', 'order'),
             ('question', 'label'),
+            ('question', 'default_score'),
         )
         ordering = ('order',)
 
@@ -212,7 +215,7 @@ class ScoreLabel(models.Model):
 class Score(models.Model):
     item = models.ForeignKey(ScoreGroupItem, related_name="scores")
     label = models.ForeignKey(ScoreLabel, related_name="scores")
-    score = models.IntegerField()
+    score = models.IntegerField(null=True, blank=True)
 
     class Meta:
         unique_together = ('item', 'label', 'score')

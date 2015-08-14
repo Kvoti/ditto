@@ -18,4 +18,9 @@ export class StringManager extends BaseItemManager {
     }
     return errors;
   }
+
+  isEmpty() {
+    return this.get() === '';
+  }
+
 }

@@ -15,4 +15,8 @@ export class BoolManager extends BaseItemManager {
     }
     return errors;
   }
+
+  isEmpty() {
+    return this.get();
+  }
 }

@@ -1,18 +1,22 @@
-import React from 'react';
-import classNames from 'classnames';
+import React, { PropTypes } from 'react';
 
 export default class ScoreGroup extends React.Component {
 
   static propTypes = {
-    question: React.PropTypes.string.isRequired,
-    isRequired: React.PropTypes.bool,
-    scoregroup: React.PropTypes.shape({
-      labels: React.PropTypes.arrayOf(React.PropTypes.string),
-      items: React.PropTypes.arrayOf(
-        React.PropTypes.shape({
-          text: React.PropTypes.string.isRequired,
+    question: PropTypes.string.isRequired,
+    isRequired: PropTypes.bool,
+    scoregroup: PropTypes.shape({
+      labels: PropTypes.arrayOf(
+	PropTypes.shape({
+	  label: PropTypes.arrayOf(PropTypes.string),
+	  defaultScore: PropTypes.number
+	})
+      ),
+      items: PropTypes.arrayOf(
+        PropTypes.shape({
+          text: PropTypes.string.isRequired,
           // TODO validate score labels and values are same length
-          scores: React.PropTypes.arrayOf(React.PropTypes.number).isRequired
+          scores: PropTypes.arrayOf(PropTypes.number).isRequired
         }).isRequired
       ).isRequired
     }).isRequired
@@ -28,7 +32,7 @@ export default class ScoreGroup extends React.Component {
           <th></th>
           {this.props.scoregroup.labels.map((label, i) => {
             return (
-              <th key={label}>{label}</th>
+              <th key={i}>{label.label}</th>
             );
            })}
         </tr>
