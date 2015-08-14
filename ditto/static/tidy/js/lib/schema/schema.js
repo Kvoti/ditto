@@ -22,7 +22,7 @@ export function string(options={}) {
   }
   return function _string(question, chain, basePath) {
     let name = basePath[basePath.length - 1];
-    chain[name] = new managers.StringManager(question, basePath, options);
+    chain[name] = new managers.StringManager(question, chain, basePath, options);
     return chain[name];
   };
 }
@@ -33,7 +33,7 @@ export function bool(options={}) {
   }
   return function _string(question, chain, basePath) {
     let name = basePath[basePath.length - 1];
-    chain[name] = new managers.BoolManager(question, basePath, options);
+    chain[name] = new managers.BoolManager(question, chain, basePath, options);
     return chain[name];
   };
 }
@@ -44,7 +44,7 @@ export function integer(options={}) {
   }
   return function _string(question, chain, basePath) {
     let name = basePath[basePath.length - 1];
-    chain[name] = new managers.IntegerManager(question, basePath, options);
+    chain[name] = new managers.IntegerManager(question, chain, basePath, options);
     return chain[name];
   };
 }

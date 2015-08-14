@@ -1,4 +1,4 @@
-import { BaseItemManager } from './base';
+import { BaseItemManager } from './BaseItemManager';
 
 export class BoolManager extends BaseItemManager {
   _checkValue(value) {
@@ -18,5 +18,9 @@ export class BoolManager extends BaseItemManager {
 
   isEmpty() {
     return this.get();
+  }
+  
+  valueIsEmpty(value) {
+    return value;
   }
 }

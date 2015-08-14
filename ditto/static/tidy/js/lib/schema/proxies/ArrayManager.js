@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { BaseCollectionManager } from './base';
+import { BaseCollectionManager } from './BaseCollectionManager';
 import { MemberManager } from './MemberManager';
 
 export class ArrayManager extends BaseCollectionManager {
@@ -106,44 +106,52 @@ export class ArrayManager extends BaseCollectionManager {
   }
   
   _validate() {
-    let errors = [];
-    if (!this.options.unique) {
-      return errors;
-    }
-    let others = this._getBoundOthers();
     for (let k in this) {
-      if (k === 'chain') {
-        continue;
-      }
-      if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
-        let item = this[k];
-        for (let i = 0; i < others.length; i += 1) {
-          if (i !== parseInt(k) && _.isEqual(item.get(), others[i])) {
-            item.addError('Items must be unique');
-            break;
-          }
-        }
-      }
-    }
-    this.errors = errors;
-    if (this.options.validate) {
-      this.errors = this.errors.concat(this.options.validate.apply(this));
-    }
-  }
-
-  _getBoundOthers() {
-    let items = [];
-    for (let k in this) {
-      if (k === 'chain') {
-        continue;
-      }
-      if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
+      if (k !== 'question' && k !== 'chain' && this.hasOwnProperty(k) && this[k]._validate) {
         this[k]._validate();
-        if (this[k].isBound && this.isEmpty && !this.isEmpty()) {
-          items.push(this[k].get());
-        }
       }
     }
-    return items;
   }
+  
+  // _validate() {
+  //   let errors = [];
+  //   if (!this.options.unique) {
+  //     return errors;
+  //   }
+  //   let others = this._getBoundOthers();
+  //   for (let k in this) {
+  //     if (k === 'chain') {
+  //       continue;
+  //     }
+  //     if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
+  //       let item = this[k];
+  //       for (let i = 0; i < others.length; i += 1) {
+  //         if (i !== parseInt(k) && _.isEqual(item.get(), others[i])) {
+  //           item.addError('Items must be unique');
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   this.errors = errors;
+  //   if (this.options.validate) {
+  //     this.errors = this.errors.concat(this.options.validate.apply(this));
+  //   }
+  // }
+
+  // _getBoundOthers() {
+  //   let items = [];
+  //   for (let k in this) {
+  //     if (k === 'chain') {
+  //       continue;
+  //     }
+  //     if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
+  //       this[k]._validate();
+  //       if (this[k].isBound && this.isEmpty && !this.isEmpty()) {
+  //         items.push(this[k].get());
+  //       }
+  //     }
+  //   }
+  //   return items;
+  // }
 }

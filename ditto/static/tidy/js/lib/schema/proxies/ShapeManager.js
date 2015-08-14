@@ -1,4 +1,4 @@
-import { BaseCollectionManager } from './base';
+import { BaseCollectionManager } from './BaseCollectionManager';
 import { MemberManager } from './MemberManager';
 
 export class ShapeManager extends BaseCollectionManager {

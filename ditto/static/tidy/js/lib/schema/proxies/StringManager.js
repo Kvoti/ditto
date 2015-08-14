@@ -1,4 +1,4 @@
-import { BaseItemManager } from './base';
+import { BaseItemManager } from './BaseItemManager';
 
 export class StringManager extends BaseItemManager {
   _checkValue(value) {
@@ -8,8 +8,8 @@ export class StringManager extends BaseItemManager {
   }
 
   _validateBoundValue() {
+    let errors = super._validateBoundValue();
     const value = this.get();
-    let errors = [];
     if (this.options.isRequired && value === '') {
       errors.push('This field is required');
     }
@@ -20,7 +20,10 @@ export class StringManager extends BaseItemManager {
   }
 
   isEmpty() {
-    return this.get() === '';
+    return this.valueIsEmpty(this.get());
   }
 
+  valueIsEmpty(value) {
+    return value === '';
+  }
 }

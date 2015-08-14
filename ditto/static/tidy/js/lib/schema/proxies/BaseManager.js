@@ -1,4 +1,4 @@
-export class BaseManager {
+export default class BaseManager {
   get() {
     return this.question.get(this.path);
   }
@@ -63,50 +63,4 @@ export class BaseManager {
     throw new Error('Subclass must implement _validateBoundValue method');
   }
 
-}
-
-export class BaseItemManager extends BaseManager {
-  constructor(question, path, options) {
-    super();
-    this.question = question;
-    this.path = path;
-    this.options = options;
-  }
-
-  init(value) {
-    this._set(value);
-  }
-
-  set(value) {
-    if (!this.question.pendNextChange) {
-      this.isBound = true;
-    }
-    return this._set(value);
-  }
-
-  preRemove() {
-    this.question._removeIsBound(this.path);
-  }
-}
-
-export class BaseCollectionManager extends BaseManager {
-  init(values) {
-    return this._set(values, 'init');
-  }
-
-  set(values) {
-    return this._set(values, 'set');
-  }
-  
-  preRemove() {
-    this.question._removeIsBound(this.path);
-    for (let k in this) {
-      if (k === 'chain') {
-        continue;
-      }
-      if (this.hasOwnProperty(k) && this[k].preRemove) {
-        this[k].preRemove();
-      }
-    }
-  }
 }
