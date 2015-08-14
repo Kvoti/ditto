@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
 import { Question as QuestionSchema } from '../../../lib/schema/schema';
-import Renderer from './Renderer';
+import Renderer from './renderer/Renderer';
 
 export default class Question extends React.Component {
   constructor(props) {

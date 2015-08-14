@@ -704,3 +704,23 @@ footer {
     margin-right: 0;
     margin-bottom: 15px;
 }
+
+/* http://khan.github.io/react-components/#sortable */
+li.sortable-disabled label span {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==);
+    background-position: left center;
+    background-repeat: no-repeat;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    display: inline-block;
+    padding-left: 10px;
+    height: 100%;
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+
+/* TODO not working, think component maybe overrides? */
+li.sortable-dragging label span {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+}
