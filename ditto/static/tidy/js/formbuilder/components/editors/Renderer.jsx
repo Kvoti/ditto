@@ -128,6 +128,12 @@ export default class Renderer extends React.Component {
     ) {
       return null;
     }
+    if (item instanceof schemaTypes.BoolManager &&
+      (!item.isBound ||
+       !item.errors.length && !item.options.isRequired)
+    ) {
+      return null;
+    }
     if (item instanceof schemaTypes.IntegerManager &&
       (!item.errors.length && !item.options.isRequired && item.get() === null)) {
 	return null;
