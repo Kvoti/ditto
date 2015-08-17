@@ -55,8 +55,8 @@ export const scoreGroupQuestion = {
       }),
       {
         canAdd: true,
-        maxItems: 5,
-        minItems: 2,
+        maxLength: 5,
+        minLength: 2,
         canRemove: true,
         canReorder: true,
         empty: {
@@ -88,8 +88,8 @@ export const scoreGroupQuestion = {
       }),
       {
         canAdd: true,
-        maxItems: 10,
-        minItems: 1,
+        maxLength: 10,
+        minLength: 1,
         canRemove: true,
         canReorder: true,
         empty: {text: '', scores: []},  // TODO init scores properly

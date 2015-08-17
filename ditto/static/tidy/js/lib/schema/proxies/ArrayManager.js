@@ -1,18 +1,22 @@
-import _ from 'lodash';
-
 import { BaseCollectionManager } from './BaseCollectionManager';
-import { MemberManager } from './MemberManager';
 
 export class ArrayManager extends BaseCollectionManager {
-  constructor(question, chain, path, name, item, options, method) {
-    super();
-    this.question = question;
-    this.chain = chain;
-    this.path = path;
-    this.name = name;
-    this.item = item;
-    this.options = options;
-    this.question.set(this.path, [], method);
+  constructor(question, parent, path, key, MemberManager, options) {
+    super(question, parent, path, key, options);
+    this.key = key;
+    this.MemberManager = MemberManager;
+    this.question.set(this.path, []);
+  }
+
+  canAdd() {
+    if (this.options.canAdd === undefined) {
+      return false;
+    }
+    if (this.options.maxLength === undefined) {
+      return true;
+    }
+    let length = this.get().length;
+    return length < this.options.maxLength;
   }
 
   add(value) {
@@ -30,45 +34,25 @@ export class ArrayManager extends BaseCollectionManager {
     if (array.length - 2 >= 0 && !this[array.length - 2].isBound) {
       this[array.length - 2].isBound = true;
     }
-    this._setIndex(array.length - 1, value, 'set');
+    this._setIndex(array.length - 1, value);
+    this.question._validate();
     if (this.options.postAdd) {
       this.options.postAdd.call(this.question, value);
     }
   }
 
-  _remove(index) {
-    // TODO details of storage should all live with Question as an array
-    // _might_ be stored as a real Array or an ImmutableJS array or object
-    // or something else entirely.
-    let array = this.get();
-    array.splice(index, 1);
-    // TODO does this leave isBound and errors to clean up?
-    this[index].preRemove();
-    this.init(array);
-    this.question._validate();
-    debugger;
-  }
-
   reorder(indices) {
+    console.log('reordering', indices);
     let reordered = [];
     indices.forEach((origIndex, index) => {
       reordered.push(this[origIndex].get());
       this[index].preRemove();
     });
     this.set(reordered);
+    this.question._validate();
   }
 
-  canAdd() {
-    if (this.options.canAdd === undefined) {
-      return false;
-    }
-    if (this.options.maxLength === undefined) {
-      return true;
-    }
-    let length = this.get().length;
-    return length < this.options.maxLength;
-  }
-
+  // private methods
   // TODO maybe these 'can' methods are UI things?
   canRemoveItems() {
     if (this.options.canRemove === undefined) {
@@ -83,12 +67,23 @@ export class ArrayManager extends BaseCollectionManager {
     return false;
   }
 
+  _remove(index) {
+    // TODO details of storage should all live with Question as an array
+    // _might_ be stored as a real Array or an ImmutableJS array or object
+    // or something else entirely.
+    let array = this.get();
+    array.splice(index, 1);
+    this[index].preRemove();
+    this.set(array);
+    this.errors = [];
+    this.question._validate();
+  }
+
   canReorderItems() {
     return this.options.canReorder;
   }
-  
-  _set(values, method) {
-    console.log('array._set method', method);
+
+  _checkValue(values) {
     try {
       if (values.push === undefined) {
         throw new Error();
@@ -96,70 +91,33 @@ export class ArrayManager extends BaseCollectionManager {
     } catch (e) {
       throw new Error(`Values must be iterable ${values}`);
     }
-    this.question.set(this.path, [], method);
+  }
+
+  _setCheckedValue(values) {
+    this.question.set(this.path, []);
     values.forEach((v, i) => {
-      this._setIndex(i, v, method);
+      this._setIndex(i, v);
     });
     return this.question;
   }
 
-  _setIndex(i, v, method) {
-    console.log('setindex method', method);
+  _setIndex(i, v) {
     let path = this.path.concat([i]);
     if (this[i] === undefined) {
-      this[i] = new MemberManager(this.question, this, path, i, this.item, method);
+      // TODO init or set!
+      this[i] = new this.MemberManager(this.question, this, path, i);
     }
-    this.chain[i] = this[i];
-    this[i][method](v);
+    this[i].set(v);
   }
-  
-  _validate() {
+
+  get _memberKeys() {
+    let keys = [];
     for (let k in this) {
-      if (k !== 'question' && k !== 'chain' && this.hasOwnProperty(k) && this[k]._validate) {
-        this[k]._validate();
+      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k].__isManager === true) {
+        keys.push(k);
       }
     }
+    keys.sort();
+    return keys;
   }
-  
-  // _validate() {
-  //   let errors = [];
-  //   if (!this.options.unique) {
-  //     return errors;
-  //   }
-  //   let others = this._getBoundOthers();
-  //   for (let k in this) {
-  //     if (k === 'chain') {
-  //       continue;
-  //     }
-  //     if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
-  //       let item = this[k];
-  //       for (let i = 0; i < others.length; i += 1) {
-  //         if (i !== parseInt(k) && _.isEqual(item.get(), others[i])) {
-  //           item.addError('Items must be unique');
-  //           break;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   this.errors = errors;
-  //   if (this.options.validate) {
-  //     this.errors = this.errors.concat(this.options.validate.apply(this));
-  //   }
-  // }
-
-  // _getBoundOthers() {
-  //   let items = [];
-  //   for (let k in this) {
-  //     if (k === 'chain') {
-  //       continue;
-  //     }
-  //     if (this.hasOwnProperty(k) && this[k] instanceof MemberManager) {
-  //       this[k]._validate();
-  //       if (this[k].isBound && this.isEmpty && !this.isEmpty()) {
-  //         items.push(this[k].get());
-  //       }
-  //     }
-  //   }
-  //   return items;
-  // }
 }

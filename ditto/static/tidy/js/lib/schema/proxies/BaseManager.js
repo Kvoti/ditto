@@ -1,4 +1,13 @@
 export default class BaseManager {
+  constructor(question, parent, path, key, options) {
+    this.__isManager = true;
+    this.question = question;
+    this.parent = parent;
+    this.path = path;
+    this.key = key;
+    this.options = options;
+  }
+  
   get() {
     return this.question.get(this.path);
   }
@@ -21,14 +30,6 @@ export default class BaseManager {
     return this.question._getIsBound(this.path);
   }
 
-  set isBound(value) {
-    this.question._setIsBound(this.path, value);
-  }
-
-  set errors(errors) {
-    return this.question._setErrors(this.path, errors);
-  }
-
   get errors() {
     return this.question._getErrors(this.path);
   }
@@ -39,11 +40,24 @@ export default class BaseManager {
     this.errors = errors;
   }
 
-  _set(value, method) {
-    this._checkValue(value);
-    return this.question.set(this.path, value, method);
+  // private methods
+  set isBound(value) {
+    this.question._setIsBound(this.path, value);
   }
 
+  set errors(errors) {
+    return this.question._setErrors(this.path, errors);
+  }
+
+  set(value) {
+    this._checkValue(value);
+    return this._setCheckedValue(value);
+  }
+
+  _setCheckedValue(value) {
+    return this.question.init(this.path, value);
+  }
+  
   _validate() {
     if (!this.isBound) {
       this.errors = [];
@@ -64,26 +78,25 @@ export default class BaseManager {
   }
 
   canReorder() {
-    return (this.chain && this.chain.chain &&
-            this.chain.chain.canReorderItems());
-  }
-  
-  canReorderItems() {
-    return false;
+    return (
+      this.parent &&
+        this.parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
+        this.parent.canReorderItems()
+    );
   }
 
-  canRemoveItems() {
-    return false;
-  }
-  
   canRemove() {
-    return (this.chain && this.chain.chain &&
-            this.chain.chain.canRemoveItems());
+    return (
+      this.parent &&
+        this.parent.canRemoveItems &&
+        this.parent.canRemoveItems()
+    );
   }
 
-  remove() {
-    console.log('removing', this.path);
-    (this.chain && this.chain.chain &&
-     this.chain.chain._remove(parseInt(this.chain.name)));
+  remove = () => {
+    if (!(this.parent && this.parent._remove)) {
+      throw new Error('Item is not in a list');
+    }
+    this.parent._remove(parseInt(this.key, 10));
   }
 }

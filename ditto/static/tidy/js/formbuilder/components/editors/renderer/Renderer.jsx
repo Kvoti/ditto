@@ -34,9 +34,6 @@ export default class Renderer extends React.Component {
   _renderPart(name, part) {
     console.log('rendering part', part.path, typeof part, part.canReorder());
     let rendered;
-    if (name === 'chain') {
-      return null;
-    }
     if (this._isLeaf(part)) {
       rendered = this._renderItem(part, name);
     } else {
@@ -47,7 +44,7 @@ export default class Renderer extends React.Component {
 	      style={part.canReorder() ? {color: 'red'} : null}
 	      key={part.path}
 	      draggable={part.canReorder()}
-	      index={part.chain.name}
+	      orderingIndex={part.key}
 	      >
 	  {rendered}
 	  <div className="col-md-offset-4">
@@ -66,14 +63,11 @@ export default class Renderer extends React.Component {
 
   _renderCollection(part) {
     let parts = [];
-    for (let k in part) {
-      if (k !== 'chain' && part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
-        parts.push(this._renderPart(k, part[k].item));
-      }
-    }
-    console.log(part.chain);
+    part._memberKeys.forEach(k => {    
+        parts.push(this._renderPart(k, part[k]));
+    });
     // this only applies to array so split out the colleciton function
-    if (part.canReorderItems()) {
+    if (part.canReorderItems && part.canReorderItems()) {
       parts = (
         <Sortable
                 components={parts}
@@ -104,7 +98,7 @@ export default class Renderer extends React.Component {
 		  className="btn btn-danger"
 		  onClick={() => part.remove()}
 		  >
-	    Remove
+	    Remove {part.parent.key}
 	  </button>
 	</div>
       );
@@ -143,7 +137,7 @@ export default class Renderer extends React.Component {
 	      onChange={onChange}
 	      onPendingChange={onPendingChange}
 	      onRemove={part.canRemove() && (() => part.remove())}
-	      orderingIndex={part.canReorder && part.chain.name}
+	      orderingIndex={part.canReorder() && part.key}
       />
     );
   }

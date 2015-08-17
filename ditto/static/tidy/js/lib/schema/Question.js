@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 export class Question {
-  constructor(schema, { initial, data,  onChange}) {
+  constructor(schema, { initial = {}, data = {}, onChange} = {}) {
     this.questionSpec = {};
     this.pendNextChange = false;
     this.pendingChange = null;
@@ -20,9 +20,8 @@ export class Question {
       if (this.hasOwnProperty(k) && this[k] && this[k]._validate !== undefined) {
         if (data && data.hasOwnProperty(k)) {
           this[k].set(data[k]);
-        }
-        if (initial && initial.hasOwnProperty(k)) {
-          this[k].init(initial[k]);
+        } else if (initial && initial.hasOwnProperty(k)) {
+          this[k].set(initial[k]);
         }
       }
     }
@@ -58,8 +57,8 @@ export class Question {
     question.onChange = onChange;
     return question;
   }
-  
-  set(path, value, method) {
+
+  set(path, value) {
     if (this.pendNextChange) {
       if (this.pendingChange && !_.isEqual(path, this.pendingChange.path)) {
         throw new Error('Cannot pend more than one change');
@@ -71,7 +70,7 @@ export class Question {
           !_.isEqual(path, this.pendingChange.path)) {
         throw new Error('Cannot change other state while change is pending');
       }
-      this._set(path, value, method);
+      this._set(path, value);
       this.pendingChange = null;
       this.pendNextChange = false;
     }
@@ -91,20 +90,19 @@ export class Question {
     };
   }
     
-  _set(path, value, method) {
-    console.log('question._set method', method);
+  _set(path, value) {
     let state = this.questionSpec;
     path.slice(0, path.length - 1).forEach(p => {
       state = state[p];
     });
     state[path[path.length - 1]] = value;
-    if (this.isInitialised && method !== 'init') {
-      this._validate();
-    }
+    // Think the calling method should know whether to validate or not
+    // if (this.isInitialised && method !== 'init') {
+    //   this._validate();
+    // }
   }
 
   get(path) {
-    console.log('getting', path);
     let state = this.questionSpec;
     path.forEach(p => {
       state = state[p];
@@ -144,7 +142,6 @@ export class Question {
 
   _setIsBound(path, value) {
     this.isBound[path] = value;
-//    console.log(this.isBound);
   }
 
   _getErrors(path) {
