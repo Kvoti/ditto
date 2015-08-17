@@ -39,9 +39,9 @@ export default class BaseManager {
     this.errors = errors;
   }
 
-  _set(value) {
+  _set(value, method) {
     this._checkValue(value);
-    return this.question.set(this.path, value);
+    return this.question.set(this.path, value, method);
   }
 
   _validate() {
@@ -63,4 +63,27 @@ export default class BaseManager {
     throw new Error('Subclass must implement _validateBoundValue method');
   }
 
+  canReorder() {
+    return (this.chain && this.chain.chain &&
+            this.chain.chain.canReorderItems());
+  }
+  
+  canReorderItems() {
+    return false;
+  }
+
+  canRemoveItems() {
+    return false;
+  }
+  
+  canRemove() {
+    return (this.chain && this.chain.chain &&
+            this.chain.chain.canRemoveItems());
+  }
+
+  remove() {
+    console.log('removing', this.path);
+    (this.chain && this.chain.chain &&
+     this.chain.chain._remove(parseInt(this.chain.name)));
+  }
 }

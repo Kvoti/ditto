@@ -2,14 +2,15 @@ import { BaseCollectionManager } from './BaseCollectionManager';
 import { MemberManager } from './MemberManager';
 
 export class ShapeManager extends BaseCollectionManager {
-  constructor(question, chain, path, name, args) {
+  constructor(question, chain, path, name, args, method) {
     super();
     this.question = question;
     this.chain = chain;
     this.path = path;
     this.name = name;
     this.args = args;
-    this.question.set(this.path, {});
+    this.question.set(this.path, {}, method);
+    this.options = {};
   }
   
   _set(values, method) {
@@ -21,7 +22,7 @@ export class ShapeManager extends BaseCollectionManager {
         }
         let path = this.path.concat([k]);
         if (this[k] === undefined) {
-          this[k] = new MemberManager(this.question, this, path, k, this.args[k]);
+          this[k] = new MemberManager(this.question, this, path, k, this.args[k], method);
         }
         this.chain[k] = this[k];
         this[k][method](values[k]);

@@ -12,17 +12,17 @@ export class BaseItemManager extends BaseManager {
   }
 
   init(value) {
-    this._set(value);
+    this._set(value, 'init');
   }
 
-  set(value) {
+  set(value, method) {
     if (!this.question.pendNextChange) {
       if (this.options.isRequired || !this.valueIsEmpty(value)) {
         console.log(this.path, 'setting bound', value);
         this.isBound = true;
       }
     }
-    return this._set(value);
+    return this._set(value, method);
   }
 
   preRemove() {

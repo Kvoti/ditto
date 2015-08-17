@@ -1,9 +1,9 @@
 export class MemberManager {
-  constructor(question, chain, path, name, item) {
+  constructor(question, chain, path, name, item, method) {
     this.question = question;
     this.chain = chain;
     this.path = path;
-    this.item = item(question, this, path);
+    this.item = item(question, this, path, method);
     this.name = name;
     this.options = this.item.options;
   }
@@ -55,4 +55,12 @@ export class MemberManager {
   isEmpty(value) {
     return this.item.isEmpty();
   }
+  
+  // canReorder() {
+  //   debugger;
+  //   return (this.chain &&
+  //           this.chain.canReorderItems &&
+  //           this.chain.canReorderItems());
+  // }
+  
 }

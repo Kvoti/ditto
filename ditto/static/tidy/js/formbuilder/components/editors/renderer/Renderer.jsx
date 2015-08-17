@@ -31,14 +31,30 @@ export default class Renderer extends React.Component {
     );
   }
 
-  _renderPart(name, part, options) {
+  _renderPart(name, part) {
+    console.log('rendering part', part.path, typeof part, part.canReorder());
+    let rendered;
     if (name === 'chain') {
       return null;
     }
     if (this._isLeaf(part)) {
-      return this._renderItem(part, name, options);
+      rendered = this._renderItem(part, name);
+    } else {
+      rendered = this._renderCollection(part);
     }
-    return this._renderCollection(part, options);
+    return (
+      <div
+	      style={part.canReorder() ? {color: 'red'} : null}
+	      key={part.path}
+	      draggable={part.canReorder()}
+	      index={part.chain.name}
+	      >
+	  {rendered}
+	  <div className="col-md-offset-4">
+	    {this._renderAddButton(part)}
+	  </div>
+      </div>
+    );
   }
   
   _isLeaf(part) {
@@ -48,22 +64,16 @@ export default class Renderer extends React.Component {
     );
   }
 
-  _renderCollection(part, options) {
+  _renderCollection(part) {
     let parts = [];
     for (let k in part) {
       if (k !== 'chain' && part.hasOwnProperty(k) && part[k] instanceof schemaTypes.MemberManager) {
-        let removeItem;
-        if (part.canRemove && part.canRemove()) {
-          removeItem = () => part.remove(k);
-        }
-        parts.push(this._renderPart(k, part[k].item, {
-	  removeItem,
-	  itemIndex: k,
-	  canReorder: part.options && part.options.canReorder
-	}));
+        parts.push(this._renderPart(k, part[k].item));
       }
     }
-    if (part.options && part.options.canReorder) {
+    console.log(part.chain);
+    // this only applies to array so split out the colleciton function
+    if (part.canReorderItems()) {
       parts = (
         <Sortable
                 components={parts}
@@ -72,15 +82,9 @@ export default class Renderer extends React.Component {
       );
     }
     return (
-      <div
-	      key={part.path}
-              draggable={options && options.canReorder}
-	      index={options && options.itemIndex}
-	      >
+      <div>
 	{parts}
-	<div className="col-md-offset-4">
-	  {this._renderAddButton(part)}
-	</div>
+	{this._renderDeleteButton(part)}
       </div>
     );
   }
@@ -91,8 +95,25 @@ export default class Renderer extends React.Component {
     }
     return null;
   }
+
+  _renderDeleteButton(part) {
+    if (part.canRemove()) {
+      return (
+	<div className="col-md-offset-4">
+	  <button
+		  className="btn btn-danger"
+		  onClick={() => part.remove()}
+		  >
+	    Remove
+	  </button>
+	</div>
+      );
+    }
+    return null;
+  }
   
-  _renderItem(part, name, options) {
+  _renderItem(part, name) {
+    console.log('rendering item', part.path);
     let ID = this._getItemID(part);
     let errors = this._getItemErrors(part);
     let type;
@@ -121,8 +142,8 @@ export default class Renderer extends React.Component {
               validateImmediately={part.question.isBound}
 	      onChange={onChange}
 	      onPendingChange={onPendingChange}
-	      onRemove={options && options.removeItem}
-	      orderingIndex={options && options.itemIndex}
+	      onRemove={part.canRemove() && (() => part.remove())}
+	      orderingIndex={part.canReorder && part.chain.name}
       />
     );
   }

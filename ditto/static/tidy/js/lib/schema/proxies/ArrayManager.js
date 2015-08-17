@@ -4,7 +4,7 @@ import { BaseCollectionManager } from './BaseCollectionManager';
 import { MemberManager } from './MemberManager';
 
 export class ArrayManager extends BaseCollectionManager {
-  constructor(question, chain, path, name, item, options) {
+  constructor(question, chain, path, name, item, options, method) {
     super();
     this.question = question;
     this.chain = chain;
@@ -12,7 +12,7 @@ export class ArrayManager extends BaseCollectionManager {
     this.name = name;
     this.item = item;
     this.options = options;
-    this.question.set(this.path, []);
+    this.question.set(this.path, [], method);
   }
 
   add(value) {
@@ -36,7 +36,7 @@ export class ArrayManager extends BaseCollectionManager {
     }
   }
 
-  remove(index) {
+  _remove(index) {
     // TODO details of storage should all live with Question as an array
     // _might_ be stored as a real Array or an ImmutableJS array or object
     // or something else entirely.
@@ -44,7 +44,9 @@ export class ArrayManager extends BaseCollectionManager {
     array.splice(index, 1);
     // TODO does this leave isBound and errors to clean up?
     this[index].preRemove();
-    this.set(array);
+    this.init(array);
+    this.question._validate();
+    debugger;
   }
 
   reorder(indices) {
@@ -68,7 +70,7 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   // TODO maybe these 'can' methods are UI things?
-  canRemove() {
+  canRemoveItems() {
     if (this.options.canRemove === undefined) {
       return false;
     }
@@ -80,8 +82,13 @@ export class ArrayManager extends BaseCollectionManager {
     }
     return false;
   }
+
+  canReorderItems() {
+    return this.options.canReorder;
+  }
   
   _set(values, method) {
+    console.log('array._set method', method);
     try {
       if (values.push === undefined) {
         throw new Error();
@@ -89,7 +96,7 @@ export class ArrayManager extends BaseCollectionManager {
     } catch (e) {
       throw new Error(`Values must be iterable ${values}`);
     }
-    this.question.set(this.path, []);
+    this.question.set(this.path, [], method);
     values.forEach((v, i) => {
       this._setIndex(i, v, method);
     });
@@ -97,9 +104,10 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   _setIndex(i, v, method) {
+    console.log('setindex method', method);
     let path = this.path.concat([i]);
     if (this[i] === undefined) {
-      this[i] = new MemberManager(this.question, this, path, i, this.item);
+      this[i] = new MemberManager(this.question, this, path, i, this.item, method);
     }
     this.chain[i] = this[i];
     this[i][method](v);

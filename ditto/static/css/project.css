@@ -724,3 +724,6 @@ li.sortable-dragging label span {
     cursor: grabbing;
     cursor: -webkit-grabbing;
 }
+/* li.sortable-dragging div { */
+/*     display: none; */
+/* } */

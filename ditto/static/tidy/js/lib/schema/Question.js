@@ -7,6 +7,7 @@ export class Question {
     this.pendingChange = null;
     this.isBound = {};
     this.errors = {};
+    this.options = {};
     this.onChange = onChange;
     let path = [];
     for (let k in schema) {
@@ -58,7 +59,7 @@ export class Question {
     return question;
   }
   
-  set(path, value) {
+  set(path, value, method) {
     if (this.pendNextChange) {
       if (this.pendingChange && !_.isEqual(path, this.pendingChange.path)) {
         throw new Error('Cannot pend more than one change');
@@ -70,7 +71,7 @@ export class Question {
           !_.isEqual(path, this.pendingChange.path)) {
         throw new Error('Cannot change other state while change is pending');
       }
-      this._set(path, value);
+      this._set(path, value, method);
       this.pendingChange = null;
       this.pendNextChange = false;
     }
@@ -90,18 +91,20 @@ export class Question {
     };
   }
     
-  _set(path, value) {
+  _set(path, value, method) {
+    console.log('question._set method', method);
     let state = this.questionSpec;
     path.slice(0, path.length - 1).forEach(p => {
       state = state[p];
     });
     state[path[path.length - 1]] = value;
-    if (this.isInitialised) {
+    if (this.isInitialised && method !== 'init') {
       this._validate();
     }
   }
 
   get(path) {
+    console.log('getting', path);
     let state = this.questionSpec;
     path.forEach(p => {
       state = state[p];
