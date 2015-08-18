@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export class Question {
   constructor(schema, { initial = {}, data = {}, onChange} = {}) {
+    console.log('constructing');
     this.questionSpec = {};
     this.pendNextChange = false;
     this.pendingChange = null;
@@ -77,7 +78,6 @@ export class Question {
     if (this.onChange) {
       this.onChange(this.toState());
     }
-    return this;
   }
 
   toState() {
@@ -96,10 +96,6 @@ export class Question {
       state = state[p];
     });
     state[path[path.length - 1]] = value;
-    // Think the calling method should know whether to validate or not
-    // if (this.isInitialised && method !== 'init') {
-    //   this._validate();
-    // }
   }
 
   get(path) {

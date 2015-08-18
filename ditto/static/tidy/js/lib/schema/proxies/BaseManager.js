@@ -41,6 +41,14 @@ export default class BaseManager {
   }
 
   // private methods
+  set isSetting(value) {
+    this.question.isSetting = value;
+  }
+
+  get isSetting() {
+    return this.question.isSetting;
+  }
+  
   set isBound(value) {
     this.question._setIsBound(this.path, value);
   }
@@ -50,8 +58,22 @@ export default class BaseManager {
   }
 
   set(value) {
+    console.log('setting', this.path);
+    let validate;
+    if (!this.isSetting) {
+      console.log('top level');
+      this.isSetting = true;
+      validate = true;
+    } else {
+      console.log('recursing');
+    }
     this._checkValue(value);
-    return this._setCheckedValue(value);
+    this._setCheckedValue(value);
+    if (validate) {
+      console.log('validating complete change');
+      this._validate();
+      this.isSetting = false;
+    }
   }
 
   _setCheckedValue(value) {
