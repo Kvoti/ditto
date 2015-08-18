@@ -1,5 +1,4 @@
 import BaseManager from './BaseManager';
-import { MemberManager } from './MemberManager';
 import { ArrayManager } from './ArrayManager';
 
 export class BaseItemManager extends BaseManager {
@@ -36,14 +35,12 @@ export class BaseItemManager extends BaseManager {
       parent = parent.parent;
     }
     let index = this.path[parent.path.length];
-    for (let k in parent) {
-      if (parent.parent.hasOwnProperty(k) && parent.parent[k] instanceof MemberManager) {
+    for (let k in parent._memberKeys) {
         if (parseInt(k, 10) !== index) {
           let sibling = this._getSibling(parent, k);
           if (sibling.isBound) {
             others.push(sibling.get());
           }
-        }
       }
     }
     let duplicates = [for (o of others) if (o === value) o];

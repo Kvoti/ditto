@@ -706,24 +706,40 @@ footer {
 }
 
 /* http://khan.github.io/react-components/#sortable */
-li.sortable-disabled label span {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==);
-    background-position: left center;
-    background-repeat: no-repeat;
-    border: 1px solid #ddd;
-    background-color: #fafafa;
-    display: inline-block;
-    padding-left: 10px;
-    height: 100%;
-    cursor: -webkit-grab;
-    cursor: grab;
-}
+/* li.sortable-disabled label span { */
+/*     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==); */
+/*     background-position: left center; */
+/*     background-repeat: no-repeat; */
+/*     border: 1px solid #ddd; */
+/*     background-color: #fafafa; */
+/*     display: inline-block; */
+/*     padding-left: 10px; */
+/*     height: 100%; */
+/*     cursor: -webkit-grab; */
+/*     cursor: grab; */
+/* } */
 
-/* TODO not working, think component maybe overrides? */
-li.sortable-dragging label span {
-    cursor: grabbing;
-    cursor: -webkit-grabbing;
-}
+/* /\* TODO not working, think component maybe overrides? *\/ */
+/* li.sortable-dragging label span { */
+/*     cursor: grabbing; */
+/*     cursor: -webkit-grabbing; */
+/* } */
 /* li.sortable-dragging div { */
 /*     display: none; */
 /* } */
+
+/* TODO move these styles inline */
+.scoregroup-labels {
+    display: inline-block;
+}    
+.scoregroup-labels li.sortable-enabled,
+.scoregroup-labels li.sortable-dragging
+{
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==);
+    background-position: left center;
+    background-repeat: repeat-y;
+    display: inline-block;
+    width: 200px;
+    cursor: -webkit-grab;
+    cursor: grab;
+}

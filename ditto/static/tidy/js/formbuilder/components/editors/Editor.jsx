@@ -3,6 +3,7 @@ import _ from 'lodash';  // TODO switch to ImmutableJS?
 
 import { Question as QuestionSchema } from '../../../lib/schema/schema';
 import Renderer from './renderer/Renderer';
+import ScoreGroup from './scoregroup/ScoreGroup';
 
 export default class Question extends React.Component {
   constructor(props) {
@@ -32,14 +33,15 @@ export default class Question extends React.Component {
         this.setState({config: newState});
       }
     );
+    let renderer = question.scoregroup ? ScoreGroup : Renderer;
     let viewer = React.createElement(this.props.viewer, question.questionSpec);
     return (
         <div className="well form-horizontal">
           <div className="row">
-            <div className="col-md-6">
-              <Renderer question={question} />
+            <div className="col-md-9">
+	      {React.createElement(renderer, {question})}
             </div>
-            <div className="col-md-6">
+            <div className="col-md-3">
               {viewer}
             </div>
           </div>

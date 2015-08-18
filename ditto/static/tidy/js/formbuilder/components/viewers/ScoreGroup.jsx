@@ -28,6 +28,7 @@ export default class ScoreGroup extends React.Component {
         <caption>
           {this.props.question}{this.props.isRequired ? '*' : ''}
         </caption>
+	  <thead>
         <tr>
           <th></th>
           {this.props.scoregroup.labels.map((label, i) => {
@@ -36,6 +37,8 @@ export default class ScoreGroup extends React.Component {
             );
            })}
         </tr>
+	  </thead>
+	  <tbody>
         {this.props.scoregroup.items.map(item => {
           return (
             <tr>
@@ -52,6 +55,7 @@ export default class ScoreGroup extends React.Component {
             </tr>
             );
          })}
+	    </tbody>
       </table>
     );
   }

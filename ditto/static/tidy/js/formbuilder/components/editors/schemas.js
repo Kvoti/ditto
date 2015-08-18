@@ -64,13 +64,23 @@ export const scoreGroupQuestion = {
           defaultScore: null
         },
         postAdd: function() {
-          // TODO schema API should support this better
-          for (let j in this.scoregroup.items) {
-            if (this.scoregroup.items[j].scores) {
-              this.scoregroup.items[j].scores.add(null);
-            }
-          }
+          // Append a null score for each item
+          this.scoregroup.items.members.forEach(([i, item]) => {
+            item.scores.add(null);
+          });
         },
+        postRemove: function(index) {
+          // Remove corresponding score from each item
+          this.scoregroup.items.members.forEach(([i, item]) => {
+            item.scores[index].remove();
+          });
+        },
+        postReorder: function(indices) {
+          // Reorder corresponding scores for each item
+          this.scoregroup.items.members.forEach(([i, item]) => {
+            item.scores.reorder(indices);
+          });
+        }
       }
     ),
     items: schema.array(
@@ -93,6 +103,11 @@ export const scoreGroupQuestion = {
         canRemove: true,
         canReorder: true,
         empty: {text: '', scores: []},  // TODO init scores properly
+        postAdd: function(item) {
+          // Add a null score to this item for each label
+          let scores = [for (l of this.scoregroup.labels.members) null];
+          item.scores.set(scores);
+        }
       }
     )
   })

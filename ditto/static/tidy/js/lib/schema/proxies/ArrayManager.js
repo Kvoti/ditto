@@ -35,21 +35,23 @@ export class ArrayManager extends BaseCollectionManager {
       this[array.length - 2].isBound = true;
     }
     this._setIndex(array.length - 1, value);
-    this.question._validate();
+    //this.question._validate();
     if (this.options.postAdd) {
-      this.options.postAdd.call(this.question, value);
+      this.options.postAdd.call(this.question, this[array.length - 1], value);
     }
   }
 
   reorder(indices) {
-    console.log('reordering', indices);
     let reordered = [];
     indices.forEach((origIndex, index) => {
       reordered.push(this[origIndex].get());
       this[index].preRemove();
     });
     this.set(reordered);
-    this.question._validate();
+    if (this.options.postReorder) {
+      this.options.postReorder.call(this.question, indices);
+    }
+    //this.question._validate();
   }
 
   // private methods
@@ -76,7 +78,10 @@ export class ArrayManager extends BaseCollectionManager {
     this[index].preRemove();
     this.set(array);
     this.errors = [];
-    this.question._validate();
+    if (this.options.postRemove) {
+      this.options.postRemove.call(this.question, index);
+    }
+    //this.question._validate();
   }
 
   canReorderItems() {
