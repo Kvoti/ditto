@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
 
 export default class Input extends React.Component {
   render() {
@@ -24,7 +25,8 @@ export default class Input extends React.Component {
     );
     let id = `inputStatus-${this.props.controlID}`;
     return (
-      <div className={wrapperClassNames}>
+      <div className={wrapperClassNames} style={{position: 'relative'}}>
+        {errors && errors.map((e) => <div style={{position: 'relative', top: -25}}><Tooltip placement="top" key={e}>{e}</Tooltip></div>)}
         <input
                 className={props.type !== 'checkbox' ? 'form-control' : null}
                 {...props}
@@ -33,7 +35,6 @@ export default class Input extends React.Component {
           {validationIcon ? <span className={glyphClassNames} aria-hidden="true"></span> : null}
           {validationIcon ? <span id={id} className="sr-only">({validationStatus})</span> : null}
         </span>
-	{errors && errors.map((e) => <p key={e} className="help-block">{e}</p>)}
       </div>
     );
   }
