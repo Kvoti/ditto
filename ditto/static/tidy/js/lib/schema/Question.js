@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 export class Question {
   constructor(schema, { initial = {}, data = {}, onChange} = {}) {
-    console.log('constructing');
     this.questionSpec = {};
     this.pendNextChange = false;
     this.pendingChange = null;

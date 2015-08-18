@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
+import Sortable from 'react-components/Sortable';
+
 import Row from './Row';
 import Col from './Col';
 import Label from './Label';
 import Score from './Score';
-import Sortable from 'react-components/Sortable';
+import Input from './Input';
 
 export default class ScoreGroup extends React.Component {
 
@@ -12,13 +14,15 @@ export default class ScoreGroup extends React.Component {
     return (
       <div>
         <p>
-          <input
+          <Input
+                  errors={spec.question.errors}
                   value={spec.question.get()}
                   onChange={(e) => spec.question.set(e.target.value)}
           />
           <label>
             Is required?
-            <input
+            <Input
+                    errors={null}
                     type="checkbox"
                     checked={spec.isRequired.get()}
                     onChange={(e) => spec.isRequired.set(e.target.checked)}
@@ -58,7 +62,8 @@ export default class ScoreGroup extends React.Component {
                               return (
                                 <Row key={i} draggable={true} orderingIndex={item.key}>
                                 <Col>
-                                <input
+                                <Input
+                                errors={item.text.errors}
                                 value={item.text.get()}
                                 onChange={(e) => item.text.set(e.target.value)}
                                 />

@@ -22,9 +22,9 @@ export default class Row extends React.Component {
     }
     return (
       <div style={style}
-	      {...props}
-	      >
-	{children}
+              {...props}
+              >
+        {children}
       </div>
     );
   }

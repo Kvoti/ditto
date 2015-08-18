@@ -58,19 +58,14 @@ export default class BaseManager {
   }
 
   set(value) {
-    console.log('setting', this.path);
     let validate;
     if (!this.isSetting) {
-      console.log('top level');
       this.isSetting = true;
       validate = true;
-    } else {
-      console.log('recursing');
     }
     this._checkValue(value);
     this._setCheckedValue(value);
     if (validate) {
-      console.log('validating complete change');
       this._validate();
       this.isSetting = false;
     }
