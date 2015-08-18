@@ -5,6 +5,7 @@ import Sortable from 'react-components/Sortable';
 import * as schemaTypes from '../../../../lib/schema/proxies';
 import ControlRow from './ControlRow';
 import AddButton from './AddButton';
+import { inputValueToInt } from '../../../utils';
 
 export default class Renderer extends React.Component {
   constructor(props) {
@@ -41,15 +42,15 @@ export default class Renderer extends React.Component {
     }
     return (
       <div
-	      style={part.canReorder() ? {color: 'red'} : null}
-	      key={part.path}
-	      draggable={part.canReorder()}
-	      orderingIndex={part.key}
-	      >
-	  {rendered}
-	  <div className="col-md-offset-4">
-	    {this._renderAddButton(part)}
-	  </div>
+              style={part.canReorder() ? {color: 'red'} : null}
+              key={part.path}
+              draggable={part.canReorder()}
+              orderingIndex={part.key}
+              >
+        {rendered}
+        <div className="col-md-offset-4">
+          {this._renderAddButton(part)}
+        </div>
       </div>
     );
   }
@@ -64,7 +65,7 @@ export default class Renderer extends React.Component {
   _renderCollection(part) {
     let parts = [];
     part._memberKeys.forEach(k => {    
-        parts.push(this._renderPart(k, part[k]));
+      parts.push(this._renderPart(k, part[k]));
     });
     // this only applies to array so split out the colleciton function
     if (part.canReorderItems && part.canReorderItems()) {
@@ -77,8 +78,8 @@ export default class Renderer extends React.Component {
     }
     return (
       <div>
-	{parts}
-	{this._renderDeleteButton(part)}
+        {parts}
+        {this._renderDeleteButton(part)}
       </div>
     );
   }
@@ -93,14 +94,14 @@ export default class Renderer extends React.Component {
   _renderDeleteButton(part) {
     if (part.canRemove()) {
       return (
-	<div className="col-md-offset-4">
-	  <button
-		  className="btn btn-danger"
-		  onClick={() => part.remove()}
-		  >
-	    Remove {part.parent.key}
-	  </button>
-	</div>
+        <div className="col-md-offset-4">
+          <button
+                  className="btn btn-danger"
+                  onClick={() => part.remove()}
+                  >
+            Remove {part.parent.key}
+          </button>
+        </div>
       );
     }
     return null;
@@ -122,26 +123,26 @@ export default class Renderer extends React.Component {
       type = 'bool';
       onChange = (v) => part.set(v);
     } else if (part instanceof schemaTypes.IntegerManager) {
-      onChange = (v) => part.set(this._toInt(v));
-      onPendingChange = (v) => part.pend().set(this._toInt(v));
+      onChange = (v) => part.set(inputValueToInt(v));
+      onPendingChange = (v) => part.pend().set(inputValueToInt(v));
     }
     return (
       <ControlRow
-	      key={part.path}
-	      id={ID}
-	      name={name}
-	      type={type}
+              key={part.path}
+              id={ID}
+              name={name}
+              type={type}
               value={part.getPendingOrCurrent()}
-	      errors={errors}
+              errors={errors}
               validateImmediately={part.question.isBound}
-	      onChange={onChange}
-	      onPendingChange={onPendingChange}
-	      onRemove={part.canRemove() && (() => part.remove())}
-	      orderingIndex={part.canReorder() && part.key}
+              onChange={onChange}
+              onPendingChange={onPendingChange}
+              onRemove={part.canRemove() && (() => part.remove())}
+              orderingIndex={part.canReorder() && part.key}
       />
     );
   }
-	      
+  
   _getItemID(item) {
     return `${this.controlID}${item.path}`;
   }
@@ -162,20 +163,9 @@ export default class Renderer extends React.Component {
     }
     if (item instanceof schemaTypes.IntegerManager &&
       (!item.errors.length && !item.options.isRequired && item.get() === null)) {
-	return null;
+        return null;
     }
     return item.errors;
   }
 
-  _toInt(value) {
-    if (value === '') {
-      return null;
-    }
-    let parsed = parseInt(value, 10);
-    if (isNaN(parsed)) {
-      return value;
-    }
-    return parsed;
-  }
-  
 }

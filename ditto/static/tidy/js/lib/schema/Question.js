@@ -39,7 +39,7 @@ export class Question {
   isValid() {
     for (let path in this.errors) {
       if (this.errors.hasOwnProperty(path)) {
-        if (this.errors[path].length) {
+        if (this.errors[path] !== null && this.errors[path].length) {
           return false;
         }
       }

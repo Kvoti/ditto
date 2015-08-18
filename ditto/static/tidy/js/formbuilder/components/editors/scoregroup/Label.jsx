@@ -12,19 +12,17 @@ export default class Label extends React.Component {
         {label.canRemove() ?
          <RemoveButton
          onClick={label.remove}
-         >
-         Remove
-         </RemoveButton>
+         ariaLabel="Remove label"
+         title="Remove label"
+         />
          : null
          }
-         <br/>
          <Input
                  errors={label.label.errors}
                  style={{textAlign: 'center'}}
                  value={label.label.get()}
                  onChange={(e) => label.label.set(e.target.value)}
          />
-         <br/>
          <Score score={label.defaultScore} />
       </div>
     );

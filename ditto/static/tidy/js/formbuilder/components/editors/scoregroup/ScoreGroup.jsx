@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Sortable from 'react-components/Sortable';
 
+import Question from './Question';
 import Row from './Row';
 import Col from './Col';
 import Label from './Label';
@@ -15,22 +16,7 @@ export default class ScoreGroup extends React.Component {
     let spec = this.props.question;
     return (
       <div>
-        <p>
-          <Input
-                  errors={spec.question.errors}
-                  value={spec.question.get()}
-                  onChange={(e) => spec.question.set(e.target.value)}
-          />
-          <label>
-            Is required?
-            <Input
-                    errors={null}
-                    type="checkbox"
-                    checked={spec.isRequired.get()}
-                    onChange={(e) => spec.isRequired.set(e.target.checked)}
-            />
-          </label>
-        </p>
+        <Question question={spec.question} isRequired={spec.isRequired} />
         <Row>
           <Col></Col>
           <Sortable
@@ -84,9 +70,9 @@ export default class ScoreGroup extends React.Component {
                                 {item.canRemove() ?
                                   <RemoveButton
                                   onClick={item.remove}
-                                  >
-                                  Remove item
-                                  </RemoveButton>
+                                  ariaLabel="Remove item"
+                                  title="Remove item"
+                                  />
                                   : null
                                 }
                                 </Col>

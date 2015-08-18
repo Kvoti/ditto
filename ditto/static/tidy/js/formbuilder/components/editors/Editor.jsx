@@ -36,7 +36,7 @@ export default class Question extends React.Component {
     let renderer = question.scoregroup ? ScoreGroup : Renderer;
     let viewer = React.createElement(this.props.viewer, question.questionSpec);
     return (
-        <div className="well form-horizontal">
+        <div className="well">
           <div className="row">
             <div className="col-md-9">
 	      {React.createElement(renderer, {question})}

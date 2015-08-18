@@ -77,10 +77,15 @@ export default class BaseManager {
   
   _validate() {
     if (!this.isBound) {
-      this.errors = [];
+      this.errors = null;
       return;
     }
-    this.errors = this._validateBoundValue();
+    let errors = this._validateBoundValue();
+    if (!errors.length && !this.options.isRequired && this.isEmpty()) {
+      this.errors = null;
+      return;
+    }
+    this.errors = errors;
     if (this.options.validate) {
       this.errors = this.errors.concat(this.options.validate.apply(this));
     }

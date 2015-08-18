@@ -13,6 +13,15 @@ describe('BaseItemManager', () => {
       expect(errors).toEqual(['This is a duplicate value']);
     });
 
+    it('should return an error if number item is not unique', () => {
+      let q = new s.Question({
+        items: s.array(s.integer({unique: true}))
+      });
+      q.items.set([1, 1]);
+      let errors = q.items[0]._validateUnique();
+      expect(errors).toEqual(['This is a duplicate value']);
+    });
+    
     it('should return an error if nested item is not unique', () => {
       let q = new s.Question({
         items: s.array(
