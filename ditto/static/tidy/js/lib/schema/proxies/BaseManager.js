@@ -12,6 +12,24 @@ export default class BaseManager {
     return this.question.get(this.path);
   }
 
+  set(value) {
+    let validate;
+    if (!this.isSetting) {
+      console.log('setting top level', this.path);
+      this.isSetting = true;
+      validate = true;
+    } else {
+      console.log('setting recurse', this.path);
+    }
+    this._checkValue(value);
+    this._setCheckedValue(value);
+    if (validate) {
+      console.log('validating top level');
+      this._validate();
+      this.isSetting = false;
+    }
+  }
+
   pend() {
     this.question.pend();
     return this;
@@ -55,20 +73,6 @@ export default class BaseManager {
 
   set errors(errors) {
     return this.question._setErrors(this.path, errors);
-  }
-
-  set(value) {
-    let validate;
-    if (!this.isSetting) {
-      this.isSetting = true;
-      validate = true;
-    }
-    this._checkValue(value);
-    this._setCheckedValue(value);
-    if (validate) {
-      this._validate();
-      this.isSetting = false;
-    }
   }
 
   _setCheckedValue(value) {

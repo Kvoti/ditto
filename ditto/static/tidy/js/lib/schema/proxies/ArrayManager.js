@@ -76,6 +76,7 @@ export class ArrayManager extends BaseCollectionManager {
     let array = this.get();
     array.splice(index, 1);
     this[index].preRemove();
+    this.removeMembers();
     this.set(array);
     this.errors = [];
     if (this.options.postRemove) {

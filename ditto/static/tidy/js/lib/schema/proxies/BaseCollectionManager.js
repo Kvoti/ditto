@@ -6,8 +6,12 @@ export class BaseCollectionManager extends BaseManager {
     this._memberKeys.forEach(k => members.push([k, this[k]]));
     return members;
   }
-  
+
   // private methods
+  removeMembers() {
+    this._memberKeys.forEach(k => delete this[k]);
+  }
+
   preRemove() {
     this.question._removeIsBound(this.path);
     this._memberKeys.forEach(k => {

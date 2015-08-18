@@ -46,7 +46,7 @@ export class BaseItemManager extends BaseManager {
           }
       }
     }
-    console.log('comparing this', value, 'with', others);
+
     let duplicates = [for (o of others) if (o === value) o];
     if (duplicates.length) {
       return ['This is a duplicate value'];
