@@ -2,6 +2,7 @@ import React from 'react';
 
 import Score from './Score';
 import Input from './Input';
+import RemoveButton from './RemoveButton';
 
 export default class Label extends React.Component {
   render() {
@@ -9,11 +10,11 @@ export default class Label extends React.Component {
     return (
       <div style={{textAlign: 'center'}}>
         {label.canRemove() ?
-         <button
+         <RemoveButton
          onClick={label.remove}
          >
          Remove
-         </button>
+         </RemoveButton>
          : null
          }
          <br/>

@@ -6,6 +6,8 @@ import Col from './Col';
 import Label from './Label';
 import Score from './Score';
 import Input from './Input';
+import AddButton from './AddButton';
+import RemoveButton from './RemoveButton';
 
 export default class ScoreGroup extends React.Component {
 
@@ -47,11 +49,11 @@ export default class ScoreGroup extends React.Component {
                   />
            <Col>
            {spec.scoregroup.labels.canAdd() ?
-            <button
+            <AddButton
             onClick={(e) => spec.scoregroup.labels.add()}
             >
             Add label
-            </button>
+            </AddButton>
             : null
             }
           </Col>
@@ -68,9 +70,9 @@ export default class ScoreGroup extends React.Component {
                                 onChange={(e) => item.text.set(e.target.value)}
                                 />
                                 </Col>
-                                {item.scores.members.map(([i, score]) => {
+                                {item.scores.members.map(([j, score]) => {
                                   return (
-                                    <Col key={item.text.get() + i} centered={true}>
+                                    <Col key={item.text.get() + j} centered={true}>
                                     <Score
                                     score={score} 
                                     name={item.text.get()}
@@ -80,11 +82,11 @@ export default class ScoreGroup extends React.Component {
                                 })}
                                 <Col>
                                 {item.canRemove() ?
-                                  <button
+                                  <RemoveButton
                                   onClick={item.remove}
                                   >
                                   Remove item
-                                  </button>
+                                  </RemoveButton>
                                   : null
                                 }
                                 </Col>
@@ -98,11 +100,11 @@ export default class ScoreGroup extends React.Component {
         />
         {spec.scoregroup.items.canAdd() ?
          <p>
-         <button
+         <AddButton
          onClick={(e) => spec.scoregroup.items.add()}
          >
          Add item
-         </button>
+         </AddButton>
          </p>
          : null}
       </div>
