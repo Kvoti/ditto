@@ -30,6 +30,7 @@ export default class Input extends React.Component {
         <input
                 className={props.type !== 'checkbox' ? 'form-control' : null}
                 {...props}
+                size={String(this.props.value).length}
         />
         <span>
           {validationIcon ? <span className={glyphClassNames} aria-hidden="true"></span> : null}

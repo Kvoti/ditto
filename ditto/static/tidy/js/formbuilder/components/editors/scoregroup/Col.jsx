@@ -6,7 +6,6 @@ export default class Col extends React.Component {
       <div
               style={{
                      display: 'inline-block',
-                     width: 150,
                      textAlign: this.props.centered ? 'center' : 'left',
                      padding: 5
                      }}
