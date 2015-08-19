@@ -36,7 +36,7 @@ export default class ScoreGroup extends React.Component {
                                  style={{width: labelColSizes[i]}}
                                  key={i}
                                  draggable={true}
-                                 orderingIndex={label.key}
+                                 orderingIndex={label._key}
                                  >
                                  <Label label={label} />
                                  </Col>

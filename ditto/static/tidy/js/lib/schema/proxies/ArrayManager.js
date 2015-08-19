@@ -5,7 +5,7 @@ export class ArrayManager extends BaseCollectionManager {
     super(question, parent, path, key, options);
     this._key = key;
     this._MemberManager = MemberManager;
-    this._question._set(this._path, []);
+    this._object._set(this._path, []);
   }
 
   canAdd() {
@@ -35,9 +35,9 @@ export class ArrayManager extends BaseCollectionManager {
       this[array.length - 2].isBound = true;
     }
     this._setIndex(array.length - 1, value);
-    //this._question._validate();
+    //this._object._validate();
     if (this._options.postAdd) {
-      this._options.postAdd.call(this._question, this[array.length - 1], value);
+      this._options.postAdd.call(this._object, this[array.length - 1], value);
     }
   }
 
@@ -49,9 +49,9 @@ export class ArrayManager extends BaseCollectionManager {
     });
     this.set(reordered);
     if (this._options.postReorder) {
-      this._options.postReorder.call(this._question, indices);
+      this._options.postReorder.call(this._object, indices);
     }
-    //this._question._validate();
+    //this._object._validate();
   }
 
   // private methods
@@ -80,9 +80,9 @@ export class ArrayManager extends BaseCollectionManager {
     this.set(array);
     this._errors = [];
     if (this._options.postRemove) {
-      this._options.postRemove.call(this._question, index);
+      this._options.postRemove.call(this._object, index);
     }
-    //this._question._validate();
+    //this._object._validate();
   }
 
   canReorderItems() {
@@ -100,18 +100,18 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   _setCheckedValue(values) {
-    this._question._set(this._path, []);
+    this._object._set(this._path, []);
     values.forEach((v, i) => {
       this._setIndex(i, v);
     });
-    return this._question;
+    return this._object;
   }
 
   _setIndex(i, v) {
     let path = this._path.concat([i]);
     if (this[i] === undefined) {
       // TODO init or set!
-      this[i] = new this._MemberManager(this._question, this, path, i);
+      this[i] = new this._MemberManager(this._object, this, path, i);
     }
     this[i].set(v);
   }

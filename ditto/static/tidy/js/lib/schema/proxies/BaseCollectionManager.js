@@ -16,8 +16,8 @@ export class BaseCollectionManager extends BaseManager {
   }
 
   _preRemove() {
-    this._question._removeIsBound(this._path);
-    this._question._removeErrors(this._path);
+    this._object._removeIsBound(this._path);
+    this._object._removeErrors(this._path);
     this._memberKeys.forEach(k => {
       if (this[k]._preRemove) {
         this[k]._preRemove();

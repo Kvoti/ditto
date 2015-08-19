@@ -1,21 +1,21 @@
 import React from 'react';
 import _ from 'lodash';  // TODO switch to ImmutableJS?
 
-import { Question as QuestionSchema } from '../../../lib/schema/schema';
+import { ManagedObject } from '../../../lib/schema/schema';
 import Renderer from './renderer/Renderer';
 import ScoreGroup from './scoregroup/ScoreGroup';
 
 export default class Question extends React.Component {
   constructor(props) {
     super(props);
-    let questionConfig = new QuestionSchema(
+    let questionConfig = new ManagedObject(
       props.schema,
       {
         data: this.props
       }
     );
     this.state = {
-      origSpec: questionConfig.toState().questionSpec,
+      origSpec: questionConfig.toState()._objectSpec,
       config: questionConfig.toState(),
       isCancelling: false
     };
@@ -26,20 +26,20 @@ export default class Question extends React.Component {
   }
 
   render() {
-    let question = QuestionSchema.fromState(
+    let question = ManagedObject.fromState(
       this.props.schema,
       this.state.config,
       (newState) => {
         this.setState({config: newState});
       }
     );
-    let renderer = question.scoregroup ? ScoreGroup : Renderer;
-    let viewer = React.createElement(this.props.viewer, question.questionSpec);
+    let renderer = question.managed.scoregroup ? ScoreGroup : Renderer;
+    let viewer = React.createElement(this.props.viewer, question._objectSpec);
     return (
         <div className="well">
           <div className="row">
-            <div className={'col-md-' + (question.scoregroup ? 9 : 6)}>
-	      {React.createElement(renderer, {question})}
+            <div className={'col-md-' + (question.managed.scoregroup ? 9 : 6)}>
+              {React.createElement(renderer, {question: question.managed})}
             </div>
             <div className="col-md-3">
               {viewer}
@@ -98,7 +98,7 @@ export default class Question extends React.Component {
   }
 
   _save = () => {
-    this.props.onSave(this.state.config.questionSpec);
+    this.props.onSave(this.state.config._objectSpec);
   }
 
   _confirmCancel = () => {

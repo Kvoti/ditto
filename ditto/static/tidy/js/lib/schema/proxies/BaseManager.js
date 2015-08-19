@@ -1,7 +1,7 @@
 export default class BaseManager {
   constructor(question, parent, path, key, options) {
     this.__isManager = true;
-    this._question = question;
+    this._object = question;
     this._parent = parent;
     this._path = path;
     this._key = key;
@@ -10,7 +10,7 @@ export default class BaseManager {
 
   // Public API
   get() {
-    return this._question._get(this._path);
+    return this._object._get(this._path);
   }
 
   set(value) {
@@ -22,34 +22,34 @@ export default class BaseManager {
     this._checkValue(value);
     this._setCheckedValue(value);
     if (validate) {
-      this._question._validate();
+      this._object._validate();
       this._isSetting = false;
-      if (this._question._onChange) {
-        this._question._onChange(this._question._toState());
+      if (this._object._onChange) {
+        this._object._onChange(this._object._toState());
       }
     }
   }
 
   pend() {
-    this._question._pend();
+    this._object._pend();
     return this;
   }
 
   getPending() {
-    return this._question._getPending(this._path);
+    return this._object._getPending(this._path);
   }
 
   getPendingOrCurrent() {
-    let pending = this._getPending();
-    return pending !== undefined ? pending : this._get();
+    let pending = this.getPending();
+    return pending !== undefined ? pending : this.get();
   }
 
   get isBound() {
-    return this._question._getIsBound(this._path);
+    return this._object._getIsBound(this._path);
   }
 
   get errors() {
-    return this._question._getErrors(this._path);
+    return this._object._getErrors(this._path);
   }
 
   addError(error) {
@@ -83,19 +83,19 @@ export default class BaseManager {
 
   // Private methods
   set _isSetting(value) {
-    this._question._isSetting = value;
+    this._object._isSetting = value;
   }
 
   get _isSetting() {
-    return this._question._isSetting;
+    return this._object._isSetting;
   }
 
   set isBound(value) {
-    this._question._setIsBound(this._path, value);
+    this._object._setIsBound(this._path, value);
   }
 
   set errors(errors) {
-    return this._question._setErrors(this._path, errors);
+    return this._object._setErrors(this._path, errors);
   }
 
   _setCheckedValue(value) {
@@ -114,7 +114,7 @@ export default class BaseManager {
       }
     }
     if (this._options.validate) {
-      let errors = this._options.validate.apply(this);
+      let errors = this._options.validate.apply(this._object.managed);
       if (errors.length) {
         if (this.errors === null) {
           this.errors = errors;

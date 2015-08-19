@@ -4,17 +4,17 @@ import { ArrayManager } from './ArrayManager';
 export class BaseItemManager extends BaseManager {
   // private methods
   _setCheckedValue(value) {
-    if (!this._question._pendNextChange) {
+    if (!this._object._pendNextChange) {
       if (this._options.isRequired || !this._valueIsEmpty(value)) {
         this.isBound = true;
       }
     }
-    return this._question._set(this._path, value);
+    return this._object._set(this._path, value);
   }
 
   _preRemove() {
-    this._question._removeIsBound(this._path);
-    this._question._removeErrors(this._path);
+    this._object._removeIsBound(this._path);
+    this._object._removeErrors(this._path);
   }
 
   _validateBoundValue() {

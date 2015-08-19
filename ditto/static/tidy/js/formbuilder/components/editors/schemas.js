@@ -9,7 +9,7 @@ export const textQuestion = schema.shape({
     maxWords: schema.integer({
       validate: function validateMaxWords() {
         let errors = [];
-        if (!this.question.text.isMultiline.get() && this.get()) {
+        if (!this.text.isMultiline.get() && this.get()) {
           errors.push("Can't specify max words if question is not multiline");
         }
         return errors;

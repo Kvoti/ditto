@@ -21,6 +21,9 @@ export class ManagedObject {
     //   if (this._hasOwnProperty(k) && this[k] && this[k]._validate !== undefined) {
     //     if (data && data.hasOwnProperty(k)) {
     if (initial !== undefined) {
+      this.managed.set(initial);
+    }
+    if (data !== undefined) {
       this.managed.set(data);
     }
     //     } else if (initial && initial.hasOwnProperty(k)) {
@@ -100,6 +103,7 @@ export class ManagedObject {
   }
 
   _setPathToValue(path, value) {
+    console.log('setting', path, 'to', value);
     if (this._objectSpec === undefined || !path.length) {
       this._objectSpec = value;
       return;

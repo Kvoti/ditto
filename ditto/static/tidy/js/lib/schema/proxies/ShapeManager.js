@@ -4,11 +4,11 @@ export class ShapeManager extends BaseCollectionManager {
   constructor(question, parent, path, key, MemberManagers) {
     super(question, parent, path, key);
     this._MemberManagers = MemberManagers;
-    this._question._set(this._path, {});
+    this._object._set(this._path, {});
     for (let k in MemberManagers) {
       if (MemberManagers.hasOwnProperty(k)) {
         let path = this._path.concat([k]);
-        this[k] = new this._MemberManagers[k](this._question, this, path, k);
+        this[k] = new this._MemberManagers[k](this._object, this, path, k);
       }
     }
   }
@@ -25,13 +25,14 @@ export class ShapeManager extends BaseCollectionManager {
   }
 
   _setCheckedValue(values) {
-    this._question._set(this._path, {});
+    this._object._set(this._path, {});
     for (let k in values) {
       if (values.hasOwnProperty(k)) {
         if (!this._MemberManagers.hasOwnProperty(k)) {
-          throw new Error(`Key '${k}' is not valid for object '${this._name}'`);
+          // throw new Error(`Key '${k}' is not valid for object '${this._key}'`);
+        } else {
+          this[k].set(values[k]);
         }
-        this[k].set(values[k]);
       }
     }
   }
