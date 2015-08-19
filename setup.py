@@ -17,7 +17,7 @@ setup(
     name='ditto',
     version=version,
     author='',
-    author_email='mark@digital-impacts.com',
+    author_email='mark@kvoti.technology',
     packages=[
         'ditto',
     ],

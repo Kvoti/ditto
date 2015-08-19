@@ -88,7 +88,7 @@ class Production(Common):
     # END STORAGE CONFIGURATION
 
     # EMAIL
-    DEFAULT_FROM_EMAIL = values.Value('hello <hello@digital-impacts.com>')
+    DEFAULT_FROM_EMAIL = values.Value('hello <hello@kvoti.technology>')
     EMAIL_HOST = values.Value('smtp.mailgun.com')
     EMAIL_HOST_PASSWORD = values.SecretValue(environ_prefix="", environ_name="MAILGUN_PASSWORD")
     EMAIL_HOST_USER = values.SecretValue(environ_prefix="", environ_name="MAILGUN_USERNAME")
