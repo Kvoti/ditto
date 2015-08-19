@@ -40,7 +40,7 @@ def deploy(js=False):
 
 def builddb():
     with cd('/srv/venv/ditto/ditto'):
-        with shell_env(DJANGO_CONFIGURATION='Production'):
+        with shell_env(DJANGO_CONFIGURATION='Production', DJANGO_SETTINGS_MODULE='config.production'):
             sudo("echo 'drop database app_data;create database app_data' | ../../bin/python manage.py dbshell",
                  user="pydev")
             sudo("echo 'source /usr/lib/mongooseim//lib/ejabberd-2.1.8+mim-1.5.0/priv/mysql.sql' | ../../bin/python manage.py dbshell",
@@ -63,6 +63,8 @@ def newnetwork(name):
             sudo(' ../../bin/python manage.py migrate',
                  user="pydev")
             sudo(' ../../bin/python manage.py runscript setup_test_data',
+                 user="pydev")
+            sudo(' ../../bin/python manage.py runscript setup_test_form',
                  user="pydev")
             # don't set up chat data for now while we're playing with the chat bot
             # sudo(' ../../bin/python manage.py runscript setup_chat_data',
