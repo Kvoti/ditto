@@ -15,18 +15,21 @@ export default class BaseManager {
   set(value) {
     let validate;
     if (!this.isSetting) {
-      console.log('setting top level', this.path);
+      console.log('setting top level', this.path, value);
       this.isSetting = true;
       validate = true;
-    } else {
-      console.log('setting recurse', this.path);
     }
     this._checkValue(value);
     this._setCheckedValue(value);
     if (validate) {
       console.log('validating top level');
-      this._validate();
+      this.question._validate();
+      console.log('ERRORS', this.question.errors);
       this.isSetting = false;
+      if (this.question.onChange) {
+        console.log('CHANGING STATE');
+        this.question.onChange(this.question.toState());
+      }
     }
   }
 
@@ -82,16 +85,24 @@ export default class BaseManager {
   _validate() {
     if (!this.isBound) {
       this.errors = null;
-      return;
+    } else {
+      let errors = this._validateBoundValue();
+      if (!errors.length && !this.options.isRequired && this.isEmpty()) {
+        this.errors = null;
+      } else {
+        this.errors = errors;
+      }
     }
-    let errors = this._validateBoundValue();
-    if (!errors.length && !this.options.isRequired && this.isEmpty()) {
-      this.errors = null;
-      return;
-    }
-    this.errors = errors;
     if (this.options.validate) {
-      this.errors = this.errors.concat(this.options.validate.apply(this));
+      let errors = this.options.validate.apply(this);
+      console.log('extra errors', errors, this.errors);
+      if (errors.length) {
+        if (this.errors === null) {
+          this.errors = errors;
+        } else {
+          this.errors = this.errors.concat(errors);
+        }
+      }
     }
   }
 

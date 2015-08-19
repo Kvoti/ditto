@@ -53,6 +53,7 @@ export class Question {
     question.pendNextChange = state.pendNextChange;
     question.pendingChange = state.pendingChange;
     question.isBound = state.isBound;
+    console.log('errors from state', state.errors);
     question.errors = state.errors;
     question.onChange = onChange;
     return question;
@@ -73,9 +74,6 @@ export class Question {
       this._set(path, value);
       this.pendingChange = null;
       this.pendNextChange = false;
-    }
-    if (this.onChange) {
-      this.onChange(this.toState());
     }
   }
 
