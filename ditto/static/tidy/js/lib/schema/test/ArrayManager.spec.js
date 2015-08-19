@@ -5,21 +5,22 @@ import * as s from '../schema';
 describe('ArrayManager', () => {
   describe('#reorder()', () => {
     it('should reorder simple items', () => {
-      let q = new s.Question({
-        items: s.array(s.string())
-      });
-      q.items.set(['a', 'b', 'c']);
-      q.items.reorder([2, 1, 0]);
-      expect(q.questionSpec.items).toEqual(['c', 'b', 'a']);
+      let q = new s.ManagedObject(
+        s.array(s.string())
+      );
+      q.managed.set(['a', 'b', 'c']);
+      expect(q._objectSpec).toEqual(['a', 'b', 'c']);
+      q.managed.reorder([2, 1, 0]);
+      expect(q._objectSpec).toEqual(['c', 'b', 'a']);
     });
 
     it('should reorder composite items', () => {
-      let q = new s.Question({
-        items: s.array(s.shape({text: s.string()}))
-      });
-      q.items.set([{text: 'hello'}, {text: 'world'}]);
-      q.items.reorder([1, 0]);
-      expect(q.questionSpec.items).toEqual([
+      let q = new s.ManagedObject(
+        s.array(s.shape({text: s.string()}))
+      );
+      q.managed.set([{text: 'hello'}, {text: 'world'}]);
+      q.managed.reorder([1, 0]);
+      expect(q._objectSpec).toEqual([
         {text: 'world'},
         {text: 'hello'}
       ]);

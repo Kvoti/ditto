@@ -10,20 +10,20 @@ export class StringManager extends BaseItemManager {
   _validateBoundValue() {
     let errors = super._validateBoundValue();
     const value = this.get();
-    if (this.options.isRequired && value === '') {
+    if (this._options.isRequired && value === '') {
       errors.push('This field is required');
     }
-    if (this.options.maxLength !== undefined && value.length > this.options.maxLength) {
+    if (this._options.maxLength !== undefined && value.length > this._options.maxLength) {
       errors.push('String is too long');
     }
     return errors;
   }
 
-  isEmpty() {
-    return this.valueIsEmpty(this.get());
+  _isEmpty() {
+    return this._valueIsEmpty(this.get());
   }
 
-  valueIsEmpty(value) {
+  _valueIsEmpty(value) {
     return value === '';
   }
 }

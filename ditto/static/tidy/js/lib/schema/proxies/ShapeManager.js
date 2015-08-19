@@ -3,12 +3,12 @@ import { BaseCollectionManager } from './BaseCollectionManager';
 export class ShapeManager extends BaseCollectionManager {
   constructor(question, parent, path, key, MemberManagers) {
     super(question, parent, path, key);
-    this.MemberManagers = MemberManagers;
-    this.question.set(this.path, {});
+    this._MemberManagers = MemberManagers;
+    this._question._set(this._path, {});
     // TODO gah, have to comment this out for now but absolutely must fix the problem
     // of the Manager props clashing with the props of the object being managed! Not
     // sure the best way ...
-//    this.options = {};
+//    this._options = {};
   }
 
   _checkValue(value) {
@@ -21,17 +21,17 @@ export class ShapeManager extends BaseCollectionManager {
       throw new Error(`Value must be an object ${value}`);
     }
   }
-  
+
   _setCheckedValue(values) {
-    this.question.set(this.path, {});
+    this._question._set(this._path, {});
     for (let k in values) {
       if (values.hasOwnProperty(k)) {
-        if (!this.MemberManagers.hasOwnProperty(k)) {
-          throw new Error(`Key '${k}' is not valid for object '${this.name}'`);
+        if (!this._MemberManagers.hasOwnProperty(k)) {
+          throw new Error(`Key '${k}' is not valid for object '${this._name}'`);
         }
-        let path = this.path.concat([k]);
+        let path = this._path.concat([k]);
         if (this[k] === undefined) {
-          this[k] = new this.MemberManagers[k](this.question, this, path, k);
+          this[k] = new this._MemberManagers[k](this._question, this, path, k);
         }
         this[k].set(values[k]);
       }

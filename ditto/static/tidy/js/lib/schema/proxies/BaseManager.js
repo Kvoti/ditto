@@ -1,106 +1,130 @@
 export default class BaseManager {
   constructor(question, parent, path, key, options) {
     this.__isManager = true;
-    this.question = question;
-    this.parent = parent;
-    this.path = path;
-    this.key = key;
-    this.options = options;
+    this._question = question;
+    this._parent = parent;
+    this._path = path;
+    this._key = key;
+    this._options = options;
   }
-  
+
+  // Public API
   get() {
-    return this.question.get(this.path);
+    return this._question._get(this._path);
   }
 
   set(value) {
     let validate;
-    if (!this.isSetting) {
-      console.log('setting top level', this.path, value);
-      this.isSetting = true;
+    if (!this._isSetting) {
+      console.log('setting top level', this._path, value);
+      this._isSetting = true;
       validate = true;
     }
     this._checkValue(value);
     this._setCheckedValue(value);
     if (validate) {
       console.log('validating top level');
-      this.question._validate();
-      console.log('ERRORS', this.question.errors);
-      this.isSetting = false;
-      if (this.question.onChange) {
+      this._question._validate();
+      console.log('ERRORS', this._question._errors);
+      this._isSetting = false;
+      if (this._question._onChange) {
         console.log('CHANGING STATE');
-        this.question.onChange(this.question.toState());
+        this._question._onChange(this._question._toState());
       }
     }
   }
 
   pend() {
-    this.question.pend();
+    this._question._pend();
     return this;
   }
 
   getPending() {
-    return this.question.getPending(this.path);
+    return this._question._getPending(this._path);
   }
 
   getPendingOrCurrent() {
-    let pending = this.getPending();
-    return pending !== undefined ? pending : this.get();
+    let pending = this._getPending();
+    return pending !== undefined ? pending : this._get();
   }
 
   get isBound() {
-    return this.question._getIsBound(this.path);
+    return this._question._getIsBound(this._path);
   }
 
   get errors() {
-    return this.question._getErrors(this.path);
+    return this._question._getErrors(this._path);
   }
 
   addError(error) {
-    let errors = this.errors;
+    let errors = this._errors;
     errors.push(error);
-    this.errors = errors;
+    this._errors = errors;
   }
 
-  // private methods
-  set isSetting(value) {
-    this.question.isSetting = value;
+  canReorder() {
+    return (
+      this._parent &&
+        this._parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
+        this._parent.canReorderItems()
+    );
   }
 
-  get isSetting() {
-    return this.question.isSetting;
+  canRemove() {
+    return (
+      this._parent &&
+        this._parent.canRemoveItems &&
+        this._parent.canRemoveItems()
+    );
   }
-  
+
+  remove = () => {
+    if (!(this._parent && this._parent._remove)) {
+      throw new Error('Item is not in a list');
+    }
+    this._parent._remove(parseInt(this._key, 10));
+  }
+
+  // Private methods
+  set _isSetting(value) {
+    this._question._isSetting = value;
+  }
+
+  get _isSetting() {
+    return this._question._isSetting;
+  }
+
   set isBound(value) {
-    this.question._setIsBound(this.path, value);
+    this._question._setIsBound(this._path, value);
   }
 
   set errors(errors) {
-    return this.question._setErrors(this.path, errors);
+    return this._question._setErrors(this._path, errors);
   }
 
   _setCheckedValue(value) {
-    return this.question.init(this.path, value);
+    throw new Error('Subclass must implement _setCheckedValue');
   }
-  
+
   _validate() {
-    if (!this.isBound) {
-      this.errors = null;
+    if (!this._isBound) {
+      this._errors = null;
     } else {
       let errors = this._validateBoundValue();
-      if (!errors.length && !this.options.isRequired && this.isEmpty()) {
-        this.errors = null;
+      if (!errors.length && !this._options.isRequired && this._isEmpty()) {
+        this._errors = null;
       } else {
-        this.errors = errors;
+        this._errors = errors;
       }
     }
-    if (this.options.validate) {
-      let errors = this.options.validate.apply(this);
-      console.log('extra errors', errors, this.errors);
+    if (this._options.validate) {
+      let errors = this._options.validate.apply(this);
+      console.log('extra errors', errors, this._errors);
       if (errors.length) {
-        if (this.errors === null) {
-          this.errors = errors;
+        if (this._errors === null) {
+          this._errors = errors;
         } else {
-          this.errors = this.errors.concat(errors);
+          this._errors = this._errors.concat(errors);
         }
       }
     }
@@ -112,28 +136,5 @@ export default class BaseManager {
 
   _validateBoundValue() {
     throw new Error('Subclass must implement _validateBoundValue method');
-  }
-
-  canReorder() {
-    return (
-      this.parent &&
-        this.parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
-        this.parent.canReorderItems()
-    );
-  }
-
-  canRemove() {
-    return (
-      this.parent &&
-        this.parent.canRemoveItems &&
-        this.parent.canRemoveItems()
-    );
-  }
-
-  remove = () => {
-    if (!(this.parent && this.parent._remove)) {
-      throw new Error('Item is not in a list');
-    }
-    this.parent._remove(parseInt(this.key, 10));
   }
 }

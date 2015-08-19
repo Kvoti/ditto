@@ -49,4 +49,4 @@ export function integer(options={}) {
   };
 }
 
-export * from './Question';
+export * from './ManagedObject';

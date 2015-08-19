@@ -6,7 +6,7 @@ export default class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      editing: null,
+      editing: 0,
       config: _.cloneDeep(this.props)
     };
   }
