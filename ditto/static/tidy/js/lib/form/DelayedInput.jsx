@@ -39,8 +39,8 @@ export default class DelayedInput extends React.Component {
   _onBlur = (e) => {
     if (this._pendingChange) {
       clearTimeout(this._pendingChange);
+      this.props.onChange(this._getValue(e));
     }
-    this.props.onChange(this._getValue(e));
   }
 
   _pendChange = (e) => {
