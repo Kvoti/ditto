@@ -14,6 +14,7 @@ export class BaseItemManager extends BaseManager {
 
   preRemove() {
     this.question._removeIsBound(this.path);
+    this.question._removeErrors(this.path);
   }
 
   _validateBoundValue() {

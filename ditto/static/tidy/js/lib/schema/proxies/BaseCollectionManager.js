@@ -9,11 +9,15 @@ export class BaseCollectionManager extends BaseManager {
 
   // private methods
   removeMembers() {
-    this._memberKeys.forEach(k => delete this[k]);
+    this._memberKeys.forEach(k => {
+      this[k].preRemove();
+      delete this[k];
+    });
   }
 
   preRemove() {
     this.question._removeIsBound(this.path);
+    this.question._removeErrors(this.path);
     this._memberKeys.forEach(k => {
       if (this[k].preRemove) {
         this[k].preRemove();
