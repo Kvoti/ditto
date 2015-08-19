@@ -1,7 +1,7 @@
 from users.models import User
 from formbuilder import models, renderer
 
-def run()
+def run():
     models.Form.objects.all().delete()
 
     form = models.Form.objects.create_form(
