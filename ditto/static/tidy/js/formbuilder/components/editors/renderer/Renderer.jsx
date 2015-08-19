@@ -26,7 +26,7 @@ export default class Renderer extends React.Component {
       }
     }
     return (
-      <div className="well">
+      <div className="form-horizontal">
         {parts}
       </div>
     );
@@ -110,7 +110,7 @@ export default class Renderer extends React.Component {
   _renderItem(part, name) {
     console.log('rendering item', part.path);
     let ID = this._getItemID(part);
-    let errors = this._getItemErrors(part);
+    let errors = part.errors;
     let type;
     let onChange;
     let onPendingChange;

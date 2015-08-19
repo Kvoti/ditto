@@ -38,7 +38,7 @@ export default class Question extends React.Component {
     return (
         <div className="well">
           <div className="row">
-            <div className="col-md-9">
+            <div className={'col-md-' + (question.scoregroup ? 9 : 6)}>
 	      {React.createElement(renderer, {question})}
             </div>
             <div className="col-md-3">
