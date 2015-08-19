@@ -16,19 +16,15 @@ export default class BaseManager {
   set(value) {
     let validate;
     if (!this._isSetting) {
-      console.log('setting top level', this._path, value);
       this._isSetting = true;
       validate = true;
     }
     this._checkValue(value);
     this._setCheckedValue(value);
     if (validate) {
-      console.log('validating top level');
       this._question._validate();
-      console.log('ERRORS', this._question._errors);
       this._isSetting = false;
       if (this._question._onChange) {
-        console.log('CHANGING STATE');
         this._question._onChange(this._question._toState());
       }
     }
@@ -57,9 +53,9 @@ export default class BaseManager {
   }
 
   addError(error) {
-    let errors = this._errors;
+    let errors = this.errors;
     errors.push(error);
-    this._errors = errors;
+    this.errors = errors;
   }
 
   canReorder() {
@@ -107,24 +103,23 @@ export default class BaseManager {
   }
 
   _validate() {
-    if (!this._isBound) {
-      this._errors = null;
+    if (!this.isBound) {
+      this.errors = null;
     } else {
       let errors = this._validateBoundValue();
       if (!errors.length && !this._options.isRequired && this._isEmpty()) {
-        this._errors = null;
+        this.errors = null;
       } else {
-        this._errors = errors;
+        this.errors = errors;
       }
     }
     if (this._options.validate) {
       let errors = this._options.validate.apply(this);
-      console.log('extra errors', errors, this._errors);
       if (errors.length) {
-        if (this._errors === null) {
-          this._errors = errors;
+        if (this.errors === null) {
+          this.errors = errors;
         } else {
-          this._errors = this._errors.concat(errors);
+          this.errors = this.errors.concat(errors);
         }
       }
     }

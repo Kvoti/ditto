@@ -6,7 +6,7 @@ export class BaseItemManager extends BaseManager {
   _setCheckedValue(value) {
     if (!this._question._pendNextChange) {
       if (this._options.isRequired || !this._valueIsEmpty(value)) {
-        this._isBound = true;
+        this.isBound = true;
       }
     }
     return this._question._set(this._path, value);
@@ -29,25 +29,24 @@ export class BaseItemManager extends BaseManager {
     if (this._isEmpty()) {
       return [];
     }
-    let value = this._get();
+    let value = this.get();
     let parent = this._parent;
     let others = [];
     for (;;) {
       if (parent instanceof ArrayManager) {
         break;
       }
-      parent = parent.parent;
+      parent = parent._parent;
     }
-    let index = this._path[parent.path.length];
+    let index = this._path[parent._path.length];
     for (let k in parent._memberKeys) {
-        if (parseInt(k, 10) !== index) {
-          let sibling = this._getSibling(parent, k);
-          if (sibling.isBound) {
-            others.push(sibling.get());
-          }
+      if (parseInt(k, 10) !== index) {
+        let sibling = this._getSibling(parent, k);
+        if (sibling.isBound) {
+          others.push(sibling.get());
+        }
       }
     }
-
     let duplicates = [for (o of others) if (o === value) o];
     if (duplicates.length) {
       return ['This is a duplicate value'];
@@ -56,7 +55,7 @@ export class BaseItemManager extends BaseManager {
   }
 
   _getSibling(parent, i) {
-    let index = parent.path.length;
+    let index = parent._path.length;
     let path = [...this._path];
     path[index] = i;
     path = path.slice(index);

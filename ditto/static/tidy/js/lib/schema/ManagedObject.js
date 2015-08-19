@@ -119,7 +119,7 @@ export class ManagedObject {
     return item;
   }
 
-  _getPending(path, value) {
+  _getPending(path) {
     if (this._pendingChange && _.isEqual(path, this._pendingChange.path)) {
       return this._pendingChange.value;
     }

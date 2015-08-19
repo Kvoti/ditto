@@ -16,11 +16,11 @@ export class BoolManager extends BaseItemManager {
     return errors;
   }
 
-  isEmpty() {
+  _isEmpty() {
     return !this.get();
   }
 
-  valueIsEmpty(value) {
+  _valueIsEmpty(value) {
     return value;
   }
 }

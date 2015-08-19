@@ -15,7 +15,7 @@ export class ArrayManager extends BaseCollectionManager {
     if (this._options.maxLength === undefined) {
       return true;
     }
-    let length = this._get().length;
+    let length = this.get().length;
     return length < this._options.maxLength;
   }
 
@@ -29,7 +29,7 @@ export class ArrayManager extends BaseCollectionManager {
     // TODO details of storage should all live with Question as an array
     // _might_ be stored as a real Array or an ImmutableJS array or object
     // or something else entirely.
-    let array = this._get();
+    let array = this.get();
     array.push(undefined);
     if (array.length - 2 >= 0 && !this[array.length - 2].isBound) {
       this[array.length - 2].isBound = true;
@@ -60,7 +60,7 @@ export class ArrayManager extends BaseCollectionManager {
     if (this._options.canRemove === undefined) {
       return false;
     }
-    let length = this._get().length;
+    let length = this.get().length;
     if (length &&
         (this._options.minLength === undefined ||
          this._options.minLength < length)) {
@@ -73,9 +73,9 @@ export class ArrayManager extends BaseCollectionManager {
     // TODO details of storage should all live with Question as an array
     // _might_ be stored as a real Array or an ImmutableJS array or object
     // or something else entirely.
-    let array = this._get();
+    let array = this.get();
     array.splice(index, 1);
-    this[index].preRemove();
+    this[index]._preRemove();
     this._removeMembers();
     this.set(array);
     this._errors = [];
@@ -119,7 +119,7 @@ export class ArrayManager extends BaseCollectionManager {
   get _memberKeys() {
     let keys = [];
     for (let k in this) {
-      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k]._isManager === true) {
+      if (this.hasOwnProperty(k) && k !== '_parent' && this[k] && this[k].__isManager === true) {
         keys.push(k);
       }
     }

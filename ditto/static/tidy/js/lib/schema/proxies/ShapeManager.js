@@ -5,10 +5,12 @@ export class ShapeManager extends BaseCollectionManager {
     super(question, parent, path, key);
     this._MemberManagers = MemberManagers;
     this._question._set(this._path, {});
-    // TODO gah, have to comment this out for now but absolutely must fix the problem
-    // of the Manager props clashing with the props of the object being managed! Not
-    // sure the best way ...
-//    this._options = {};
+    for (let k in MemberManagers) {
+      if (MemberManagers.hasOwnProperty(k)) {
+        let path = this._path.concat([k]);
+        this[k] = new this._MemberManagers[k](this._question, this, path, k);
+      }
+    }
   }
 
   _checkValue(value) {
@@ -29,10 +31,6 @@ export class ShapeManager extends BaseCollectionManager {
         if (!this._MemberManagers.hasOwnProperty(k)) {
           throw new Error(`Key '${k}' is not valid for object '${this._name}'`);
         }
-        let path = this._path.concat([k]);
-        if (this[k] === undefined) {
-          this[k] = new this._MemberManagers[k](this._question, this, path, k);
-        }
         this[k].set(values[k]);
       }
     }
@@ -41,8 +39,7 @@ export class ShapeManager extends BaseCollectionManager {
   get _memberKeys() {
     let keys = [];
     for (let k in this) {
-      console.log('key', k);
-      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k].__isManager === true) {
+      if (this.hasOwnProperty(k) && k !== '_parent' && this[k] && this[k].__isManager === true) {
         keys.push(k);
       }
     }
