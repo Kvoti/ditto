@@ -1,1 +1,1 @@
-{"status":"error","error":"ModuleNotFoundError","message":"Module not found: Error: Cannot resolve 'file' or 'directory' ../../tidy/js/formbuilder/components/FormContainer in /Users/user/di/src/ditto/static/chat/js"}
+{"status":"done","chunks":{"main":[{"name":"main-fb88f543b40574fc481b.js","publicPath":"/static/dist/main-fb88f543b40574fc481b.js","path":"/Users/user/di/src/ditto/static/dist/main-fb88f543b40574fc481b.js"}]},"startTime":1439981069795,"endTime":1439981146471}
