@@ -25,7 +25,7 @@ export default class BaseManager {
       this._object._validate();
       this._isSetting = false;
       if (this._object._onChange) {
-        this._object._onChange(this._object._toState());
+        this._object._onChange(this._object.toState());
       }
     }
   }

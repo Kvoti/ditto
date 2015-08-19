@@ -37,7 +37,7 @@ export class ArrayManager extends BaseCollectionManager {
     this._setIndex(array.length - 1, value);
     //this._object._validate();
     if (this._options.postAdd) {
-      this._options.postAdd.call(this._object, this[array.length - 1], value);
+      this._options.postAdd.call(this._object.managed, this[array.length - 1], value);
     }
   }
 
@@ -49,7 +49,7 @@ export class ArrayManager extends BaseCollectionManager {
     });
     this.set(reordered);
     if (this._options.postReorder) {
-      this._options.postReorder.call(this._object, indices);
+      this._options.postReorder.call(this._object.managed, indices);
     }
     //this._object._validate();
   }
@@ -80,7 +80,7 @@ export class ArrayManager extends BaseCollectionManager {
     this.set(array);
     this._errors = [];
     if (this._options.postRemove) {
-      this._options.postRemove.call(this._object, index);
+      this._options.postRemove.call(this._object.managed, index);
     }
     //this._object._validate();
   }
