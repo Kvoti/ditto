@@ -147,25 +147,4 @@ export default class Renderer extends React.Component {
     return `${this.controlID}${item.path}`;
   }
 
-  // TODO this logic probably belongs in the Managers
-  _getItemErrors(item) {
-    if (item instanceof schemaTypes.StringManager &&
-      (!item.isBound ||
-       !item.errors.length && !item.options.isRequired && item.get() === '')
-    ) {
-      return null;
-    }
-    if (item instanceof schemaTypes.BoolManager &&
-      (!item.isBound ||
-       !item.errors.length && !item.options.isRequired)
-    ) {
-      return null;
-    }
-    if (item instanceof schemaTypes.IntegerManager &&
-      (!item.errors.length && !item.options.isRequired && item.get() === null)) {
-        return null;
-    }
-    return item.errors;
-  }
-
 }
