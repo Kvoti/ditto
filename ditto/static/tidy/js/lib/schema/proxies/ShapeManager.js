@@ -11,14 +11,14 @@ export class ShapeManager extends BaseCollectionManager {
 //    this.options = {};
   }
 
-  _checkValue(values) {
+  _checkValue(value) {
     try {
       // TODO can we do a decent object check here?
-      if (typeof values !== 'object') {
+      if (typeof value !== 'object') {
         throw new Error();
       }
     } catch (e) {
-      throw new Error(`Values must be iterable ${values}`);
+      throw new Error(`Value must be an object ${value}`);
     }
   }
   
