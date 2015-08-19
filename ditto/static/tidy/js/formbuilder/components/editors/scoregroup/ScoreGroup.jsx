@@ -14,18 +14,31 @@ export default class ScoreGroup extends React.Component {
 
   render() {
     let spec = this.props.question;
+    let textColSize = Math.max(
+      ...spec.scoregroup.items.members.map(
+        m => Math.sqrt(String(m[1].text.get()).length) * 45 + 30
+      )
+    );
+    let labelColSizes = spec.scoregroup.labels.members.map(l =>
+      Math.sqrt(String(l[1].label.get()).length) * 40 + 60
+    );
     return (
       <div>
         <Question question={spec.question} isRequired={spec.isRequired} />
         <Row>
-          <Col></Col>
+          <Col style={{width: textColSize}}></Col>
           <Sortable
                   className='scoregroup-labels'
                   components={
                              spec.scoregroup.labels.members.map(([i, label]) => {
                                return (
-                                 <Col key={i} draggable={true} orderingIndex={label.key}>
-                                 <Label label={label}/>
+                                 <Col
+                                 style={{width: labelColSizes[i]}}
+                                 key={i}
+                                 draggable={true}
+                                 orderingIndex={label.key}
+                                 >
+                                 <Label label={label} />
                                  </Col>
                                );
                                })}
@@ -49,7 +62,7 @@ export default class ScoreGroup extends React.Component {
                             spec.scoregroup.items.members.map(([i, item]) => {
                               return (
                                 <Row key={i} draggable={true} orderingIndex={item.key}>
-                                <Col>
+                                <Col style={{width: textColSize}}>
                                 <Input
                                 errors={item.text.errors}
                                 value={item.text.get()}
@@ -58,7 +71,11 @@ export default class ScoreGroup extends React.Component {
                                 </Col>
                                 {item.scores.members.map(([j, score]) => {
                                   return (
-                                    <Col key={item.text.get() + j} centered={true}>
+                                    <Col
+                                    style={{width: labelColSizes[j]}}
+                                    key={item.text.get() + j}
+                                    centered={true}
+                                    >
                                     <Score
                                     score={score} 
                                     name={item.text.get()}
