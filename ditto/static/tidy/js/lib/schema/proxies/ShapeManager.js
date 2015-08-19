@@ -5,7 +5,10 @@ export class ShapeManager extends BaseCollectionManager {
     super(question, parent, path, key);
     this.MemberManagers = MemberManagers;
     this.question.set(this.path, {});
-    this.options = {};
+    // TODO gah, have to comment this out for now but absolutely must fix the problem
+    // of the Manager props clashing with the props of the object being managed! Not
+    // sure the best way ...
+//    this.options = {};
   }
 
   _checkValue(values) {
@@ -38,7 +41,8 @@ export class ShapeManager extends BaseCollectionManager {
   get _memberKeys() {
     let keys = [];
     for (let k in this) {
-      if (this.hasOwnProperty(k) && k !== 'parent' && this[k].__isManager === true) {
+      console.log('key', k);
+      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k].__isManager === true) {
         keys.push(k);
       }
     }
