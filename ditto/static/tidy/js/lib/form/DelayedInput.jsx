@@ -17,9 +17,9 @@ export default class DelayedInput extends React.Component {
     // TODO how best to share logic to wrap other controls, eg textarea, select, etc?
     return (
       <input
-	      {...props}
-	      onChange={this._onChange}
-	      onBlur={this._onBlur}
+              {...props}
+              onChange={this._onChange}
+              onBlur={this._onBlur}
       />
     );
   }
