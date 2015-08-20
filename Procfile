@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath="$PWD/ditto" wsgi:application
+web: gunicorn --pythonpath="$PWD/kvoti" wsgi:application

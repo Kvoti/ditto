@@ -25,8 +25,8 @@ $(document).ready(function () {
     
     function createRoom(name, members) {
 	return new Promise(function (resolve, reject) {
-            room_jid = name + '@muc.' + DITTO.chat_host;
-            connection.muc.join(room_jid, DITTO.chat_nick, null,
+            room_jid = name + '@muc.' + KVOTI.chat_host;
+            connection.muc.join(room_jid, KVOTI.chat_nick, null,
 				function () { resolve(members); }
                                );
 	});
@@ -54,7 +54,7 @@ $(document).ready(function () {
 	return new Promise(function (resolve, reject) {
             connection.muc.member(
 		room_jid,
-		member + '@' + DITTO.chat_host,
+		member + '@' + KVOTI.chat_host,
 		"",
 		function () { console.log('added', member);resolve(); }
 	    );
@@ -67,11 +67,11 @@ $(document).ready(function () {
     };
 
     function connect () {
-	connection = new Strophe.Connection('ws://' + DITTO.chat_ip + ':5280/ws-xmpp');
+	connection = new Strophe.Connection('ws://' + KVOTI.chat_ip + ':5280/ws-xmpp');
 	connection.rawInput = rawInput;
 	connection.rawOutput = rawOutput;
 	connection.connect(
-	    DITTO.chat_name, DITTO.chat_pass, onConnect
+	    KVOTI.chat_name, KVOTI.chat_pass, onConnect
 	);
     }
     

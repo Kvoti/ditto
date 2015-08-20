@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dittoforms', '0001_initial'),
+        ('kvotiforms', '0001_initial'),
         ('auth', '0006_require_contenttypes_0002'),
     ]
 
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
             name='RegForm',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('form', models.ForeignKey(to='dittoforms.FormSpec')),
+                ('form', models.ForeignKey(to='kvotiforms.FormSpec')),
                 ('role', models.ForeignKey(related_name='reg_forms', to='auth.Group')),
             ],
         ),

@@ -35,7 +35,7 @@ var WhosOnline = React.createClass({
                 return (
                         <div style={{height: 50, display: 'table'}} key={user}>
                         <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
-                        <MessageLink from={DITTO.user} to={user}>
+                        <MessageLink from={KVOTI.user} to={user}>
                         {avatar ? <Avatar username={user} avatar={avatar} size={30} link={false} /> : null}
                         </MessageLink>
                         </div>
@@ -47,7 +47,7 @@ var WhosOnline = React.createClass({
             }
             return (
                     <div className="whosOnlineItem" key={user}>
-                    <MessageLink from={DITTO.user} to={user}>
+                    <MessageLink from={KVOTI.user} to={user}>
                     {avatar ? <Avatar username={user} avatar={avatar} link={false}/> : null}
                     </MessageLink>
                     <small>

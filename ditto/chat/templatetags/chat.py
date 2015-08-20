@@ -46,4 +46,4 @@ def chat_config(context, other=None, extra=None):
 
 
 def _resource(jid):
-    return '%s/Ditto' % jid
+    return '%s/Kvoti' % jid

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Django settings for Ditto project.
+Django settings for Kvoti project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/dev/topics/settings/
@@ -64,7 +64,7 @@ class Common(Configuration):
         'dashboard',
         'configuration',
         'skin',
-        'dittoforms',
+        'kvotiforms',
         'signup',
         'casenotes',
         'tickets',
@@ -130,7 +130,7 @@ class Common(Configuration):
 
     # DATABASE CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-    DATABASES = values.DatabaseURLValue('mysql://root@localhost/ditto')
+    DATABASES = values.DatabaseURLValue('mysql://root@localhost/kvoti')
     # END DATABASE CONFIGURATION
 
     # CACHING
@@ -243,14 +243,14 @@ class Common(Configuration):
     ACCOUNT_AUTHENTICATION_METHOD = 'username'
     ACCOUNT_EMAIL_REQUIRED = True
     ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-    ACCOUNT_LOGOUT_REDIRECT_URL = 'ditto:home'
+    ACCOUNT_LOGOUT_REDIRECT_URL = 'kvoti:home'
     ACCOUNT_SIGNUP_FORM_CLASS = 'signup.forms.SignupForm'
     # END AUTHENTICATION CONFIGURATION
 
     # Custom user app defaults
     # Select the correct user model
     AUTH_USER_MODEL = 'users.User'
-    LOGIN_REDIRECT_URL = 'ditto:home'
+    LOGIN_REDIRECT_URL = 'kvoti:home'
     LOGIN_URL = 'account_login'
     # END Custom user app defaults
 

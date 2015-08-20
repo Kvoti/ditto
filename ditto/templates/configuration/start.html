@@ -4,7 +4,7 @@
 <div class="container" style="margin-top:150px;text-align:center">
     <div class="junbotron">
         <h1>{% if perms.users.can_admin %}Build your own Social Support Service Network.{% else %}Under construction.{% endif %}</h1>
-        {% if perms.users.can_admin %}<p><a class="btn btn-primary btn-lg" href="{% url 'ditto:initialconfig' 1 %}" role="button">GET STARTED</a></p>{% endif %}
+        {% if perms.users.can_admin %}<p><a class="btn btn-primary btn-lg" href="{% url 'kvoti:initialconfig' 1 %}" role="button">GET STARTED</a></p>{% endif %}
     </div>
 </div>
 {% endblock %}

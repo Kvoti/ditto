@@ -36,10 +36,10 @@ def edit_initial_config(request, step):
     step = int(step)
     section = STEPS[step - 1]
     if not section == STEPS[-1]:
-        next = success_url = reverse('ditto:initialconfig', args=(step + 1,))
+        next = success_url = reverse('kvoti:initialconfig', args=(step + 1,))
     else:
         next = None
-        success_url = reverse('ditto:home')
+        success_url = reverse('kvoti:home')
     if step == 2:
         from .views import roles
         result = roles(request, success_url=success_url)
@@ -96,7 +96,7 @@ def _edit_config(
         form = form_class()
     return TemplateResponse(request, 'configuration/edit.html', {
         'form': form,
-        'back': reverse('ditto:editconfig', args=('basicinfo',)),
+        'back': reverse('kvoti:editconfig', args=('basicinfo',)),
         'nav': ['settings', section],
         'form_template': form_template,
         'submit': 'SAVE',
@@ -106,7 +106,7 @@ def _edit_config(
 
 
 @admin_required
-@nav(['settings', 'roles'], back=reverse_lazy('ditto:editconfig', args=('basicinfo',)))
+@nav(['settings', 'roles'], back=reverse_lazy('kvoti:editconfig', args=('basicinfo',)))
 def roles(request, template='configuration/roles.html', success_url=None):
     if success_url is None:
         success_url = request.path
@@ -150,7 +150,7 @@ def delete_role(request, role_id):
         group.delete()
         # TODO trans
         messages.success(request, "Deleted '%s' role" % group.name)
-        return HttpResponseRedirect(reverse('ditto:settings'))
+        return HttpResponseRedirect(reverse('kvoti:settings'))
     return TemplateResponse(request, 'configuration/delete_role_confirm.html', {
         'group': group,
     })
@@ -162,7 +162,7 @@ def _on_setup_finish(request):
 
 def start_again(request):
     request.tenant.reset_configured()
-    return HttpResponseRedirect(reverse('ditto:home'))
+    return HttpResponseRedirect(reverse('kvoti:home'))
 
 
 @admin_required
@@ -178,7 +178,7 @@ def chatroom(request, room=None):
         default_room = chat.models.Room.objects.values_list(
             'slug', flat=True)[0]
         return HttpResponseRedirect(
-            reverse('ditto:chatroom_config_room', args=(default_room,)))
+            reverse('kvoti:chatroom_config_room', args=(default_room,)))
     return TemplateResponse(request, 'configuration/chatroom_configuration.html', {
         'nav': ['chatroom_config'],
     })

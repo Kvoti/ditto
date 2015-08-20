@@ -5,7 +5,7 @@
 {% block tenant-content %}
 {% for tenant in tenants %}
 <p>
-    <form style="display:inline" method="post" action="{% url 'ditto:delete' tenant.pk %}">
+    <form style="display:inline" method="post" action="{% url 'kvoti:delete' tenant.pk %}">
         {% csrf_token %}
         Open <a href="{{ tenant.network_url }}">{{ tenant.network_name }}</a>
 

@@ -20,7 +20,7 @@ def form(request, form_slug, data=None):
         form = Form(request.user, form_spec, data=data)
     return TemplateResponse(
         request,
-        'dittoforms/form.html',
+        'kvotiforms/form.html',
         {'form': form}
     )
 

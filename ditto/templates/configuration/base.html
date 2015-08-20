@@ -7,24 +7,24 @@
 	<div class="col-md-2">
 	    <ul class="nav nav-pills nav-stacked">
 		{% if perms.users.can_admin %}
-		    {% url 'ditto:editconfig' 'basicinfo' as url %}
+		    {% url 'kvoti:editconfig' 'basicinfo' as url %}
 		    {% navitem "basicinfo" url _("Basic Information") %}
 
-		    {% url 'ditto:settings' as url %}
+		    {% url 'kvoti:settings' as url %}
 		    {% navitem "roles" url _("Roles") %}
 
-		    {% url 'ditto:editconfig' 'permissions' as url %}
+		    {% url 'kvoti:editconfig' 'permissions' as url %}
 		    {% navitem "permissions" url _("Communications") %}
 
-		    {% url 'ditto:editconfig' 'features' as url %}
+		    {% url 'kvoti:editconfig' 'features' as url %}
 		    {% navitem "features" url _("Permissions") %}
 		    
-		    {% url 'ditto:evaluation' as url %}
+		    {% url 'kvoti:evaluation' as url %}
 		    {% navitem "evaluation" url _("Evaluation") %}
 		{% endif %}
 		
 		{% if perms.chat.configure_chatroom %}    
-		    {% url 'ditto:chatroom_config' as url %}
+		    {% url 'kvoti:chatroom_config' as url %}
 		    {% navitem "chatroom_config" url _("Chatrooms") %}
 		{% endif %}
 	    </ul>

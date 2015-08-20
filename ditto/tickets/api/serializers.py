@@ -13,10 +13,10 @@ class ViewTicketSerializer(serializers.ModelSerializer):
     assigned_to = serializers.SlugRelatedField(slug_field='username', read_only=True)
     
     def get_claim_url(self, obj):
-        return reverse('ditto:ticket_claim', args=(obj.pk,))
+        return reverse('kvoti:ticket_claim', args=(obj.pk,))
     
     def get_resolve_url(self, obj):
-        return reverse('ditto:ticket_resolve', args=(obj.pk,))
+        return reverse('kvoti:ticket_resolve', args=(obj.pk,))
     
     class Meta:
         model = models.Ticket

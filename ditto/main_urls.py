@@ -11,14 +11,14 @@ from core.views import PageView
 # new network
 urlpatterns = patterns('',
     (r'^$', RedirectView.as_view(
-        pattern_name='ditto:home',
+        pattern_name='kvoti:home',
         permanent=True,
     )),
     # include 'signup' urls above 'allauth' to override                       
     url(r'^main/accounts/', include('signup.urls')),
     url(r'^main/accounts/', include('allauth.urls')),
     url(r'^main/use-cases/', include('usecase_urls')),
-    url(r'^main/', include('multitenancy.urls', namespace="ditto")),
+    url(r'^main/', include('multitenancy.urls', namespace="kvoti")),
 
     url(r'^main/([\w\-]+)/$', PageView.as_view(), name="page"),
                        

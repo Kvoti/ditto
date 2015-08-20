@@ -6,7 +6,7 @@ function search(input, callback) {
     if (!input) {
 	return
     }
-    var url = '/' + DITTO.tenant + '/users/search/'
+    var url = '/' + KVOTI.tenant + '/users/search/'
     $.getJSON(url, {q: input}, function(res) {
 	var options = res.map(o => { return {value: o, label: o};});
         callback(null, {

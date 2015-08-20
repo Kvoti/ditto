@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-from dittoforms.models import FormSubmission
+from kvotiforms.models import FormSubmission
 from users.models import User
 
 from . import models

@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data', models.TextField(blank=True)),
-                ('form', models.ForeignKey(related_name='submissions', to='dittoforms.FormSpec')),
+                ('form', models.ForeignKey(related_name='submissions', to='kvotiforms.FormSpec')),
                 ('user', models.ForeignKey(related_name='form_submissions', to=settings.AUTH_USER_MODEL)),
             ],
         ),

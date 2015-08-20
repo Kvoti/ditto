@@ -124,7 +124,7 @@
             CandyShop.Notifications.init(); 
             
 	    Candy.Core.connect(
-                '{{ user.username }}@{{ debug|yesno:"localhost,ditto.com" }}',
+                '{{ user.username }}@{{ debug|yesno:"localhost,kvoti.com" }}',
                 '{% if debug %}pass{% else %}{{ request.session.session_key }}{% endif %}'
             );
 	    //Candy.Core.connect();

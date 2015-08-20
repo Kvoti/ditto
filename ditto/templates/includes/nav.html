@@ -8,11 +8,11 @@
 
     <ul class="nav navbar-nav">
         {% if not request.tenant.is_main %}
-            {% url 'ditto:about' as url %}
+            {% url 'kvoti:about' as url %}
             {% navitem "about" url _("PEOPLE") %}
 
             {% if request.user.is_authenticated and request.tenant.is_configured and perms.configuration.can_chat %}
-                {% url 'ditto:chatroom' as url %}
+                {% url 'kvoti:chatroom' as url %}
                 {% navitem "chatroom" url _("CHATROOM") %}
             {% endif %}
         
@@ -52,7 +52,7 @@
             {% if not request.tenant.is_main %}
                 {% if request.tenant.is_configured %}
                 <li{% if "messages" in nav %} class="active"{% endif %}>
-                    {% url "ditto:private_chats" as url %}
+                    {% url "kvoti:private_chats" as url %}
                     <a class="navicon text-hide navicon-messages" href="{{ url }}">
                         Messages
                         <span id="new-message-count"></span>
@@ -74,7 +74,7 @@
 
                 {% if request.tenant.is_configured %}
                 <li{% if "dashboard" in nav %} class="active"{% endif %}>
-                    {% url "ditto:dashboard" as url %}
+                    {% url "kvoti:dashboard" as url %}
                     <a class="navicon navicon-dashboard text-hide" href="{{ url }}">
                         Dashboard
                     </a>
@@ -85,9 +85,9 @@
 		    {% if perms.users.can_admin or perms.chat.configure_chatroom %}
 			<li{% if "settings" in nav %} class="active"{% endif %}>
 			    {% if perms.users.can_admin %}
-				{% url "ditto:editconfig" "basicinfo" as url %}
+				{% url "kvoti:editconfig" "basicinfo" as url %}
 			    {% else %}
-				{% url "ditto:chatroom_config" as url %}
+				{% url "kvoti:chatroom_config" as url %}
 			    {% endif %}
 			    <a class="navicon navicon-settings text-hide" href="{{ url }}">
 				Settings

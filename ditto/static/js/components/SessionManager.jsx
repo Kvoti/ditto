@@ -100,7 +100,7 @@ var SessionCreator = React.createClass({
         var text = this.state.text.trim();
 	var participants, threadID;
 	// TODO remove this hack that encodes the participants in the the session id
-	participants = [DITTO.user, this.state.user];
+	participants = [KVOTI.user, this.state.user];
 	participants.sort();
 	participants = participants.join(':');
 	// TODO threads can have parents so maybe we should have two top level

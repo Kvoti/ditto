@@ -10,13 +10,13 @@ $dependencies = <<SCRIPT
 SCRIPT
 
 $db = <<SCRIPT
-    mysql -e "CREATE DATABASE IF NOT EXISTS ditto"
-    mysql -e "GRANT ALL on  ditto.* to 'vagrant'@'localhost'"
-    cd /vagrant/ditto && python manage.py migrate
+    mysql -e "CREATE DATABASE IF NOT EXISTS kvoti"
+    mysql -e "GRANT ALL on  kvoti.* to 'vagrant'@'localhost'"
+    cd /vagrant/kvoti && python manage.py migrate
 SCRIPT
 
 $app = <<SCRIPT
-echo "cd /vagrant/ditto && python manage.py runserver 0.0.0.0:8000" > /usr/local/bin/runapp
+echo "cd /vagrant/kvoti && python manage.py runserver 0.0.0.0:8000" > /usr/local/bin/runapp
 chmod a+x /usr/local/bin/runapp
 SCRIPT
 

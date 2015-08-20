@@ -28,7 +28,7 @@ var Avatar = React.createClass({
         // or create a LinkedAvatar component?
         if (this.props.link) {
             avatar = (
-                <MessageLink from={DITTO.user} to={this.props.username}>
+                <MessageLink from={KVOTI.user} to={this.props.username}>
                     {avatar}
                 </MessageLink>
             );

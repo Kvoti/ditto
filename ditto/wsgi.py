@@ -21,7 +21,7 @@ import os
 # os.environ["DJANGO_SETTINGS_MODULE"] = ".settings"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config")
 os.environ.setdefault("DJANGO_CONFIGURATION", "Production")
-production_secrets = '/srv/venv/ditto/ditto/production-vars.py'
+production_secrets = '/srv/venv/kvoti/kvoti/production-vars.py'
 if os.path.exists(production_secrets):
     execfile(production_secrets)
 

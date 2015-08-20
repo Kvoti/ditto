@@ -150,7 +150,7 @@ if (users) {
     );
 }
 
-// TODO get this from config (DITTO.client or something)
+// TODO get this from config (KVOTI.client or something)
 function hackGetClient () {
     var parts = window.location.href.split('/');
     return parts[parts.length - 2];

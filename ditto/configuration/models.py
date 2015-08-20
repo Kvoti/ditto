@@ -106,7 +106,7 @@ class PermittedInteraction(models.Model):
 
 class RegForm(models.Model):
     role = models.ForeignKey('auth.Group', related_name="reg_forms")
-    form = models.ForeignKey('dittoforms.FormSpec')
+    form = models.ForeignKey('kvotiforms.FormSpec')
 
 
 # Note would like to just add a 'description' field to auth.Group but

@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 
 import casenotes.models
 import chat.models
-import dittoforms.models
+import kvotiforms.models
 from core.views.decorators import admin_required
 from core.views.mixins import NavMixin
 from users.models import User
@@ -154,7 +154,7 @@ def _private_messages():
 
 def _custom_registration_data():
     # TODO handle fact we might have different forms for each role
-    form_spec = dittoforms.models.FormSpec.objects.all()[0]
+    form_spec = kvotiforms.models.FormSpec.objects.all()[0]
     ######
     # TODO handle field types other than single choice
     custom_choice_fields = form_spec.get_choice_fields()

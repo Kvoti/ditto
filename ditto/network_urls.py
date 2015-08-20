@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^avatar/', include('avatar.urls')),
 
     # Your stuff: custom urls go here
-    url(r'', include('network.urls', namespace="ditto")),
+    url(r'', include('network.urls', namespace="kvoti")),
     url(r'', include('django_comments.urls')),
 
 )

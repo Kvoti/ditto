@@ -139,13 +139,13 @@ var TicketTable = React.createClass({
     },
 
     _isResolvable (ticket) {
-	return ticket.assigned_to === DITTO.user && !ticket.is_resolved;
+	return ticket.assigned_to === KVOTI.user && !ticket.is_resolved;
     },
     
     _claim (index) {
 	var ticket = this.state.dataList[index];
 	var change = {};
-	change[index] = {assigned_to: {$set: DITTO.user}};
+	change[index] = {assigned_to: {$set: KVOTI.user}};
 	// as usual optimistically update the ui then fire off the ajax request
 	this.setState({dataList: update(this.state.dataList, change)},
 	    () => post(ticket.claim_url)

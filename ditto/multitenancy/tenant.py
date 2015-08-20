@@ -29,8 +29,8 @@ def chat_host():
     if settings.DEBUG:
         domain = 'localhost'
     else:
-        domain = 'ditto.technology'
-    # Each ditto network has their own chat vhost to keep the users
+        domain = 'kvoti.technology'
+    # Each kvoti network has their own chat vhost to keep the users
     # isolated.  At the moment I can't figure out if it's possible to
     # configure new hosts at runtime (other than by invoking a script
     # to update the conf file and reloading). So, for testing/demoing,

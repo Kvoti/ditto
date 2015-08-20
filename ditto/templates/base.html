@@ -56,7 +56,7 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		    </button>
-		    <a style="margin-left:5px" class="navbar-brand text-hide" href="{% url 'ditto:home' %}">
+		    <a style="margin-left:5px" class="navbar-brand text-hide" href="{% url 'kvoti:home' %}">
 			{{ request.site.name }}                
 		    </a>
 		</div>
@@ -96,7 +96,7 @@
 
 	{% block javascript %}
 	    <script>
-		var DITTO = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}'};
+		var KVOTI = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}'};
 	    </script>
 	    <!-- Latest JQuery -->
 	    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>

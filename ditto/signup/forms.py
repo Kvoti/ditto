@@ -5,8 +5,8 @@ from django import forms
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 import core
-from dittoforms.models import FormSpec
-from dittoforms.utils import FormFromSpecMixin
+from kvotiforms.models import FormSpec
+from kvotiforms.utils import FormFromSpecMixin
 from multitenancy import tenant
 from users.models import User, UserDatum
 

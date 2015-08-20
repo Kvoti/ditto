@@ -26,7 +26,7 @@ import casenotes.models
 import chat.models
 import configuration.models
 import core
-import dittoforms.models
+import kvotiforms.models
 import multitenancy.models
 import multitenancy.tenant
 
@@ -195,7 +195,7 @@ def setup_tenants():
 
 def setup_reg_form():
     for role in Group.objects.all():
-        form = dittoforms.models.FormSpec.objects.create(
+        form = kvotiforms.models.FormSpec.objects.create(
             slug='reg',
             spec=REG_FORM_SPEC
         )

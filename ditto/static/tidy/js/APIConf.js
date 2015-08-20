@@ -1,5 +1,5 @@
 const APIConf = {
-  casenotes: `/${DITTO.tenant}/api/casenotes/`,
+  casenotes: `/${KVOTI.tenant}/api/casenotes/`,
 };
 
 export default APIConf;

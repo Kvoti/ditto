@@ -10,7 +10,7 @@
     {% for link, name in networks %}
     <p>Go to <a href="{{ link }}">{{ name }}</a></p>
     {% endfor %}
-    <p><a href="{% url 'ditto:create' %}" class="btn btn-primary">Create another network</a></p>
+    <p><a href="{% url 'kvoti:create' %}" class="btn btn-primary">Create another network</a></p>
     </div>
 </div>
 {% endblock %}

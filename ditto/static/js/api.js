@@ -44,7 +44,7 @@ import { get, post } from './request';
 export const list = 'list', detail = 'detail', create = 'create', update = 'update';
 
 function _fullUrl (part, id) {
-    let url =  `/${DITTO.tenant}/api/${part}`;
+    let url =  `/${KVOTI.tenant}/api/${part}`;
     if (id) {
         url = `${url}/${id}`;
     }

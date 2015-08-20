@@ -8,7 +8,7 @@ urlpatterns = patterns('',
     url(
         regex=r'^builder/$',
         view=TemplateView.as_view(
-            template_name='dittoforms/builder.html'),
+            template_name='kvotiforms/builder.html'),
     ),
 
     url(

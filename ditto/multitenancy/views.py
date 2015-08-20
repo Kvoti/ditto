@@ -40,7 +40,7 @@ def create_my_network(request):
             tenant = form.save()
             _create_network_instance(tenant)
             messages.success(request, 'Network successfully created!')
-            return HttpResponseRedirect(reverse('ditto:home'))
+            return HttpResponseRedirect(reverse('kvoti:home'))
     else:
         form = forms.TenantForm(request.user)
     return render(request, 'tenant/create.html', {
@@ -111,7 +111,7 @@ def delete_network(request, tenant_id):
         raise Http404
     tenant.delete()
     messages.success(request, "Deleted '%s' network." % tenant.network_name)
-    return HttpResponseRedirect(reverse('ditto:home'))
+    return HttpResponseRedirect(reverse('kvoti:home'))
     
 
 # TODO restrict this to requests from chat (localhost for now)?

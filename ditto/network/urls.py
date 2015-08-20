@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^config/', include('configuration.urls')),
     url(r'', include('chat.urls')),
     url(r'', include('dashboard.urls')),
-    url(r'^forms/', include('dittoforms.urls')),
+    url(r'^forms/', include('kvotiforms.urls')),
 
     url(r'^api/formbuilder/', include('formbuilder.api')),
     url(r'^api/comments/', include('comments.api')),

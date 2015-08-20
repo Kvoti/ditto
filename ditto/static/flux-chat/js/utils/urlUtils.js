@@ -1,5 +1,5 @@
 function _fullUrl(part) {
-    return '/' + DITTO.tenant + '/' + part;
+    return '/' + KVOTI.tenant + '/' + part;
 }
 
 // TODO be nice to be DRY and compute this from django's url config

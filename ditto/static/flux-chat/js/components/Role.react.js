@@ -1,7 +1,7 @@
 var React = require('react');
 var UserProfileStore = require('../stores/UserProfileStore');
 
-var aboutRoleURL = '/' + DITTO.tenant + '/about/';
+var aboutRoleURL = '/' + KVOTI.tenant + '/about/';
 
 function getStateFromStores() {
     return {
