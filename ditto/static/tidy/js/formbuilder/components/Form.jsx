@@ -108,7 +108,7 @@ export default class Form extends React.Component {
 
   _saveQuestion = (newConfig) => {
     var change = {
-      config: {questions: {[this.state.editing]: {$set: newConfig}}},
+      config: {managedObject: {questions: {[this.state.editing]: {$set: newConfig}}}},
       editing: {$set: null}
     };
     this.setState(React.addons.update(this.state, change));

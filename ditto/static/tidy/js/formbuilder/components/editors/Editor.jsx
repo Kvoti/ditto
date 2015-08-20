@@ -4,7 +4,7 @@ import React from 'react';
 import Renderer from './renderer/Renderer';
 import ScoreGroup from './scoregroup/ScoreGroup';
 
-export default class Question extends React.Component {
+export default class Editor extends React.Component {
   state = {
       isCancelling: false
   };

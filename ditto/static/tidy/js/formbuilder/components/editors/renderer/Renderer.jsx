@@ -118,6 +118,7 @@ export default class Renderer extends React.Component {
     } else if (part instanceof schemaTypes.BoolManager) {
       type = 'bool';
       onChange = (v) => part.set(v);
+      onPendingChange = onChange;
     } else if (part instanceof schemaTypes.IntegerManager) {
       onChange = (v) => part.set(inputValueToInt(v));
       onPendingChange = (v) => part.pend().set(inputValueToInt(v));
