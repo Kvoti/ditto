@@ -3,7 +3,6 @@ import Text from './viewers/Text';
 import Choice from './viewers/Choice';
 import ScoreGroup from './viewers/ScoreGroup';
 import Editor from './editors/Editor';
-import * as schemas from './editors/schemas';
 
 export default class Question extends React.Component {
   static propTypes = {
@@ -11,21 +10,12 @@ export default class Question extends React.Component {
   }
 
   render() {
-    const { text, choice, scoregroup } = this.props.question;
-    console.log(text, choice, scoregroup);
-    const { isEditable, ...subProps } = this.props;
+    const { question, isEditable, ...subProps } = this.props;
+    const { text, choice, scoregroup } = question;
     let viewer;
     let editor;
-    let schema;
-    if (this.props.isEditable) {
+    if (isEditable) {
       editor = Editor;
-      if (text) {
-        schema = schemas.textQuestion;
-      } else if (choice) {
-        schema = schemas.choiceQuestion;
-      } else if (scoregroup) {
-        schema = schemas.scoreGroupQuestion;
-      }
     }
     if (text) {
       viewer = Text;
@@ -35,7 +25,7 @@ export default class Question extends React.Component {
       viewer = ScoreGroup;
     }
     if (editor) {
-      return React.createElement(editor, {...subProps, schema: schema, viewer: viewer});
+      return React.createElement(editor, {...subProps, question: question, viewer: viewer});
     }
     return React.createElement(viewer, this.props.question.get());
   }

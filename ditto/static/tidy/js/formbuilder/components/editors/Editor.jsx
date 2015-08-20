@@ -31,7 +31,7 @@ export default class Question extends React.Component {
   }
 
   _renderSave(question) {
-    if (question.isChanged(this.state.origSpec) && question.isValid()) {
+    if (this.props.isChanged && this.props.isValid) {
       return (
         <button
                 className="btn btn-success"
@@ -49,7 +49,7 @@ export default class Question extends React.Component {
       return (
         <button
                 className="btn btn-default"
-                onClick={question.isChanged(this.state.origSpec) ? this._confirmCancel : this._cancel}
+                onClick={this.props.isChanged ? this._confirmCancel : this._cancel}
                 >
           Cancel
         </button>

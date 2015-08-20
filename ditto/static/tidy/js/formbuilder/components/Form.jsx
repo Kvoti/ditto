@@ -14,7 +14,7 @@ export default class Form extends React.Component {
     formSpec.managed.slug.set(this.props.slug);
     this.state = {
       origFormSpec: formSpec.get(),
-      editing: null,
+      editing: 0,
       config: formSpec.toState()
     };
   }
@@ -53,6 +53,8 @@ export default class Form extends React.Component {
     form.managed.slug.set(this.state.config.managedObject.slug);
     form.onChange = newState => this.setState({config: newState});
     //////////////////////////////////////////////////////////////////////
+    let isChanged = form.isChanged(this.state.origFormSpec);
+    let isValid = form.isValid();
     return (
       <div>
         <h1>{form.managed.title.get()}</h1>
@@ -61,7 +63,7 @@ export default class Form extends React.Component {
             <div key={q.id.get()} className="row">
             <div className={editing === null ? 'col-md-6' : 'col-md-12'}>
             <div className={editing === null ? 'well' : ''}>
-            {this._renderQuestion(q, i, editing)}
+            {this._renderQuestion(q, i, editing, isChanged, isValid)}
             {this._renderEditButton(i)}
             </div>
             </div>
@@ -72,12 +74,14 @@ export default class Form extends React.Component {
     );
   }
   
-  _renderQuestion(question, index, editingIndex) {
+  _renderQuestion(question, index, editingIndex, isChanged, isValid) {
     return (
       <Question
               key={question.id.get()}
               question={question}
               isEditable={editingIndex === index}
+              isChanged={isChanged}
+              isValid={isValid}
               onSave={this._saveQuestion}
               onCancel={this._cancelEdit}
       />
