@@ -51,7 +51,7 @@ export default class Form extends React.Component {
     ));
     form.managed.title.set(this.state.config.managedObject.title);
     form.managed.slug.set(this.state.config.managedObject.slug);
-    form.onChange = newState => this.setState({config: newState});
+    form._onChange = newState => this.setState({config: newState});
     //////////////////////////////////////////////////////////////////////
     let isChanged = form.isChanged(this.state.origFormSpec);
     let isValid = form.isValid();

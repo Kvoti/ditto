@@ -76,7 +76,10 @@ export default class Question extends React.Component {
   }
 
   _save = () => {
-    this.props.onSave(this.state.config._objectSpec);
+    // TODO props shouldn't change
+    // Maybe this component should construct the manager?
+    // Or have the data and manager passed separately?
+    this.props.onSave(this.props.question.get());
   }
 
   _confirmCancel = () => {
