@@ -7,6 +7,9 @@ export class ShapeManager extends BaseCollectionManager {
     this._object._set(this._path, {});
     for (let k in MemberManagers) {
       if (MemberManagers.hasOwnProperty(k)) {
+        if (this[k] !== undefined) {
+          throw new Error(`Cannot have property named '${k}'`);
+        }
         let path = this._path.concat([k]);
         this[k] = new this._MemberManagers[k](this._object, this, path, k);
       }
