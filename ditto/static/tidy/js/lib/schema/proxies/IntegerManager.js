@@ -11,7 +11,7 @@ export class IntegerManager extends BaseItemManager {
     let errors = super._validateBoundValue();
     let value = this.get();
     //console.log('value', value);
-    if (this.options.isRequired && value === null) {
+    if (this._options.isRequired && value === null) {
       errors.push('This field is required');
     }
     if (value !== null) {
@@ -19,8 +19,8 @@ export class IntegerManager extends BaseItemManager {
       if (isNaN(parsedValue)) {
         errors.push('Please enter an integer');
       } else {
-        if (this.options.max && value > this.options.max) {
-          errors.push(`Maximum allowed value is ${this.options.max}`);
+        if (this._options.max && value > this._options.max) {
+          errors.push(`Maximum allowed value is ${this._options.max}`);
         }
       }
     }
@@ -28,11 +28,11 @@ export class IntegerManager extends BaseItemManager {
     return errors;
   }
 
-  isEmpty() {
-    return this.valueIsEmpty(this.get());
+  _isEmpty() {
+    return this._valueIsEmpty(this.get());
   }
 
-  valueIsEmpty(value) {
+  _valueIsEmpty(value) {
     return value === null;
   }
 }

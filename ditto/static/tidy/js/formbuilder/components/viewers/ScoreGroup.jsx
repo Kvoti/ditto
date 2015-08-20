@@ -7,10 +7,10 @@ export default class ScoreGroup extends React.Component {
     isRequired: PropTypes.bool,
     scoregroup: PropTypes.shape({
       labels: PropTypes.arrayOf(
-	PropTypes.shape({
-	  label: PropTypes.arrayOf(PropTypes.string),
-	  defaultScore: PropTypes.number
-	})
+        PropTypes.shape({
+          label: PropTypes.string,
+          defaultScore: PropTypes.number
+        })
       ),
       items: PropTypes.arrayOf(
         PropTypes.shape({
@@ -28,34 +28,34 @@ export default class ScoreGroup extends React.Component {
         <caption>
           {this.props.question}{this.props.isRequired ? '*' : ''}
         </caption>
-	  <thead>
-        <tr>
-          <th></th>
-          {this.props.scoregroup.labels.map((label, i) => {
+        <thead>
+          <tr>
+            <th></th>
+            {this.props.scoregroup.labels.map((label, i) => {
+              return (
+                <th key={i}>{label.label}</th>
+              );
+             })}
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.scoregroup.items.map(item => {
             return (
-              <th key={i}>{label.label}</th>
+              <tr>
+              <td>
+              {item.text}
+              </td>
+              {this.props.scoregroup.labels.map(() => {
+                return (
+                  <td>
+                  <input name={item.text} type="radio" />
+                  </td>
+                );
+              })}
+              </tr>
             );
            })}
-        </tr>
-	  </thead>
-	  <tbody>
-        {this.props.scoregroup.items.map(item => {
-          return (
-            <tr>
-            <td>
-            {item.text}
-            </td>
-            {this.props.scoregroup.labels.map(() => {
-              return (
-                <td>
-                <input name={item.text} type="radio" />
-                </td>
-              );
-            })}
-            </tr>
-            );
-         })}
-	    </tbody>
+        </tbody>
       </table>
     );
   }

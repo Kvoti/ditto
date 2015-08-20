@@ -1,27 +1,26 @@
 import { BaseCollectionManager } from './BaseCollectionManager';
 
 export class ArrayManager extends BaseCollectionManager {
-  constructor(question, parent, path, key, MemberManager, options) {
-    super(question, parent, path, key, options);
-    this.key = key;
-    this.MemberManager = MemberManager;
-    this.question.set(this.path, []);
+  constructor(question, parent, path, MemberManager, options) {
+    super(question, parent, path, options);
+    this._MemberManager = MemberManager;
+    this._object._set(this._path, []);
   }
 
   canAdd() {
-    if (this.options.canAdd === undefined) {
+    if (this._options.canAdd === undefined) {
       return false;
     }
-    if (this.options.maxLength === undefined) {
+    if (this._options.maxLength === undefined) {
       return true;
     }
     let length = this.get().length;
-    return length < this.options.maxLength;
+    return length < this._options.maxLength;
   }
 
   add(value) {
     if (value === undefined) {
-      value = this.options.empty;
+      value = this._options.empty;
       if (value === undefined) {
         throw new Error("Can't add Array item with no 'empty' value");
       }
@@ -35,9 +34,9 @@ export class ArrayManager extends BaseCollectionManager {
       this[array.length - 2].isBound = true;
     }
     this._setIndex(array.length - 1, value);
-    //this.question._validate();
-    if (this.options.postAdd) {
-      this.options.postAdd.call(this.question, this[array.length - 1], value);
+    //this._object._validate();
+    if (this._options.postAdd) {
+      this._options.postAdd.call(this._object.managed, this[array.length - 1], value);
     }
   }
 
@@ -45,25 +44,25 @@ export class ArrayManager extends BaseCollectionManager {
     let reordered = [];
     indices.forEach((origIndex, index) => {
       reordered.push(this[origIndex].get());
-      this[index].preRemove();
+      this[index]._preRemove();
     });
     this.set(reordered);
-    if (this.options.postReorder) {
-      this.options.postReorder.call(this.question, indices);
+    if (this._options.postReorder) {
+      this._options.postReorder.call(this._object.managed, indices);
     }
-    //this.question._validate();
+    //this._object._validate();
   }
 
   // private methods
   // TODO maybe these 'can' methods are UI things?
   canRemoveItems() {
-    if (this.options.canRemove === undefined) {
+    if (this._options.canRemove === undefined) {
       return false;
     }
     let length = this.get().length;
     if (length &&
-        (this.options.minLength === undefined ||
-         this.options.minLength < length)) {
+        (this._options.minLength === undefined ||
+         this._options.minLength < length)) {
       return true;
     }
     return false;
@@ -75,18 +74,18 @@ export class ArrayManager extends BaseCollectionManager {
     // or something else entirely.
     let array = this.get();
     array.splice(index, 1);
-    this[index].preRemove();
-    this.removeMembers();
+    this[index]._preRemove();
+    this._removeMembers();
     this.set(array);
-    this.errors = [];
-    if (this.options.postRemove) {
-      this.options.postRemove.call(this.question, index);
+    this._errors = [];
+    if (this._options.postRemove) {
+      this._options.postRemove.call(this._object.managed, index);
     }
-    //this.question._validate();
+    //this._object._validate();
   }
 
   canReorderItems() {
-    return this.options.canReorder;
+    return this._options.canReorder;
   }
 
   _checkValue(values) {
@@ -100,18 +99,18 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   _setCheckedValue(values) {
-    this.question.set(this.path, []);
+    this._object._set(this._path, []);
     values.forEach((v, i) => {
       this._setIndex(i, v);
     });
-    return this.question;
+    return this._object;
   }
 
   _setIndex(i, v) {
-    let path = this.path.concat([i]);
+    let path = this._path.concat([i]);
     if (this[i] === undefined) {
       // TODO init or set!
-      this[i] = new this.MemberManager(this.question, this, path, i);
+      this[i] = new this._MemberManager(this._object, this, path, i);
     }
     this[i].set(v);
   }
@@ -119,7 +118,7 @@ export class ArrayManager extends BaseCollectionManager {
   get _memberKeys() {
     let keys = [];
     for (let k in this) {
-      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k].__isManager === true) {
+      if (this.hasOwnProperty(k) && k !== '_parent' && this[k] && this[k].__isManager === true) {
         keys.push(k);
       }
     }

@@ -20,11 +20,11 @@ export default class Renderer extends React.Component {
   render() {
     let parts = [];
     let question = this.props.question;
-    for (let key in question) {
-      if (question.hasOwnProperty(key) && question[key] && question[key].pend) {
-        parts.push(this._renderPart(key, question[key]));
-      }
-    }
+    /* for (let key in question) {
+       if (question.hasOwnProperty(key) && question[key] && question[key].pend) { */
+        parts.push(this._renderPart('main', question));
+    /* }
+       } */
     return (
       <div className="form-horizontal">
         {parts}
@@ -134,7 +134,7 @@ export default class Renderer extends React.Component {
               type={type}
               value={part.getPendingOrCurrent()}
               errors={errors}
-              validateImmediately={part.question.isBound}
+              validateImmediately={part.isBound}
               onChange={onChange}
               onPendingChange={onPendingChange}
               onRemove={part.canRemove() && (() => part.remove())}

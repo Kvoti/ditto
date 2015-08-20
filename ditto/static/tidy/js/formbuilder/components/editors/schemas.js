@@ -1,6 +1,6 @@
 import * as schema from '../../../lib/schema/schema';
 
-export const textQuestion = {
+export const textQuestion = schema.shape({
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   text: schema.shape({
@@ -9,16 +9,16 @@ export const textQuestion = {
     maxWords: schema.integer({
       validate: function validateMaxWords() {
         let errors = [];
-        if (!this.question.text.isMultiline.get() && this.get()) {
+        if (!this.text.isMultiline.get() && this.get()) {
           errors.push("Can't specify max words if question is not multiline");
         }
         return errors;
       }
     })
   })
-};
+});
 
-export const choiceQuestion = {
+export const choiceQuestion = schema.shape({
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   choice: schema.shape({
@@ -42,9 +42,9 @@ export const choiceQuestion = {
     hasOther: schema.bool(),
     otherText: schema.string()
   })
-};
+});
 
-export const scoreGroupQuestion = {
+export const scoreGroupQuestion = schema.shape({
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   scoregroup: schema.shape({
@@ -111,4 +111,4 @@ export const scoreGroupQuestion = {
       }
     )
   })
-};
+});
