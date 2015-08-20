@@ -23,15 +23,12 @@ export default class Form extends React.Component {
     const { text, choice, scoregroup } = question;
     let schema;
     if (text) {
-      console.log('text');
       schema = schemas.textQuestion;
     }
     if (choice) {
-      console.log('choice');
       schema = schemas.choiceQuestion;
     }
     if (scoregroup) {
-      console.log('scoregroup');
       schema = schemas.scoreGroupQuestion;
     }
     // TODO this is a quirk of the API. Each question should just have a type

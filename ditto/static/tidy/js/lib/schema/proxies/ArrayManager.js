@@ -113,7 +113,6 @@ export class ArrayManager extends BaseCollectionManager {
     let path = this._path.concat([i]);
     if (this[i] === undefined) {
       // TODO init or set!
-      console.log('adding item with manager', Manager);
       this[i] = new Manager(this._object, this, path, i);
     }
     this[i].set(v);

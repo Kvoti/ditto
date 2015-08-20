@@ -93,7 +93,6 @@ export class ManagedObject {
   }
 
   _setPathToValue(path, value) {
-    console.log('setting', path, 'to', value);
     if (this._managedObject === undefined || !path.length) {
       this._managedObject = value;
       return;

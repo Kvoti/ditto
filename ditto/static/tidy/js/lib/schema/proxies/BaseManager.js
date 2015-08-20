@@ -1,6 +1,5 @@
 export default class BaseManager {
   constructor(question, parent, path, options) {
-    console.log('new Manager');
     this.__isManager = true;
     this._object = question;
     this._parent = parent;
