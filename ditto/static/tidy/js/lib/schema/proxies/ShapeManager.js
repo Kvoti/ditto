@@ -32,7 +32,8 @@ export class ShapeManager extends BaseCollectionManager {
     for (let k in values) {
       if (values.hasOwnProperty(k)) {
         if (!this._MemberManagers.hasOwnProperty(k)) {
-          // throw new Error(`Key '${k}' is not valid for object '${this.key}'`);
+//          debugger;
+          throw new Error(`Key '${k}' is not valid for object '${this._path}'`);
         } else {
           this[k].set(values[k]);
         }

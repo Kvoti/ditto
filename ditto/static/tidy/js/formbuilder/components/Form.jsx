@@ -1,26 +1,70 @@
 import React from 'react';
 import Question from './Question';
-import _ from 'lodash';  // TODO switch to ImmutableJS?
+import { ManagedObject } from '../../lib/schema/schema';
+import * as schemas from './editors/schemas.js';
 
 export default class Form extends React.Component {
   constructor(props) {
     super(props);
+    let formSpec = new ManagedObject(schemas.form);
+    props.questions.forEach(q => formSpec.managed.questions.add(
+      ...this._getQuestionDataAndManager(q)
+    ));
+    formSpec.managed.title.set(this.props.title);
+    formSpec.managed.slug.set(this.props.slug);
     this.state = {
-      editing: 2,
-      config: _.cloneDeep(this.props)
+      origFormSpec: formSpec.get(),
+      editing: null,
+      config: formSpec.toState()
     };
+  }
+
+  _getQuestionDataAndManager(question) {
+    const { text, choice, scoregroup } = question;
+    let schema;
+    if (text) {
+      console.log('text');
+      schema = schemas.textQuestion;
+    }
+    if (choice) {
+      console.log('choice');
+      schema = schemas.choiceQuestion;
+    }
+    if (scoregroup) {
+      console.log('scoregroup');
+      schema = schemas.scoreGroupQuestion;
+    }
+    // TODO this is a quirk of the API. Each question should just have a type
+    // and not these null valued fields
+    ['text', 'choice', 'scoregroup'].forEach(p => {
+      if (question[p] === null) {
+        delete question[p];
+      }
+    });
+    //////////////////////////////////////////////////////////////////////
+    return [question, schema];
   }
   
   render() {
     let editing = this.state.editing;
+    // TODO not sure about this fromState/toState stuff
+    let form = new ManagedObject(schemas.form);
+    this.state.config.managedObject.questions.forEach(q => form.managed.questions.add(
+      ...this._getQuestionDataAndManager(q)
+    ));
+    form.managed.title.set(this.state.config.managedObject.title);
+    form.managed.slug.set(this.state.config.managedObject.slug);
+    form.onChange = newState => this.setState({config: newState});
+    //////////////////////////////////////////////////////////////////////
     return (
       <div>
-        <h1>{this.state.config.title}</h1>
-        {this.state.config.questions.map((q, i) => {
+        <h1>{form.managed.title.get()}</h1>
+        {form.managed.questions.members.map(([key, q], i) => {
           return (
-            <div key={q.id} className="row">
+            <div key={q.id.get()} className="row">
             <div className={editing === null ? 'col-md-6' : 'col-md-12'}>
             <div className={editing === null ? 'well' : ''}>
+            {q.question.get()}
             {this._renderQuestion(q, i, editing)}
             {this._renderEditButton(i)}
             </div>
@@ -33,6 +77,7 @@ export default class Form extends React.Component {
   }
   
   _renderQuestion(question, index, editingIndex) {
+    return null;
     return (
       <Question
               key={question.id}

@@ -18,7 +18,7 @@ export class ArrayManager extends BaseCollectionManager {
     return length < this._options.maxLength;
   }
 
-  add(value) {
+  add(value, manager) {
     if (value === undefined) {
       value = this._options.empty;
       if (value === undefined) {
@@ -33,7 +33,7 @@ export class ArrayManager extends BaseCollectionManager {
     if (array.length - 2 >= 0 && !this[array.length - 2].isBound) {
       this[array.length - 2].isBound = true;
     }
-    this._setIndex(array.length - 1, value);
+    this._setIndex(array.length - 1, value, manager);
     //this._object._validate();
     if (this._options.postAdd) {
       this._options.postAdd.call(this._object.managed, this[array.length - 1], value);
@@ -106,11 +106,15 @@ export class ArrayManager extends BaseCollectionManager {
     return this._object;
   }
 
-  _setIndex(i, v) {
+  _setIndex(i, v, Manager) {
+    if (Manager === undefined) {
+      Manager = this._MemberManager;
+    }
     let path = this._path.concat([i]);
     if (this[i] === undefined) {
       // TODO init or set!
-      this[i] = new this._MemberManager(this._object, this, path, i);
+      console.log('adding item with manager', Manager);
+      this[i] = new Manager(this._object, this, path, i);
     }
     this[i].set(v);
   }
