@@ -1,5 +1,5 @@
-mysqladmin -uroot drop ditto
-mysqladmin -uroot create ditto
+mysqladmin -uroot drop kvoti
+mysqladmin -uroot create kvoti
 mysqladmin -uroot drop chat
 mysqladmin -uroot create chat
 echo 'source /usr/local/lib/mongooseim/lib/ejabberd-2.1.8+mim-1.5.0/priv/mysql.sql' | mysql -uroot chat
