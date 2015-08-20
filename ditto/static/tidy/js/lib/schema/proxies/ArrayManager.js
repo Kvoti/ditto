@@ -1,9 +1,8 @@
 import { BaseCollectionManager } from './BaseCollectionManager';
 
 export class ArrayManager extends BaseCollectionManager {
-  constructor(question, parent, path, key, MemberManager, options) {
-    super(question, parent, path, key, options);
-    this._key = key;
+  constructor(question, parent, path, MemberManager, options) {
+    super(question, parent, path, options);
     this._MemberManager = MemberManager;
     this._object._set(this._path, []);
   }

@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 export class ManagedObject {
   constructor(schema, { initial, data, onChange} = {}) {
-    // this._objectSpec = {};
     this._pendNextChange = false;
     this._pendingChange = null;
     this._isBound = {};
@@ -10,35 +9,23 @@ export class ManagedObject {
     this._options = {};
     this._onChange = onChange;
     let path = [];
-    
-    // for (let k in schema) {
-    //   if (schema.hasOwnProperty(k)) {
-    this.managed = schema(this, this, path);
-    //   }
-    // }
 
-    // for (let k in this) {
-    //   if (this._hasOwnProperty(k) && this[k] && this[k]._validate !== undefined) {
-    //     if (data && data.hasOwnProperty(k)) {
+    this.managed = schema(this, this, path);
     if (initial !== undefined) {
       this.managed.set(initial);
     }
     if (data !== undefined) {
       this.managed.set(data);
     }
-    //     } else if (initial && initial.hasOwnProperty(k)) {
-    //       this[k].set(initial[k]);
-    //     }
-    //   }
-    // }
     this._isInitialised = true;
-    if (data) {
+    if (data) {  // FIXME
       this._validate();
     }
   }
 
+  // Public API
   static fromState(schema, state, onChange) {
-    let initial = state.objectSpec;
+    let initial = state.managedObject;
     let object = new ManagedObject(schema, {initial: initial});
     object._pendNextChange = state.pendNextChange;
     object._pendingChange = state.pendingChange;
@@ -48,9 +35,12 @@ export class ManagedObject {
     return object;
   }
 
-  // Public API
+  get() {
+    return this._managedObject;
+  }
+
   isChanged(original) {
-    let result = !_.isEqual(this._objectSpec, original);
+    let result = !_.isEqual(this._managedObject, original);
     return result;
   }
 
@@ -75,7 +65,7 @@ export class ManagedObject {
 
   toState() {
     return {
-      objectSpec: this._objectSpec,
+      managedObject: this._managedObject,
       pendNextChange: this._pendNextChange,
       pendingChange: this._pendingChange,
       isBound: this._isBound,
@@ -104,11 +94,11 @@ export class ManagedObject {
 
   _setPathToValue(path, value) {
     console.log('setting', path, 'to', value);
-    if (this._objectSpec === undefined || !path.length) {
-      this._objectSpec = value;
+    if (this._managedObject === undefined || !path.length) {
+      this._managedObject = value;
       return;
     }
-    let state = this._objectSpec;
+    let state = this._managedObject;
     path.slice(0, path.length - 1).forEach(p => {
       state = state[p];
     });
@@ -116,7 +106,7 @@ export class ManagedObject {
   }
 
   _get(path) {
-    let item = this._objectSpec;
+    let item = this._managedObject;
     path.forEach(p => {
       item = item[p];
     });

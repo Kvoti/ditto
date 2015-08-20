@@ -36,7 +36,7 @@ export default class ScoreGroup extends React.Component {
                                  style={{width: labelColSizes[i]}}
                                  key={i}
                                  draggable={true}
-                                 orderingIndex={label._key}
+                                 orderingIndex={label.key}
                                  >
                                  <Label label={label} />
                                  </Col>
@@ -61,7 +61,7 @@ export default class ScoreGroup extends React.Component {
                 components={
                             spec.scoregroup.items.members.map(([i, item]) => {
                               return (
-                                <Row key={i} draggable={true} orderingIndex={item._key}>
+                                <Row key={i} draggable={true} orderingIndex={item.key}>
                                 <Col style={{width: textColSize}}>
                                 <Input
                                 errors={item.text.errors}

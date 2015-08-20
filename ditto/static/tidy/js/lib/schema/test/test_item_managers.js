@@ -57,7 +57,7 @@ describe('Item managers', () => {
         it('should set the internal state', () => {
           let q = new s.ManagedObject(test.schema);
           q.managed.set(test.validValue);
-          expect(q._objectSpec).toEqual(test.validValue);
+          expect(q._managedObject).toEqual(test.validValue);
         });
 
         it('should throw an error if the value is not valid', () => {
@@ -85,9 +85,9 @@ describe('Item managers', () => {
         it('should remove item from parent list', () => {
           let q = new s.ManagedObject(test.listSchema);
           q.managed.set([test.validValue]);
-          expect(q._objectSpec).toEqual([test.validValue]);
+          expect(q._managedObject).toEqual([test.validValue]);
           q.managed[0].remove();
-          expect(q._objectSpec.length).toBe(0);
+          expect(q._managedObject.length).toBe(0);
         });
         
       });
@@ -137,7 +137,7 @@ describe('Item managers', () => {
         it('should not change the state', () => {
           let q = new s.ManagedObject(test.schema);
           q.pend().managed.set(test.validValue);
-          expect(q._objectSpec).toBe(undefined);
+          expect(q._managedObject).toBe(undefined);
         });
         
         it('should store the pending change', () => {

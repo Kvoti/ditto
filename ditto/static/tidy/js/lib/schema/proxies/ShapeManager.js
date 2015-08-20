@@ -1,8 +1,8 @@
 import { BaseCollectionManager } from './BaseCollectionManager';
 
 export class ShapeManager extends BaseCollectionManager {
-  constructor(question, parent, path, key, MemberManagers) {
-    super(question, parent, path, key);
+  constructor(question, parent, path, MemberManagers) {
+    super(question, parent, path);
     this._MemberManagers = MemberManagers;
     this._object._set(this._path, {});
     for (let k in MemberManagers) {
@@ -29,7 +29,7 @@ export class ShapeManager extends BaseCollectionManager {
     for (let k in values) {
       if (values.hasOwnProperty(k)) {
         if (!this._MemberManagers.hasOwnProperty(k)) {
-          // throw new Error(`Key '${k}' is not valid for object '${this._key}'`);
+          // throw new Error(`Key '${k}' is not valid for object '${this.key}'`);
         } else {
           this[k].set(values[k]);
         }

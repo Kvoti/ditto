@@ -15,7 +15,7 @@ export default class Question extends React.Component {
       }
     );
     this.state = {
-      origSpec: questionConfig.toState()._objectSpec,
+      origSpec: questionConfig.get(),
       config: questionConfig.toState(),
       isCancelling: false
     };
@@ -34,7 +34,7 @@ export default class Question extends React.Component {
       }
     );
     let renderer = question.managed.scoregroup ? ScoreGroup : Renderer;
-    let viewer = React.createElement(this.props.viewer, question._objectSpec);
+    let viewer = React.createElement(this.props.viewer, question.get());
     return (
         <div className="well">
           <div className="row">

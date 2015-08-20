@@ -9,9 +9,9 @@ describe('ArrayManager', () => {
         s.array(s.string())
       );
       q.managed.set(['a', 'b', 'c']);
-      expect(q._objectSpec).toEqual(['a', 'b', 'c']);
+      expect(q._managedObject).toEqual(['a', 'b', 'c']);
       q.managed.reorder([2, 1, 0]);
-      expect(q._objectSpec).toEqual(['c', 'b', 'a']);
+      expect(q._managedObject).toEqual(['c', 'b', 'a']);
     });
 
     it('should reorder composite items', () => {
@@ -20,7 +20,7 @@ describe('ArrayManager', () => {
       );
       q.managed.set([{text: 'hello'}, {text: 'world'}]);
       q.managed.reorder([1, 0]);
-      expect(q._objectSpec).toEqual([
+      expect(q._managedObject).toEqual([
         {text: 'world'},
         {text: 'hello'}
       ]);

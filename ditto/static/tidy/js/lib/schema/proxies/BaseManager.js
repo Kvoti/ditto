@@ -1,16 +1,19 @@
 export default class BaseManager {
-  constructor(question, parent, path, key, options) {
+  constructor(question, parent, path, options) {
     this.__isManager = true;
     this._object = question;
     this._parent = parent;
     this._path = path;
-    this._key = key;
     this._options = options;
   }
 
   // Public API
   get() {
     return this._object._get(this._path);
+  }
+
+  get key() {
+    return this._path[this._path.length - 1];
   }
 
   set(value) {
@@ -78,7 +81,7 @@ export default class BaseManager {
     if (!(this._parent && this._parent._remove)) {
       throw new Error('Item is not in a list');
     }
-    this._parent._remove(parseInt(this._key, 10));
+    this._parent._remove(parseInt(this.key, 10));
   }
 
   // Private methods

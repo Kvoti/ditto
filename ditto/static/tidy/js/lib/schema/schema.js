@@ -3,7 +3,7 @@ import * as managers from './proxies';
 export function array(item, options={}) {
   return function _array(managedObject, parent, basePath) {
     let key = basePath[basePath.length - 1];
-    parent[key] = new managers.ArrayManager(managedObject, parent, basePath, key, item, options);
+    parent[key] = new managers.ArrayManager(managedObject, parent, basePath, item, options);
     return parent[key];
   };
 }
@@ -11,7 +11,7 @@ export function array(item, options={}) {
 export function shape(args) {
   return function _shape(managedObject, parent, basePath) {
     let key = basePath[basePath.length - 1];
-    parent[key] = new managers.ShapeManager(managedObject, parent, basePath, key, args);
+    parent[key] = new managers.ShapeManager(managedObject, parent, basePath, args);
     return parent[key];
   };
 }
@@ -22,7 +22,7 @@ export function string(options={}) {
   }
   return function _string(managedObject, parent, basePath) {
     let key = basePath[basePath.length - 1];
-    parent[key] = new managers.StringManager(managedObject, parent, basePath, key, options);
+    parent[key] = new managers.StringManager(managedObject, parent, basePath, options);
     return parent[key];
   };
 }
@@ -33,7 +33,7 @@ export function bool(options={}) {
   }
   return function _string(managedObject, parent, basePath) {
     let key = basePath[basePath.length - 1];
-    parent[key] = new managers.BoolManager(managedObject, parent, basePath, key, options);
+    parent[key] = new managers.BoolManager(managedObject, parent, basePath, options);
     return parent[key];
   };
 }
@@ -44,7 +44,7 @@ export function integer(options={}) {
   }
   return function _string(managedObject, parent, basePath) {
     let key = basePath[basePath.length - 1];
-    parent[key] = new managers.IntegerManager(managedObject, parent, basePath, key, options);
+    parent[key] = new managers.IntegerManager(managedObject, parent, basePath, options);
     return parent[key];
   };
 }
