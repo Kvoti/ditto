@@ -11,7 +11,8 @@ export default class Question extends React.Component {
   }
 
   render() {
-    const { text, choice, scoregroup } = this.props;
+    const { text, choice, scoregroup } = this.props.question;
+    console.log(text, choice, scoregroup);
     const { isEditable, ...subProps } = this.props;
     let viewer;
     let editor;
@@ -36,6 +37,6 @@ export default class Question extends React.Component {
     if (editor) {
       return React.createElement(editor, {...subProps, schema: schema, viewer: viewer});
     }
-    return React.createElement(viewer, subProps);
+    return React.createElement(viewer, this.props.question.get());
   }
 }

@@ -61,7 +61,6 @@ export default class Form extends React.Component {
             <div key={q.id.get()} className="row">
             <div className={editing === null ? 'col-md-6' : 'col-md-12'}>
             <div className={editing === null ? 'well' : ''}>
-            {q.question.get()}
             {this._renderQuestion(q, i, editing)}
             {this._renderEditButton(i)}
             </div>
@@ -74,11 +73,10 @@ export default class Form extends React.Component {
   }
   
   _renderQuestion(question, index, editingIndex) {
-    return null;
     return (
       <Question
-              key={question.id}
-              {...question}
+              key={question.id.get()}
+              question={question}
               isEditable={editingIndex === index}
               onSave={this._saveQuestion}
               onCancel={this._cancelEdit}
