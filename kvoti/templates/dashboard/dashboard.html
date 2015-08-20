@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load skin static %}
+
+{% block content %}
+    <div class="row toolbar">
+	<div class="col-md-3 col-md-offset-2">
+	    <form class="form-inline">
+		<div class="form-group">
+		    <label class="sr-only" for="dashboard-search search">Search</label>
+		    <input id="dashboard-search" class="form-control" type="search" placeholder="Search...">
+		    <input class="dashboard-search-submit" type="image" src="{% static 'images/icons/search.png' %}" alt="search" >
+		    <img src="{% static 'images/icons/more.png' %}" alt="">
+		</div>
+	    </form>
+	</div>
+	<div class="col-md-2 col-md-offset-5 dashboard-dates">
+	    <span>30/6/2015 - 31/7/2015</span>
+	</div>
+    </div>
+    {% m "row" %}
+    <div class="col-sm-3 col-md-2 sidebar">
+        {% if back %}
+            <p><a href="{% url 'kvoti:dash' %}">{% include "skin/icon.html" with icon="chevron-left" %} DASHBOARD</a></p>
+        {% endif %}
+        {# TODO correct way to add a title on a nav? #}
+        <p>{% block section %}DASHBOARD{% endblock %}</p>
+        {% m "sidenav" %}
+        {% block sidenav %}
+	    {% url "kvoti:tickets" as url %}
+            {% navitem "tickets" url _("Tickets") %}
+	    {% url "kvoti:user_mgmt" as url %}
+            {% navitem "usermgmt" url _("User Management") %}
+	    {% url "kvoti:safeguarding" as url %}
+            {% navitem "safeguarding" url _("Safeguarding") %}
+	    {% url "kvoti:reports" as url %}
+            {% navitem "reports" url _("Reports") %}
+        {% endblock %}
+        {% endm %}
+        <p>SHORTCUTS</p>
+        {% m "sidenav" %}
+        {% navitem "tasks" "#" _("Sessions") %}
+        {% navitem "usermgmt" "#" _("Chats") %}
+        {% navitem "safeguarding" "#" _("Chatrooms") %}
+        {% navitem "reports" "#" _("Comments") %}
+        {% endm %}
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        {% block dash-content %}
+            {% include "dashboard/dashlet/tasks.html" %}
+            {% include "dashboard/dashlet/usermgmt.html" %}
+            {% include "dashboard/dashlet/safeguard.html" %}
+            {% include "dashboard/dashlet/reports.html" %}
+        {% endblock %}
+    </div>
+{% endm %}
+{% endblock %}

@@ -1,4 +1,4 @@
-Ditto
+Kvoti
 ==============================
 
 A short description of the project.
@@ -9,9 +9,9 @@ LICENSE: BSD
 Settings
 ------------
 
-Ditto relies extensively on environment settings which **will not work with Apache/mod_wsgi setups**. It has been deployed successfully with both Gunicorn/Nginx and even uWSGI/Nginx.
+Kvoti relies extensively on environment settings which **will not work with Apache/mod_wsgi setups**. It has been deployed successfully with both Gunicorn/Nginx and even uWSGI/Nginx.
 
-For configuration purposes, the following table maps the 'Ditto' environment variables to their Django setting:
+For configuration purposes, the following table maps the 'Kvoti' environment variables to their Django setting:
 
 ======================================= =========================== ============================================== ===========================================
 Environment Variable                    Django Setting              Development Default                            Production Default
@@ -105,8 +105,8 @@ Run these commands to deploy the project to Heroku:
     heroku config:set DJANGO_AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_ACCESS_KEY_HERE
     heroku config:set DJANGO_AWS_STORAGE_BUCKET_NAME=YOUR_AWS_S3_BUCKET_NAME_HERE
     git push heroku master
-    heroku run python ditto/manage.py migrate
-    heroku run python ditto/manage.py createsuperuser
+    heroku run python kvoti/manage.py migrate
+    heroku run python kvoti/manage.py createsuperuser
     heroku open
 
 Dokku
@@ -133,20 +133,20 @@ You can then deploy by running the following commands.
 
 ..  code-block:: bash
 
-    git remote add dokku dokku@yourservername.com:ditto
+    git remote add dokku dokku@yourservername.com:kvoti
     git push dokku master
-    ssh -t dokku@yourservername.com dokku memcached:create ditto-memcached
-    ssh -t dokku@yourservername.com dokku memcached:link ditto-memcached ditto
-    ssh -t dokku@yourservername.com dokku postgres:create ditto-postgres
-    ssh -t dokku@yourservername.com dokku postgres:link ditto-postgres ditto
-    ssh -t dokku@yourservername.com dokku config:set ditto DJANGO_CONFIGURATION=Production
-    ssh -t dokku@yourservername.com dokku config:set ditto DJANGO_SECRET_KEY=RANDOM_SECRET_KEY_HERE
-    ssh -t dokku@yourservername.com dokku config:set ditto DJANGO_AWS_ACCESS_KEY_ID=YOUR_AWS_ID_HERE
-    ssh -t dokku@yourservername.com dokku config:set ditto DJANGO_AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_ACCESS_KEY_HERE
-    ssh -t dokku@yourservername.com dokku config:set ditto DJANGO_AWS_STORAGE_BUCKET_NAME=YOUR_AWS_S3_BUCKET_NAME_HERE
-    ssh -t dokku@yourservername.com dokku config:set ditto SENDGRID_USERNAME=YOUR_SENDGRID_USERNAME
-    ssh -t dokku@yourservername.com dokku config:set ditto SENDGRID_PASSWORD=YOUR_SENDGRID_PASSWORD
-    ssh -t dokku@yourservername.com dokku run ditto python ditto/manage.py migrate
-    ssh -t dokku@yourservername.com dokku run ditto python ditto/manage.py createsuperuser
+    ssh -t dokku@yourservername.com dokku memcached:create kvoti-memcached
+    ssh -t dokku@yourservername.com dokku memcached:link kvoti-memcached kvoti
+    ssh -t dokku@yourservername.com dokku postgres:create kvoti-postgres
+    ssh -t dokku@yourservername.com dokku postgres:link kvoti-postgres kvoti
+    ssh -t dokku@yourservername.com dokku config:set kvoti DJANGO_CONFIGURATION=Production
+    ssh -t dokku@yourservername.com dokku config:set kvoti DJANGO_SECRET_KEY=RANDOM_SECRET_KEY_HERE
+    ssh -t dokku@yourservername.com dokku config:set kvoti DJANGO_AWS_ACCESS_KEY_ID=YOUR_AWS_ID_HERE
+    ssh -t dokku@yourservername.com dokku config:set kvoti DJANGO_AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_ACCESS_KEY_HERE
+    ssh -t dokku@yourservername.com dokku config:set kvoti DJANGO_AWS_STORAGE_BUCKET_NAME=YOUR_AWS_S3_BUCKET_NAME_HERE
+    ssh -t dokku@yourservername.com dokku config:set kvoti SENDGRID_USERNAME=YOUR_SENDGRID_USERNAME
+    ssh -t dokku@yourservername.com dokku config:set kvoti SENDGRID_PASSWORD=YOUR_SENDGRID_PASSWORD
+    ssh -t dokku@yourservername.com dokku run kvoti python kvoti/manage.py migrate
+    ssh -t dokku@yourservername.com dokku run kvoti python kvoti/manage.py createsuperuser
 
 When deploying via Dokku make sure you backup your database in some fashion as it is NOT done automatically.

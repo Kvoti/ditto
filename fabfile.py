@@ -18,17 +18,17 @@ def deploy(js=False):
         # generates files for intermediate states. We only want to run it
         # once before deployment)
         local('./node_modules/.bin/webpack -p --config webpack.prod.config.js')
-        local('git add webpack-stats-prod.json ditto/static/dist')
+        local('git add webpack-stats-prod.json kvoti/static/dist')
         # TODO if last commit isn't pushed we could --amend and avoid
         # the extra commit
         local('git commit -m "Update production assets"')
         local('git push')
-    with cd('/srv/venv/ditto'):
+    with cd('/srv/venv/kvoti'):
         run('git fetch')
         changes = run('git log ..origin/master --oneline --no-color --reverse > /tmp/log; cat /tmp/log')
         run('git merge origin/master')
-        sudo('/srv/venv/bin/pip install -U -r /srv/venv/ditto/requirements/production.txt')
-        with cd('ditto'), shell_env(DJANGO_CONFIGURATION='Production'):
+        sudo('/srv/venv/bin/pip install -U -r /srv/venv/kvoti/requirements/production.txt')
+        with cd('kvoti'), shell_env(DJANGO_CONFIGURATION='Production'):
             sudo(' ../../bin/python manage.py collectstatic --noinput',
                  user="pydev")
     run('apachectl graceful')
@@ -39,7 +39,7 @@ def deploy(js=False):
     
 
 def builddb():
-    with cd('/srv/venv/ditto/ditto'):
+    with cd('/srv/venv/kvoti/kvoti'):
         with shell_env(DJANGO_CONFIGURATION='Production', DJANGO_SETTINGS_MODULE='config.production'):
             sudo("echo 'drop database app_data;create database app_data' | ../../bin/python manage.py dbshell",
                  user="pydev")
@@ -58,7 +58,7 @@ def builddb():
 
 def newnetwork(name):
     # TODO this needs to create the Tenant record in the main 'database'
-    with cd('/srv/venv/ditto/ditto'):
+    with cd('/srv/venv/kvoti/kvoti'):
         with shell_env(DJANGO_CONFIGURATION='Production', DJANGO_TENANT=name):
             sudo(' ../../bin/python manage.py migrate',
                  user="pydev")
@@ -77,7 +77,7 @@ def email(body):
     toaddrs = ['sarah@kvoti.technology', 'mark@kvoti.technology']
 
     msg = MIMEText(body)
-    msg['Subject'] = '[DITTO] deployment'
+    msg['Subject'] = '[KVOTI] deployment'
     msg['From'] = fromaddr
     msg['To'] = ','.join(toaddrs)
 

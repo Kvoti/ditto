@@ -1,0 +1,11 @@
+{% extends "kvoti/module/base.html" %}
+
+{% block title %}CHAT ROOM | <a href="{% url 'kvoti:chatroom' %}">JOIN CHAT</a>{% endblock %}
+
+{% block body %}
+<div id="chat-module"></div>
+{% endblock %}
+
+{% block footer %}
+<a href="{% url 'kvoti:chatroom' %}">Enter chatroom >></a>
+{% endblock %}

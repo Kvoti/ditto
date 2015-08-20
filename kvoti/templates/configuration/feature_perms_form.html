@@ -1,0 +1,40 @@
+{% extends "skin/forms/form.html" %}
+
+{% load kvoti %}
+
+{% block form %}
+    <table class="table">
+	<thead>
+	    <tr>
+		<th></th>
+		{% for role in roles %}
+		    <th>{{ role.name }}</th>
+		{% endfor %}
+		<th>Users</th>
+	    </tr>
+	</thead>
+	<tbody>
+	    {% for feature in features %}
+		{% for perm in feature.permissions.all %}
+		    <tr>
+			<th>{{ perm.name }}</th>
+			{% for role in roles %}
+			    <td>
+				{% with fieldname=role.name|add:"-"|add:feature.name|add:"-"|add:perm.name %}
+				    {{ form|lookup:fieldname }}
+				{% endwith %}
+			    </td>
+			{% endfor %}
+			<td>
+			    {% with fieldname=perm.content_type_id|capfirst|add:"-"|add:perm.codename %}
+			    {% with field=form|lookup:fieldname %}
+				<span class="user-autocomplete" data-perm="{{ fieldname }}" data-value="{{ field.value }}"></span>
+			    {% endwith %}
+			    {% endwith %}
+			</td>
+		    </tr>
+		{% endfor %}
+	    {% endfor %}
+	</tbody>
+    </table>
+{% endblock %}

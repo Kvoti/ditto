@@ -1,0 +1,31 @@
+{% extends "skin/accordion_panel.html" %}
+
+{% load kvoti %}
+
+{% block title %}{{ role1 }}{% endblock %}
+
+{% block body %}
+    {% for role2 in others %}
+
+        {% if forloop.first %}
+        <div class="row">
+            <div class="col-md-3"></div>
+            {% for interaction in interactions %}
+                <div class="col-md-3">{{ interaction.name }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-3">{{ role2 }}</div>
+            {% for interaction in interactions %}
+            <div class="col-md-3">
+                {% with field=interaction.name|add:"-"|add:role1|add:"-"|add:role2 %}
+                    {{ form|lookup:field }}
+                {% endwith %}
+            </div>
+            {% endfor %}
+        </div>
+
+    {% endfor %}
+{% endblock %}

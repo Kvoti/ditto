@@ -1,0 +1,141 @@
+{% load staticfiles i18n skin configuration chat %}{% load render_bundle from webpack_loader %}<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<link href='http://fonts.googleapis.com/css?family=Lato:100normal,300normal,400normal,700normal,900normal&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	<meta charset="utf-8">
+	<title>{% block title %}{{ request.site.name }}{% endblock title %}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+	{% block css %}
+	    {% theme as theme %}
+	    <!-- Latest compiled and minified CSS -->
+	    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css">
+	    
+	    <!-- Your stuff: Third-party css libraries go here -->
+	    {% if not theme %}<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">{% endif %}
+	    <!-- <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet"> -->
+
+	    <!-- This file store project specific CSS -->
+	    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+	    <!-- Manually include datagrid css (TODO webpack better than browserify as it handles css? -->
+	    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+	    <!-- Manually include fixed-data-table css (TODO webpack better than browserify as it handles css? -->
+	    <link href="{% static 'css/fixed-data-table.css' %}" rel="stylesheet">
+	{% endblock %}
+
+	{% if not debug %}
+	    <script>
+	    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	    
+	    ga('create', 'UA-64176846-1', 'auto');
+	    ga('send', 'pageview');
+	    </script>
+	{% endif %}
+    </head>
+
+    <body>
+	<div id="emptychat">{# empty container so chat still renders #}</div>
+	<nav class="header navbar navbar-default navbar-fixed-top navbar-inverse">
+	    <div class="container-fluid">
+		<div class="navbar-header">
+		    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		    </button>
+		    <a style="margin-left:5px" class="navbar-brand text-hide" href="{% url 'kvoti:home' %}">
+			{{ request.site.name }}                
+		    </a>
+		</div>
+		{% include "includes/nav.html" %}
+	    </div>
+	</nav>
+	{% block main %}
+	    <div class="container-fluid">
+		
+		{% if messages %}
+		    {% for message in messages %}
+			<div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+		    {% endfor %}
+		{% endif %}
+
+		{% block content %}
+		    <p>Use this document as a way to quick start any new project.</p>
+		{% endblock content %}
+
+	    </div> <!-- /container -->
+	    
+	    {% block modal %}{% endblock modal %}
+	    <footer class="footer">
+		<div class="container-fluid">
+		    <p><img width="30px" alt="" src="{% static 'images/kvoti-web-logo.png' %}"> Kvoti, © 2015.</p>
+		</div>
+	    </footer>
+	    <audio id="new-message-beep" src="{% static 'audio/newmessage.wav' %}" ></audio>
+	{% endblock %}
+	
+	<!-- Le javascript
+	================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script id="avatar_svgs" type="text/template">
+            {% include "skin/avatars.html" %}
+	</script>
+
+	{% block javascript %}
+	    <script>
+		var KVOTI = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}'};
+	    </script>
+	    <!-- Latest JQuery -->
+	    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+	    <script>
+	    $( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
+		// Make ajax errors very obvious (and annoying) to try and see what's going on for sarah
+		if (settings.url !== "/di/ratings/") {  // TODO temp. ignoring this until sessions api sorted out
+		    alert('ajax error: ' + settings.url + ' ' + thrownError);
+		}
+	    });
+	    </script>
+	    
+	    <!-- Latest compiled and minified JavaScript -->
+	    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+	    <!-- Your stuff: Third-party javascript libraries go here -->
+	    
+	    <!-- place project specific Javascript in this file -->
+	    <script src="{% static 'js/project.js' %}"></script>
+
+	    {% if not request.tenant.is_main %}
+		<script id="avatar_svgs" type="text/template">
+		    {% include "skin/avatars.html" %}
+		</script>
+
+		{# Note we can't 'require' strophe and its plugins as the npm version is not compatible with mongooseim #}
+		<script src="{% static 'vendor/strophe.js' %}"></script>
+		<script src="{% static 'vendor/strophe.rsm.js' %}"></script>
+		<script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
+		<script src="{% static 'vendor/strophe.roster.js' %}"></script>
+		<script src="{% static 'vendor/strophe.vcard.js' %}"></script>
+		<script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
+		<script src="{% static 'vendor/strophe.muc.js' %}"></script>
+		{# Note this Notification shim is not available via npm either #}
+		<script src="{% static 'vendor/notification.js' %}"></script>
+		{% chat_config extra=chat_conf %}
+		{% render_bundle 'main' %}
+	    {% endif %}
+	{% endblock javascript %}
+    </body>
+</html>

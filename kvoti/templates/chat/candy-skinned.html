@@ -1,0 +1,152 @@
+{% load staticfiles %}<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+	<title>Candy - Chats are not dead yet</title>
+	<link rel="shortcut icon" href="{% static 'vendor/candy-core/res/img/favicon.png' %}" type="image/gif" />
+	<!-- <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-core/res/default.css' %}" /> -->
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css">
+
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="{% static 'vendor/candy-core/libs/libs.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'vendor/candy-core/candy.min.js' %}"></script>
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/colors/candy.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-plugins/colors/candy.css' %}" />
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/createroom/createroom.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-plugins/createroom/createroom.css' %}" />
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/typingnotifications/typingnotifications.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-plugins/typingnotifications/typingnotifications.css' %}" />
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/timeago/candy.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-plugins/timeago/candy.css' %}" />
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/inline-images/candy.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-plugins/inline-images/candy.css' %}" />
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/inline-videos/candy.js' %}"></script>
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/chatrecall/candy.js' %}"></script>
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/namecomplete/candy.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-plugins/namecomplete/candy.css' %}" />
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/notifyme/candy.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/candy-plugins/notifyme/candy.css' %}" />
+
+        <script type="text/javascript" src="{% static 'vendor/candy-plugins/notifications/candy.js' %}"></script>
+
+        <!-- UI templates -->
+        {% verbatim %}
+        <script type="text/template" data-name="Chat.pane">
+            <div class="row" id="chat-pane" role="Chat.tabpanel">
+                {{> tabs}}
+                {{> toolbar}}
+                {{> rooms}}
+            </div>
+            {{> modal}}
+        </script>
+        <script type="text/template" data-name="Chat.rooms">
+            <div id="chat-rooms" class="rooms"></div>
+        </script>
+        <script type="text/template" data-name="Chat.tabs">
+            <ul class="nav nav-tabs" role="tablist" id="chat-tabs"></ul>
+        </script>
+        <script type="text/template" data-name="Chat.tab">
+            <li role="presentation" class="roomtype-{{roomType}} active" data-roomjid="{{roomJid}}" data-roomtype="{{roomType}}">
+                <a href="#" class="label">{{#privateUserChat}}<span class="glyphicon glyphicon-user"></span> {{/privateUserChat}}{{name}}</a>
+                <!-- <a href="#" class="transition"></a><a href="#" class="close">\u00D7</a> -->
+                <!-- <small class="unread"></small> -->
+            </li>
+        </script>
+        <script type="text/template" data-name="Room.pane">
+            <div class="row room-pane roomtype-{{roomType}}" id="chat-room-{{roomId}}" data-roomjid="{{roomJid}}" data-roomtype="{{roomType}}">
+                <div class="col-md-8">{{> messages}}</div>
+                <div class="col-md-4">{{> roster}}</div>
+                {{> form}}
+            </div>
+        </script>
+
+        <script type="text/template" data-name="Roster.pane">
+            <ul class="list-group roster-pane"></ul>
+        </script>
+        <script type="text/template" data-name="Roster.user">
+            <li class="list-group-item user role-{{role}} affiliation-{{affiliation}}{{#me}} me{{/me}}" id="user-{{roomId}}-{{userId}}" data-jid="{{userJid}}"' data-nick="{{nick}}" data-role="{{role}}" data-affiliation="{{affiliation}}">
+                <!-- <div class="label">{{displayNick}}</div> -->
+                <div class="dropdown">
+                    <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{displayNick}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li class="role role-{{role}} affiliation-{{affiliation}}" data-tooltip="{{tooltipRole}}"></li>
+                        <li class="ignore" data-tooltip="{{tooltipIgnored}}"></li>
+                    </ul>
+            </li>
+        </script>
+        
+        {% endverbatim %}
+
+        <script type="text/javascript" src="{% static 'chat/js/candybootstrap.js' %}"></script>
+        
+        <script type="text/javascript">
+	    $(document).ready(function() {
+
+            CandyShop.BootstrapTheme.init();  // MUST come before Candy.init!
+
+	    Candy.init('/http-bind/', {
+	    core: {
+	    // only set this to true if developing / debugging errors
+	    debug: false,
+	    // autojoin is a *required* parameter if you don't have a plugin (e.g. roomPanel) for it
+	    //   true
+	    //     -> fetch info from server (NOTE: does only work with openfire server)
+	    //   ['test@conference.example.com']
+	    //     -> array of rooms to join after connecting
+	    autojoin: ['muc1@muc.localhost'],
+	    },
+	    view: { assets: '{% static 'vendor/candy-core/res/' %}' }
+	    });
+
+            CandyShop.Colors.init();
+            // CandyShop.CreateRoom.init();  doens't work :(
+            CandyShop.TypingNotifications.init();
+            CandyShop.Timeago.init();
+            CandyShop.InlineImages.init();
+            CandyShop.InlineVideos.init();
+            CandyShop.ChatRecall.init();
+            CandyShop.NameComplete.init();
+            CandyShop.Notifications.init(); 
+            
+	    Candy.Core.connect(
+                '{{ user.username }}@{{ debug|yesno:"localhost,kvoti.com" }}',
+                '{% if debug %}pass{% else %}{{ request.session.session_key }}{% endif %}'
+            );
+	    //Candy.Core.connect();
+            CandyShop.NotifyMe.init(); 
+
+	    /**
+	    * Thanks for trying Candy!
+	    *
+	    * If you need more information, please see here:
+	    *   - Setup instructions & config params: http://candy-chat.github.io/candy/#setup
+	    *   - FAQ & more: https://github.com/candy-chat/candy/wiki
+	    *
+	    * Mailinglist for questions:
+	    *   - http://groups.google.com/group/candy-chat
+	    *
+	    * Github issues for bugs:
+	    *   - https://github.com/candy-chat/candy/issues
+	    */
+	    });
+	</script>
+    </head>
+    <body>
+	<div id="candy" class="container"></div>
+    </body>
+</html>

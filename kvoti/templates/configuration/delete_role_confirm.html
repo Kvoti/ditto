@@ -1,0 +1,14 @@
+{% extends "configuration/base.html" %}
+
+{% load skin i18n %}
+
+{% block page-heading %}{% trans "Confirm delete" %}{% endblock %}
+
+{% block dash-content %}
+    {% m "p" %}{% blocktrans with role=group.name %}Are you sure you want to delete the '{{ role }}' role?{% endblocktrans %}{% endm %}
+    <form class="form-horizontal" role="form" action="{{ request.path }}" method="post">
+        {% csrf_token %}
+        <a href="{% url 'kvoti:settings' %}" class="btn btn-default">{% trans "Cancel" %}</a>
+        <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+    </form>
+{% endblock %}

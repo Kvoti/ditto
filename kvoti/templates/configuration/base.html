@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% load skin %}
+
+{% block content %}
+    <div class="row">
+	<div class="col-md-2">
+	    <ul class="nav nav-pills nav-stacked">
+		{% if perms.users.can_admin %}
+		    {% url 'kvoti:editconfig' 'basicinfo' as url %}
+		    {% navitem "basicinfo" url _("Basic Information") %}
+
+		    {% url 'kvoti:settings' as url %}
+		    {% navitem "roles" url _("Roles") %}
+
+		    {% url 'kvoti:editconfig' 'permissions' as url %}
+		    {% navitem "permissions" url _("Communications") %}
+
+		    {% url 'kvoti:editconfig' 'features' as url %}
+		    {% navitem "features" url _("Permissions") %}
+		    
+		    {% url 'kvoti:evaluation' as url %}
+		    {% navitem "evaluation" url _("Evaluation") %}
+		{% endif %}
+		
+		{% if perms.chat.configure_chatroom %}    
+		    {% url 'kvoti:chatroom_config' as url %}
+		    {% navitem "chatroom_config" url _("Chatrooms") %}
+		{% endif %}
+	    </ul>
+	</div>
+	<div class="col-md-10">
+	    <h1>{% block heading %}{% endblock %}</h1>
+	    {% block config-content %}{% endblock %}
+	</div>
+    </div>
+{% endblock %}
