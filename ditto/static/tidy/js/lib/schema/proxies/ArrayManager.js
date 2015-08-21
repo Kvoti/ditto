@@ -121,7 +121,7 @@ export class ArrayManager extends BaseCollectionManager {
   get _memberKeys() {
     let keys = [];
     for (let k in this) {
-      if (this.hasOwnProperty(k) && k !== '_parent' && this[k] && this[k].__isManager === true) {
+      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k].__isManager === true) {
         keys.push(k);
       }
     }

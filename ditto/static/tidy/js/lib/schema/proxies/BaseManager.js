@@ -2,7 +2,7 @@ export default class BaseManager {
   constructor(question, parent, path, options) {
     this.__isManager = true;
     this._object = question;
-    this._parent = parent;
+    this.parent = parent;
     this._path = path;
     this._options = options;
   }
@@ -66,25 +66,25 @@ export default class BaseManager {
 
   canReorder() {
     return (
-      this._parent &&
-        this._parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
-        this._parent.canReorderItems()
+      this.parent &&
+        this.parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
+        this.parent.canReorderItems()
     );
   }
 
   canRemove() {
     return (
-      this._parent &&
-        this._parent.canRemoveItems &&
-        this._parent.canRemoveItems()
+      this.parent &&
+        this.parent.canRemoveItems &&
+        this.parent.canRemoveItems()
     );
   }
 
   remove = () => {
-    if (!(this._parent && this._parent._remove)) {
+    if (!(this.parent && this.parent._remove)) {
       throw new Error('Item is not in a list');
     }
-    this._parent._remove(parseInt(this.key, 10));
+    this.parent._remove(parseInt(this.key, 10));
   }
 
   // Private methods

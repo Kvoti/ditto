@@ -30,13 +30,13 @@ export class BaseItemManager extends BaseManager {
       return [];
     }
     let value = this.get();
-    let parent = this._parent;
+    let parent = this.parent;
     let others = [];
     for (;;) {
       if (parent instanceof ArrayManager) {
         break;
       }
-      parent = parent._parent;
+      parent = parent.parent;
     }
     let index = this._path[parent._path.length];
     for (let k in parent._memberKeys) {
