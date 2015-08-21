@@ -17,7 +17,7 @@ export default class BaseManager {
   }
 
   set(value) {
-    console.log('setting', this._path, value);
+//    console.log('setting', this._path, value);
     let validate;
     if (!this._isSetting) {
       this._isSetting = true;
@@ -25,12 +25,12 @@ export default class BaseManager {
     }
     this._checkValue(value);
     this._setCheckedValue(value);
-    console.log('validate?', validate);
+//    console.log('validate?', validate);
     if (validate) {
       this._object._validate();
       this._isSetting = false;
       if (this._object._onChange) {
-        console.log('emitting state change');
+//        console.log('emitting state change');
         this._object._onChange(this._object.toState());
       }
     }

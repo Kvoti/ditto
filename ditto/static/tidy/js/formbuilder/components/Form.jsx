@@ -9,7 +9,7 @@ import Editor from './editors/Editor';
 
 export default class Form extends React.Component {
   state = {
-    editing: 0
+    editing: 1
   };
 
   render() {
@@ -47,7 +47,8 @@ export default class Form extends React.Component {
           editor,
           isChanged,
           isValid,
-          onCancel: this._cancelEdit
+          onCancel: this._cancelEdit,
+          onSave: this._save
         }
       );
     }
@@ -92,7 +93,13 @@ export default class Form extends React.Component {
     this.setState({editing: index});
   }
 
+  _save = () => {
+    this.setState({editing: null});
+    // TODO save form to db of course!!!
+  }
+  
   _cancelEdit = () => {
     this.setState({editing: null});
+    this.props.onCancelEdit();
   }
 }

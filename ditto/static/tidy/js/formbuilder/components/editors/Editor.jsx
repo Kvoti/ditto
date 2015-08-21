@@ -29,7 +29,7 @@ export default class Editor extends React.Component {
       return (
         <button
                 className="btn btn-success"
-                onClick={this._save}
+                onClick={this.props.onSave}
                 >
           Save
         </button>

@@ -3,7 +3,7 @@ import React from 'react';
 import { get } from '../../../../js/request';
 import Form from './Form';
 import camelCaseify from '../../lib/camelCaseify';
-import store from '../store';
+import { ManagedObject } from '../../lib/schema/schema';
 import * as formSchema from '../schema';
 
 const APIURL = '/di/api/formbuilder/';
@@ -17,41 +17,50 @@ export default class FormContainer extends React.Component {
   }
 
   componentDidMount() {
-    // TODO this should be a proper subscribe
-    store._onChange = () =>this.forceUpdate();
     //////////////////////////////////////////////////////////////////////
     get(APIURL)
       .done(res => {
         camelCaseify(res);
         // TODO only handling one form at the moment
-        let form = res[0];
-        // TODO be nice to set this data in one op (to not trigger intermediate state changes)
-        // (complication is questions which are not all of same type. could push that down
-        // into store? so you just store.set(form); ???) (could have a callback for adding
-        // new items that must return the correct manager)
-        form.questions.forEach(q => store.managed.questions.add(
-          ...this._getQuestionDataAndManager(q)
-        ));
-        store.managed.title.set(form.title);
-        store.managed.slug.set(form.slug);
+        let form = this._buildForm(res[0]);
         this.setState(
           {
-            origForm: store.get(),
+            origForm: {...form.get()},
             // TODO form is not plain object but for now can't figure out how to
             // to this more cleanly
-            form: store
+            form
           });
         //////////////////////////////////////////////////////////////////////
       });
   }
 
+  _buildForm(formData) {
+    let form = new ManagedObject(formSchema.form);
+    // TODO be nice to set this data in one op (to not trigger intermediate state changes)
+    // (complication is questions which are not all of same type. could push that down
+    // into store? so you just store.set(form); ???) (could have a callback for adding
+    // new items that must return the correct manager)
+    formData.questions.forEach(q => form.managed.questions.add(
+            ...this._getQuestionDataAndManager(q)
+    ));
+    form.managed.title.set(formData.title);
+    form.managed.slug.set(formData.slug);
+    form._onChange = () => this.forceUpdate();
+    return form;
+  }
+
   render() {
     if (this.state.form) {
       return (
-        <Form form={this.state.form} />
+        <Form form={this.state.form} onCancelEdit={this._restoreOriginal} />
       );
     }
     return <p>Loading ...</p>;
+  }
+
+  _restoreOriginal = () => {
+    console.log('restoring to', this.state.origForm);
+    this.setState({form: this._buildForm(this.state.origForm)});
   }
 
   // TODO this could be a callback in the schema

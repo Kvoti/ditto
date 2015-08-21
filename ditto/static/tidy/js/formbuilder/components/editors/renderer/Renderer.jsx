@@ -29,7 +29,7 @@ export default class Renderer extends React.Component {
   }
 
   _renderPart(name, part) {
-    console.log('rendering part', part._path, typeof part, part.canReorder());
+//    console.log('rendering part', part._path, typeof part, part.canReorder());
     let rendered;
     if (this._isLeaf(part)) {
       rendered = this._renderItem(part, name);
@@ -104,7 +104,7 @@ export default class Renderer extends React.Component {
   }
   
   _renderItem(part, name) {
-    console.log('rendering item', part._path);
+//    console.log('rendering item', part._path);
     let ID = this._getItemID(part);
     let errors = part.errors;
     let type;
