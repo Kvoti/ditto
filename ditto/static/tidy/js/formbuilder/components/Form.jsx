@@ -27,7 +27,7 @@ export default class Form extends React.Component {
           <div className={editing === null ? 'col-md-6' : 'col-md-12'}>
             <div className={editing === null ? 'well' : ''}>
               {this._renderQuestion(q, i, editing, this.props.isChanged, this.props.isValid)}
-              {this._renderEditButton(i)}
+              {this._renderEditButton(i)} {this._renderRemoveButton(q)}
             </div>
           </div>
         </div>
@@ -104,6 +104,20 @@ export default class Form extends React.Component {
     return null;
   }
 
+  _renderRemoveButton(question) {
+    if (this.state.editing === null) {
+      return (
+        <button
+                className="btn btn-danger"
+                onClick={question.remove}
+                >
+          Remove
+        </button>
+      );
+    }
+    return null;
+  }
+  
   _editQuestion(index) {
     this.setState({editing: index});
   }
