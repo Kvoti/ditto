@@ -95,7 +95,7 @@ export default class Renderer extends React.Component {
                   className="btn btn-danger"
                   onClick={() => part.remove()}
                   >
-            Remove {part._parent.key}
+            Remove {part.parent.key}
           </button>
         </div>
       );
