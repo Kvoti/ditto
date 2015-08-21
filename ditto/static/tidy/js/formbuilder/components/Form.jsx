@@ -44,7 +44,20 @@ export default class Form extends React.Component {
     return (
       <div>
         <h1>{form.managed.title.get()}</h1>
+        {editing === null ?
+        <div className="form-group">
+        </div>
+        : null }
         {questionRows}
+         <select
+                 className="form-control"
+                 onChange={this._add}
+                 >
+           <option value="">-- Select new question --</option>
+           <option value="text">Text</option>
+           <option value="choice">Choice</option>
+           <option value="scoregroup">Score group</option>
+         </select>
       </div>
     );
   }
@@ -117,16 +130,21 @@ export default class Form extends React.Component {
     }
     return null;
   }
-  
+
+  _add = (e) => {
+    this.props.onAddQuestion(e);
+    this.setState({editing: this.props.form.managed.questions.members.length - 1});
+  }
+
   _editQuestion(index) {
     this.setState({editing: index});
   }
 
   _save = () => {
     this.setState({editing: null});
-    // TODO save form to db of course!!!
+    this.props.onSave();
   }
-  
+
   _cancelEdit = () => {
     this.setState({editing: null});
     this.props.onCancelEdit();

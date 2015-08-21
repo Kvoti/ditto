@@ -19,8 +19,12 @@ export default class ScoreGroup extends React.Component {
               m => Math.sqrt(String(m[1].text.get()).length) * 45 + 30
             )
     );
+    textColSize = Math.max(200, textColSize);
     let labelColSizes = spec.scoregroup.labels.members.map(l =>
-      Math.sqrt(String(l[1].label.get()).length) * 40 + 60
+      Math.max(
+        150,
+        Math.sqrt(String(l[1].label.get()).length) * 40 + 60
+      )
     );
     let { labels, items } = spec.scoregroup;
     return (

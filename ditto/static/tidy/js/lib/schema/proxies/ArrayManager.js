@@ -8,10 +8,14 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   canAdd() {
-    if (this._options.canAdd === undefined) {
+    if (!this._options.canAdd) {
       return false;
     }
     if (this._options.maxLength === undefined) {
+      return true;
+    }
+    /// TODO how does this happen?
+    if (this.get() === undefined) {
       return true;
     }
     let length = this.get().length;
@@ -25,10 +29,16 @@ export class ArrayManager extends BaseCollectionManager {
         throw new Error("Can't add Array item with no 'empty' value");
       }
     }
+    console.log('adding', value);
     // TODO details of storage should all live with Question as an array
     // _might_ be stored as a real Array or an ImmutableJS array or object
     // or something else entirely.
-    let array = this.get();
+    let array = this.get()
+    if (array === undefined) {
+      // TODO how can this.get() be undefined?
+      array = [];
+      this._object._set(this._path, array); // or this.set([])??
+    }
     array.push(undefined);
     if (array.length - 2 >= 0 && !this[array.length - 2].isBound) {
       this[array.length - 2].isBound = true;

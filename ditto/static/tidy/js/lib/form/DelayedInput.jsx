@@ -37,9 +37,16 @@ export default class DelayedInput extends React.Component {
   }
 
   _onBlur = (e) => {
+    console.log('blurred');
+    let value = this._getValue(e);
     if (this._pendingChange) {
       clearTimeout(this._pendingChange);
-      this.props.onChange(this._getValue(e));
+      console.log('emitting change');
+      this.props.onChange(value);
+    } else if (value === '' && !this.props.immediate) {
+      // TODO this clause assumes you only want to signal no change to an initially empty value --
+      // might not always be true?
+      this.props.onChange(value);
     }
   }
 

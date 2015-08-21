@@ -19,7 +19,7 @@ export default class Choice extends React.Component {
       <div>
         <div className="form-group">
           <label>
-            {this.props.question}
+            {this.props.question || <p><em>Please enter question</em></p>}
             {this.props.choice.isMultiple ?
              <small> (You can select more than one)</small>
              : null
@@ -27,7 +27,8 @@ export default class Choice extends React.Component {
              {this.props.isRequired ? ' *' : ''}
           </label>
         </div>
-          {this.props.choice.options.map(option => {
+        {this.props.choice.options ?
+         this.props.choice.options.map(option => {
             return (
               <div className={type}>
               <label key={option}>
@@ -36,7 +37,7 @@ export default class Choice extends React.Component {
               </label>
               </div>
             );
-           })}
+           }) : <p><em>Please add at least two options</em></p>}
         {this.props.choice.hasOther ?
          (
            <div className="form-group">

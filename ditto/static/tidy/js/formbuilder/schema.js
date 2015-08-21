@@ -6,9 +6,10 @@ export const form = schema.shape({
   questions: schema.array(
     undefined, // TODO have an Any type or new top-level thing instead of array?
     {
-      canAdd: true,
-      canRemove: true,
-      canReorder: true,
+      // implicit
+//      canAdd: true,
+//      canRemove: true,
+//      canReorder: true,
       // This is an untyped array so we provide a callback to return
       // the correct manager for an item
       getMemberManager(value) {

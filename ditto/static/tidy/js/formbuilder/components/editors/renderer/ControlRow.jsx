@@ -18,7 +18,10 @@ export default class ControlRow extends React.Component {
               className={this._rowClassNames(controlProps.errors)}
               >
         <label className="control-label col-md-4" htmlFor={controlProps.id}>
-          <span>{this._toLabel(this.props.name)}</span>
+          <span>
+            {this._toLabel(this.props.name)}
+            {this.props.isRequired ? ' *' : null}
+          </span>
         </label>
         <div className="col-md-8">
 	  <Control {...controlProps} />

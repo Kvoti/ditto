@@ -50,15 +50,48 @@ export default class FormContainer extends React.Component {
                 isValid={this.state.form.isValid()}
                 onCancelEdit={this._restoreOriginal}
                 onReorder={this._reorder}
+                onAddQuestion={this._add}
+                onSave={this._save}
         />
       );
     }
     return <p>Loading ...</p>;
   }
 
+  _save = () => {
+    // Pretend we've persisted change for now
+    this.setState({origForm: _.cloneDeep(this.state.form.get())});
+  }
+  
   _restoreOriginal = () => {
 //    console.log('restoring to', this.state.origForm);
     this.setState({form: this._buildForm(this.state.origForm)});
+  }
+
+  _add = (e) => {
+    let questionType = e.target.value;
+    let emptyQuestion;
+    if (questionType === 'text') {
+      emptyQuestion = {
+        text: {}
+      };
+    }
+    if (questionType === 'choice') {
+      emptyQuestion = {
+        choice: {}
+      };
+    }
+    if (questionType === 'scoregroup') {
+      emptyQuestion = {
+        scoregroup: {}
+      };
+    }
+    // TODO what to really do for the new id?
+    emptyQuestion.id = this.state.form.managed.questions.members.length + 1;
+    this.state.form.managed.questions.add(emptyQuestion);
+    console.log('adding', e.target.value);
+    e.target.value = '';
+    this.setState({origForm: _.cloneDeep(this.state.form.get())});
   }
 
   _reorder = (reorderedComponents) => {

@@ -38,7 +38,6 @@ export default class Renderer extends React.Component {
     }
     return (
       <div
-              style={part.canReorder() ? {color: 'red'} : null}
               key={part._path}
               draggable={part.canReorder()}
               orderingIndex={part.key}
@@ -123,6 +122,7 @@ export default class Renderer extends React.Component {
       onChange = (v) => part.set(inputValueToInt(v));
       onPendingChange = (v) => part.pend().set(inputValueToInt(v));
     }
+    console.log(part._path, part._options);
     return (
       <ControlRow
               key={part._path}
@@ -131,6 +131,7 @@ export default class Renderer extends React.Component {
               type={type}
               value={part.getPendingOrCurrent()}
               errors={errors}
+              isRequired={part._options.isRequired}
               validateImmediately={part.isBound}
               onChange={onChange}
               onPendingChange={onPendingChange}

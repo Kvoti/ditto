@@ -31,7 +31,7 @@ export default class ScoreGroup extends React.Component {
         <thead>
           <tr>
             <th></th>
-            {this.props.scoregroup.labels.map((label, i) => {
+            {this.props.scoregroup.labels && this.props.scoregroup.labels.map((label, i) => {
               return (
                 <th key={i}>{label.label}</th>
               );
@@ -39,13 +39,13 @@ export default class ScoreGroup extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {this.props.scoregroup.items.map(item => {
+          {this.props.scoregroup.items && this.props.scoregroup.items.map(item => {
             return (
               <tr>
               <td>
               {item.text}
               </td>
-              {this.props.scoregroup.labels.map(() => {
+              {this.props.scoregroup.labels && this.props.scoregroup.labels.map(() => {
                 return (
                   <td>
                   <input name={item.text} type="radio" />

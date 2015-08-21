@@ -36,6 +36,16 @@ export default class BaseManager {
     }
   }
 
+  // TODO need to be able to initialise values without settings isBound and without
+  // triggering validation
+  // init(value) {
+  //   this._checkValue(value);
+  //   this._setCheckedValue(value);
+  //   if (this._object._onChange) {
+  //     this._object._onChange(this._object.toState());
+  //   }
+  // }
+
   pend() {
     this._object.pend();
     return this;
