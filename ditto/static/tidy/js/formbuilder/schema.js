@@ -47,14 +47,13 @@ export const textQuestion = schema.shape({
     isMultiline: schema.bool(),
     maxChars: schema.integer({max: 100}),
     maxWords: schema.integer({
-      // validate: function validateMaxWords() {
-      //   debugger;
-      //   let errors = [];
-      //   if (!this.text.isMultiline.get() && this.get()) {
-      //     errors.push("Can't specify max words if question is not multiline");
-      //   }
-      //   return errors;
-      // }
+      validate: function validateMaxWords() {
+        let errors = [];
+        if (!this._parent.isMultiline.get() && this.get()) {
+          errors.push("Can't specify max words if question is not multiline");
+        }
+        return errors;
+      }
     })
   })
 });
@@ -106,24 +105,24 @@ export const scoreGroupQuestion = schema.shape({
           label: '',
           defaultScore: null
         },
-        // postAdd: function() {
-        //   // Append a null score for each item
-        //   this.scoregroup.items.members.forEach(([i, item]) => {
-        //     item.scores.add(null);
-        //   });
-        // },
-        // postRemove: function(index) {
-        //   // Remove corresponding score from each item
-        //   this.scoregroup.items.members.forEach(([i, item]) => {
-        //     item.scores[index].remove();
-        //   });
-        // },
-        // postReorder: function(indices) {
-        //   // Reorder corresponding scores for each item
-        //   this.scoregroup.items.members.forEach(([i, item]) => {
-        //     item.scores.reorder(indices);
-        //   });
-        // }
+        postAdd: function() {
+          // Append a null score for each item
+          this._parent.items.members.forEach(([i, item]) => {
+            item.scores.add(null);
+          });
+        },
+        postRemove: function(index) {
+          // Remove corresponding score from each item
+          this._parent.items.members.forEach(([i, item]) => {
+            item.scores[index].remove();
+          });
+        },
+        postReorder: function(indices) {
+          // Reorder corresponding scores for each item
+          this._parent.items.members.forEach(([i, item]) => {
+            item.scores.reorder(indices);
+          });
+        }
       }
     ),
     items: schema.array(
@@ -146,11 +145,11 @@ export const scoreGroupQuestion = schema.shape({
         canRemove: true,
         canReorder: true,
         empty: {text: '', scores: []},  // TODO init scores properly
-        // postAdd: function(item) {
-        //   // Add a null score to this item for each label
-        //   let scores = [for (l of this.scoregroup.labels.members) null];
-        //   item.scores.set(scores);
-        // }
+        postAdd: function(item) {
+          // Add a null score to this item for each label
+          let scores = [for (l of this.scoregroup.labels.members) null];
+          item.scores.set(scores);
+        }
       }
     )
   })

@@ -120,7 +120,7 @@ export default class BaseManager {
       }
     }
     if (this._options.validate) {
-      let errors = this._options.validate.apply(this._object.managed);
+      let errors = this._options.validate.apply(this);
       if (errors.length) {
         if (this.errors === null) {
           this.errors = errors;
