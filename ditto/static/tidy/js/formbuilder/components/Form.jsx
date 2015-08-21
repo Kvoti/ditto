@@ -23,7 +23,7 @@ export default class Form extends React.Component {
             <div key={q.id.get()} className="row">
             <div className={editing === null ? 'col-md-6' : 'col-md-12'}>
             <div className={editing === null ? 'well' : ''}>
-            {this._renderQuestion(q, i, editing, form.isChanged(), form.isValid())}
+            {this._renderQuestion(q, i, editing, this.props.isChanged, this.props.isValid)}
             {this._renderEditButton(i)}
             </div>
             </div>

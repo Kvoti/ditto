@@ -37,7 +37,7 @@ export default class BaseManager {
   }
 
   pend() {
-    this._object._pend();
+    this._object.pend();
     return this;
   }
 

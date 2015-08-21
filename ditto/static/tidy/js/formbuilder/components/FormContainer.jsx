@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 import { get } from '../../../../js/request';
 import Form from './Form';
@@ -17,7 +18,6 @@ export default class FormContainer extends React.Component {
   }
 
   componentDidMount() {
-    //////////////////////////////////////////////////////////////////////
     get(APIURL)
       .done(res => {
         camelCaseify(res);
@@ -25,12 +25,13 @@ export default class FormContainer extends React.Component {
         let form = this._buildForm(res[0]);
         this.setState(
           {
-            origForm: {...form.get()},
+            // TODO won't need cloneDeep when making sure to use immutable data,
+            // can then compare by reference
+            origForm: _.cloneDeep(form.get()),
             // TODO form is not plain object but for now can't figure out how to
             // to this more cleanly
             form
           });
-        //////////////////////////////////////////////////////////////////////
       });
   }
 
@@ -52,7 +53,11 @@ export default class FormContainer extends React.Component {
   render() {
     if (this.state.form) {
       return (
-        <Form form={this.state.form} onCancelEdit={this._restoreOriginal} />
+        <Form form={this.state.form}
+                isChanged={this.state.form.isChanged(this.state.origForm)}
+                isValid={this.state.form.isValid()}
+                onCancelEdit={this._restoreOriginal}
+        />
       );
     }
     return <p>Loading ...</p>;
