@@ -40,7 +40,7 @@ export class ManagedObject {
   }
 
   isChanged(original) {
-    console.log('is changed', this._managedObject, original);
+//    console.log('is changed', this._managedObject, original);
     let result = !_.isEqual(this._managedObject, original);
     return result;
   }

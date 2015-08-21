@@ -56,7 +56,7 @@ export default class FormContainer extends React.Component {
   }
 
   _restoreOriginal = () => {
-    console.log('restoring to', this.state.origForm);
+//    console.log('restoring to', this.state.origForm);
     this.setState({form: this._buildForm(this.state.origForm)});
   }
 }
