@@ -41,6 +41,7 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   reorder(indices) {
+    console.log('reordering', indices, this._path, this);
     let reordered = [];
     indices.forEach((origIndex, index) => {
       reordered.push(this[origIndex].get());
@@ -107,14 +108,13 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   _setIndex(i, v, Manager) {
-    if (Manager === undefined) {
+    if (this._options.getMemberManager) {
+      Manager = this._options.getMemberManager(v);
+    } else if (Manager === undefined) {
       Manager = this._MemberManager;
     }
     let path = this._path.concat([i]);
-    if (this[i] === undefined) {
-      // TODO init or set!
-      this[i] = new Manager(this._object, this, path, i);
-    }
+    this[i] = new Manager(this._object, this, path, i);
     this[i].set(v);
   }
 

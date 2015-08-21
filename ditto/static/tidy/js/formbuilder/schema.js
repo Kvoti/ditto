@@ -8,7 +8,31 @@ export const form = schema.shape({
     {
       canAdd: true,
       canRemove: true,
-      canReorder: true
+      canReorder: true,
+      // This is an untyped array so we provide a callback to return
+      // the correct manager for an item
+      getMemberManager(value) {
+        const { text, choice, scoregroup } = value;
+        let manager;
+        if (text) {
+          manager = textQuestion;
+        }
+        if (choice) {
+          manager = choiceQuestion;
+        }
+        if (scoregroup) {
+          manager = scoreGroupQuestion;
+        }
+        // TODO this is a quirk of the API. Each question should just have a type
+        // and not these null valued fields
+        ['text', 'choice', 'scoregroup'].forEach(p => {
+          if (value[p] === null) {
+            delete value[p];
+          }
+        });
+        return manager;
+        //////////////////////////////////////////////////////////////////////
+      }
     }
   )
 });
