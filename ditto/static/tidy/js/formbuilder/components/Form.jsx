@@ -37,7 +37,7 @@ export default class Form extends React.Component {
       questionRows = (
         <Sortable
                 components={questionRows}
-                onReorder={this._reorder.bind(this, form.managed.questions)}
+                onReorder={this.props.onReorder}
         />
       );
     }
@@ -122,10 +122,6 @@ export default class Form extends React.Component {
     this.setState({editing: index});
   }
 
-  _reorder(questionsManager, reorderedComponents) {
-    questionsManager.reorder([for (c of reorderedComponents) c.props.orderingIndex]);
-  }
-  
   _save = () => {
     this.setState({editing: null});
     // TODO save form to db of course!!!

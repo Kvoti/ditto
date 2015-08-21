@@ -49,6 +49,7 @@ export default class FormContainer extends React.Component {
                 isChanged={this.state.form.isChanged(this.state.origForm)}
                 isValid={this.state.form.isValid()}
                 onCancelEdit={this._restoreOriginal}
+                onReorder={this._reorder}
         />
       );
     }
@@ -58,5 +59,13 @@ export default class FormContainer extends React.Component {
   _restoreOriginal = () => {
 //    console.log('restoring to', this.state.origForm);
     this.setState({form: this._buildForm(this.state.origForm)});
+  }
+
+  _reorder = (reorderedComponents) => {
+    this.state.form.managed.questions.reorder(
+      [for (c of reorderedComponents) c.props.orderingIndex]
+    );
+    // Simulate a save here (need to add save/cancel for form level operations)
+    this.setState({origForm: _.cloneDeep(this.state.form.get())});
   }
 }
