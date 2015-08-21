@@ -17,6 +17,7 @@ export default class BaseManager {
   }
 
   set(value) {
+    console.log('setting', this._path, value);
     let validate;
     if (!this._isSetting) {
       this._isSetting = true;

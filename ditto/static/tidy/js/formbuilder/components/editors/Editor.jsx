@@ -1,23 +1,17 @@
 import React from 'react';
 
-// needed? import { ManagedObject } from '../../../lib/schema/schema';
-import Renderer from './renderer/Renderer';
-import ScoreGroup from './scoregroup/ScoreGroup';
-
 export default class Editor extends React.Component {
   state = {
       isCancelling: false
   };
 
   render() {
-    let question = this.props.question;
-    let renderer = question.scoregroup ? ScoreGroup : Renderer;
-    let viewer = React.createElement(this.props.viewer, question.get());
+    let { question, viewer, editor } = this.props;
     return (
         <div className="well">
           <div className="row">
             <div className={'col-md-' + (question.scoregroup ? 9 : 6)}>
-              {React.createElement(renderer, {question: question})}
+              {editor}
             </div>
             <div className="col-md-3">
               {viewer}
@@ -30,7 +24,7 @@ export default class Editor extends React.Component {
     );
   }
 
-  _renderSave(question) {
+  _renderSave() {
     if (this.props.isChanged && this.props.isValid) {
       return (
         <button
@@ -44,7 +38,7 @@ export default class Editor extends React.Component {
     return null;
   }
 
-  _renderCancel(question) {
+  _renderCancel() {
     if (!this.state.isCancelling) {
       return (
         <button
@@ -73,13 +67,6 @@ export default class Editor extends React.Component {
         </button>
       </div>
     );
-  }
-
-  _save = () => {
-    // TODO props shouldn't change
-    // Maybe this component should construct the manager?
-    // Or have the data and manager passed separately?
-    this.props.onSave(this.props.question.get());
   }
 
   _confirmCancel = () => {
