@@ -40,6 +40,7 @@ export class ManagedObject {
   }
 
   isChanged(original) {
+//    console.log('is changed', this._managedObject, original);
     let result = !_.isEqual(this._managedObject, original);
     return result;
   }
@@ -93,7 +94,7 @@ export class ManagedObject {
   }
 
   _setPathToValue(path, value) {
-    console.log('setting', path, 'to', value);
+    //console.log('setting', path, value);
     if (this._managedObject === undefined || !path.length) {
       this._managedObject = value;
       return;

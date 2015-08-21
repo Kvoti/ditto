@@ -20,11 +20,7 @@ export default class Renderer extends React.Component {
   render() {
     let parts = [];
     let question = this.props.question;
-    /* for (let key in question) {
-       if (question.hasOwnProperty(key) && question[key] && question[key].pend) { */
-        parts.push(this._renderPart('main', question));
-    /* }
-       } */
+    parts.push(this._renderPart('main', question));
     return (
       <div className="form-horizontal">
         {parts}
@@ -33,7 +29,7 @@ export default class Renderer extends React.Component {
   }
 
   _renderPart(name, part) {
-    console.log('rendering part', part.path, typeof part, part.canReorder());
+//    console.log('rendering part', part._path, typeof part, part.canReorder());
     let rendered;
     if (this._isLeaf(part)) {
       rendered = this._renderItem(part, name);
@@ -43,7 +39,7 @@ export default class Renderer extends React.Component {
     return (
       <div
               style={part.canReorder() ? {color: 'red'} : null}
-              key={part.path}
+              key={part._path}
               draggable={part.canReorder()}
               orderingIndex={part.key}
               >
@@ -99,7 +95,7 @@ export default class Renderer extends React.Component {
                   className="btn btn-danger"
                   onClick={() => part.remove()}
                   >
-            Remove {part.parent.key}
+            Remove {part._parent.key}
           </button>
         </div>
       );
@@ -108,7 +104,7 @@ export default class Renderer extends React.Component {
   }
   
   _renderItem(part, name) {
-    console.log('rendering item', part.path);
+//    console.log('rendering item', part._path);
     let ID = this._getItemID(part);
     let errors = part.errors;
     let type;
@@ -122,13 +118,14 @@ export default class Renderer extends React.Component {
     } else if (part instanceof schemaTypes.BoolManager) {
       type = 'bool';
       onChange = (v) => part.set(v);
+      onPendingChange = onChange;
     } else if (part instanceof schemaTypes.IntegerManager) {
       onChange = (v) => part.set(inputValueToInt(v));
       onPendingChange = (v) => part.pend().set(inputValueToInt(v));
     }
     return (
       <ControlRow
-              key={part.path}
+              key={part._path}
               id={ID}
               name={name}
               type={type}
@@ -144,7 +141,7 @@ export default class Renderer extends React.Component {
   }
   
   _getItemID(item) {
-    return `${this.controlID}${item.path}`;
+    return `${this.controlID}${item._path}`;
   }
 
 }

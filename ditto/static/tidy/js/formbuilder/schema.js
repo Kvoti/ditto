@@ -1,15 +1,55 @@
-import * as schema from '../../../lib/schema/schema';
+import * as schema from '../lib/schema/schema';
+
+export const form = schema.shape({
+  title: schema.string(),
+  slug: schema.string(),
+  questions: schema.array(
+    undefined, // TODO have an Any type or new top-level thing instead of array?
+    {
+      canAdd: true,
+      canRemove: true,
+      canReorder: true,
+      // This is an untyped array so we provide a callback to return
+      // the correct manager for an item
+      getMemberManager(value) {
+        const { text, choice, scoregroup } = value;
+        let manager;
+        if (text) {
+          manager = textQuestion;
+        }
+        if (choice) {
+          manager = choiceQuestion;
+        }
+        if (scoregroup) {
+          manager = scoreGroupQuestion;
+        }
+        // TODO this is a quirk of the API. Each question should just have a type
+        // and not these null valued fields
+        ['text', 'choice', 'scoregroup'].forEach(p => {
+          if (value[p] === null) {
+            delete value[p];
+          }
+        });
+        return manager;
+        //////////////////////////////////////////////////////////////////////
+      }
+    }
+  )
+});
 
 export const textQuestion = schema.shape({
+  id: schema.integer(),
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
+  // choice: schema.nullValue(),
+  // scoregroup: schema.nullValue(),
   text: schema.shape({
     isMultiline: schema.bool(),
     maxChars: schema.integer({max: 100}),
     maxWords: schema.integer({
       validate: function validateMaxWords() {
         let errors = [];
-        if (!this.text.isMultiline.get() && this.get()) {
+        if (!this.parent.isMultiline.get() && this.get()) {
           errors.push("Can't specify max words if question is not multiline");
         }
         return errors;
@@ -19,6 +59,7 @@ export const textQuestion = schema.shape({
 });
 
 export const choiceQuestion = schema.shape({
+  id: schema.integer(),
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   choice: schema.shape({
@@ -45,6 +86,7 @@ export const choiceQuestion = schema.shape({
 });
 
 export const scoreGroupQuestion = schema.shape({
+  id: schema.integer(),
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   scoregroup: schema.shape({
@@ -65,19 +107,19 @@ export const scoreGroupQuestion = schema.shape({
         },
         postAdd: function() {
           // Append a null score for each item
-          this.scoregroup.items.members.forEach(([i, item]) => {
+          this.parent.items.members.forEach(([i, item]) => {
             item.scores.add(null);
           });
         },
         postRemove: function(index) {
           // Remove corresponding score from each item
-          this.scoregroup.items.members.forEach(([i, item]) => {
+          this.parent.items.members.forEach(([i, item]) => {
             item.scores[index].remove();
           });
         },
         postReorder: function(indices) {
           // Reorder corresponding scores for each item
-          this.scoregroup.items.members.forEach(([i, item]) => {
+          this.parent.items.members.forEach(([i, item]) => {
             item.scores.reorder(indices);
           });
         }
@@ -105,7 +147,7 @@ export const scoreGroupQuestion = schema.shape({
         empty: {text: '', scores: []},  // TODO init scores properly
         postAdd: function(item) {
           // Add a null score to this item for each label
-          let scores = [for (l of this.scoregroup.labels.members) null];
+          let scores = [for (l of this.parent.labels.members) null];
           item.scores.set(scores);
         }
       }

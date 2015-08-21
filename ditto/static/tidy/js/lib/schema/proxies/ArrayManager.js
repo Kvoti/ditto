@@ -18,7 +18,7 @@ export class ArrayManager extends BaseCollectionManager {
     return length < this._options.maxLength;
   }
 
-  add(value) {
+  add(value, manager) {
     if (value === undefined) {
       value = this._options.empty;
       if (value === undefined) {
@@ -33,14 +33,15 @@ export class ArrayManager extends BaseCollectionManager {
     if (array.length - 2 >= 0 && !this[array.length - 2].isBound) {
       this[array.length - 2].isBound = true;
     }
-    this._setIndex(array.length - 1, value);
+    this._setIndex(array.length - 1, value, manager);
     //this._object._validate();
     if (this._options.postAdd) {
-      this._options.postAdd.call(this._object.managed, this[array.length - 1], value);
+      this._options.postAdd.call(this, this[array.length - 1], value);
     }
   }
 
   reorder(indices) {
+    console.log('reordering', indices, this._path, this);
     let reordered = [];
     indices.forEach((origIndex, index) => {
       reordered.push(this[origIndex].get());
@@ -48,7 +49,7 @@ export class ArrayManager extends BaseCollectionManager {
     });
     this.set(reordered);
     if (this._options.postReorder) {
-      this._options.postReorder.call(this._object.managed, indices);
+      this._options.postReorder.call(this, indices);
     }
     //this._object._validate();
   }
@@ -79,7 +80,7 @@ export class ArrayManager extends BaseCollectionManager {
     this.set(array);
     this._errors = [];
     if (this._options.postRemove) {
-      this._options.postRemove.call(this._object.managed, index);
+      this._options.postRemove.call(this, index);
     }
     //this._object._validate();
   }
@@ -106,19 +107,21 @@ export class ArrayManager extends BaseCollectionManager {
     return this._object;
   }
 
-  _setIndex(i, v) {
-    let path = this._path.concat([i]);
-    if (this[i] === undefined) {
-      // TODO init or set!
-      this[i] = new this._MemberManager(this._object, this, path, i);
+  _setIndex(i, v, Manager) {
+    if (this._options.getMemberManager) {
+      Manager = this._options.getMemberManager(v);
+    } else if (Manager === undefined) {
+      Manager = this._MemberManager;
     }
+    let path = this._path.concat([i]);
+    this[i] = new Manager(this._object, this, path, i);
     this[i].set(v);
   }
 
   get _memberKeys() {
     let keys = [];
     for (let k in this) {
-      if (this.hasOwnProperty(k) && k !== '_parent' && this[k] && this[k].__isManager === true) {
+      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k].__isManager === true) {
         keys.push(k);
       }
     }

@@ -32,7 +32,8 @@ export class ShapeManager extends BaseCollectionManager {
     for (let k in values) {
       if (values.hasOwnProperty(k)) {
         if (!this._MemberManagers.hasOwnProperty(k)) {
-          // throw new Error(`Key '${k}' is not valid for object '${this.key}'`);
+//          debugger;
+          throw new Error(`Key '${k}' is not valid for object '${this._path}'`);
         } else {
           this[k].set(values[k]);
         }
@@ -43,7 +44,7 @@ export class ShapeManager extends BaseCollectionManager {
   get _memberKeys() {
     let keys = [];
     for (let k in this) {
-      if (this.hasOwnProperty(k) && k !== '_parent' && this[k] && this[k].__isManager === true) {
+      if (this.hasOwnProperty(k) && k !== 'parent' && this[k] && this[k].__isManager === true) {
         keys.push(k);
       }
     }

@@ -2,7 +2,7 @@ export default class BaseManager {
   constructor(question, parent, path, options) {
     this.__isManager = true;
     this._object = question;
-    this._parent = parent;
+    this.parent = parent;
     this._path = path;
     this._options = options;
   }
@@ -17,6 +17,7 @@ export default class BaseManager {
   }
 
   set(value) {
+//    console.log('setting', this._path, value);
     let validate;
     if (!this._isSetting) {
       this._isSetting = true;
@@ -24,17 +25,19 @@ export default class BaseManager {
     }
     this._checkValue(value);
     this._setCheckedValue(value);
+//    console.log('validate?', validate);
     if (validate) {
       this._object._validate();
       this._isSetting = false;
       if (this._object._onChange) {
+//        console.log('emitting state change');
         this._object._onChange(this._object.toState());
       }
     }
   }
 
   pend() {
-    this._object._pend();
+    this._object.pend();
     return this;
   }
 
@@ -63,25 +66,25 @@ export default class BaseManager {
 
   canReorder() {
     return (
-      this._parent &&
-        this._parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
-        this._parent.canReorderItems()
+      this.parent &&
+        this.parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
+        this.parent.canReorderItems()
     );
   }
 
   canRemove() {
     return (
-      this._parent &&
-        this._parent.canRemoveItems &&
-        this._parent.canRemoveItems()
+      this.parent &&
+        this.parent.canRemoveItems &&
+        this.parent.canRemoveItems()
     );
   }
 
   remove = () => {
-    if (!(this._parent && this._parent._remove)) {
+    if (!(this.parent && this.parent._remove)) {
       throw new Error('Item is not in a list');
     }
-    this._parent._remove(parseInt(this.key, 10));
+    this.parent._remove(parseInt(this.key, 10));
   }
 
   // Private methods
@@ -117,7 +120,7 @@ export default class BaseManager {
       }
     }
     if (this._options.validate) {
-      let errors = this._options.validate.apply(this._object.managed);
+      let errors = this._options.validate.apply(this);
       if (errors.length) {
         if (this.errors === null) {
           this.errors = errors;

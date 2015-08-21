@@ -49,4 +49,12 @@ export function integer(options={}) {
   };
 }
 
+export function nullValue() {
+  return function _null(managedObject, parent, basePath) {
+    let key = basePath[basePath.length - 1];
+    parent[key] = new managers.NullManager(managedObject, parent, basePath, options);
+    return parent[key];
+  };
+}
+
 export * from './ManagedObject';

@@ -1,45 +1,17 @@
 import React from 'react';
-import _ from 'lodash';  // TODO switch to ImmutableJS?
 
-import { ManagedObject } from '../../../lib/schema/schema';
-import Renderer from './renderer/Renderer';
-import ScoreGroup from './scoregroup/ScoreGroup';
-
-export default class Question extends React.Component {
-  constructor(props) {
-    super(props);
-    let questionConfig = new ManagedObject(
-      props.schema,
-      {
-        data: this.props
-      }
-    );
-    this.state = {
-      origSpec: questionConfig.get(),
-      config: questionConfig.toState(),
+export default class Editor extends React.Component {
+  state = {
       isCancelling: false
-    };
-  }
-
-  _copyProps() {
-    return _.cloneDeep(this.props);
-  }
+  };
 
   render() {
-    let question = ManagedObject.fromState(
-      this.props.schema,
-      this.state.config,
-      (newState) => {
-        this.setState({config: newState});
-      }
-    );
-    let renderer = question.managed.scoregroup ? ScoreGroup : Renderer;
-    let viewer = React.createElement(this.props.viewer, question.get());
+    let { question, viewer, editor } = this.props;
     return (
         <div className="well">
           <div className="row">
-            <div className={'col-md-' + (question.managed.scoregroup ? 9 : 6)}>
-              {React.createElement(renderer, {question: question.managed})}
+            <div className={'col-md-' + (question.scoregroup ? 9 : 6)}>
+              {editor}
             </div>
             <div className="col-md-3">
               {viewer}
@@ -52,12 +24,12 @@ export default class Question extends React.Component {
     );
   }
 
-  _renderSave(questionConfig) {
-    if (questionConfig.isChanged(this.state.origSpec) && questionConfig.isValid()) {
+  _renderSave() {
+    if (this.props.isChanged && this.props.isValid) {
       return (
         <button
                 className="btn btn-success"
-                onClick={this._save}
+                onClick={this.props.onSave}
                 >
           Save
         </button>
@@ -66,12 +38,12 @@ export default class Question extends React.Component {
     return null;
   }
 
-  _renderCancel(questionConfig) {
+  _renderCancel() {
     if (!this.state.isCancelling) {
       return (
         <button
                 className="btn btn-default"
-                onClick={questionConfig.isChanged(this.state.origSpec) ? this._confirmCancel : this._cancel}
+                onClick={this.props.isChanged ? this._confirmCancel : this._cancel}
                 >
           Cancel
         </button>
@@ -95,10 +67,6 @@ export default class Question extends React.Component {
         </button>
       </div>
     );
-  }
-
-  _save = () => {
-    this.props.onSave(this.state.config._objectSpec);
   }
 
   _confirmCancel = () => {
