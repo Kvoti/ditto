@@ -9,29 +9,32 @@ def run():
         title='test form',
         questions=[
             models.Form.text(
-                question="What is your favourite colour"
+                question="What is your favourite colour",
+                is_required=True
             ),
             models.Form.choice(
                 question="Which f/e framework do you prefer",
+                is_required=True,
                 options=[
                     "React",
                     "Angular",
                     "Ember",
                 ]
             ),
-            models.Form.score_group(
-                question="Please rate how you feel about the following",
-                labels=[
-                    "Disagree",
-                    "No opinion",
-                    "Agree"
-                ],
-                items=[
-                    "React is cool",
-                    "Coding is fun",
-                    "Client coding is hard",
-                ],
-            )
+            # models.Form.score_group(
+            #     question="Please rate how you feel about the following",
+            #     is_required=True,
+            #     labels=[
+            #         "Disagree",
+            #         "No opinion",
+            #         "Agree"
+            #     ],
+            #     items=[
+            #         "React is cool",
+            #         "Coding is fun",
+            #         "Client coding is hard",
+            #     ],
+            # )
         ]
     )
 
