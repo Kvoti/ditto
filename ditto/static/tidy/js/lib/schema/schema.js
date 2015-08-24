@@ -27,6 +27,28 @@ export function string(options={}) {
   };
 }
 
+export function choice(choices, options={}) {
+  if (options.isRequired === undefined) {
+    options.isRequired = false;
+  }
+  return function _string(managedObject, parent, basePath) {
+    let key = basePath[basePath.length - 1];
+    parent[key] = new managers.ChoiceManager(managedObject, parent, basePath, choices, options);
+    return parent[key];
+  };
+}
+
+export function multichoice(choices, options={}) {
+  if (options.isRequired === undefined) {
+    options.isRequired = false;
+  }
+  return function _string(managedObject, parent, basePath) {
+    let key = basePath[basePath.length - 1];
+    parent[key] = new managers.MultiChoiceManager(managedObject, parent, basePath, choices, options);
+    return parent[key];
+  };
+}
+
 export function bool(options={}) {
   if (options.isRequired === undefined) {
     options.isRequired = false;
