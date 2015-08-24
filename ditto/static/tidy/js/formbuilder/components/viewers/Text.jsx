@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import getID from '../../../lib/id';
-import * as schema from '../../../lib/schema/schema';
 import DelayedInput from '../../../lib/form/DelayedInput';
 import ControlErrors from '../editors/renderer/ControlErrors';
 
@@ -8,28 +7,6 @@ export default class Text extends React.Component {
   constructor(props) {
     super(props);
     this.ID = getID();
-    this.init(props);
-  }
-
-  init(props) {
-    let value = new schema.ManagedObject(
-      schema.string({
-        // TODO decide on length vs chars
-        maxLength: props.text.maxChars === null ? undefined : props.text.maxChars,
-        isRequired: props.isRequired
-      }),
-      {
-        onChange: () => this.forceUpdate()
-      }
-    );
-    if (this.state) {
-      value.managed.set(this.state.value.managed.get()
-          // TODO not sure why I need this
-          || '');
-    }
-    this.state = {
-      value
-    };
   }
 
   static propTypes = {
@@ -39,15 +16,14 @@ export default class Text extends React.Component {
       maxChars: PropTypes.number,
       maxWords: PropTypes.number,
       isMultiline: PropTypes.bool
-    })
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.init(newProps);
+    }),
+    value: PropTypes.string,
+    errors: PropTypes.arrayOf(PropTypes.string), // TODO or null
+    onChange: PropTypes.func.isRequired,
+    onPendingChange: PropTypes.func.isRequired
   }
 
   render() {
-    console.log('errors', this.state.value.managed.errors, 'bound?', this.state.value.managed.isBound);
     let control = React.DOM.input;
     if (this.props.text.isMultiline) {
       control = React.DOM.textarea;
@@ -56,7 +32,7 @@ export default class Text extends React.Component {
       {
         id: this.ID,
         className: 'form-control',
-        value: this.state.value.managed.get()
+        value: this.props.value
       }
     );
     return (
@@ -65,13 +41,13 @@ export default class Text extends React.Component {
           {this.props.question}?{this.props.isRequired ? ' *' : ' '}
         </label>
         <DelayedInput
-                immediate={this.state.value.managed.isBound}
-                onChange={(v) => this.state.value.managed.set(v)}
-                onPendingChange={(v) => this.state.value.managed.pend().set(v)}
+                immediate={this.props.validateImmediately}
+                onChange={this.props.onChange}
+                onPendingChange={this.props.onPendingChange}
                 >
           {control}
         </DelayedInput>
-        <ControlErrors errors={this.state.value.managed.errors}/>
+        <ControlErrors errors={this.props.errors}/>
       </div>
     );
   }

@@ -1,45 +1,19 @@
-import React from 'react';
-import * as schema from '../../../lib/schema/schema';
+import React, { PropTypes } from 'react';
 import ControlErrors from '../editors/renderer/ControlErrors';
 
 export default class Choice extends React.Component {
   static propTypes = {
-    question: React.PropTypes.string.isRequired,
-    isRequired: React.PropTypes.bool,
-    choice: React.PropTypes.shape({
-      options: React.PropTypes.arrayOf(
-        React.PropTypes.string).isRequired,
-      isMultiple: React.PropTypes.bool,
-      hasOther: React.PropTypes.bool,
-      otherText: React.PropTypes.string
-    })
-  }
-
-  constructor(props) {
-    super(props);
-    this.init(props);
-  }
-
-  init(props) {
-    let factory = this.props.choice.isMultiple ? schema.multichoice : schema.choice;
-    let value = new schema.ManagedObject(
-      factory(
-        this.props.choice.options,
-        {
-          isRequired: props.isRequired
-        }
-      ),
-      {
-        onChange: () => this.forceUpdate()
-      }
-    );
-    this.state = {
-      value
-    };
-  }
-
-  componentWillReceiveProps(newProps) {
-    this.init(newProps);
+    question: PropTypes.string.isRequired,
+    isRequired: PropTypes.bool,
+    choice: PropTypes.shape({
+      options: PropTypes.arrayOf(
+        PropTypes.string).isRequired,
+      isMultiple: PropTypes.bool,
+      hasOther: PropTypes.bool,
+      otherText: PropTypes.string
+    }),
+    //value: PropTypes.string, // TODO string or array, prob best to split multiple choice out?
+    errors: PropTypes.arrayOf(PropTypes.string) // TODO or null
   }
 
   render() {
@@ -63,16 +37,17 @@ export default class Choice extends React.Component {
               <label key={option}>
               <input
               type={type}
-              name={this.props.question}
+                      name={this.props.question}
+                      value={option}
               checked={this._isChecked(option)}
-                      onChange={this._onChange.bind(this, option)}
+                      onChange={this.props.onChange}
               />
               {' '}{option}
               </label>
               </div>
             );
          }) : <p><em>Please add at least two options</em></p>}
-        <ControlErrors errors={this.state.value.managed.errors}/>
+        <ControlErrors errors={this.props.errors}/>
         {this.props.choice.hasOther ?
          (
            <div className="form-group">
@@ -87,24 +62,9 @@ export default class Choice extends React.Component {
   }
 
   _isChecked(option) {
-    console.log(option, this.state.value.managed.get());
     if (!this.props.choice.isMultiple) {
-      return this.state.value.managed.get() === option;
+      return this.props.value === option;
     }
-    return this.state.value.managed.get().indexOf(option) !== -1;
-  }
-    
-  _onChange(option, e) {
-    if (!this.props.choice.isMultiple) {
-      console.log('setting', option);
-      this.state.value.managed.set(option);
-    } else {
-      if (e.target.checked) {
-        this.state.value.managed.add(option);
-      } else {
-        console.log('removing', option);
-        this.state.value.managed.removeX(option);
-      }
-    }
+    return this.props.value.indexOf(option) !== -1;
   }
 }

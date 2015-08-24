@@ -2,10 +2,11 @@ import React from 'react';
 import _ from 'lodash';
 
 import { get } from '../../../../js/request';
-import Form from './Form';
 import camelCaseify from '../../lib/camelCaseify';
 import { ManagedObject } from '../../lib/schema/schema';
 import * as formSchema from '../schema';
+/* import Form from './Form'; */
+import Form from './viewers/Form';
 
 const APIURL = '/di/api/formbuilder/';
 

@@ -16,7 +16,7 @@ export class ChoiceManager extends BaseItemManager {
     if (this._options.isRequired && this._valueIsEmpty(value)) {
       errors.push('This field is required');
     }
-    if (this._choices.indexOf(value) === -1) {
+    if (!this._isEmpty() && this._choices.indexOf(value) === -1) {
       errors.push(`Not a valid choice: ${value}`);
     }
     return errors;
