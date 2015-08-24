@@ -15,20 +15,18 @@ export default class Form extends React.Component {
 
   render() {
     let editing = this.state.editing;
-    let form = this.props.form;
-    let questionRows = form.managed.questions.members.map(([j, q], i) => {
-      return (
+    let formSpec = this.props.form;
+    let questionRows = formSpec.managed.questions.members.map(([j, q], i) => {
+     return (
         <div
                 key={q.id.get()}
                 draggable={true}
                 orderingIndex={i}
                 className="row"
                 >
-          <div className={editing === null ? 'col-md-6' : 'col-md-12'}>
-            <div className={editing === null ? 'well' : ''}>
-              {this._renderQuestion(q, i, editing, this.props.isChanged, this.props.isValid)}
-              {this._renderEditButton(i)} {this._renderRemoveButton(q)}
-            </div>
+          <div className={editing === null ? 'well' : ''}>
+            {this._renderQuestion(q, i, editing, this.props.isChanged, this.props.isValid)}
+            {this._renderEditButton(i)} {this._renderRemoveButton(q)}
           </div>
         </div>
       );
@@ -41,14 +39,13 @@ export default class Form extends React.Component {
         />
       );
     }
-    return (
+    let form = (
       <div>
-        <h1>{form.managed.title.get()}</h1>
         {editing === null ?
-        <div className="form-group">
-        </div>
-        : null }
-        {questionRows}
+         <div className="form-group">
+         </div>
+         : null }
+         {questionRows}
          <select
                  className="form-control"
                  onChange={this._add}
@@ -58,6 +55,25 @@ export default class Form extends React.Component {
            <option value="choice">Choice</option>
            <option value="scoregroup">Score group</option>
          </select>
+      </div>
+    );
+    if (editing === null) {
+      form = React.createElement(
+        Editor,
+        {
+          editor: form,
+          isValid: this.props.isValid,
+          isChanged: this.props.isChanged,
+          showCancelOnChange: true,
+          onSave: this.props.onSave,
+          onCancel: this.props.onCancelEdit
+        }
+      );
+    }
+    return (
+      <div>
+        <h1>{formSpec.managed.title.get()}</h1>
+        {form}
       </div>
     );
   }
@@ -70,7 +86,6 @@ export default class Form extends React.Component {
         Editor,
         {
           key: question.id.get(),
-          question,
           viewer,
           editor,
           isChanged,

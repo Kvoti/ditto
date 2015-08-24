@@ -91,14 +91,11 @@ export default class FormContainer extends React.Component {
     this.state.form.managed.questions.add(emptyQuestion);
     console.log('adding', e.target.value);
     e.target.value = '';
-    this.setState({origForm: _.cloneDeep(this.state.form.get())});
   }
 
   _reorder = (reorderedComponents) => {
     this.state.form.managed.questions.reorder(
       [for (c of reorderedComponents) c.props.orderingIndex]
     );
-    // Simulate a save here (need to add save/cancel for form level operations)
-    this.setState({origForm: _.cloneDeep(this.state.form.get())});
   }
 }
