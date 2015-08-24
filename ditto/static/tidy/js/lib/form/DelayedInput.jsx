@@ -13,15 +13,22 @@ export default class DelayedInput extends React.Component {
   }
 
   render() {
-    let { typingDelay, immediate, onChange, onPendingChange, ...props } = this.props;
+    let { typingDelay, immediate, onChange, onPendingChange, children, ...props } = this.props;
     // TODO how best to share logic to wrap other controls, eg textarea, select, etc?
-    return (
-      <input
-              {...props}
-              onChange={this._onChange}
-              onBlur={this._onBlur}
-      />
-    );
+    let control;
+    let myProps = {
+      onChange: this._onChange,
+      onBlur: this._onBlur
+    };
+    if (React.Children.count(children) > 0) {
+      control = React.cloneElement(
+        children,
+        myProps
+      );
+    } else {
+      control = <input{...props} {...myProps}/>;
+    }
+    return control;
   }
 
   _onChange = (e) => {
