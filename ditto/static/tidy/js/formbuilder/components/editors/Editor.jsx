@@ -1,16 +1,33 @@
-import React from 'react';
+// Generic component to wrap any edit component
+//
+// Handles save/confirm/cancel operations
+//
+import React, { PropTypes } from 'react';
 
 export default class Editor extends React.Component {
+  static propTypes = {
+    editor: PropTypes.node.isRequired,
+    viewer: PropTypes.node.isRequired,
+    isValid: PropTypes.bool,
+    isChanged: PropTypes.bool,
+    onSave: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    showCancelOnChange: PropTypes.bool
+  }
+
   state = {
       isCancelling: false
   };
 
   render() {
-    let { question, viewer, editor } = this.props;
+    let { viewer, editor } = this.props;
     return (
         <div className="well">
           <div className="row">
-            <div className={'col-md-' + (question.scoregroup ? 9 : 6)}>
+            {this._renderSave()} {this._renderCancel()}
+          </div>
+          <div className="row">
+            <div className={'col-md-' + (viewer ? 9 : 6)}>
               {editor}
             </div>
             <div className="col-md-3">
@@ -18,13 +35,16 @@ export default class Editor extends React.Component {
             </div>
           </div>
           <div className="row">
-            {this._renderSave(question)} {this._renderCancel(question)}
+            {this._renderSave()} {this._renderCancel()}
           </div>
         </div>
     );
   }
 
   _renderSave() {
+    if (this.state.isCancelling) {
+      return null;
+    }
     if (this.props.isChanged && this.props.isValid) {
       return (
         <button
@@ -39,6 +59,9 @@ export default class Editor extends React.Component {
   }
 
   _renderCancel() {
+    if (this.props.showCancelOnChange && !this.props.isChanged) {
+      return null;
+    }
     if (!this.state.isCancelling) {
       return (
         <button
