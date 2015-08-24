@@ -733,12 +733,13 @@ footer {
     display: inline-block;
 }    
 .scoregroup-labels li.sortable-enabled,
-.scoregroup-labels li.sortable-dragging
+.scoregroup-labels li.sortable-dragging,
+li.sortable-enabled .well,
+li.sortable-dragging .well
 {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==);
     background-position: left center;
     background-repeat: repeat-y;
-    display: inline-block;
     cursor: -webkit-grab;
     cursor: grab;
 }
