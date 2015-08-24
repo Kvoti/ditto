@@ -122,7 +122,7 @@ export default class Renderer extends React.Component {
       onChange = (v) => part.set(inputValueToInt(v));
       onPendingChange = (v) => part.pend().set(inputValueToInt(v));
     }
-    console.log(part._path, part._options);
+//    console.log(part._path, part._options);
     return (
       <ControlRow
               key={part._path}
