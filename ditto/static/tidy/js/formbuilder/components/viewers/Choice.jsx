@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
 import ControlErrors from '../editors/renderer/ControlErrors';
+import { controlRowErrorClassNames } from '../editors/renderer/utils';
+import ControlValidationIcon from '../editors/renderer/ControlValidationIcon';
 
 export default class Choice extends React.Component {
   static propTypes = {
@@ -20,8 +22,10 @@ export default class Choice extends React.Component {
     const type = this.props.choice.isMultiple ? 'checkbox' : 'radio';
     return (
       <div>
-        <div className="form-group">
-          <label>
+        <div
+              className={controlRowErrorClassNames(this.props.errors, {'form-group': true})}
+                >
+          <label className="control-label">
             {this.props.question || <p><em>Please enter question</em></p>}
             {this.props.choice.isMultiple ?
              <small> (You can select more than one)</small>
@@ -29,11 +33,14 @@ export default class Choice extends React.Component {
              }
              {this.props.isRequired ? ' *' : ''}
           </label>
+          <ControlValidationIcon controlID={this.ID} errors={this.props.errors} />
         </div>
         {this.props.choice.options ?
          this.props.choice.options.map(option => {
             return (
-              <div className={type}>
+              <div
+                      className={controlRowErrorClassNames(this.props.errors, {[type]: true})}
+                      >
               <label key={option}>
               <input
               type={type}
@@ -47,7 +54,11 @@ export default class Choice extends React.Component {
               </div>
             );
          }) : <p><em>Please add at least two options</em></p>}
-        <ControlErrors errors={this.props.errors}/>
+              <div
+                      className={controlRowErrorClassNames(this.props.errors)}
+                      >
+                <ControlErrors errors={this.props.errors}/>
+              </div>
         {this.props.choice.hasOther ?
          (
            <div className="form-group">
