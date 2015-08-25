@@ -355,7 +355,9 @@ footer {
 .page h3 {
     font-size: 20px;
 }
-
+.page p, .page ul {
+    font-size: 110%;
+}
 
 /* TODO copied this here for now, doesnt seem to be other way to have react-select styles */
 /**
