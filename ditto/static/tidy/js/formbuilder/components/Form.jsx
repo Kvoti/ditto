@@ -18,9 +18,11 @@ export default class Form extends React.Component {
     let isEditing = this.state.isEditing;
     if (!isEditing) {
       return (
-        <div>
-          {this._renderEditButton()}
-          <FormViewer form={this.props.form} />
+        <div className="row">
+          <div className="col-md-6 col-md-offset-3">
+            {this._renderEditButton()}
+            <FormViewer form={this.props.form} />
+          </div>
         </div>
       );
     }
