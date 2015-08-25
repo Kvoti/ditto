@@ -45,7 +45,7 @@ export default class Form extends React.Component {
       ref: index,
       onChange,
       onPendingChange,
-      value: this.state.form.managed[index].get(),
+      value: this.state.form.managed[index].getPendingOrCurrent(),
       errors: this.state.form.managed[index].errors,
       validateImmediately: this.state.form.managed[index].isBound
     };
