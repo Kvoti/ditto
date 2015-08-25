@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import getID from '../../../lib/id';
 import DelayedInput from '../../../lib/form/DelayedInput';
 import ControlErrors from '../editors/renderer/ControlErrors';
+import ControlValidationIcon from '../editors/renderer/ControlValidationIcon';
+import { controlRowErrorClassNames } from '../editors/renderer/utils';
 
 export default class Text extends React.Component {
   constructor(props) {
@@ -35,19 +37,28 @@ export default class Text extends React.Component {
         value: this.props.value
       }
     );
+    // TODO use ControlRow here? Same markup, just need ControlRow to be able to wrap a control
     return (
-      <div className="form-group">
-        <label htmlFor={this.ID}>
+      <div
+              className={controlRowErrorClassNames(this.props.errors, {'form-group': true})}
+              >
+        <label
+                htmlFor={this.ID}
+                className='control-label'
+                >
           {this.props.question}?{this.props.isRequired ? ' *' : ' '}
         </label>
-        <DelayedInput
-                immediate={this.props.validateImmediately}
-                onChange={this.props.onChange}
-                onPendingChange={this.props.onPendingChange}
-                >
-          {control}
-        </DelayedInput>
-        <ControlErrors errors={this.props.errors}/>
+        <div style={{position: 'relative'}}>
+          <DelayedInput
+                  immediate={this.props.validateImmediately}
+                  onChange={this.props.onChange}
+                  onPendingChange={this.props.onPendingChange}
+                  >
+            {control}
+          </DelayedInput>
+          <ControlValidationIcon controlID={this.ID} errors={this.props.errors} />
+        </div>
+        <ControlErrors errors={this.props.errors} />
       </div>
     );
   }
