@@ -11,7 +11,7 @@ import FormViewer from './viewers/Form';
 
 export default class Form extends React.Component {
   state = {
-    isEditing: true
+    isEditing: false
   };
 
   render() {
