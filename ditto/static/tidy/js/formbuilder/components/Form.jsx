@@ -7,31 +7,40 @@ import Text from './viewers/Text';
 import Choice from './viewers/Choice';
 import ScoreGroupViewer from './viewers/ScoreGroup';
 import Editor from './editors/Editor';
+import FormViewer from './viewers/Form';
 
 export default class Form extends React.Component {
   state = {
-    editing: null
+    isEditing: true
   };
 
   render() {
-    let editing = this.state.editing;
+    let isEditing = this.state.isEditing;
+    if (!isEditing) {
+      return (
+        <div>
+          {this._renderEditButton()}
+          <FormViewer form={this.props.form} />
+        </div>
+      );
+    }
     let formSpec = this.props.form;
     let questionRows = formSpec.managed.questions.members.map(([j, q], i) => {
-     return (
+      return (
         <div
                 key={q.id.get()}
-                draggable={true}
+                draggable={isEditing}
                 orderingIndex={i}
                 className="row"
                 >
-          <div className={editing === null ? 'well' : ''}>
-            {this._renderQuestion(q, i, editing, this.props.isChanged, this.props.isValid)}
-            {this._renderEditButton(i)} {this._renderRemoveButton(q)}
+          <div className="well">
+            {this._renderQuestion(q, i, isEditing, this.props.isChanged, this.props.isValid)}
+            {this._renderRemoveButton(q)}
           </div>
         </div>
-      );
+     );
     });
-    if (editing === null) {
+    if (isEditing) {
       questionRows = (
         <Sortable
                 components={questionRows}
@@ -41,10 +50,6 @@ export default class Form extends React.Component {
     }
     let form = (
       <div>
-        {editing === null ?
-         <div className="form-group">
-         </div>
-         : null }
          {questionRows}
          <select
                  className="form-control"
@@ -57,16 +62,15 @@ export default class Form extends React.Component {
          </select>
       </div>
     );
-    if (editing === null) {
+    if (isEditing) {
       form = React.createElement(
         Editor,
         {
           editor: form,
           isValid: this.props.isValid,
           isChanged: this.props.isChanged,
-          showCancelOnChange: true,
-          onSave: this.props.onSave,
-          onCancel: this.props.onCancelEdit
+          onSave: this._save,
+          onCancel: this._cancelEdit,
         }
       );
     }
@@ -77,25 +81,9 @@ export default class Form extends React.Component {
       </div>
     );
   }
-
-  _renderQuestion(question, index, editingIndex, isChanged, isValid) {
-    let viewer = React.createElement(this._getViewComponent(question), question.get());
-    if (editingIndex === index) {
-      let editor = React.createElement(this._getEditComponent(question), { question });
-      return React.createElement(
-        Editor,
-        {
-          key: question.id.get(),
-          viewer,
-          editor,
-          isChanged,
-          isValid,
-          onCancel: this._cancelEdit,
-          onSave: this._save
-        }
-      );
-    }
-    return viewer;
+  
+  _renderQuestion(question) {
+    return React.createElement(this._getEditComponent(question), { question });
   }
 
   _getViewComponent(question) {
@@ -118,12 +106,12 @@ export default class Form extends React.Component {
     return Renderer;
   }
   
-  _renderEditButton(index) {
-    if (this.state.editing === null) {
+  _renderEditButton() {
+    if (!this.state.isEditing) {
       return (
         <button
                 className="btn btn-default"
-                onClick={this._editQuestion.bind(this, index)}
+                onClick={this._edit}
                 >
           Edit
         </button>
@@ -133,7 +121,7 @@ export default class Form extends React.Component {
   }
 
   _renderRemoveButton(question) {
-    if (this.state.editing === null) {
+    if (this.state.isEditing) {
       return (
         <button
                 className="btn btn-danger"
@@ -148,20 +136,20 @@ export default class Form extends React.Component {
 
   _add = (e) => {
     this.props.onAddQuestion(e);
-    this.setState({editing: this.props.form.managed.questions.members.length - 1});
+    this.setState({isEditing: this.props.form.managed.questions.members.length - 1});
   }
 
-  _editQuestion(index) {
-    this.setState({editing: index});
+  _edit = (index) => {
+    this.setState({isEditing: true});
   }
 
   _save = () => {
-    this.setState({editing: null});
+    this.setState({isEditing: false});
     this.props.onSave();
   }
 
   _cancelEdit = () => {
-    this.setState({editing: null});
+    this.setState({isEditing: false});
     this.props.onCancelEdit();
   }
 }

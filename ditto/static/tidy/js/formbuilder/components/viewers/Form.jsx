@@ -25,15 +25,10 @@ export default class Form extends React.Component {
       );
     });
     return (
-      <div className="row">
-        <div className="col-md-6 col-md-offset-3">
           <form onSubmit={this._save}>
-            <h1>{formSpec.managed.title.get()}</h1>
             {questionRows}
-            <input type="submit" className="btn btn-success" value="Save"/>
+            <input type="submit" className="btn btn-success" value="Submit"/>
           </form>
-        </div>
-      </div>
     );
   }
 

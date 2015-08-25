@@ -5,8 +5,7 @@ import { get } from '../../../../js/request';
 import camelCaseify from '../../lib/camelCaseify';
 import { ManagedObject } from '../../lib/schema/schema';
 import * as formSchema from '../schema';
-/* import Form from './Form'; */
-import Form from './viewers/Form';
+import Form from './Form';
 
 const APIURL = '/di/api/formbuilder/';
 

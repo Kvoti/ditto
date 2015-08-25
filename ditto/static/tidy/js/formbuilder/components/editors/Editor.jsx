@@ -22,12 +22,12 @@ export default class Editor extends React.Component {
   render() {
     let { viewer, editor } = this.props;
     return (
-        <div className="well">
+        <div>
           <div className="row">
             {this._renderSave()} {this._renderCancel()}
           </div>
           <div className="row">
-            <div className={'col-md-' + (viewer ? 9 : 6)}>
+            <div className={'col-md-' + (viewer ? 9 : 9)}>
               {editor}
             </div>
             <div className="col-md-3">
