@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
-import classNames from 'classnames';
+import { controlRowErrorClassNames } from './utils';
 
 import Control from './Control';
 import ControlErrors from './ControlErrors';
 
 export default class ControlRow extends React.Component {
   static propTypes = {
-    ...Control.PropTypes,
+      ...Control.PropTypes,
     orderingIndex: PropTypes.number
   }
 
@@ -15,7 +15,7 @@ export default class ControlRow extends React.Component {
     return (
       <div
               draggable={orderingIndex !== undefined}
-              className={this._rowClassNames(controlProps.errors)}
+              className={controlRowErrorClassNames(controlProps.errors, {'form-group': true})}
               >
         <label className="control-label col-md-4" htmlFor={controlProps.id}>
           <span>
@@ -24,24 +24,10 @@ export default class ControlRow extends React.Component {
           </span>
         </label>
         <div className="col-md-8">
-	  <Control {...controlProps} />
-	  <ControlErrors errors={controlProps.errors} />
-	</div>
+          <Control {...controlProps} />
+          <ControlErrors errors={controlProps.errors} />
+        </div>
       </div>
-    );
-  }
-
-  _rowClassNames(errors) {
-    let validationStatus;
-    if (errors !== null) {
-      validationStatus = errors.length ? 'error' : 'success';
-    }
-    return classNames(
-      'form-group',
-      {
-        'has-feedback': validationStatus,
-        [`has-${validationStatus}`]: validationStatus
-      }
     );
   }
 
