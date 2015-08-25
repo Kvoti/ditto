@@ -27,6 +27,20 @@ export function string(options={}) {
   };
 }
 
+
+export function scoregroup(labels, noOfItems, options={}) {
+  if (options.isRequired === undefined) {
+    options.isRequired = false;
+  }
+  return function _string(managedObject, parent, basePath) {
+    let key = basePath[basePath.length - 1];
+    parent[key] = new managers.ScoreGroupManager(
+      managedObject, parent, basePath, labels, noOfItems, options
+    );
+    return parent[key];
+  };
+}
+
 export function choice(choices, options={}) {
   if (options.isRequired === undefined) {
     options.isRequired = false;

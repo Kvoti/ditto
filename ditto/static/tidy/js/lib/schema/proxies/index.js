@@ -5,3 +5,4 @@ export * from './BoolManager';
 export * from './IntegerManager';
 export * from './ChoiceManager';
 export * from './MultiChoiceManager';
+export * from './ScoreGroupManager';

@@ -21,20 +21,20 @@ def run():
                     "Ember",
                 ]
             ),
-            # models.Form.score_group(
-            #     question="Please rate how you feel about the following",
-            #     is_required=True,
-            #     labels=[
-            #         "Disagree",
-            #         "No opinion",
-            #         "Agree"
-            #     ],
-            #     items=[
-            #         "React is cool",
-            #         "Coding is fun",
-            #         "Client coding is hard",
-            #     ],
-            # )
+            models.Form.score_group(
+                question="Please rate how you feel about the following",
+                is_required=True,
+                labels=[
+                    "Disagree",
+                    "No opinion",
+                    "Agree"
+                ],
+                items=[
+                    "React is cool",
+                    "Coding is fun",
+                    "Client coding is hard",
+                ],
+            )
         ]
     )
 

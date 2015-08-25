@@ -82,7 +82,7 @@ export default class Form extends React.Component {
       } else if (q.choice) {
         values.managed.add('', this._getChoiceSchema(q));
       } else {
-        // TODO have a schema.compose?
+        values.managed.add([], this._getScoreGroupSchema(q));
       }
     });
     // TODO this is a hack until I sort out initial values vs data, URGH!
@@ -127,10 +127,9 @@ export default class Form extends React.Component {
           }
         };
       }
+    } else if (scoregroup) {
+      handler = (i, v) => value.setChoice(i, v);
     }
-    //else if (scoregroup) {
-    /* handler = ScoreGroup;
-       } */
     return [handler, pendingChangeHandler];
   }
 
@@ -153,6 +152,16 @@ export default class Form extends React.Component {
     );
   }
 
+  _getScoreGroupSchema(question) {
+    return schema.scoregroup(
+      question.scoregroup.labels.get(),
+      question.scoregroup.items.members.length,
+      {
+        isRequired: question.isRequired
+      }
+    );
+  }
+    
   _save = (e) => {
     e.preventDefault();
     this.state.form.validateWithUnbound();
