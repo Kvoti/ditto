@@ -17,7 +17,7 @@ export default class Form extends React.Component {
     let questionRows = formSpec.managed.questions.members.map(([j, q], i) => {
       return (
         <div
-                key={q.id.get()}
+                key={i}
                 className="well"
                 >
           {this._renderQuestion(q, i)}

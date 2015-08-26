@@ -1,8 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import { get } from '../../../../js/request';
-import camelCaseify from '../../lib/camelCaseify';
+import { get, put } from '../../../../js/request';
 import { objToCamelCase, objToUnderscore } from '../../lib/camelCaseify';
 import { ManagedObject } from '../../lib/schema/schema';
 import * as formSchema from '../schema';
@@ -21,7 +20,6 @@ export default class FormContainer extends React.Component {
   componentDidMount() {
     get(APIURL)
       .done(res => {
-        camelCaseify(res);
         objToCamelCase(res);
         // TODO only handling one form at the moment
         let form = this._buildForm(res[0]);
@@ -61,10 +59,16 @@ export default class FormContainer extends React.Component {
   }
 
   _save = () => {
-    // Pretend we've persisted change for now
+    let formData = _.cloneDeep(this.state.form.get());
+    objToUnderscore(formData);
+    // TODO handle success/failure!
+    put(
+      `${APIURL}${formData.slug}/`,
+      formData
+    );
     this.setState({origForm: _.cloneDeep(this.state.form.get())});
   }
-  
+
   _restoreOriginal = () => {
 //    console.log('restoring to', this.state.origForm);
     this.setState({form: this._buildForm(this.state.origForm)});

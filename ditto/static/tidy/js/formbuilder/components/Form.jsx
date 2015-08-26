@@ -30,7 +30,7 @@ export default class Form extends React.Component {
     let questionRows = formSpec.managed.questions.members.map(([j, q], i) => {
       return (
         <div
-                key={q.id.get()}
+                key={i}
                 draggable={isEditing}
                 orderingIndex={i}
                 className="row"

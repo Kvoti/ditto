@@ -10,6 +10,42 @@ class FormManager(models.Manager):
             getattr(form, creator)(**kwargs)
         return form
 
+    def create_form_from_data(self, data):
+        # TODO validation
+        questions = []
+        for question in data['questions']:
+            if 'text' in question:
+                questions.append(
+                    Form.text(
+                        question=question['question'],
+                        is_required=question['is_required'],
+                    )
+                )
+            elif 'choice' in question:
+                questions.append(
+                    Form.choice(
+                        question=question['question'],
+                        is_required=question['is_required'],
+                        options=question['choice']['options']
+                    )
+                )
+            else:
+                questions.append(
+                    Form.score_group(
+                        question=question['question'],
+                        is_required=question['is_required'],
+                        # TODO save scores as well
+                        labels=[l['label'] for l in question['scoregroup']['labels']],
+                        items=[i['text'] for i in question['scoregroup']['items']],
+                        ##################################################
+                    )
+                )
+        return self.create_form(
+            title=data['title'],
+            slug=data['slug'],
+            questions=questions
+        )
+
 
 class Form(models.Model):
     slug = models.SlugField(unique=True)

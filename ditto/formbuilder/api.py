@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from rest_framework import serializers, generics
+from rest_framework import serializers, generics, decorators, response
 
 from . import models
 
@@ -46,7 +46,7 @@ class ScoreLableSerializer(serializers.ModelSerializer):
             'default_score'
         )
 
-        
+
 class ScoreGroupSerializer(serializers.ModelSerializer):
     items = ScoreGroupItemSerializer(many=True)
     labels = ScoreLableSerializer(many=True)
@@ -67,7 +67,6 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Question
         fields = (
-            'id',
             'question',
             'is_required',
             'text',
@@ -93,6 +92,17 @@ class FormList(generics.ListAPIView):
     serializer_class = FormSerializer
 
 
+@decorators.api_view(['PUT'])
+def form(request, slug):
+    # For now just rip up and recreate the whole form when saving changes.
+    # Should probably throw an error if the form has submissions.
+    # In future we _might_ allow granular changes
+    models.Form.objects.filter(slug=slug).delete()
+    form = models.Form.objects.create_form_from_data(request.data)
+    return response.Response(FormSerializer(form).data)
+
+
 urlpatterns = patterns('',
-    url(r'^', FormList.as_view()),
+    url(r'^$', FormList.as_view()),
+    url(r'^(?P<slug>\w+)/$', form)
 )

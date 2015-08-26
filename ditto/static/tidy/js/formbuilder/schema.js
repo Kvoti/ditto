@@ -39,7 +39,6 @@ export const form = schema.shape({
 });
 
 export const textQuestion = schema.shape({
-  id: schema.integer(),
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   // choice: schema.nullValue(),
@@ -60,7 +59,6 @@ export const textQuestion = schema.shape({
 });
 
 export const choiceQuestion = schema.shape({
-  id: schema.integer(),
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   choice: schema.shape({
@@ -87,7 +85,6 @@ export const choiceQuestion = schema.shape({
 });
 
 export const scoreGroupQuestion = schema.shape({
-  id: schema.integer(),
   question: schema.string({isRequired: true}),
   isRequired: schema.bool(),
   scoregroup: schema.shape({
