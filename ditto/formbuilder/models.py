@@ -19,13 +19,9 @@ class FormManager(models.Manager):
                 del question['text']
                 questions.append(Form.text(**question))
             elif 'choice' in question:
-                questions.append(
-                    Form.choice(
-                        question=question['question'],
-                        is_required=question['is_required'],
-                        options=question['choice']['options']
-                    )
-                )
+                question.update(question['choice'])
+                del question['choice']
+                questions.append(Form.choice(**question))
             else:
                 questions.append(
                     Form.score_group(
