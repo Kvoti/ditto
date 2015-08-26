@@ -23,16 +23,9 @@ class FormManager(models.Manager):
                 del question['choice']
                 questions.append(Form.choice(**question))
             else:
-                questions.append(
-                    Form.score_group(
-                        question=question['question'],
-                        is_required=question['is_required'],
-                        # TODO save scores as well
-                        labels=[l['label'] for l in question['scoregroup']['labels']],
-                        items=[i['text'] for i in question['scoregroup']['items']],
-                        ##################################################
-                    )
-                )
+                question.update(question['scoregroup'])
+                del question['scoregroup']
+                questions.append(Form.score_group(**question))
         return self.create_form(
             title=data['title'],
             slug=data['slug'],
@@ -91,13 +84,12 @@ class Form(models.Model):
         labels = kwargs.pop('labels')
         items = kwargs.pop('items')
         score_group = self._append(ScoreGroup, **kwargs)
-        default_scores = range(len(labels))
         labels = [
             ScoreLabel.objects.create(
                 question=score_group,
-                label=label,
+                label=label['label'],
                 order=i + 1,
-                default_score=default_scores[i]
+                default_score=label['default_score']
             )
             for i, label in enumerate(labels)
         ]
@@ -105,7 +97,7 @@ class Form(models.Model):
             if isinstance(item, basestring):
                 scores = [None] * len(labels)
             else:
-                item, scores = item
+                item, scores = item['text'], item['scores']
             item = ScoreGroupItem.objects.create(
                 question=score_group,
                 text=item,
