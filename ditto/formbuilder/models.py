@@ -142,7 +142,7 @@ class Text(Question):
 class Choice(Question):
     is_multiple = models.BooleanField(default=False)
     has_other = models.BooleanField(default=False)
-    other_text = models.CharField(max_length=255)
+    other_text = models.CharField(max_length=255, blank=True)
 
     def save_response(self, response, data):
         if self.is_multiple:
