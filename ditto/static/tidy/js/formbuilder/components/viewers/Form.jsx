@@ -133,7 +133,7 @@ export default class Form extends React.Component {
     return schema.string({
       // TODO decide on length vs chars
       maxLength: question.text.maxChars === null ? undefined : question.text.maxChars,
-      isRequired: question.isRequired
+      isRequired: question.isRequired.get()
     });
   }
 
@@ -142,7 +142,7 @@ export default class Form extends React.Component {
     return factory(
       question.choice.options.get(),
       {
-        isRequired: question.isRequired
+        isRequired: question.isRequired.get()
       }
     );
   }
@@ -152,11 +152,11 @@ export default class Form extends React.Component {
       question.scoregroup.labels.get(),
       question.scoregroup.items.members.length,
       {
-        isRequired: question.isRequired
+        isRequired: question.isRequired.get()
       }
     );
   }
-    
+
   _save = (e) => {
     e.preventDefault();
     this.state.form.validateWithUnbound();
