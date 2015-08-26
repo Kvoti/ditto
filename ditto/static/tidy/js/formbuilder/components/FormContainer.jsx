@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import slug from 'slug';
 
 import { get, put } from '../../../../js/request';
 import { objToCamelCase, objToUnderscore } from '../../lib/camelCaseify';
@@ -68,11 +69,26 @@ export default class FormContainer extends React.Component {
           <ul>
             {forms}
           </ul>
-          <button
-                  className="btn btn-default"
-                  >
-            Add form
-          </button>
+          <div className="form-inline">
+            <div className="form-group">
+              <label htmlFor="formTitle">
+                Title
+              </label>
+              <input
+                      id="formTitle"
+                      ref="formTitle"
+                      className="form-control"
+                      placeholder="Enter a title for the new form"
+              />
+            </div>
+            {' '}
+            <button
+                    className="btn btn-default"
+                    onClick={this._addForm}
+                    >
+              Add form
+            </button>
+          </div>
         </div>
       );
     }
@@ -105,6 +121,23 @@ export default class FormContainer extends React.Component {
 
   _listForms = () => {
     this.setState({showing: null});
+  }
+
+  _addForm = () => {
+    let input = React.findDOMNode(this.refs.formTitle);
+    let title = input.value;
+    if (title) {
+      input.value = '';
+      let forms = this.state.forms;
+      let form = this._buildForm({title: title, slug: slug(title)});
+      forms.push(form);
+      let origForms = this.state.origForms;
+      origForms.push(_.cloneDeep(form.get()));
+      this.setState({
+        forms: forms,
+        origForms: origForms
+      });
+    }
   }
 
   _save = () => {
@@ -143,7 +176,10 @@ export default class FormContainer extends React.Component {
         scoregroup: {}
       };
     }
-    this.state.form.managed.questions.add(emptyQuestion);
+    // TODO this default should come from schema
+    emptyQuestion.isRequired = false;
+    //////////////////////////////////////////////////////////////////////
+    this.state.forms[this.state.showing].managed.questions.add(emptyQuestion);
     console.log('adding', e.target.value);
     e.target.value = '';
   }
