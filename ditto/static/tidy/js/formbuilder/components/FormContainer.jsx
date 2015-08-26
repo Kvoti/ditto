@@ -14,7 +14,9 @@ export default class FormContainer extends React.Component {
      } */
 
   state = {
-    form: undefined
+    forms: [],
+    origForms: [],
+    showing: null
   }
 
   componentDidMount() {
@@ -22,16 +24,18 @@ export default class FormContainer extends React.Component {
       .done(res => {
         objToCamelCase(res);
         // TODO only handling one form at the moment
-        let form = this._buildForm(res[0]);
-        this.setState(
-          {
-            // TODO won't need cloneDeep when making sure to use immutable data,
-            // can then compare by reference
-            origForm: _.cloneDeep(form.get()),
-            // TODO form is not plain object but for now can't figure out how to
-            // to this more cleanly
-            form
-          });
+        let forms = [];
+        let origForms = [];
+        res.forEach(formSpec => {
+          // TODO form is not plain object but for now can't figure out how to
+          // to this more cleanly
+          let form = this._buildForm(formSpec);
+          forms.push(form);
+          // TODO won't need cloneDeep when making sure to use immutable data,
+          // can then compare by reference
+          origForms.push(_.cloneDeep(form.get()));
+        });
+        this.setState({ forms, origForms });
       });
   }
 
@@ -43,30 +47,77 @@ export default class FormContainer extends React.Component {
   }
 
   render() {
-    if (this.state.form) {
+    if (this.state.showing === null) {
+      let forms;
+      if (this.state.forms.length) {
+        forms = this.state.forms.map((form, i) => {
+          return (
+            <li key={form.managed.slug.get()}>
+              <a
+                      href="#"
+                      onClick={this._showForm.bind(this, i)}
+                      >
+                {form.managed.title.get()}
+              </a>
+            </li>
+          );
+        });
+      }
       return (
-        <Form form={this.state.form}
-                isChanged={this.state.form.isChanged(this.state.origForm)}
-                isValid={this.state.form.isValid()}
+        <div>
+          <ul>
+            {forms}
+          </ul>
+          <button
+                  className="btn btn-default"
+                  >
+            Add form
+          </button>
+        </div>
+      );
+    }
+    let form = this.state.forms[this.state.showing];
+    // TODO keep this container pure and move list stuff in to a FormList component
+    return (
+      <div>
+        <a
+                href="#"
+                className="btn btn-default"
+                onClick={this._listForms}
+                >
+          Back to form list
+        </a>
+        <Form form={form}
+                isChanged={form.isChanged(this.state.origForms[this.state.showing])}
+                isValid={form.isValid()}
                 onCancelEdit={this._restoreOriginal}
                 onReorder={this._reorder}
                 onAddQuestion={this._add}
                 onSave={this._save}
         />
-      );
-    }
-    return <p>Loading ...</p>;
+      </div>
+    );
+  }
+
+  _showForm(i) {
+    this.setState({showing: i});
+  }
+
+  _listForms = () => {
+    this.setState({showing: null});
   }
 
   _save = () => {
-    let formData = _.cloneDeep(this.state.form.get());
+    let formData = _.cloneDeep(this.state.forms[this.state.showing].get());
     objToUnderscore(formData);
     // TODO handle success/failure!
     put(
       `${APIURL}${formData.slug}/`,
       formData
     );
-    this.setState({origForm: _.cloneDeep(this.state.form.get())});
+    let origForms = this.state.origForms;
+    origForms[this.state.showing] = _.cloneDeep(this.state.forms[this.state.showing].get());
+    this.setState({origForms: origForms});
   }
 
   _restoreOriginal = () => {
