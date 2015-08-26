@@ -135,7 +135,8 @@ export default class FormContainer extends React.Component {
       origForms.push(_.cloneDeep(form.get()));
       this.setState({
         forms: forms,
-        origForms: origForms
+        origForms: origForms,
+        showing: forms.length - 1
       });
     }
   }
