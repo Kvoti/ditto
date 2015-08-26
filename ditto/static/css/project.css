@@ -731,7 +731,8 @@ footer {
 /* } */
 
 /* TODO move these styles inline */
-.scoregroup-labels li.sortable-dragging, .scoregroup-labels li.sortable-enabled {
+.scoregroup-labels li.sortable-dragging, .scoregroup-labels li.sortable-enabled,
+.scoregroup-labels {
     display: inline-block;
 }    
 .scoregroup-labels li.sortable-enabled,
