@@ -138,7 +138,6 @@ export default class Form extends React.Component {
 
   _add = (e) => {
     this.props.onAddQuestion(e);
-    this.setState({isEditing: this.props.form.managed.questions.members.length - 1});
   }
 
   _edit = (index) => {

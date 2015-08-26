@@ -92,8 +92,6 @@ export default class FormContainer extends React.Component {
         scoregroup: {}
       };
     }
-    // TODO what to really do for the new id?
-    emptyQuestion.id = this.state.form.managed.questions.members.length + 1;
     this.state.form.managed.questions.add(emptyQuestion);
     console.log('adding', e.target.value);
     e.target.value = '';
