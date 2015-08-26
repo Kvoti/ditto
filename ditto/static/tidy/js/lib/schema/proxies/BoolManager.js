@@ -8,9 +8,8 @@ export class BoolManager extends BaseItemManager {
   }
 
   _validateBoundValue() {
-    const value = this.get();
     let errors = [];
-    if (this._options.isRequired && value === false) {
+    if (this._options.isRequired && this._isEmpty()) {
       errors.push('This field is required');
     }
     return errors;

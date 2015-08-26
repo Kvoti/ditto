@@ -68,7 +68,7 @@ export default class Editor extends React.Component {
                 className="btn btn-default"
                 onClick={this.props.isChanged ? this._confirmCancel : this._cancel}
                 >
-          Cancel
+          Close
         </button>
       );
     }

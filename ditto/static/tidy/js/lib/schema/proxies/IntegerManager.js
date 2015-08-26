@@ -11,10 +11,10 @@ export class IntegerManager extends BaseItemManager {
     let errors = super._validateBoundValue();
     let value = this.get();
     //console.log('value', value);
-    if (this._options.isRequired && value === null) {
+    if (this._options.isRequired && this._isEmpty()) {
       errors.push('This field is required');
     }
-    if (value !== null) {
+    if (!this._isEmpty()) {
       let parsedValue = parseInt(value, 10);
       if (isNaN(parsedValue)) {
         errors.push('Please enter an integer');
@@ -33,6 +33,6 @@ export class IntegerManager extends BaseItemManager {
   }
 
   _valueIsEmpty(value) {
-    return value === null;
+    return value === null || value === undefined;
   }
 }

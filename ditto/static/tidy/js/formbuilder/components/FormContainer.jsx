@@ -142,16 +142,21 @@ export default class FormContainer extends React.Component {
   }
 
   _save = () => {
-    let formData = _.cloneDeep(this.state.forms[this.state.showing].get());
-    objToUnderscore(formData);
-    // TODO handle success/failure!
-    put(
-      `${APIURL}${formData.slug}/`,
-      formData
-    );
-    let origForms = this.state.origForms;
-    origForms[this.state.showing] = _.cloneDeep(this.state.forms[this.state.showing].get());
-    this.setState({origForms: origForms});
+    this.state.forms[this.state.showing].validateWithUnbound();
+    if (this.state.forms[this.state.showing].isValid()) {
+      let formData = _.cloneDeep(this.state.forms[this.state.showing].get());
+      objToUnderscore(formData);
+      // TODO handle success/failure!
+      put(
+        `${APIURL}${formData.slug}/`,
+        formData
+      );
+      let origForms = this.state.origForms;
+      origForms[this.state.showing] = _.cloneDeep(this.state.forms[this.state.showing].get());
+      this.setState({origForms: origForms});
+    } else {
+      this.forceUpdate();
+    }
   }
 
   _restoreOriginal = () => {

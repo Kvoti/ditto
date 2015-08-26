@@ -146,7 +146,6 @@ export default class Form extends React.Component {
   }
 
   _save = () => {
-    this.setState({isEditing: false});
     this.props.onSave();
   }
 

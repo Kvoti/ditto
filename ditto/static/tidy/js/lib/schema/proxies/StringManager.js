@@ -10,7 +10,7 @@ export class StringManager extends BaseItemManager {
   _validateBoundValue() {
     let errors = super._validateBoundValue();
     const value = this.get();
-    if (this._options.isRequired && value === '') {
+    if (this._options.isRequired && this._isEmpty()) {
       errors.push('This field is required');
     }
     if (this._options.maxLength !== undefined && value.length > this._options.maxLength) {
@@ -24,6 +24,6 @@ export class StringManager extends BaseItemManager {
   }
 
   _valueIsEmpty(value) {
-    return value === '';
+    return value === '' || value === undefined;
   }
 }
