@@ -21,6 +21,7 @@ export default class Form extends React.Component {
         <div className="row">
           <div className="col-md-6 col-md-offset-3">
             {this._renderEditButton()}
+            <h1>{this.props.form.managed.title.get()}</h1>
             <FormViewer form={this.props.form} />
           </div>
         </div>
