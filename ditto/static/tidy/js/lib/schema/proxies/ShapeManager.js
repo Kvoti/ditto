@@ -1,8 +1,8 @@
 import { BaseCollectionManager } from './BaseCollectionManager';
 
 export class ShapeManager extends BaseCollectionManager {
-  constructor(question, parent, path, MemberManagers) {
-    super(question, parent, path);
+  constructor(managedObject, parent, path, MemberManagers) {
+    super(managedObject, parent, path);
     this._MemberManagers = MemberManagers;
     this._object._set(this._path, {});
     for (let k in MemberManagers) {

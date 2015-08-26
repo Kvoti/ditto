@@ -1,8 +1,8 @@
 import { BaseCollectionManager } from './BaseCollectionManager';
 
 export class ArrayManager extends BaseCollectionManager {
-  constructor(question, parent, path, MemberManager, options) {
-    super(question, parent, path, options);
+  constructor(managedObject, parent, path, MemberManager, options) {
+    super(managedObject, parent, path, options);
     this._MemberManager = MemberManager;
     this._object._set(this._path, []);
   }
@@ -30,7 +30,7 @@ export class ArrayManager extends BaseCollectionManager {
       }
     }
     console.log('adding', value);
-    // TODO details of storage should all live with Question as an array
+    // TODO details of storage should all live with ManagedObject as an array
     // _might_ be stored as a real Array or an ImmutableJS array or object
     // or something else entirely.
     let array = this.get()
@@ -80,7 +80,7 @@ export class ArrayManager extends BaseCollectionManager {
   }
 
   _remove(index) {
-    // TODO details of storage should all live with Question as an array
+    // TODO details of storage should all live with ManagedObject as an array
     // _might_ be stored as a real Array or an ImmutableJS array or object
     // or something else entirely.
     let array = this.get();

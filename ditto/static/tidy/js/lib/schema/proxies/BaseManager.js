@@ -1,7 +1,7 @@
 export default class BaseManager {
-  constructor(question, parent, path, options) {
+  constructor(managedObject, parent, path, options) {
     this.__isManager = true;
-    this._object = question;
+    this._object = managedObject;
     this.parent = parent;
     this._path = path;
     this._options = options;
@@ -77,7 +77,7 @@ export default class BaseManager {
   canReorder() {
     return (
       this.parent &&
-        this.parent.canReorderItems && // TODO this only needed as Question api not like Manager api, maybe should be?
+        this.parent.canReorderItems && // TODO this only needed as ManagedObject api not like Manager api, maybe should be?
         this.parent.canReorderItems()
     );
   }
