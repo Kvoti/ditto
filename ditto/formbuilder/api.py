@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from rest_framework import serializers, generics, decorators, response
+from django.shortcuts import get_object_or_404
 
 from . import models
 
@@ -102,7 +103,18 @@ def form(request, slug):
     return response.Response(FormSerializer(form).data)
 
 
+@decorators.api_view(['POST'])
+def submit_form(request, slug):
+    form = get_object_or_404(models.Form, slug=slug);
+    form.submit_response(
+        request.user,
+        request.data
+    )
+    return response.Response('ok');
+
+
 urlpatterns = patterns('',
     url(r'^$', FormList.as_view()),
-    url(r'^(?P<slug>[\w\-]+)/$', form)
+    url(r'^(?P<slug>[\w\-]+)/$', form),
+    url(r'^(?P<slug>[\w\-]+)/responses/$', submit_form)
 )

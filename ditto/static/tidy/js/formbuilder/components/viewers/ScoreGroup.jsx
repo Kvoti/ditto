@@ -60,8 +60,8 @@ export default class ScoreGroup extends React.Component {
                   <input
                   name={item.text}
                   type="radio"
-                  onChange={() => this.props.onChange(i, label)}
-                  checked={this.props.value[i] === label}
+                  onChange={() => this.props.onChange(i, label.label)}
+                  checked={this.props.value[i] === label.label}
                   />
                   </td>
                 );

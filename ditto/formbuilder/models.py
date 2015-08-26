@@ -195,14 +195,13 @@ class Option(models.Model):
 
 class ScoreGroup(Question):
     def save_response(self, response, data):
-        for i, item in enumerate(self.items.order_by('order')):
-            ScoreGroupAnswer.objects.create(
-                response=response,
-                score=item.scores.get(
+        if data:
+            for i, item in enumerate(self.items.order_by('order')):
+                ScoreGroupAnswer.objects.create(
+                    response=response,
                     item=item,
-                    label__label=data[i]
+                    label=self.labels.get(label=data[i])
                 )
-            )
 
 
 class ScoreGroupItem(models.Model):
@@ -263,4 +262,5 @@ class ChoiceAnswer(Answer):
 
 
 class ScoreGroupAnswer(Answer):
-    score = models.ForeignKey(Score)
+    item = models.ForeignKey(ScoreGroupItem, related_name="answers")
+    label = models.ForeignKey(ScoreLabel, related_name="answers")

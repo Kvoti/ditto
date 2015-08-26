@@ -4,6 +4,7 @@ import Text from './Text';
 import Choice from './Choice';
 import ScoreGroup from './ScoreGroup';
 import * as schema from '../../../lib/schema/schema';
+import { post } from '../../../../../js/request';
 
 export default class Form extends React.Component {
   constructor(props) {
@@ -149,7 +150,7 @@ export default class Form extends React.Component {
 
   _getScoreGroupSchema(question) {
     return schema.scoregroup(
-      question.scoregroup.labels.get(),
+      question.scoregroup.labels.members.map(([i, m])=> m.label.get()),
       question.scoregroup.items.members.length,
       {
         isRequired: question.isRequired.get()
@@ -162,6 +163,11 @@ export default class Form extends React.Component {
     this.state.form.validateWithUnbound();
     this.forceUpdate();
     let isValid = this.state.form.isValid();
-    console.log('saving', 'valid?', isValid);
+    if (isValid) {
+      post(
+        `/di/api/formbuilder/${this.props.form.managed.slug.get()}/responses/`,
+        this.state.form.get()
+      );
+    }
   }
 }
