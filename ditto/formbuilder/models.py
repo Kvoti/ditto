@@ -15,12 +15,9 @@ class FormManager(models.Manager):
         questions = []
         for question in data['questions']:
             if 'text' in question:
-                questions.append(
-                    Form.text(
-                        question=question['question'],
-                        is_required=question['is_required'],
-                    )
-                )
+                question.update(question['text'])
+                del question['text']
+                questions.append(Form.text(**question))
             elif 'choice' in question:
                 questions.append(
                     Form.choice(
