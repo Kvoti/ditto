@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import { get } from '../../../../js/request';
 import camelCaseify from '../../lib/camelCaseify';
+import { objToCamelCase, objToUnderscore } from '../../lib/camelCaseify';
 import { ManagedObject } from '../../lib/schema/schema';
 import * as formSchema from '../schema';
 import Form from './Form';
@@ -21,6 +22,7 @@ export default class FormContainer extends React.Component {
     get(APIURL)
       .done(res => {
         camelCaseify(res);
+        objToCamelCase(res);
         // TODO only handling one form at the moment
         let form = this._buildForm(res[0]);
         this.setState(

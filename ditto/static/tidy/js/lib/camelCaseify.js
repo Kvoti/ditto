@@ -1,24 +1,32 @@
-/**
-* Recursively convert object keys to camelCase
-*
-* Python prefers underscores, javascript prefers camelCase.
-* This utilty recursively converts object keys to camelCase for, say,
-* passing API responses to React components.
-*
-*/
 import objectWalk from 'object-walk';
 
-export default function camelCaseify(obj) {
-  objectWalk(obj, down);
+export function strToUnderscore(str) {
+  return str.replace(/([A-Z])/, (m, p1) => '_' + p1.toLowerCase());
 }
 
-function down(val, prop, obj) {
-  if (prop.indexOf('_') !== -1) {
-    obj[_camelCaseify(prop)] = obj[prop];
-    delete obj[prop];
-  }
-}
-
-function _camelCaseify(str) {
+export function strToCamelCase(str) {
   return str.replace(/_([a-z])/, (m, p1) => p1.toUpperCase());
+}
+
+export function objToCamelCase(obj) {
+  walk(obj, strToCamelCase);
+}
+
+export function objToUnderscore(obj) {
+  console.log('underscore', obj);
+  walk(obj, strToUnderscore);
+  console.log('underscore', obj);
+}
+
+function walk(obj, convert) {
+  objectWalk(
+    obj,
+    function down(val, prop, child) {
+      let converted = convert(prop);
+      if (converted !== prop) {
+        child[converted] = child[prop];
+        delete child[prop];
+      }
+    }
+  );
 }
