@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required
 
 from . import views
 
 urlpatterns = patterns('',
     url(
         regex=r'^builder/$',
-        view=TemplateView.as_view(
-            template_name='dittoforms/builder.html'),
+        view=login_required(TemplateView.as_view(
+            template_name='dittoforms/builder.html')),
     ),
 
     url(
