@@ -104,5 +104,5 @@ def form(request, slug):
 
 urlpatterns = patterns('',
     url(r'^$', FormList.as_view()),
-    url(r'^(?P<slug>\w+)/$', form)
+    url(r'^(?P<slug>[\w\-]+)/$', form)
 )
