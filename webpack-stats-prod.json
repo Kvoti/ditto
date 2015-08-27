@@ -1,1 +1,1 @@
-{"status":"done","chunks":{"main":[{"name":"main-1db794ef2d9b5631d74a.js","publicPath":"/static/dist/main-1db794ef2d9b5631d74a.js","path":"/Users/user/di/src/ditto/static/dist/main-1db794ef2d9b5631d74a.js"}]},"startTime":1440669378842,"endTime":1440669496587}
+{"status":"error","error":"ModuleNotFoundError","message":"Module not found: Error: Cannot resolve module 'data-schema/src' in /Users/user/di/src/ditto/static/tidy/js/formbuilder/components"}
