@@ -3,7 +3,7 @@ import _ from 'lodash';
 import slug from 'slug';
 
 import { objToCamelCase, objToUnderscore } from 'underscore-camelcase';
-import { ManagedObject } from 'data-schema/src';
+import { ManagedObject } from 'data-schema/src/schema';
 
 import { get, put } from '../../../../js/request';
 import * as formSchema from '../schema';
