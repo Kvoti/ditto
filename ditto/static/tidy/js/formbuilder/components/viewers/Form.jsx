@@ -5,15 +5,36 @@ import Choice from './Choice';
 import ScoreGroup from './ScoreGroup';
 import * as schema from '../../../lib/schema/schema';
 import { post } from '../../../../../js/request';
+import Response from '../response/Response';
 
 export default class Form extends React.Component {
   constructor(props) {
     super(props);
     let formSchema = this._getSchema(this.props.form);
-    this.state = { form: formSchema };
+    this.state = {
+      form: formSchema,
+      isResponding: true
+    };
   }
 
   render() {
+    if (!this.state.isResponding) {
+      return (
+        <div>
+          <button
+                  className="btn btn-default"
+                  onClick={this._closeResponse}
+                  >
+            Back
+          </button>
+          <Response
+                  questions={this.props.form.managed.questions.get()}
+                  responses={this.state.form.get()}
+          />
+        </div>
+      );
+    }
+                
     let formSpec = this.props.form;
     let questionRows = formSpec.managed.questions.members.map(([j, q], i) => {
       return (
@@ -74,9 +95,9 @@ export default class Form extends React.Component {
       if (q.text) {
         values.managed.add('', this._getTextSchema(q));
       } else if (q.choice && q.choice.isMultiple.get()) {
-        values.managed.add([], this._getChoiceSchema(q));
+        values.managed.add({choice: [], otherText: ''}, this._getChoiceSchema(q));
       } else if (q.choice) {
-        values.managed.add('', this._getChoiceSchema(q));
+        values.managed.add({choice: '', otherText: ''}, this._getChoiceSchema(q));
       } else {
         values.managed.add([], this._getScoreGroupSchema(q));
       }
@@ -111,18 +132,22 @@ export default class Form extends React.Component {
       handler = (v) => value.set(v);
       pendingChangeHandler = (v) => value.pend().set(v);
     } else if (choice) {
-      if (!choice.isMultiple.get()) {
-        handler = (e) => value.set(e.target.value);
-      } else {
-        handler = (e) => {
-          if (e.target.checked) {
-            value.add(e.target.value);
-          } else {
-            console.log('removing', option);
-            value.removeX(e.target.value);
-          }
-        };
-      }
+      handler = (e) => {
+        if (e.target.type === 'text') {
+          value.otherText.set(e.target.value);
+          return;
+        }
+        if (!choice.isMultiple.get()) {
+          value.choice.set(e.target.value);
+          return;
+        }
+        if (e.target.checked) {
+          value.choice.add(e.target.value);
+        } else {
+          console.log('removing', option);
+          value.choice.removeX(e.target.value);
+        }
+      };
     } else if (scoregroup) {
       handler = (i, v) => value.setChoice(i, v);
     }
@@ -140,12 +165,15 @@ export default class Form extends React.Component {
 
   _getChoiceSchema(question) {
     let factory = question.choice.isMultiple.get() ? schema.multichoice : schema.choice;
-    return factory(
-      question.choice.options.get(),
-      {
-        isRequired: question.isRequired.get()
-      }
-    );
+    return schema.shape({
+      choice: factory(
+        question.choice.options.get(),
+        {
+          isRequired: question.isRequired.get()
+        }
+      ),
+      otherText: schema.string()
+    });
   }
 
   _getScoreGroupSchema(question) {
@@ -161,7 +189,8 @@ export default class Form extends React.Component {
   _save = (e) => {
     e.preventDefault();
     this.state.form.validateWithUnbound();
-    this.forceUpdate();
+    //    this.forceUpdate();
+    this.setState({isResponding: false});
     let isValid = this.state.form.isValid();
     if (isValid) {
       post(
@@ -169,5 +198,9 @@ export default class Form extends React.Component {
         this.state.form.get()
       );
     }
+  }
+
+  _closeResponse = () => {
+    this.setState({isResponding: true});
   }
 }

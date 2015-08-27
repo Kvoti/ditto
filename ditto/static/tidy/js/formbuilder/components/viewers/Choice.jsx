@@ -19,6 +19,7 @@ export default class Choice extends React.Component {
   }
 
   render() {
+    console.log('choice value', this.props.value);
     const type = this.props.choice.isMultiple ? 'checkbox' : 'radio';
     return (
       <div>
@@ -65,7 +66,12 @@ export default class Choice extends React.Component {
            <label>
            {this.props.choice.otherText || 'Other'}:{' '}
            </label>
-           <input className="form-control" type="text" />
+           <input
+           className="form-control"
+           type="text"
+           value={this.props.value.otherText}
+           onChange={this.props.onChange}
+           />
            </div>
          ) : null}
       </div>
@@ -73,9 +79,10 @@ export default class Choice extends React.Component {
   }
 
   _isChecked(option) {
+    let value = this.props.value.choice;
     if (!this.props.choice.isMultiple) {
-      return this.props.value === option;
+      return value === option;
     }
-    return this.props.value.indexOf(option) !== -1;
+    return value.indexOf(option) !== -1;
   }
 }

@@ -166,20 +166,20 @@ class Choice(Question):
     other_text = models.CharField(max_length=255, blank=True)
 
     def save_response(self, response, data):
-        if not data:
-            return
         if self.is_multiple:
-            answers = data
+            answers = data['choice']
         else:
-            answers = [data]
-        for answer in answers:
-            ChoiceAnswer.objects.create(
-                response=response,
-                option=Option.objects.get(
-                    question=self,
-                    text=answer
-                )
-            )
+            answers = [data['choice']]
+        ChoiceAnswer.objects.create(
+            response=response,
+            question=self,
+            other=data.get('otherText', '')
+        )
+        choices = Option.objects.filter(
+            question=self,
+            text__in=answers
+        )
+        ChoiceAnswer.choices = choices
 
 
 class Option(models.Model):
@@ -260,7 +260,10 @@ class TextAnswer(Answer):
 
 
 class ChoiceAnswer(Answer):
-    option = models.ForeignKey(Option)
+    question = models.ForeignKey(Choice, related_name="answers")
+    # TODO ManyToMany as choice might be multiple, cleaner to split out multi choice?
+    choices = models.ManyToManyField(Option, related_name="answers")
+    other = models.TextField(blank=True)
 
 
 class ScoreGroupAnswer(Answer):
