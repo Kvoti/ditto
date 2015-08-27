@@ -1,9 +1,10 @@
 import React from 'react';
 
+import * as schema from 'data-schema/src/schema';
+
 import Text from './Text';
 import Choice from './Choice';
 import ScoreGroup from './ScoreGroup';
-import * as schema from '../../../lib/schema/schema';
 import { post } from '../../../../../js/request';
 import Response from '../response/Response';
 

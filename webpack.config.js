@@ -39,6 +39,7 @@ module.exports = {
     new BundleTracker({filename: './webpack-stats.json'}),
   ],
   resolve: {
+    fallback: path.join(__dirname, 'node_modules'),
     extensions: ['', '.js', '.jsx']
   }
 };

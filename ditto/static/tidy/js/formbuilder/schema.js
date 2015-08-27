@@ -1,4 +1,4 @@
-import * as schema from '../lib/schema/schema';
+import * as schema from 'data-schema/src/schema';
 
 export const form = schema.shape({
   title: schema.string(),

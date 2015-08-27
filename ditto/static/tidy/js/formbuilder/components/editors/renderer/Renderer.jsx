@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 
+import { schemaTypes } from 'data-schema/src/proxies';
 import getID from '../../../../lib/id';
 import Sortable from 'react-components/Sortable';
-import * as schemaTypes from '../../../../lib/schema/proxies';
 import ControlRow from './ControlRow';
 import AddButton from './AddButton';
 import { inputValueToInt } from '../../../utils';

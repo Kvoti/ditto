@@ -2,9 +2,10 @@ import React from 'react';
 import _ from 'lodash';
 import slug from 'slug';
 
+import { objToCamelCase, objToUnderscore } from 'underscore-camelcase';
+import { ManagedObject } from 'data-schema/src';
+
 import { get, put } from '../../../../js/request';
-import { objToCamelCase, objToUnderscore } from '../../lib/camelCaseify';
-import { ManagedObject } from '../../lib/schema/schema';
 import * as formSchema from '../schema';
 import Form from './Form';
 
