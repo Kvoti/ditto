@@ -64,8 +64,8 @@ def newnetwork(name):
                  user="pydev")
             sudo(' ../../bin/python manage.py runscript setup_test_data',
                  user="pydev")
-            # sudo(' ../../bin/python manage.py runscript setup_test_form',
-            #      user="pydev")
+            sudo(' ../../bin/python manage.py runscript setup_test_form',
+                 user="pydev")
             # don't set up chat data for now while we're playing with the chat bot
             # sudo(' ../../bin/python manage.py runscript setup_chat_data',
             #      user="pydev")

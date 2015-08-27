@@ -84,15 +84,20 @@ class Form(models.Model):
         labels = kwargs.pop('labels')
         items = kwargs.pop('items')
         score_group = self._append(ScoreGroup, **kwargs)
-        labels = [
-            ScoreLabel.objects.create(
+        default_scores = range(len(labels))
+        for i, label in enumerate(labels):
+            if isinstance(label, basestring):
+                default_score = default_scores[i]
+            else:
+                label = label['label']
+                default_score = label['default_score']
+            label = ScoreLabel.objects.create(
                 question=score_group,
-                label=label['label'],
+                label=label,
                 order=i + 1,
-                default_score=label['default_score']
+                default_score=default_score
             )
-            for i, label in enumerate(labels)
-        ]
+            labels[i] = label
         for i, item in enumerate(items):
             if isinstance(item, basestring):
                 scores = [None] * len(labels)

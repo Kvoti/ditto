@@ -41,16 +41,16 @@ def run():
     print renderer.render_form(form)
 
 
-    response = form.submit_response(
-        User.objects.get(username="mark"),
-        [
-            "blue",
-            "React",
-            [
-                "Agree",
-                "No opinion",
-                "Agree"
-            ]
-        ]
-    )
-    print renderer.render_response(response)
+    # response = form.submit_response(
+    #     User.objects.get(username="mark"),
+    #     [
+    #         "blue",
+    #         "React",
+    #         [
+    #             "Agree",
+    #             "No opinion",
+    #             "Agree"
+    #         ]
+    #     ]
+    # )
+    # print renderer.render_response(response)
