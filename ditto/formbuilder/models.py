@@ -166,6 +166,8 @@ class Choice(Question):
     other_text = models.CharField(max_length=255, blank=True)
 
     def save_response(self, response, data):
+        if not data:
+            return
         if self.is_multiple:
             answers = data
         else:
