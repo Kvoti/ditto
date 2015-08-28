@@ -11,54 +11,42 @@ export default class Text extends React.Component {
     this.ID = getID();
   }
 
-  static propTypes = {
-    question: PropTypes.string.isRequired,
-    isRequired: PropTypes.bool,
-    text: PropTypes.shape({
-      maxChars: PropTypes.number,
-      maxWords: PropTypes.number,
-      isMultiline: PropTypes.bool
-    }),
-    value: PropTypes.string,
-    errors: PropTypes.arrayOf(PropTypes.string), // TODO or null
-    onChange: PropTypes.func.isRequired,
-    onPendingChange: PropTypes.func.isRequired
-  }
-
   render() {
+    let question = this.props.question;
+    let answer = this.props.value;
     let control = React.DOM.input;
-    if (this.props.text.isMultiline) {
+    if (question.text.isMultiline.get()) {
       control = React.DOM.textarea;
     }
     control = control(
       {
         id: this.ID,
         className: 'form-control',
-        value: this.props.value
+        value: answer.get()
       }
     );
     // TODO use ControlRow here? Same markup, just need ControlRow to be able to wrap a control
     return (
       <div
-              className={controlRowErrorClassNames(this.props.errors, {'form-group': true})}
+              className={controlRowErrorClassNames(answer.errors, {'form-group': true})}
               >
         <label
                 htmlFor={this.ID}
                 className='control-label'
                 >
-          {this.props.question}?{this.props.isRequired ? ' *' : ' '}
+          {question.question.get()}?{question.isRequired.get() ? ' *' : ' '}
         </label>
         <div style={{position: 'relative'}}>
           <DelayedInput
-                  immediate={this.props.validateImmediately}
-                  onChange={this.props.onChange}
-                  onPendingChange={this.props.onPendingChange}
+                  immediate={answer.isBound}
+                  onChange={(v) => answer.set(v)}
+                  onPendingChange={(v) => answer.pend().set(v)}
                   >
             {control}
           </DelayedInput>
-          <ControlValidationIcon controlID={this.ID} errors={this.props.errors} />
+          <ControlValidationIcon controlID={this.ID} errors={answer.errors} />
         </div>
-        <ControlErrors errors={this.props.errors} />
+        <ControlErrors errors={answer.errors} />
       </div>
     );
   }

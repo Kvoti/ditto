@@ -56,16 +56,11 @@ export default class Form extends React.Component {
   }
 
   _renderQuestion(question, index) {
-    let [onChange, onPendingChange] = this._getChangeHandlers(question, this.state.form.managed[index]);
     let props = {
-        ...question.get(),
-      key: index,
+      question,
+//      key: index,
       ref: index,
-      onChange,
-      onPendingChange,
-      value: this.state.form.managed[index].getPendingOrCurrent(),
-      errors: this.state.form.managed[index].errors,
-      validateImmediately: this.state.form.managed[index].isBound
+      value: this.state.form.managed[index]
     };
     console.log(props);
     return React.createElement(this._getViewComponent(question), props);
@@ -123,36 +118,6 @@ export default class Form extends React.Component {
       viewer = ScoreGroup;
     }
     return viewer;
-  }
-
-  _getChangeHandlers(question, value) {
-    // TODO add these as methods on Manager or object that wraps Manager?
-    const { text, choice, scoregroup } = question;
-    let handler, pendingChangeHandler;
-    if (text) {
-      handler = (v) => value.set(v);
-      pendingChangeHandler = (v) => value.pend().set(v);
-    } else if (choice) {
-      handler = (e) => {
-        if (e.target.type === 'text') {
-          value.otherText.set(e.target.value);
-          return;
-        }
-        if (!choice.isMultiple.get()) {
-          value.choice.set(e.target.value);
-          return;
-        }
-        if (e.target.checked) {
-          value.choice.add(e.target.value);
-        } else {
-          console.log('removing', option);
-          value.choice.removeX(e.target.value);
-        }
-      };
-    } else if (scoregroup) {
-      handler = (i, v) => value.setChoice(i, v);
-    }
-    return [handler, pendingChangeHandler];
   }
 
   _getTextSchema(question) {
