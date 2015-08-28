@@ -191,13 +191,15 @@ export default class Form extends React.Component {
     e.preventDefault();
     this.state.form.validateWithUnbound();
     //    this.forceUpdate();
-    this.setState({isResponding: false});
     let isValid = this.state.form.isValid();
     if (isValid) {
       post(
         `/di/api/formbuilder/${this.props.form.managed.slug.get()}/responses/`,
         this.state.form.get()
       );
+      this.setState({isResponding: false});
+    } else {
+      this.forceUpdate();
     }
   }
 
