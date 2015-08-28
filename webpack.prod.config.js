@@ -44,6 +44,7 @@ module.exports = {
         })
     ],
   resolve: {
+    fallback: path.join(__dirname, 'node_modules'),
     extensions: ['', '.js', '.jsx']
   }
 };
