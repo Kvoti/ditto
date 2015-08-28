@@ -204,11 +204,17 @@ class ScoreGroup(Question):
     def save_response(self, response, data):
         if data:
             for i, item in enumerate(self.items.order_by('order')):
-                ScoreGroupAnswer.objects.create(
-                    response=response,
-                    item=item,
-                    label=self.labels.get(label=data[i])
-                )
+                try:
+                    label = data[i]
+                except IndexError:
+                    break
+                else:
+                    if label:
+                        ScoreGroupAnswer.objects.create(
+                            response=response,
+                            item=item,
+                            label=self.labels.get(label=label)
+                        )
 
 
 class ScoreGroupItem(models.Model):
