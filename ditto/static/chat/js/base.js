@@ -19,7 +19,7 @@ var UserTable = require('../../users/js/components/UserTable.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
-import FormContainer from '../../tidy/js/formbuilder/components/FormContainer';
+import FormContainer from 'react-form-builder/src/components/FormContainer';
 
 if (chatConf.me) {
     ChatWebAPIUtils.connect(
