@@ -10,6 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 
 # Subclass AbstractUser
 class User(AbstractUser):
+    bio = models.TextField(blank=True)
+    
     def __unicode__(self):
         return self.username
 

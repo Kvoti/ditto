@@ -19,5 +19,5 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'role',
+            'bio'
         )
-        
