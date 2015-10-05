@@ -37,8 +37,13 @@ WhosOnlineStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         if (!inside) {
             _whosOnline[action.room] = [];
         }
+      // TODO hack here to prevent adding same user multiple times
+      // really should fix presence handling so action is not raised
+      // is user is *already* in a chatroom.
+      if (_whosOnline[action.room].indexOf(action.user) === -1) {
         _whosOnline[action.room].push(action.user);
         WhosOnlineStore.emitChange();
+      }
         break;
 
     case ActionTypes.RECEIVE_OFFLINE:

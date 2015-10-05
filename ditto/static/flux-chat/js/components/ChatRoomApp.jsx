@@ -47,13 +47,11 @@ var ChatRoomApp = React.createClass({
         ThreadStore.removeChangeListener(this._onChange);
     },
 
-//    componentWillReceiveProps: function (newProps) {
-//	var roomID = newProps.params.id;
-//	var roomJID = roomID + '@muc.network1.localhost';
-//	ChatThreadActionCreators.clickRoom(roomJID);
-//    },
-//
-    render: function() {
+    componentWillReceiveProps (nextProps) {
+        RouteActionCreators.changeChatroom(nextProps.location.pathname);
+    },
+  
+  render: function() {
 	// TODO chatroom presence should prob be separate component to whosOnline
 	// (whosOnline is supposed to have carousel etc.)
         if (this.state.connection == ChatConstants.connected) {

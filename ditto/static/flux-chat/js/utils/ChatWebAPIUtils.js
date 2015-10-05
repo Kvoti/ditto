@@ -42,6 +42,7 @@ function onConnectFactory (resolve) {
             _connection.chatstates.init(_connection);
             if (chatConf.hasChatroom) {
                 _connection.muc.init(_connection);
+	      addGroupChatHandlers();
             }
             if (_pendingFriends.length) {
                 _pendingFriends.forEach(f => addFriend(f));
@@ -119,10 +120,7 @@ function joinChatroom (roomJID) {
         ChatServerActionCreators.joinChatroom(roomJID);
         connection.muc.join(
             roomJID,
-            _nick,
-            // TODO move these to addHandler otherwise they're probably added every time we join a chatroom
-            receiveGroupMessage,
-	    receiveGroupPresence
+            _nick
         );
     });
 }
@@ -158,6 +156,11 @@ function receiveGroupPresence (pres) {
 function addPrivateChatHandlers () {
     _connection.addHandler(receivePrivateMessage, null, 'message', 'chat',  null);
     _connection.addHandler(receivePresence, null, 'presence', null,  null); 
+}
+
+function addGroupChatHandlers() {
+  _connection.addHandler(receiveGroupMessage, null, 'message', 'groupchat', null);
+  _connection.addHandler(receiveGroupPresence, null, 'presence', null, null);
 }
 
 function getContacts () {
