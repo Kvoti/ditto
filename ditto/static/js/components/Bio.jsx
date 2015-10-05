@@ -14,6 +14,11 @@ export default class Bio extends React.Component {
     onSave: PropTypes.func.isRequired
   }
 
+  // TODO prob wouldn't need this if view/edit components were separate (prob should be)
+  componentWillReceiveProps(newProps) {
+    this.setState({currentValue: newProps.bio});
+  }
+
   render() {
     if (this.state.isEditing) {
       return (
