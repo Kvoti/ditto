@@ -220,13 +220,11 @@ function loadPrivateChatHistory (contact) {
 }
 
 function loadUserProfile (user) {
-  console.log('getting profile for', user);
     var jid = getBareJIDForNode(user);
     if (userProfileLoadedFor.indexOf(user) === -1) {
 	userProfileLoadedFor.push(user);
         _connection.vcard.get(
 	  vcard => {
-            console.log('got vcard for', user);
                 var userProfile = XMPP.parse.vCard(vcard);
                 userProfile.user = user;
                 ChatServerActionCreators.receiveUserProfile(userProfile);
