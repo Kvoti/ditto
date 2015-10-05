@@ -142,7 +142,8 @@ function receiveGroupMessage (msg) {
 function receiveGroupPresence (pres) {
     var presence = XMPP.parse.groupPresence(pres);
     if (presence.added) {
-        ChatServerActionCreators.receiveOnline(presence.user, presence.room);
+      ChatServerActionCreators.receiveOnline(presence.user, presence.room);
+      loadUserProfile(presence.user);
     } else if (presence.removed) {
         ChatServerActionCreators.receiveOffline(presence.user, presence.room);
         if (presence.destroyed) {
