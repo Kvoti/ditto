@@ -17,6 +17,7 @@ var urls = require('../../../flux-chat/js/utils/urlUtils');
 
 import { Router, Route, Link, Navigation } from 'react-router';
 import { history } from 'react-router/lib/BrowserHistory';
+import slug from 'slug';
 
 function getStateFromStores () {
     return {
@@ -31,7 +32,6 @@ var ChatroomSettings = React.createClass({
     getInitialState () {
 	var initial = getStateFromStores();
 	return assign({
-	    newChatroomID: "",
 	    newChatroomName: "",
 	    newChatroomFormErrors: [],
 	    currentRoomID: initial.currentRoomID,
@@ -72,9 +72,6 @@ var ChatroomSettings = React.createClass({
 			<input className="form-control" type="checkbox" checkedLink={this.linkState('isNewChatroomRegular')} />
 			Regular scheduled room?
 		    </label>
-		</div>
-		<div className="form-group">
-		    <input className="form-control" type="text" valueLink={this.linkState('newChatroomID')} placeholder="Enter id (a-z characters only)" />
 		</div>
 		<div className="form-group">
 		    <input className="form-control" type="text" valueLink={this.linkState('newChatroomName')} placeholder="Enter name" />
@@ -131,14 +128,13 @@ var ChatroomSettings = React.createClass({
 	} else {
 	    SettingsActionCreators.createChatroom({
 		is_regular: this.state.isNewChatroomRegular,
-		slug: this.state.newChatroomID,
+		slug: slug(this.state.newChatroomName),
 		name: this.state.newChatroomName,
 		roles: [],
 		users: []
 	    })
 	    this.setState({
 		newChatroomName: "",
-		newChatroomID: "",
 		newChatroomFormErrors: [],
 		isNewChatroomRegular: false,
 	    });
@@ -146,17 +142,10 @@ var ChatroomSettings = React.createClass({
     },
 
     _validateNewChatroom () {
-	var errors = [];
-	if (this.state.newChatroomID && !/^[a-z]+$/.test(this.state.newChatroomID)) {
-	    errors.push('Please only use lowecase letters for the ID');
-	}
-	if (!this.state.newChatroomID && this.state.newChatroomName ||
-	    !this.state.newChatroomName && this.state.newChatroomID) {
-		errors.push('Please provide an ID and a name');
-	}
-	console.log(this.state.chatrooms);
-	if (this.state.chatrooms.findIndex(c => c.slug === this.state.newChatroomID) > -1) {
-	    errors.push('Room with id ' + this.state.newChatroomID + ' already exists');
+      var errors = [];
+      let newChatroomID = slug(this.state.newChatroomName);
+	if (this.state.chatrooms.findIndex(c => c.slug === newChatroomID) > -1) {
+	    errors.push('Room with id ' + newChatroomID + ' already exists');
 	}
 	return errors;
     },
