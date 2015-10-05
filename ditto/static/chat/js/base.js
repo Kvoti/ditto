@@ -20,6 +20,7 @@ var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
 
 import FormContainer from 'react-form-builder/src/components/FormContainer';
+import BioContainer from '../../js/components/BioContainer';
 
 if (chatConf.me) {
     ChatWebAPIUtils.connect(
@@ -147,6 +148,14 @@ if (users) {
     React.render(
         UserTable,
         users
+    );
+}
+
+let bio = document.getElementById('user-bio');
+if (bio) {
+    React.render(
+        <BioContainer/>,
+        bio
     );
 }
 
