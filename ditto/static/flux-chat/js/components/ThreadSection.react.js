@@ -82,7 +82,7 @@ var ThreadSection = React.createClass({
                 {threadListItems}
             </div>
 		{this.state.threadType === ThreadStore.session && this.state.currentSessionID ? <Link className="btn btn-primary" to={urls.sessions()}>New session</Link> : null }
-	    {this.state.threadType !== ThreadStore.session && this.state.currentChatID ? <Link className="btn btn-primary" to={urls.messages()}>New message</Link> : null }
+	    {this.state.threadType !== ThreadStore.session && this.state.currentChatID ? <Link className="btn btn-primary" to={urls.messages()}>New chat</Link> : null }
                 </div>
         );
     },
