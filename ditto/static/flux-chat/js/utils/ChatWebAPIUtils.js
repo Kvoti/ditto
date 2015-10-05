@@ -219,16 +219,26 @@ function loadPrivateChatHistory (contact) {
 }
 
 function loadUserProfile (user) {
+  console.log('getting profile for', user);
     var jid = getBareJIDForNode(user);
     if (userProfileLoadedFor.indexOf(user) === -1) {
 	userProfileLoadedFor.push(user);
         _connection.vcard.get(
-	    vcard => {
+	  vcard => {
+            console.log('got vcard for', user);
                 var userProfile = XMPP.parse.vCard(vcard);
                 userProfile.user = user;
                 ChatServerActionCreators.receiveUserProfile(userProfile);
 	    },
-	    jid
+	  jid,
+          () => {
+            changeAvatar('sunshine');
+            // Assume vcard.set will work and update the UI
+            ChatServerActionCreators.receiveUserProfile({
+              role: chatConf.role,
+              avatar: 'sunshine'
+            });
+          }
         );
     }
 }
@@ -291,6 +301,27 @@ function setupLogging () {
 function getBareJIDForNode (node) {
     return node + '@' + _domain;
 };
+
+function changeAvatar(avatarName) {
+  // TODO no convenience function provided for making vcards?
+  var role = Strophe.xmlElement('ROLE');
+  role.appendChild(Strophe.xmlTextNode(chatConf.role));
+
+  var photo = Strophe.xmlElement('PHOTO');
+  photo.appendChild(Strophe.xmlTextNode(avatarName));  // TODO prob make this full URI of avatar?
+  // TODO looks like strophe.vcard doesn't allow setting multiple elements?
+  // (sort of doesn't matter cos the data you set isn't validated, which is ok
+  // while we assume no other clients will connect)
+  var vcard = Strophe.xmlElement('XXX');
+  vcard.appendChild(role);
+  vcard.appendChild(photo);
+
+  // TODO handle error
+  _connection.vcard.set(
+    function (r) { },  // TODO handle something here?
+    vcard
+  );
+}
 
 module.exports = {
 
@@ -373,26 +404,7 @@ module.exports = {
 	);
     },
 
-    changeAvatar: function (avatarName) {
-        // TODO no convenience function provided for making vcards?
-        var role = Strophe.xmlElement('ROLE');
-        role.appendChild(Strophe.xmlTextNode(chatConf.role));
-
-        var photo = Strophe.xmlElement('PHOTO');
-        photo.appendChild(Strophe.xmlTextNode(avatarName));  // TODO prob make this full URI of avatar?
-        // TODO looks like strophe.vcard doesn't allow setting multiple elements?
-        // (sort of doesn't matter cos the data you set isn't validated, which is ok
-        // while we assume no other clients will connect)
-        var vcard = Strophe.xmlElement('XXX');
-        vcard.appendChild(role);
-        vcard.appendChild(photo);
-
-        // TODO handle error
-        _connection.vcard.set(
-	    function (r) { },  // TODO handle something here?
-	    vcard
-        );
-    },
+  changeAvatar: changeAvatar,
 
     joinChatroom: joinChatroom,
     
