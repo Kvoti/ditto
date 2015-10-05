@@ -46,7 +46,7 @@
                     <h2>{{ object.get_full_name|default:object.username }} | <span class="profile-role"><a href="{% url "ditto:about" %}#{{ role }}">{{ role }}</a></span> <span id="my-status"></span></h2>
 		{% endwith %}
                 <p><em><strong>Joined: </strong> {{ object.date_joined }}</em></p>
-		<p{% if is_me %} id="user-bio"{% endif %}></p>
+		<div{% if is_me %} id="user-bio"{% endif %}>{{ object.bio }}</div>
 	    </div>
             {% with accordion_id='user_content' %}
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
