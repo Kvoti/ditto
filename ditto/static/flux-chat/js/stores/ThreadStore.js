@@ -21,7 +21,7 @@ var _roomJIDs = [];
 var _currentRoomJID;
 
 function notifyNewMessage(msg) {
-//  document.getElementById('new-message-beep').play();
+  document.getElementById('new-message-beep').play();
   let notification = new Notification('New message from ' + msg.authorName, {
     icon: '/static/images/ditto-logo.png',
     body: msg.text.slice(0, 140)

@@ -20,10 +20,6 @@ function getStateFromStores() {
     };
 }
 
-function notifyUnreadThreads() {
-    document.getElementById('new-message-beep').play();
-}
-
 var ThreadSection = React.createClass({
     mixins: [FluidHeightMixin],
 
@@ -57,9 +53,6 @@ var ThreadSection = React.createClass({
             this.state.unreadCount === 0 ?
             null :
             <span>Unread threads: {this.state.unreadCount}</span>;
-        if (this.state.unreadCount) {
-            notifyUnreadThreads();
-        }
         return (
                 <div className="thread-section">
                 <ul className="nav nav-tabs">

@@ -22,7 +22,6 @@ export default class NewMessageCount extends React.Component {
   render() {
     console.log('XXXshowing unread', this.state.unreadCount);
     if (this.state.unreadCount) {
-      notifyUnreadThreads();
       return <span className="badge"><b>{this.state.unreadCount}</b></span>;
     }
     return null;
@@ -31,8 +30,4 @@ export default class NewMessageCount extends React.Component {
   _onChange = () => {
     this.setState(getStateFromStores());
   }
-}
-
-function notifyUnreadThreads() {
-  document.getElementById('new-message-beep').play();
 }
