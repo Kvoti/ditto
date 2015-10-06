@@ -21,7 +21,8 @@ module.exports = {
         }
     },
 
-    changePrivateChat: function(path) {
+  changePrivateChat: function(path) {
+    path = decodeURIComponent(path);
         var parts = path.split('/');
         var threadID = parts[parts.length - 2];
         var threadType;
