@@ -35,6 +35,17 @@ module.exports = {
         return other;
     },
 
+  getMessageThreadName: function (threadID) {
+    let parts = threadID.split(':');
+    let name = '';
+    if (parts[0] === 'session' && parts.length === 4 ||
+        parts[0] !== 'session' && parts.length === 3
+       ) {
+      name = parts[parts.length - 1];
+    }
+    return name;
+  },
+  
     getPrivateChatThreadID: function (from, to) {
 	var participants = [from, to];
 	participants.sort();

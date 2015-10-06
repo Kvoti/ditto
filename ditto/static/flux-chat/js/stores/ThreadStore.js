@@ -232,10 +232,11 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         } else {
             _currentMessageID = _currentID
         }
-        if (!_threads[_currentID]) {
+      if (!_threads[_currentID]) {
+        console.log('ID',_currentID);
             _threads[_currentID] = {
                 id: _currentID,
-                name: _currentID
+              name: ChatMessageUtils.getMessageThreadName(_currentID)
             }
         }
         ThreadStore.emitChange();

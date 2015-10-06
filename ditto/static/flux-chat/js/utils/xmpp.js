@@ -3,6 +3,8 @@
 // TODO is increasing integer ok to use as id?
 var _messageID = 0;
 
+import ChatMessageUtils from './ChatMessageUtils';
+
 function getNewMessageID () {
     return _messageID++;
 }
@@ -13,7 +15,7 @@ function setThreadFields(message) {
     if (!message.threadID) {
         message.threadID = thread.join(':');
     }
-    message.threadName = message.threadID ? message.threadID : thread.join(' and ');
+  message.threadName = message.threadID ? ChatMessageUtils.getMessageThreadName(message.threadID) : thread.join(' and ');
     message.authorName = message.from;
 }    
 
