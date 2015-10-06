@@ -102,14 +102,14 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
             orderedThreads.push(thread);
         }
         orderedThreads.sort(function(a, b) {
-            if (!a.lastMessage) {
+          if (!a.lastMessage) {
                 return -1;
             } else if (!b.lastMessage) {
                 return 1;
             } else if (a.lastMessage.date < b.lastMessage.date) {
-                return -1;
-            } else if (a.lastMessage.date > b.lastMessage.date) {
                 return 1;
+            } else if (a.lastMessage.date > b.lastMessage.date) {
+                return -1;
             }
             return 0;
         });
