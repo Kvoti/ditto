@@ -174,7 +174,7 @@ body {
 -------------------------------------------------- */
 
 /* Mark's stuff to be fixed one day! */
-#msgs, #pchat_msgs, #presence, .friend-messages, .message-list, .thread-section  {
+#msgs, #pchat_msgs, #presence, .friend-messages, .message-list {
     overflow-y: scroll;
 }
 #msgs .row, #chat-module .row {

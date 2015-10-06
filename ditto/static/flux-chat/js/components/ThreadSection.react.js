@@ -42,7 +42,7 @@ var ThreadSection = React.createClass({
     },
 
     render: function() {
-	var style = {height: this.state.height};
+      var style = {height: this.state.height, 'overflow-y': 'scroll'};
         var threadListItems = this.state.threads.map(function(thread) {
             return (
                     <ThreadListItem
@@ -61,7 +61,7 @@ var ThreadSection = React.createClass({
             notifyUnreadThreads();
         }
         return (
-                <div className="thread-section" style={style}>
+                <div className="thread-section">
                 <ul className="nav nav-tabs">
                 <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}>
                 {this.state.currentChatID ?
@@ -78,7 +78,7 @@ var ThreadSection = React.createClass({
                 <div className="thread-count">
                 {unread}
             </div>
-                <div className="list-group">
+                <div className="list-group" style={style}>
                 {threadListItems}
             </div>
 		{this.state.threadType === ThreadStore.session && this.state.currentSessionID ? <Link className="btn btn-primary" to={urls.sessions()}>New session</Link> : null }
