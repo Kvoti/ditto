@@ -25,10 +25,12 @@ module.exports = {
     //   });
     // },
 
-    receivePrivateMessage: function(rawMessage) {
+  //  TODO should have different actions for archived messages instead of a boolean option
+  receivePrivateMessage: function(rawMessage, isArchived) {
         ChatAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_RAW_PRIVATE_MESSAGE,
-            rawMessage: rawMessage
+          rawMessage: rawMessage,
+          isArchived: isArchived
         });
     },
     

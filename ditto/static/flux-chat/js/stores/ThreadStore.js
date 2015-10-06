@@ -3,6 +3,7 @@ var ChatConstants = require('../constants/ChatConstants');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
+import Visibility from 'visibilityjs';
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
@@ -23,7 +24,7 @@ var _currentRoomJID;
 function notifyNewMessage(msg) {
   document.getElementById('new-message-beep').play();
   let notification = new Notification('New message from ' + msg.authorName, {
-    icon: '/static/images/ditto-logo.png',
+    icon: '/static/images/kvoti-web-logo.png',
     body: msg.text.slice(0, 140)
   });
   // TODO this is supposed to go to the right tab in chrome but doesn't seem to work
@@ -176,8 +177,10 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
       ThreadStore.init([action.rawMessage]);
 
       //TODO where does issuing a desktop notifcation belong with React??
-      console.log('new message', _threads[action.rawMessage.threadID].lastMessage);
-      if (!_threads[action.rawMessage.threadID].lastMessage.isRead) {
+      console.log('new message', _threads[action.rawMessage.threadID].lastMessage, 'hidden', Visibility.hidden());
+      if (!_threads[action.rawMessage.threadID].lastMessage.isRead
+          || (!action.isArchived && Visibility.hidden())
+         ) {
         console.log('notifying');
         notifyNewMessage(_threads[action.rawMessage.threadID].lastMessage);
       }
