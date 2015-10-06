@@ -147,6 +147,13 @@ module.exports = {
             var result = $(result);
             var roomJIDs = result.find('item').map(function () { return $(this).attr('jid'); });
             return $.makeArray(roomJIDs);
+        },
+      RSM: function (msg) {
+        msg = $(msg);
+        let first = msg.find('first');
+        if (first.attr('index') !== '0') {
+          return first.text();
         }
+      }
     }
-}
+};

@@ -189,7 +189,7 @@ function handleContacts (roster, item) {
     roster.forEach((friend, i) => {
 	var username = Strophe.getNodeFromJid(friend.jid);
 	if (friend.subscription !== 'none') {
-            loadPrivateChatHistory(friend.jid);
+          loadPrivateChatHistory(friend.jid, "");
 	    //     friends.push(username);
 	    loadUserProfile(username);
 	}
@@ -197,25 +197,31 @@ function handleContacts (roster, item) {
     return true;
 }
 
-function loadPrivateChatHistory (contact) {
-    if (historyLoadedFor.indexOf(contact) === -1) {
+function loadPrivateChatHistory (contact, before) {
+    if (historyLoadedFor.indexOf(contact) === -1 || before) {
         historyLoadedFor.push(contact);
         console.log('loading history between', _myJID, contact);
-        _connection.mam.query(
+      _connection.mam.query(
             Strophe.getBareJidFromJid(_myJID),
             {
                 'with': contact,
-                'before': "",
-                'max': 3,
+              'before': before,
+                'max': 20,
                 // TODO strophe.mam is a bit broken.
                 // It adds onMessage as handler for all received messages so
                 // if you send off multiple queries in parallel the handler is
                 // called several times. To workaround we add receiveArchivedPrivateMessage
                 // once above and pass a noop here.
                 // TODO remove the noop otherwise we're adding one each time we do a query
-                onMessage: function () { }
+              onMessage: function () { },
+              onComplete: msg => {
+                let first = XMPP.parse.RSM(msg);
+                if (first) {
+                  loadPrivateChatHistory(contact, first);
+                }
+              }
             }
-        );
+      );
     }
 }
 
