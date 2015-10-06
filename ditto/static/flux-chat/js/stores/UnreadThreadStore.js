@@ -61,7 +61,7 @@ UnreadThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
   switch (action.type) {
 
-    case ActionTypes.CLICK_THREAD:
+    case ActionTypes.CHANGE_PRIVATE_CHAT:
       UnreadThreadStore.emitChange();
       break;
 

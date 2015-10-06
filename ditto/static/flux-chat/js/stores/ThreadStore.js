@@ -20,6 +20,17 @@ var _threadType = MESSAGE;
 var _roomJIDs = [];
 var _currentRoomJID;
 
+function notifyNewMessage(msg) {
+//  document.getElementById('new-message-beep').play();
+  let notification = new Notification('New message from ' + msg.authorName, {
+    icon: '/static/images/ditto-logo.png',
+    body: msg.text.slice(0, 140)
+  });
+  // TODO this is supposed to go to the right tab in chrome but doesn't seem to work
+  notification.onclick = function () {
+    window.focus();
+  };
+}
 
 var ThreadStore = assign({}, EventEmitter.prototype, {
 
@@ -162,7 +173,15 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         break;
 
     case ActionTypes.RECEIVE_RAW_PRIVATE_MESSAGE:
-        ThreadStore.init([action.rawMessage]);
+      ThreadStore.init([action.rawMessage]);
+
+      //TODO where does issuing a desktop notifcation belong with React??
+      console.log('new message', _threads[action.rawMessage.threadID].lastMessage);
+      if (!_threads[action.rawMessage.threadID].lastMessage.isRead) {
+        console.log('notifying');
+        notifyNewMessage(_threads[action.rawMessage.threadID].lastMessage);
+      }
+      //////////////////////////////////////////////////
         ThreadStore.emitChange();
         break;
 
@@ -238,7 +257,11 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
                 id: _currentID,
               name: ChatMessageUtils.getMessageThreadName(_currentID)
             }
-        }
+      }
+      let lastMessage = _threads[_currentID].lastMessage;
+      if (lastMessage) {
+        lastMessage.isRead = true;
+      }
         ThreadStore.emitChange();
         break;
         
@@ -294,3 +317,5 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 });
 
 module.exports = ThreadStore;
+
+

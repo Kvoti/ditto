@@ -134,6 +134,15 @@
 		{# Note this Notification shim is not available via npm either #}
 		<script src="{% static 'vendor/notification.js' %}"></script>
 		{% chat_config extra=chat_conf %}
+                <script>
+                function getNotificationPermission() {
+                                       if (Notification.permission !== "granted") {
+                                                               Notification.requestPermission();
+                                       }
+                }
+                getNotificationPermission();
+                $("body").one("click", getNotificationPermission); // chrome
+                </script>
 		{% render_bundle 'main' %}
 	    {% endif %}
 	{% endblock javascript %}

@@ -99,7 +99,7 @@ MessageStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         
     // TODO this action is never raised now we're using routing. Need to fix so we do this
     // when the thread is changed
-    case ActionTypes.CLICK_THREAD:
+    case ActionTypes.CHANGE_PRIVATE_CHAT:
       ChatAppDispatcher.waitFor([ThreadStore.dispatchToken]);
       _markAllInThreadRead(ThreadStore.getCurrentID());
       MessageStore.emitChange();

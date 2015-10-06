@@ -21,6 +21,7 @@ window.React = React; // export for http://fb.me/react-devtools
 
 import FormContainer from 'react-form-builder/src/components/FormContainer';
 import BioContainer from '../../js/components/BioContainer';
+import NewMessageCount from '../../flux-chat/js/components/NewMessageCount';
 
 if (chatConf.me) {
     ChatWebAPIUtils.connect(
@@ -158,6 +159,10 @@ if (bio) {
         bio
     );
 }
+
+React.render(
+    <NewMessageCount />, document.getElementById('new-message-count')
+);
 
 // TODO get this from config (DITTO.client or something)
 function hackGetClient () {
