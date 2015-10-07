@@ -51,7 +51,6 @@ var MessageSection = React.createClass({
         ///////
         var style;
         var messageListItems = this.state.messages.map(getMessageListItem);
-	// TODO can we move the height stuff here to a mixin somehow?
 	if (this.state.thread && this.state.thread.id) {
 	    style = {height: this.state.height};
 	};	    
