@@ -38,7 +38,7 @@ var ThreadSection = React.createClass({
     },
 
     render: function() {
-      var style = {height: this.state.height, 'overflow-y': 'scroll'};
+      var style = {height: this.state.height, 'overflowY': 'scroll'};
         var threadListItems = this.state.threads.map(function(thread) {
             return (
                     <ThreadListItem
