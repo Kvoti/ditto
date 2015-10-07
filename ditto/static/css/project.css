@@ -277,8 +277,10 @@ footer {
     /* TODO don't really know why these styles work, should probably be calculated in relation to other things */
     /* TODO borked on mobile of course */
     position:absolute;
-    top:25px;
     left:10px;
+}
+.kvoti .navbar [data-avatar] {
+    top:25px;
 }
 
 /* playing with React animation support
