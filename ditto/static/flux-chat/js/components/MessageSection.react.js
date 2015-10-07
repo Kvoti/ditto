@@ -53,12 +53,14 @@ var MessageSection = React.createClass({
         var messageListItems = this.state.messages.map(getMessageListItem);
 	if (this.state.thread && this.state.thread.id) {
 	    style = {height: this.state.height};
-	};	    
+	};
         return (
             <div className="message-section">
+            {style ?
             <ul style={style} className="message-list" ref="messageList">
             {messageListItems}
-            </ul>
+             </ul>
+             : null}
                 <WhosTyping users={this.state.whosTyping} />
                 {this.state.thread && !this.state.thread.isEnded ? <MessageComposer threadID={this.state.thread.id} isGroup={this.props.isGroup} /> : null }
                 </div>
