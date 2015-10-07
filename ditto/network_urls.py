@@ -21,9 +21,6 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('signup.urls')),
     url(r'^accounts/', include('allauth.urls')),
 
-    # Uncomment the next line to enable avatars
-    url(r'^avatar/', include('avatar.urls')),
-
     # Your stuff: custom urls go here
     url(r'', include('network.urls', namespace="ditto")),
     url(r'', include('django_comments.urls')),
