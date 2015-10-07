@@ -25,6 +25,7 @@ django-allauth==0.21.0
 
 # For the persistance stores
 MySQL-python==1.2.5
+psycopg2
 
 # Unicode slugification
 unicode-slugify==0.1.1
