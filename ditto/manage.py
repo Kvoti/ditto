@@ -10,8 +10,8 @@ if __name__ == "__main__":
     # settings are kept in file outside of version control. wsgi.py
     # and manage.py both need to set env vars so these settings are
     # available but the duplication seems a bit untidy
-    if os.environ["DJANGO_CONFIGURATION"] == "Production":
-        execfile("production-vars.py")
+    # if os.environ["DJANGO_CONFIGURATION"] == "Production":
+    #     execfile("production-vars.py")
     
     from configurations.management import execute_from_command_line
 
