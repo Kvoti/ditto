@@ -29,8 +29,12 @@ var WhosTypingStore = assign({}, EventEmitter.prototype, {
     },
 
     getForCurrentThread: function(user) {
-	var threadID = ThreadStore.getCurrentID();
-        return _whosTyping[threadID];
+      var threadID = ThreadStore.getCurrentID();
+      // chatstates doesn't know about threads so we don't know when someone
+      // is typing in a particular thread. (prob easy to modify chatstates js to pass
+      // <thread> in the message?)
+      let key = threadID.split(':').slice(0, 2).join(':');
+        return _whosTyping[key];
     }
 
 });
@@ -41,20 +45,22 @@ WhosTypingStore.dispatchToken = ChatAppDispatcher.register(function(action) {
 
         // TODO need to make this work with threading
 
-    // case ActionTypes.RECEIVE_START_TYPING:
-    //     var whosTyping = _whosTyping[action.threadID];
-    //     if (!whosTyping) {
-    //         whosTyping = [];
-    //         _whosTyping[action.threadID] = whosTyping;
-    //     }
-    //     whosTyping.push(action.user);
-    //     WhosTypingStore.emitChange();
-    //     break;
+    case ActionTypes.RECEIVE_START_TYPING:
+        var whosTyping = _whosTyping[action.threadID];
+        if (!whosTyping) {
+            whosTyping = [];
+            _whosTyping[action.threadID] = whosTyping;
+        }
+      whosTyping.push(action.user);
+      console.log('typing', _whosTyping);
+        WhosTypingStore.emitChange();
+        break;
 
-    // case ActionTypes.RECEIVE_STOP_TYPING:
-    //     _removeAuthor(action.threadID, action.user);
-    //     WhosTypingStore.emitChange();
-    //     break;
+    case ActionTypes.RECEIVE_STOP_TYPING:
+        _removeAuthor(action.threadID, action.user);
+      console.log('typing', _whosTyping);
+        WhosTypingStore.emitChange();
+        break;
 
     default:
         // do nothing
