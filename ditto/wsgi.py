@@ -29,7 +29,9 @@ if os.path.exists(production_secrets):
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
 from configurations.wsgi import get_wsgi_application
+from whitenoise.django import DjangoWhiteNoise
 application = get_wsgi_application()
+application = DjangoWhiteNoise(application)
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
