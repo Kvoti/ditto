@@ -200,7 +200,6 @@ function handleContacts (roster, item) {
 function loadPrivateChatHistory (contact, before) {
     if (historyLoadedFor.indexOf(contact) === -1 || before) {
         historyLoadedFor.push(contact);
-        console.log('loading history between', _myJID, contact);
       _connection.mam.query(
             Strophe.getBareJidFromJid(_myJID),
             {

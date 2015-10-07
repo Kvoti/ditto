@@ -177,11 +177,11 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
       ThreadStore.init([action.rawMessage]);
 
       //TODO where does issuing a desktop notifcation belong with React??
-      console.log('new message', _threads[action.rawMessage.threadID].lastMessage, 'hidden', Visibility.hidden());
+//      console.log('new message', _threads[action.rawMessage.threadID].lastMessage, 'hidden', Visibility.hidden());
       if (!_threads[action.rawMessage.threadID].lastMessage.isRead
           || (!action.isArchived && Visibility.hidden())
          ) {
-        console.log('notifying');
+//        console.log('notifying');
         notifyNewMessage(_threads[action.rawMessage.threadID].lastMessage);
       }
       //////////////////////////////////////////////////

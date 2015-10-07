@@ -20,7 +20,6 @@ export default class NewMessageCount extends React.Component {
   }
 
   render() {
-    console.log('XXXshowing unread', this.state.unreadCount);
     if (this.state.unreadCount) {
       return <span className="badge"><b>{this.state.unreadCount}</b></span>;
     }
