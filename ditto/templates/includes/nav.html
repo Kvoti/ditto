@@ -8,8 +8,8 @@
 
     <ul class="nav navbar-nav">
         {% if not request.tenant.is_main %}
-            {% url 'ditto:about' as url %}
-            {% navitem "about" url _("PEOPLE") %}
+            {% url 'ditto:people' as url %}
+            {% navitem "people" url _("PEOPLE") %}
 
             {% if request.user.is_authenticated and request.tenant.is_configured and perms.configuration.can_chat %}
                 {% url 'ditto:chatroom' as url %}

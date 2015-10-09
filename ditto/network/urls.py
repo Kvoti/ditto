@@ -7,9 +7,9 @@ urlpatterns = patterns('',
     url(r'^$',  # noqa
         views.home,
         name="home"),
-    url(r'^about/$',
-        views.AboutView.as_view(),
-        name="about"),
+    url(r'^people/$',
+        views.PeopleView.as_view(),
+        name="people"),
 
     url(r'^config/', include('configuration.urls')),
     url(r'', include('chat.urls')),
