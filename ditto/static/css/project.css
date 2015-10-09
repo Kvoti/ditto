@@ -278,9 +278,6 @@ footer {
     /* TODO borked on mobile of course */
     position:absolute;
     left:10px;
-    top: 5px;
-}
-.kvoti .navbar [data-avatar] {
     top:25px;
 }
 
@@ -750,3 +747,23 @@ li.sortable-dragging .well
     cursor: grab;
 }
 /* ********************* */
+
+
+/* Some Bootstrap customisations here so they apply to all themes */
+/* TODO all this probably broken on mobile */
+.navbar {
+    min-height: 100px;
+}
+.navbar-nav > li > a {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.navbar-text {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.navbar-brand {
+    /* padding: 40px 15px; */
+    height: 100px;
+}
