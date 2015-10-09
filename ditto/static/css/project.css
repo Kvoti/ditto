@@ -278,6 +278,7 @@ footer {
     /* TODO borked on mobile of course */
     position:absolute;
     left:10px;
+    top: 5px;
 }
 .kvoti .navbar [data-avatar] {
     top:25px;
