@@ -18,6 +18,9 @@ var TicketTable = require('../../tickets/js/components/TicketTable.jsx');
 var UserTable = require('../../users/js/components/UserTable.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
+// TODO remove this hack for people page
+window.AvatarContainer = AvatarContainer;
+//////////////////////////////////////////////////
 
 import FormContainer from 'react-form-builder/src/components/FormContainer';
 import BioContainer from '../../js/components/BioContainer';

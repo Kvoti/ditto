@@ -6,7 +6,31 @@
 	<h3 id="{{ role.name }}">{{ role.name }}</h3>
 	{{ role.description }}
         {% for user in users %}
-          <p>{{ user.username }}</p>
+          {# TODO make react component to display avatar with name and role #}
+          <div style="width:50px">
+            <div id="avatar-{{ user.username }}"></div>
+            <p style="text-align:center">{{ user.username }}</p>
+          </div>
         {% endfor %}
     {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script>
+    {% for role, users in roles %}
+      {% for user in users %}
+        React.render(
+        React.createElement(
+        AvatarContainer,
+        {
+        username: '{{ user.username }}',
+        size: 50
+        }
+        ),
+        document.getElementById('avatar-{{ user.username }}')
+        );
+      {% endfor %}
+    {% endfor %}
+  </script>
 {% endblock %}
