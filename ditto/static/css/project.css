@@ -767,3 +767,6 @@ li.sortable-dragging .well
     /* padding: 40px 15px; */
     height: 100px;
 }
+.public_fixedDataTable_main {
+    border-color: transparent !important;
+}
