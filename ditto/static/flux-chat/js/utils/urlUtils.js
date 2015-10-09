@@ -55,7 +55,7 @@ module.exports = {
     },
     
     users () {
-        return _fullUrl('dashboard/users/');
+        return _fullUrl('people/');
     },
     
     user (userID) {
