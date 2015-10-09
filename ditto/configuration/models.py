@@ -34,10 +34,16 @@ class Config(models.Model):
         'yeti'
     )
     TYPES = (
-        'Business',
-        'Social',
         'Charity',
-        'Volunteer',
+        'Not For Profit',
+        'Social Enterprise',
+        'NGO',
+        'Sole Proprietor',
+        'Partnership',
+        'Cooperative',
+        'Small Business',
+        'Corporation',
+        'Government Agency',
     )
     SIZES = (
         "100",
