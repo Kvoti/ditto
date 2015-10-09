@@ -54,7 +54,8 @@ class Config(models.Model):
     type = models.CharField(
         _("type"),
         help_text=_("What sector are you?"),
-        max_length=20, choices=zip(TYPES, TYPES)
+        max_length=20, choices=zip(TYPES, TYPES),
+        default='Charity'
     )
     description = models.TextField(
         _("description"),
