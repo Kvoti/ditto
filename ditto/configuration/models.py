@@ -47,11 +47,10 @@ class Config(models.Model):
     )
     SIZES = (
         "100",
+        "250",
         "500",
-        "1,000",
-        "5,000",
-        "10,000",
-        "Uber",
+        "1000",
+        "1000+",
     )
     
     theme = models.CharField(
@@ -59,7 +58,7 @@ class Config(models.Model):
         max_length=20, choices=zip(THEMES, THEMES), blank=True)
     type = models.CharField(
         _("type"),
-        help_text=_("What sector are you?"),
+        help_text=_("What type of organisation are you?"),
         max_length=20, choices=zip(TYPES, TYPES),
         default='Charity'
     )
@@ -71,7 +70,7 @@ class Config(models.Model):
     size_cap = models.CharField(
         _("size cap"),
         max_length=10,
-        help_text=_("How many people are you likely to have?"),
+        help_text=_("How many people are you likely to have on your Kvoti network?"),
         choices=zip(SIZES, SIZES)
     )
 
