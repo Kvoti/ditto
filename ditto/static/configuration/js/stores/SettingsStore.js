@@ -93,12 +93,29 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
     },
 
     getCaseNotesSettingsForCurrentRole: function () {
-        var role = RoleStore.getCurrent();
-        return _settings[role].caseNotes;
+      var role = RoleStore.getCurrent();
+      if (!_settings[role]) {
+        _settings[role] = {};
+      }
+      if (!_settings[role].caseNotes) {
+        _settings[role].caseNotes = {
+            title: 'CASE NOTES'
+        };
+      }
+      return _settings[role].caseNotes;
     },
 
     getPostSessionFeedbackSettingsForCurrentRole: function () {
         var role = RoleStore.getCurrent();
+      if (!_settings[role]) {
+        _settings[role] = {};
+      }
+      if (!_settings[role].postSessionFeedback) {
+        _settings[role].postSessionFeedback = {
+            title: 'POST-SESSION FEEDBACK',
+            question: 'How useful did you find the support given to you today?',
+        };
+      }
         return _settings[role].postSessionFeedback;
     },
     
