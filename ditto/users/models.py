@@ -21,6 +21,15 @@ class User(AbstractUser):
             ('guest', 'Guest permission'),
         )
 
+    def custom_values(self):
+        role = self.groups.all()[0]
+        values = role.values
+        return {
+            'case_notes': values.case_notes_name,
+            'post_session_feedback': values.post_session_feedback_name,
+            'post_session_feedback_question': values.post_session_feedback_question
+        }
+            
 
 # As registration forms as user-definable we need to store extra custom
 # data. I read this:

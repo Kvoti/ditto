@@ -2,7 +2,7 @@
 {% load comments %}
 
 {% block title %}
-CASE NOTES
+{{ object.custom_values.case_notes|upper }}
 {% endblock %}
 
 {% block body %}
