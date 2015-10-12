@@ -9,54 +9,6 @@ var ActionTypes = SettingsConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
 var _settings = {};
-RoleStore.getAll().map(role => {
-    _settings[role] = {
-        caseNotes: {
-            title: 'CASE NOTES'
-        },
-        postSessionFeedback: {
-            title: 'POST-SESSION FEEDBACK',
-            question: 'How useful did you find the support given to you today?',
-        },
-        impactFootprint: [
-            {
-                name: 'Conversations',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Sessions',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Feedback',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Blogs',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Comments',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Triage',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Case note',
-                on: true,
-                showContent: true,
-            },
-        ],
-    }
-});
 
 function getImpactFootprintItem (role, name) {
     var settings = _settings[role].impactFootprint;
