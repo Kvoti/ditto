@@ -33,8 +33,11 @@ var WhosTypingStore = assign({}, EventEmitter.prototype, {
       // chatstates doesn't know about threads so we don't know when someone
       // is typing in a particular thread. (prob easy to modify chatstates js to pass
       // <thread> in the message?)
-      let key = threadID.split(':').slice(0, 2).join(':');
+      if (threadID) {
+        let key = threadID.split(':').slice(0, 2).join(':');
         return _whosTyping[key];
+      }
+      return [];
     }
 
 });
