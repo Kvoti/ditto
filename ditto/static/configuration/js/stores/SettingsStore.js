@@ -108,8 +108,8 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
     },
     
     getRegFormSettingsForCurrentRole: function () {
-        var role = RoleStore.getCurrent();
-        return _settings[role].regForm;
+      var role = RoleStore.getCurrent();
+      return _settings[role] ? _settings[role].regForm : null;
     },
     
 });
@@ -199,6 +199,9 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         break;
 
     case ActionTypes.RECEIVE_REG_FORM_SETTINGS:
+      if (!_settings[action.role]) {
+        _settings[action.role] = {};
+      }
         _settings[action.role].regForm = action.settings;
         SettingsStore.emitChange();
         break;

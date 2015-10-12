@@ -1,11 +1,11 @@
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var urls = require('../../../flux-chat/js/utils/urlUtils');
 
-import { get, post } from '../../../js/request';
+import { get, put } from '../../../js/request';
 
 module.exports = {
 
-    getRegFormSettings: function (role) {
+  getRegFormSettings: function (role) {
         get(urls.api.forms(role))
             .done(res => {
                 SettingsActionCreators.receiveRegFormSettings(role, res);

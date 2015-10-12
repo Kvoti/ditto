@@ -152,7 +152,7 @@ module.exports = {
         saveRegSettings();
     },
     
-    receiveRegFormSettings: function (role, settings) {
+  receiveRegFormSettings: function (role, settings) {
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_REG_FORM_SETTINGS,
             role: role,
@@ -270,7 +270,7 @@ module.exports = {
     receiveRoles (roles) {
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_ROLES,
-            roles: roles,
+          roles: roles.map(r => r.name),
         });
     },
 
