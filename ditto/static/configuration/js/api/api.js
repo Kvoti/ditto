@@ -17,5 +17,19 @@ module.exports = {
             urls.api.forms(role),
             settings
         );
+    },
+  
+  getValues: function (role) {
+        get(urls.api.values(role))
+            .done(res => {
+                SettingsActionCreators.receiveValues(role, res);
+            });
+    },
+
+    updateValues: function (role, settings) {
+        put( // or put?
+            urls.api.values(role),
+            settings
+        );
     }
 }

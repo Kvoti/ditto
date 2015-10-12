@@ -126,6 +126,7 @@ class GroupDescription(models.Model):
 
 class Values(models.Model):
     """Ad-hoc values that can be customised."""
+    role = models.OneToOneField('auth.Group', related_name="values")
     case_notes_name = models.CharField(
         max_length=200,
         default="case notes"

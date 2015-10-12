@@ -207,7 +207,8 @@ def setup_reg_form():
 
 
 def setup_configurable_values():
-    configuration.models.Values.objects.create()
+    for role in Group.objects.all():
+        configuration.models.Values.objects.create(role=role)
 
     
 def setup_chat_conf():

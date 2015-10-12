@@ -101,8 +101,11 @@ module.exports = {
         
         user (userID) {
             return this.users() + userID + '/';
-        }
-        
+        },
+
+      values(role) {
+        return _fullUrl(`api/values/${role}/`);
+        },
     }
 
 }

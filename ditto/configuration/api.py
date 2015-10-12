@@ -31,11 +31,11 @@ class ValuesView(generics.RetrieveUpdateAPIView):
     queryset = models.Values.objects.all()
     serializer_class = ValuesSerializer
     permission_classes = [permissions.IsAuthenticated]  # TODO IsAdmin
-    
-
+    lookup_field = 'role__name'
+    lookup_url_kwarg = 'role'
     
     
 urlpatterns = patterns('',
     url(r'^roles/$', RoleList.as_view()),
-    url(r'^values/(?P<pk>\d+)/$', ValuesView.as_view()),
+    url(r'^values/(?P<role>\w+)/$', ValuesView.as_view()),
 )
