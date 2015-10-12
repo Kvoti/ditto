@@ -47,6 +47,7 @@ module.exports = {
         CHANGE_ROOM: null,
         
         RECEIVE_ROLES: null,
+        RECEIVE_VALUES: null,
     }),
 
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

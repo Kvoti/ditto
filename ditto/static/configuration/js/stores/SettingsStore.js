@@ -49,12 +49,7 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
       if (!_settings[role]) {
         _settings[role] = {};
       }
-      if (!_settings[role].caseNotes) {
-        _settings[role].caseNotes = {
-            title: 'CASE NOTES'
-        };
-      }
-      return _settings[role].caseNotes;
+      return _settings[role].values ? {title: _settings[role].values.case_notes_name} : 'Loading ...'
     },
 
     getPostSessionFeedbackSettingsForCurrentRole: function () {
@@ -88,7 +83,7 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
     switch(action.type) {
 
     case ActionTypes.UPDATE_CASE_NOTES_TITLE:
-        _settings[action.role].caseNotes.title = action.text;
+        _settings[action.role].values.case_notes_name = action.text;
         SettingsStore.emitChange();
         break;
         
@@ -174,7 +169,15 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         _settings[action.role].regForm = action.settings;
         SettingsStore.emitChange();
         break;
-        
+
+    case ActionTypes.RECEIVE_VALUES:
+      if (!_settings[action.role]) {
+        _settings[action.role] = {};
+      }
+        _settings[action.role].values = action.values;
+        SettingsStore.emitChange();
+        break;
+      
     default:
         // do nothing
     }

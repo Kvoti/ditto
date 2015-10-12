@@ -14,6 +14,10 @@ export function put (url, payload) {
     return send(url, payload, "PUT");
 }
 
+export function patch (url, payload) {
+    return send(url, payload, "PATCH");
+}
+
 export function del (url) {
     return $.ajax({
 	url: url,

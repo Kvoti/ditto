@@ -14,6 +14,14 @@ function saveRegSettings () {
     );
 }
 
+function saveValue(forRole, valueName, value) {
+    API.updateValues(
+      forRole,
+      valueName,
+      value
+    );
+}
+
 module.exports = {
 
     clickRole: function(role) {
@@ -31,7 +39,8 @@ module.exports = {
         API.getRegFormSettings(RoleStore.getCurrent());
     },
 
-    updateCaseNotesTitle: function (role, text) {
+  updateCaseNotesTitle: function (role, text) {
+    saveValue(role, 'case_notes_name', text);
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CASE_NOTES_TITLE,
             role: role,
@@ -267,13 +276,23 @@ module.exports = {
         });
     },
 
-    receiveRoles (roles) {
+  receiveRoles (roles) {
+    // TODO prob better to inline the values into the roles API call, save on http requests
+    roles.forEach(r => API.getValues(r.name));
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_ROLES,
           roles: roles.map(r => r.name),
         });
     },
 
+  receiveValues (role, values) {
+        SettingsAppDispatcher.dispatch({
+          type: ActionTypes.RECEIVE_VALUES,
+          role: role,
+          values: values
+        });
+    },
+  
 };
 // TODO fix circ. dependency between api and this
 var API = require('../api/api');

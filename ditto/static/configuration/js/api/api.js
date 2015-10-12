@@ -1,7 +1,7 @@
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var urls = require('../../../flux-chat/js/utils/urlUtils');
 
-import { get, put } from '../../../js/request';
+import { get, put, patch } from '../../../js/request';
 
 module.exports = {
 
@@ -13,7 +13,7 @@ module.exports = {
     },
 
     updateRegFormSettings: function (role, settings) {
-        put( // or put?
+        put(
             urls.api.forms(role),
             settings
         );
@@ -26,10 +26,10 @@ module.exports = {
             });
     },
 
-    updateValues: function (role, settings) {
-        put( // or put?
+  updateValues: function (role, name, value) {
+        patch(
             urls.api.values(role),
-            settings
+          {[name]: value}
         );
     }
 }
