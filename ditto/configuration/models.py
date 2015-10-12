@@ -122,3 +122,18 @@ class RegForm(models.Model):
 class GroupDescription(models.Model):
     group = models.OneToOneField('auth.Group', related_name="description")
     text = models.TextField(blank=True)
+
+
+class Values(models.Model):
+    """Ad-hoc values that can be customised."""
+    case_notes_name = models.CharField(
+        max_length=200,
+        default="case notes"
+    )
+    post_session_feedback_name = models.CharField(
+        max_length=200,
+        default="post-session feedback"
+    )
+    post_session_feedback_question = models.TextField(
+        default="How useful did you find the support given to you today?"
+    )

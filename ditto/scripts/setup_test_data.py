@@ -49,6 +49,7 @@ def run():
     setup_members()
     setup_tenants()
     setup_reg_form()
+    setup_configurable_values()
     setup_chat_conf()
     setup_case_notes()
     setup_sessions()
@@ -205,6 +206,10 @@ def setup_reg_form():
         )
 
 
+def setup_configurable_values():
+    configuration.models.Values.objects.create()
+
+    
 def setup_chat_conf():
     room = chat.models.Room.objects.create(
         slug='main',
