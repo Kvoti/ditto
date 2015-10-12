@@ -52,6 +52,7 @@ module.exports = {
     // or whether to have a single updateText action that specifies *which* bit of text to be
     // updated.
     updatePostSessionFeedbackTitle: function (role, text) {
+      saveValue(role, 'post_session_feedback_name', text);
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.UPDATE_POST_SESSION_FEEDBACK_TITLE,
             role: role,
@@ -60,6 +61,7 @@ module.exports = {
     },
     
     updatePostSessionFeedbackQuestion: function (role, text) {
+      saveValue(role, 'post_session_feedback_question', text);
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.UPDATE_POST_SESSION_FEEDBACK_QUESTION,
             role: role,

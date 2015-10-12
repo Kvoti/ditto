@@ -57,13 +57,16 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
       if (!_settings[role]) {
         _settings[role] = {};
       }
-      if (!_settings[role].postSessionFeedback) {
-        _settings[role].postSessionFeedback = {
-            title: 'POST-SESSION FEEDBACK',
-            question: 'How useful did you find the support given to you today?',
+      if (!_settings[role].values) {
+        return {
+            title: 'Loading ...',
+            question: 'Loading ...'
         };
       }
-        return _settings[role].postSessionFeedback;
+      return {
+        title: _settings[role].values.post_session_feedback_name,
+        question: _settings[role].values.post_session_feedback_question
+      };
     },
     
     getImpactFootprintSettingsForCurrentRole: function () {
@@ -88,12 +91,12 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         break;
         
     case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_TITLE:
-        _settings[action.role].postSessionFeedback.title = action.text;
+        _settings[action.role].values.post_session_feedback_name.title = action.text;
         SettingsStore.emitChange();
         break;
         
     case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_QUESTION:
-        _settings[action.role].postSessionFeedback.question = action.text;
+        _settings[action.role].values.post_session_feedback_question = action.text;
         SettingsStore.emitChange();
         break;
 
