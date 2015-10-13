@@ -26,23 +26,6 @@ var _items = [
 	edit: 'Edit Post-session feedback form',
         component: PostSessionFeedback,
     },
-    {
-	name: 'Impact Footprint',
-	edit: 'Edit Impact Footprint',
-        component: ImpactFootprint,
-    },
-    {
-	name: 'Impact Scales',
-	edit: 'Edit Impact Scales',
-    },
-    {
-	name: 'Longitudinal surveys',
-	edit: 'Edit Longitudinal surveys',
-    },
-    {
-	name: 'Triage Events',
-	edit: 'Edit Triage events',
-    }
 ];
 var _currentItem;
 
