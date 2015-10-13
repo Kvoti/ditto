@@ -37,11 +37,11 @@ module.exports = {
         new webpack.optimize.OccurenceOrderPlugin(),
 
         // minifies your code
-        new webpack.optimize.UglifyJsPlugin({
-            compressor: {
-                warnings: false
-            }
-        })
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compressor: {
+        //         warnings: false
+        //     }
+        // })
     ],
   resolve: {
     fallback: path.join(__dirname, 'node_modules'),
