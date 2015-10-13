@@ -134,7 +134,7 @@ function receiveGroupMessage (msg) {
     if (message.from) {
 	// TODO always get an 'empty' message from the room
 	// itself, not sure why
-        ChatServerActionCreators.receivePrivateMessage(message);
+      ChatServerActionCreators.receivePrivateMessage(message, true);
     }
     return true;
 };
