@@ -163,9 +163,12 @@ if (bio) {
     );
 }
 
-React.render(
-    <NewMessageCount />, document.getElementById('new-message-count')
-);
+let nmc = document.getElementById('new-message-count');
+if (nmc) {
+  React.render(
+      <NewMessageCount />, nmc
+  );
+}
 
 // TODO get this from config (DITTO.client or something)
 function hackGetClient () {
