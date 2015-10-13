@@ -770,3 +770,6 @@ li.sortable-dragging .well
 .public_fixedDataTable_main {
     border-color: transparent !important;
 }
+.public_fixedDataTableCell_main {
+    border-color: transparent !important;
+}
