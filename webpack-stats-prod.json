@@ -1,1 +1,1 @@
-{"status":"done","chunks":{"main":[{"name":"main-ffb2df67e64a69dced20.js","publicPath":"/static/dist/main-ffb2df67e64a69dced20.js","path":"/Users/user/di/src/ditto/static/dist/main-ffb2df67e64a69dced20.js"}]},"startTime":1444832030411,"endTime":1444832145488}
+{"status":"error","error":"ModuleNotFoundError","message":"Module not found: Error: Cannot resolve module 'slug' in /Users/user/di/lib/react-form-builder/src/components"}
