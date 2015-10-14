@@ -17,7 +17,15 @@ var urls = require('../../../flux-chat/js/utils/urlUtils');
 
 import { Router, Route, Link, Navigation } from 'react-router';
 import { history } from 'react-router/lib/BrowserHistory';
-import slug from 'slug';
+
+// Note was using slug package from npm but couldn't figure out
+// how to not bundle the symbol files with webpack -- probably easy ...
+function slugify(text) {
+  return text
+    .replace(/[^\w]/g, '-')
+    .replace(/^\-+/, '')
+    .replace(/\-+$/, '');
+}
 
 function getStateFromStores () {
     return {
@@ -128,7 +136,7 @@ var ChatroomSettings = React.createClass({
 	} else {
 	    SettingsActionCreators.createChatroom({
 		is_regular: this.state.isNewChatroomRegular,
-		slug: slug(this.state.newChatroomName),
+		slug: slugify(this.state.newChatroomName),
 		name: this.state.newChatroomName,
 		roles: [],
 		users: []
@@ -143,7 +151,7 @@ var ChatroomSettings = React.createClass({
 
     _validateNewChatroom () {
       var errors = [];
-      let newChatroomID = slug(this.state.newChatroomName);
+      let newChatroomID = slugify(this.state.newChatroomName);
 	if (this.state.chatrooms.findIndex(c => c.slug === newChatroomID) > -1) {
 	    errors.push('Room with id ' + newChatroomID + ' already exists');
 	}
