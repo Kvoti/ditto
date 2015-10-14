@@ -53,7 +53,7 @@
                 {% if request.tenant.is_configured %}
                 <li{% if "messages" in nav %} class="active"{% endif %}>
                     {% url "ditto:private_chats" as url %}
-                    <a class="navicon text-hide navicon-messages" href="{{ url }}">
+                    <a class="navicon navicon-messages" href="{{ url }}">
                         Messages
                         <span id="new-message-count"></span>
                     </a>
@@ -63,7 +63,7 @@
                 <li class="dropdown{% if 'me' in nav %} active{% endif %}">
                     {% url "users:detail" request.user.username as profile_url %}
                     <div data-avatar id="nav-avatar"></div>                    
-                    <a href="#" class="text-hide navicon navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                    <a href="#" class="navicon navicon-profile dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         Me <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
@@ -75,7 +75,7 @@
                 {% if request.tenant.is_configured %}
                 <li{% if "dashboard" in nav %} class="active"{% endif %}>
                     {% url "ditto:dashboard" as url %}
-                    <a class="navicon navicon-dashboard text-hide" href="{{ url }}">
+                    <a class="navicon navicon-dashboard" href="{{ url }}">
                         Dashboard
                     </a>
                 </li>
@@ -89,7 +89,7 @@
 			    {% else %}
 				{% url "ditto:chatroom_config" as url %}
 			    {% endif %}
-			    <a class="navicon navicon-settings text-hide" href="{{ url }}">
+			    <a class="navicon navicon-settings" href="{{ url }}">
 				Settings
 			    </a>
 			</li>

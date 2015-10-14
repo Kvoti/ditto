@@ -194,6 +194,8 @@ body {
     background-image: url(../images/kvoti-web-logo.png);
     width: 100px;
 }
+@media (min-width: 768px) {
+
 .navicon-messages {
     background-image: url(../images/icons/chat-lo.png);
 }
@@ -209,11 +211,36 @@ body {
 .navicon-dashboard {
     background-image: url(../images/icons/dashboard-50.png);
 }
-.navbar-brand, .navicon {
+
+/* Copied form bootstrap until I set up less processing .hide-text() {*/
+a.navicon {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.navicon {
     background-repeat: no-repeat;
     background-position: center center;
     width: 70px;
 }
+
+}
+
+@media (max-width: 768px) {
+    #nav-avatar, .navbar-text {
+	display: none;
+    }
+}
+
+.navbar-brand {
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 70px;
+}
+
 .active .navicon, .open .navicon {
     background-color: transparent !important;
 }
@@ -751,22 +778,25 @@ li.sortable-dragging .well
 
 /* Some Bootstrap customisations here so they apply to all themes */
 /* TODO all this probably broken on mobile */
-.navbar {
-    min-height: 100px;
-}
-.navbar-nav > li > a {
-    padding-top: 40px;
-    padding-bottom: 40px;
+@media (min-width: 768px) {
+    .navbar {
+	min-height: 100px;
+    }
+    .navbar-nav > li > a {
+	padding-top: 40px;
+	padding-bottom: 40px;
+    }
+    
+    .navbar-text {
+	margin-top: 40px;
+	margin-bottom: 40px;
+    }
+    .navbar-brand {
+	/* padding: 40px 15px; */
+	height: 100px;
+    }
 }
 
-.navbar-text {
-    margin-top: 40px;
-    margin-bottom: 40px;
-}
-.navbar-brand {
-    /* padding: 40px 15px; */
-    height: 100px;
-}
 .public_fixedDataTable_main {
     border-color: transparent !important;
 }
