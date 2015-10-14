@@ -12,7 +12,6 @@ var Alert = require('react-bootstrap/lib/Alert');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
 var RouteActionCreators = require('../actions/RouteActionCreators');
 var assign = require('object-assign');
-var _ = require('lodash');
 var urls = require('../../../flux-chat/js/utils/urlUtils');
 
 import { Router, Route, Link, Navigation } from 'react-router';

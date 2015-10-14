@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var _ = require('lodash');
+import { cloneDeep } from 'lodash/lang';
 var update = React.addons.update;
 var utils = require('../utils/utils');
 var intRegex = /^\d+$/;
