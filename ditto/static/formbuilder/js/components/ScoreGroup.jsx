@@ -1,5 +1,5 @@
 var React = require('react/addons');
-import { cloneDeep } from 'lodash/lang';
+import cloneDeep from 'lodash/lang/cloneDeep';
 var update = React.addons.update;
 var utils = require('../utils/utils');
 var intRegex = /^\d+$/;
@@ -90,7 +90,7 @@ ScoreGroup.Editor = React.createClass({
     },
 
     getInitialState: function () {
-	var state = _.cloneDeep(this.props);
+	var state = cloneDeep(this.props);
 	// TODO factor out setting of defaults (use getDefaultProps?
 	// also could specify number of scores/number of questions in props)
 	if (!state.scores) {
@@ -319,7 +319,7 @@ ScoreGroup.Editor = React.createClass({
     },
     
     _onSave: function () {
-	var questionConfig = _.cloneDeep(this.state.config);
+	var questionConfig = cloneDeep(this.state.config);
 	this.props.onSave(questionConfig);
     },
     

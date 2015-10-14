@@ -2,7 +2,7 @@
 // TODO probably want to use a nicer widget than datetime-local. Also, not sure how widely it's supported
 
 var React = require('react/addons');
-import { padLeft } from 'lodash/string';
+import padLeft from 'lodash/string/padLeft';
 
 var timezoneOffsetString = getTimezoneOffsetString();
 
