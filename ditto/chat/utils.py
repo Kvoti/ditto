@@ -13,7 +13,7 @@ def domain():
 
 
 def server():
-    return "localhost" if settings.DEBUG else "134.213.147.235"
+    return "localhost" if settings.DEBUG else "chat.kvoti.technology"
 
 
 def password(username):
