@@ -53,7 +53,7 @@ def builddb():
     # Restart chat so anything cached by the chat server is forgotten
     sudo('mongooseimctl restart')
     # Set up data for example network for Kvoti
-    newnetwork('di')
+    #newnetwork('di')
 
 
 def newnetwork(name):

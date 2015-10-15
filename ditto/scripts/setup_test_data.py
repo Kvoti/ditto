@@ -27,8 +27,6 @@ import chat.models
 import configuration.models
 import core
 import dittoforms.models
-import multitenancy.models
-import multitenancy.tenant
 
 from users.models import User
 
@@ -47,7 +45,6 @@ def run():
     setup_interactions()
     setup_admin_users()
     setup_members()
-    setup_tenants()
     setup_reg_form()
     setup_configurable_values()
     setup_chat_conf()
@@ -180,18 +177,6 @@ def _create_user(username, group_name, gender=None):
             user.custom_data.create(field_name="Gender",
                                     field_value=gender)
     user.groups.add(Group.objects.get(name=group_name))
-
-
-def setup_tenants():
-    user = User.objects.get(username='mark')
-    multitenancy.models.Tenant.objects.create(
-        user=user,
-        network_name='Kvoti',
-        slug='di',
-        is_configured=True,
-    )
-    if not multitenancy.tenant.is_main():
-        setup_site()
 
 
 def setup_reg_form():

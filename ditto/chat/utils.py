@@ -1,15 +1,15 @@
 from django.conf import settings
 from django.core.signing import Signer
 
-from multitenancy import tenant
-
 
 def jid(username):
     return "%s@%s" % (username, domain())
 
     
 def domain():
-    return tenant.chat_host()
+    if settings.DEBUG:
+        return 'network1.localhost'
+    return 'network1.ditto.technology'
 
 
 def server():
