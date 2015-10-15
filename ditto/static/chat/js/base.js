@@ -22,7 +22,6 @@ window.React = React; // export for http://fb.me/react-devtools
 window.AvatarContainer = AvatarContainer;
 //////////////////////////////////////////////////
 
-import FormContainer from 'react-form-builder/src/components/FormContainer';
 import BioContainer from '../../js/components/BioContainer';
 import NewMessageCount from '../../flux-chat/js/components/NewMessageCount';
 
@@ -101,14 +100,6 @@ if (evaluationSettings) {
 var chatroomSettings = document.getElementById('chatroomsettings');
 if (chatroomSettings) {
     React.render(ChatroomSettings, chatroomSettings);
-}
-
-var formBuilder = document.getElementById('formbuilder');
-if (formBuilder) {
-    React.render(
-            <FormContainer />,
-        formBuilder
-    );
 }
 
 var caseNotes = document.getElementById('casenotes');
