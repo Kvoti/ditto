@@ -3,7 +3,7 @@ var RoleAndUserSelect = require('./RoleAndUserSelect.jsx');
 var utils = require('../utils');
 var RoomStore = require('../stores/RoomStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
-import { isEqual } from 'lodash/lang/isEqual';
+import isEqual from 'lodash/lang/isEqual';
 var assign = require('object-assign');
 var Alert = require('react-bootstrap/lib/Alert');
 var Button = require('react-bootstrap/lib/Button');
