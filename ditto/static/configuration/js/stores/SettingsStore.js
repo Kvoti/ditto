@@ -91,7 +91,7 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         break;
         
     case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_TITLE:
-        _settings[action.role].values.post_session_feedback_name.title = action.text;
+        _settings[action.role].values.post_session_feedback_name = action.text;
         SettingsStore.emitChange();
         break;
         
