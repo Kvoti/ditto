@@ -281,6 +281,7 @@ module.exports = {
   receiveRoles (roles) {
     // TODO prob better to inline the values into the roles API call, save on http requests
     roles.forEach(r => API.getValues(r.name));
+    roles.forEach(r => API.getRegFormSettings(r.name));
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_ROLES,
           roles: roles.map(r => r.name),
