@@ -6,4 +6,6 @@ echo 'source /usr/local/lib/mongooseim/lib/ejabberd-2.1.8+mim-1.5.0/priv/mysql.s
 MAILGUN_USERNAME=x MAILGUN_PASSWORD=x python manage.py migrate
 MAILGUN_USERNAME=x MAILGUN_PASSWORD=x python manage.py runscript setup_test_data
 #DJANGO_TENANT=di python manage.py runscript setup_chat_data
-sudo mongooseimctl restart
+sudo mongooseimctl stop
+sudo rm -rf /usr/local/lib/mongooseim/MMnesia.mongooseim\@localhost/
+sudo mongooseimctl start
