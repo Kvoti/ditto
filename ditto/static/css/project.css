@@ -213,12 +213,15 @@ body {
 }
 
 /* Copied form bootstrap until I set up less processing .hide-text() {*/
-a.navicon {
+a.navicon,
+a.navicon:hover
+{
   font: 0/0 a;
   color: transparent;
   text-shadow: none;
   background-color: transparent;
   border: 0;
+  font-size: 0px !important;
 }
 
 .navicon {
