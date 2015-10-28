@@ -10,8 +10,10 @@ var CHANGE_EVENT = 'change';
 var _whosTyping = {};
 
 function _removeAuthor (recipient, author) {
-    var whosTyping = _whosTyping[recipient];
+  var whosTyping = _whosTyping[recipient];
+  if (whosTyping) {
     whosTyping.splice(whosTyping.indexOf(author), 1);
+  }
 }
 
 var WhosTypingStore = assign({}, EventEmitter.prototype, {
