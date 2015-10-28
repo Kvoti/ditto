@@ -41,14 +41,21 @@ var CaseNotes = React.createClass({
 		    value={this.state.settings.title}
 		    />;
 	} else {
-	    title = this.state.settings.title + ' [edit title]';
+	  title = (
+            <span>
+              {this.state.settings.title}{' '}
+              <button type="button" className="btn btn-default btn-sm" aria-label="Edit display name of case notes" title="Edit display name of case notes" onClick={this._onDoubleClick}>
+                <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+              </button>
+            </span>
+          );
 	}
 	return (
 	    <Panel header={header} bsStyle="primary">
 		<em>Case notes appear on a person’s profile page. You can call them something else, and professionals can share them with other roles.</em>
 
 		<div className="panel panel-default">
-		    <div className="panel-heading" onDoubleClick={this._onDoubleClick}>
+		    <div className="panel-heading">
 			{title}
 		    </div>
 		    <div style={{height:200}} className="panel-body">
