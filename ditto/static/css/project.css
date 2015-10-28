@@ -803,3 +803,8 @@ li.sortable-dragging .well
 .public_fixedDataTableCell_main {
     border-color: transparent !important;
 }
+
+.nav>li>a:hover {
+    background-color: transparent !important;
+}
+		
