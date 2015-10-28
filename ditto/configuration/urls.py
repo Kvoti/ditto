@@ -38,7 +38,7 @@ urlpatterns = patterns('',
         name='chatroom_config'
     ),
     url(
-        regex=r'^chatroom/(\w+)/$',
+        regex=r'^chatroom/([\w\-]+)/$',
         view=views.chatroom,
         name='chatroom_config_room'
     ),
