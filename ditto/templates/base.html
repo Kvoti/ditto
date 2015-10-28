@@ -18,7 +18,7 @@
 	{% block css %}
 	    {% theme as theme %}
 	    <!-- Latest compiled and minified CSS -->
-	    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css">
+	    {% if theme %}<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.3.2/{{ theme }}/bootstrap.min.css">{% endif %}
 	    
 	    <!-- Your stuff: Third-party css libraries go here -->
 	    {% if not theme %}<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">{% endif %}
