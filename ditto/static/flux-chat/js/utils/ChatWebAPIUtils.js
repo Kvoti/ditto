@@ -17,9 +17,9 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
-Strophe.log = function (level, msg) {
-    console.log(msg);
-};
+// Strophe.log = function (level, msg) {
+//     console.log(msg);
+// };
 
 
 var connect = new Promise((resolve, reject) => {
@@ -97,6 +97,7 @@ getChatrooms.then(roomList => {
 	if (window.location.href.indexOf('chatroom') === -1) {
             // Anywhere outside of /chatrooms/ we just want to join the 'main' site chatroom
           let mainRoom = roomList.find(r => r.startsWith('main'));
+          console.log('joining', mainRoom);
           joinChatroom(mainRoom);
 	}
     }
@@ -336,7 +337,7 @@ module.exports = {
 	_me = Strophe.getNodeFromJid(jid);
 	
         _connection = new Strophe.Connection('ws://' + server + ':5280/ws-xmpp');
-        if (log||true) {
+        if (log) {
             setupLogging();
         }
         _connection.connect(
