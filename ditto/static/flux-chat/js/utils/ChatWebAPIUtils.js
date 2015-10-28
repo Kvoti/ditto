@@ -96,8 +96,8 @@ getChatrooms.then(roomList => {
 	// TODO something better than these path inspection hacks, pass some explicit option?
 	if (window.location.href.indexOf('chatroom') === -1) {
             // Anywhere outside of /chatrooms/ we just want to join the 'main' site chatroom
-            // TODO should be explicit about main chatroom instead of relying on roomList[0]
-            joinChatroom(roomList[0]);
+          let mainRoom = roomList.find(r => r.startsWith('main'));
+          joinChatroom(mainRoom);
 	}
     }
 });
