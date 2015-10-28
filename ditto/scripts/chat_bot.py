@@ -22,7 +22,6 @@ from time import sleep
 import sleekxmpp
 
 import chat.utils
-from multitenancy import tenant
 
 # Python versions before 3.0 do not use UTF-8 encoding
 # by default. To ensure that Unicode is handled properly
@@ -94,14 +93,13 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
                 # unusable password or set to private room with no
                 # participants?
                 self.plugin['xep_0045'].destroy(room, ifrom=self.me)
-            with tenant._tenant('di'):
-                if action['action'] == 'open':
-                    action['room'].is_opened = True
-                    action['room'].is_closed = False
-                else:
-                    action['room'].is_closed = True
-                    action['room'].is_opened = False
-                action['room'].save()
+            if action['action'] == 'open':
+                action['room'].is_opened = True
+                action['room'].is_closed = False
+            else:
+                action['room'].is_closed = True
+                action['room'].is_opened = False
+            action['room'].save()
         self.disconnect(wait=True)
 
         
@@ -116,31 +114,28 @@ def run():
 
     # Iterate over the chatrooms in the django db and see which need
     # opened or closed
-    with tenant._tenant('di'):  # TODO do for all tenants
-        actions = []
-        for room in chat.models.Room.objects.all():
-            if room.is_open() and not room.is_opened:
-                # we set the members of the room once when we open it, we
-                # don't keep checking if role changes mean changes to the
-                # member list.
-                # TODO maybe we should?
-                # TODO can we use the chatserver idea of role?
-                # TODO this could get very big, probably *need* to do something
-                # smarter than using explicit member list
-                members = list(room.members().values_list('username', flat=True))
-                actions.append({'room': room, 'action': 'open', 'members': members})
-            elif not room.is_open() and not room.is_closed:
-                actions.append({'room': room, 'action': 'close'})
+    actions = []
+    for room in chat.models.Room.objects.all():
+        if room.is_open() and not room.is_opened:
+            # we set the members of the room once when we open it, we
+            # don't keep checking if role changes mean changes to the
+            # member list.
+            # TODO maybe we should?
+            # TODO can we use the chatserver idea of role?
+            # TODO this could get very big, probably *need* to do something
+            # smarter than using explicit member list
+            members = list(room.members().values_list('username', flat=True))
+            actions.append({'room': room, 'action': 'open', 'members': members})
+        elif not room.is_open() and not room.is_closed:
+            actions.append({'room': room, 'action': 'close'})
 
     # TESTING
     import os
     if 'OPEN' in os.environ:
-        with tenant._tenant('di'):
-            room = chat.models.Room.objects.get(slug='main')
+        room = chat.models.Room.objects.get(slug='main')
         actions = [{'room': room, 'action': 'open', 'members': []}]
     elif 'CLOSE' in os.environ:
-        with tenant._tenant('di'):
-            room = chat.models.Room.objects.get(slug='main')
+        room = chat.models.Room.objects.get(slug='main')
         actions = [{'room': room, 'action': 'close'}]
     ####################
 
