@@ -19,6 +19,7 @@ class User(AbstractUser):
         permissions = (
             ('invite_user', 'Can invite a user'),
             ('guest', 'Guest permission'),
+            ('assign_role', 'Can assign role'),
         )
 
     def custom_values(self):
