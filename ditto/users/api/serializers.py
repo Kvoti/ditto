@@ -1,16 +1,29 @@
 from rest_framework import serializers
+from django.contrib.auth.models import Group
 
 from .. import models
 
+# TODO is there a right way to add the 'role' to the user data?
+# SerializerMethodField is read-only.
+# Using a Group serializer doesn't work as validation errors get raised.
+class RoleField(serializers.Field):
+    def to_representation(self, obj):
+        return obj.name
 
-class UserSerializer(serializers.ModelSerializer):
-    role = serializers.SerializerMethodField()
-
-    def get_role(self, obj):
-        # TODO encapsualte the role logic in one place
-        # TODO this needs to be editable
-        return obj.groups.all()[0].name
+    def to_internal_value(self, data):
+        # TODO validation
+        return Group.objects.get(name=data)
         
+        
+class UserSerializer(serializers.ModelSerializer):
+    role = RoleField()
+
+    def update(self, user, validated_data):
+        role = validated_data.pop('role')
+        user = super(UserSerializer, self).update(user, validated_data)
+        user.groups = [role]
+        return user
+    
     class Meta:
         model = models.User
         fields = (

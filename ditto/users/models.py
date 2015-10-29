@@ -29,7 +29,9 @@ class User(AbstractUser):
             'post_session_feedback': values.post_session_feedback_name,
             'post_session_feedback_question': values.post_session_feedback_question
         }
-            
+
+    def role(self):
+        return self.groups.all()[0]
 
 # As registration forms as user-definable we need to store extra custom
 # data. I read this:
