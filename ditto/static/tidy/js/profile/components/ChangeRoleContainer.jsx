@@ -1,10 +1,15 @@
 import React, { PropTypes} from 'react';
 import RoleStore from '../../../../configuration/js/stores/RoleStore';
+import UserProfileStore from '../stores/UserProfileStore';
 import ChangeRole from './ChangeRole';
+import { getUserProfile, setUserProfile } from '../utils/WebAPIUtils';
+
+getUserProfile(DITTO.user); // TODO this should be the user of the profile you're looking at!!!!
 
 function getStateFromStores() {
   return {
-    roles: RoleStore.getAll()
+    roles: RoleStore.getAll(),
+    profile: UserProfileStore.get()
   };
 }
 
@@ -16,26 +21,35 @@ export default class ChangeRoleContainer extends React.Component {
 
   componentDidMount() {
     RoleStore.addChangeListener(this._onChange);
+    UserProfileStore.addChangeListener(this._onChange);
   }
 
   componentWillUnmount() {
     RoleStore.removeChangeListener(this._onChange);
+    UserProfileStore.removeChangeListener(this._onChange);
   }
 
   render() {
-    if (!this.state.roles.length) {
+    if (!(this.state.roles.length && this.state.profile)) {
       return <p>Loading...</p>;
     }
     return (
       <ChangeRole
-              currentRole=""
+              currentRole={this.state.profile.role}
               roles={this.state.roles}
-              onChange={e => alert(e)}
+              onChange={this._updateRole}
               />
     );
   }
 
   _onChange = () => {
     this.setState(getStateFromStores());
+  }
+
+  _updateRole = (e) => {
+    setUserProfile(
+      DITTO.user,
+      {...this.state.profile, role: e.target.value}
+    );
   }
 }
