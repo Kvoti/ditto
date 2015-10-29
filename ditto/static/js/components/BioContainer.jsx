@@ -14,7 +14,7 @@ export default class BioContainer extends React.Component {
   componentDidMount() {
     get(
       // TODO fix hardcoded url
-      `/di/api/users/${DITTO.user}/`)
+      `/di/api/users/${DITTO.other}/`)
       .done(res => {
         console.log('got bio', res);
 	this.setState({bio: res});
@@ -60,7 +60,7 @@ export default class BioContainer extends React.Component {
       },
       // TODO *never* sure order of setting state and making API call
       () => {
-        put(`/di/api/users/${DITTO.user}/`, bio)
+        put(`/di/api/users/${DITTO.other}/`, bio)
           .done(() => {
             this.setState({status: 'saved'});
           })

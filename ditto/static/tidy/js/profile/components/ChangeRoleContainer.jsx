@@ -4,7 +4,7 @@ import UserProfileStore from '../stores/UserProfileStore';
 import ChangeRole from './ChangeRole';
 import { getUserProfile, setUserProfile } from '../utils/WebAPIUtils';
 
-getUserProfile(DITTO.user); // TODO this should be the user of the profile you're looking at!!!!
+getUserProfile(DITTO.other);
 
 function getStateFromStores() {
   return {
@@ -48,7 +48,7 @@ export default class ChangeRoleContainer extends React.Component {
 
   _updateRole = (e) => {
     setUserProfile(
-      DITTO.user,
+      DITTO.other,
       {...this.state.profile, role: e.target.value}
     );
   }

@@ -95,8 +95,9 @@
 	</script>
 
 	{% block javascript %}
-	    <script>
-		var DITTO = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}', postSessionQuestion: '{{ request.user.custom_values.post_session_feedback_question }}'};
+	  <script>
+          // TODO this should be passed as json and parsed
+		var DITTO = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}', postSessionQuestion: '{{ request.user.custom_values.post_session_feedback_question }}', other: '{{ object.username }}'};
 	    </script>
 	    <!-- Latest JQuery -->
 	    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
