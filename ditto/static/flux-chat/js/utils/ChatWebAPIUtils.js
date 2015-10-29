@@ -2,6 +2,7 @@ var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
 var ChatMessageUtils = require('./ChatMessageUtils');
 var urlUtils = require('./urlUtils');
+import UserProfileStore from '../stores/UserProfileStore';
 
 var _connection, // raw connection
     _connectResolve,     
@@ -328,6 +329,32 @@ function changeAvatar(avatarName) {
   );
 }
 
+function changeRole(user, roleName) {
+  console.log('change role', user, roleName);
+  // TODO no convenience function provided for making vcards?
+  var role = Strophe.xmlElement('ROLE');
+  role.appendChild(Strophe.xmlTextNode(roleName));
+
+  var photo = Strophe.xmlElement('PHOTO');
+  photo.appendChild(Strophe.xmlTextNode(
+    // TODO user profile might not be loaded yet
+    UserProfileStore.getForUser(user).avatar
+  ));  // TODO prob make this full URI of avatar?
+  // TODO looks like strophe.vcard doesn't allow setting multiple elements?
+  // (sort of doesn't matter cos the data you set isn't validated, which is ok
+  // while we assume no other clients will connect)
+  var vcard = Strophe.xmlElement('XXX');
+  vcard.appendChild(role);
+  vcard.appendChild(photo);
+
+  // TODO handle error
+  _connection.vcard.set(
+    function (r) { },  // TODO handle something here?
+    vcard,
+    getBareJIDForNode(user)
+  );
+}
+
 module.exports = {
 
     connect: function (server, jid, password, nick, log=false) {
@@ -410,6 +437,8 @@ module.exports = {
     },
 
   changeAvatar: changeAvatar,
+  
+  changeRole: changeRole,
 
     joinChatroom: joinChatroom,
     

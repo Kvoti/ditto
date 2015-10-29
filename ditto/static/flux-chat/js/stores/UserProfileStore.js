@@ -26,6 +26,10 @@ var UserProfileStore = assign({}, EventEmitter.prototype, {
         return _userProfiles;
     },
 
+  getForUser: function(user) {
+    return _userProfiles[user];
+  }
+
 });
 UserProfileStore.setMaxListeners(0);  // unlimited
 

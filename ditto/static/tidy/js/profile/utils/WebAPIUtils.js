@@ -1,5 +1,6 @@
 import {get, put} from '../../../../js/request';
 import Dispatcher from '../dispatcher/Dispatcher';
+import ChatWebAPIUtils from '../../../../flux-chat/js/utils/ChatWebAPIUtils';
 
 export function getUserProfile(user) {
   get(
@@ -20,6 +21,7 @@ export function setUserProfile(user, userProfile) {
     `/di/api/users/${user}/`,
     userProfile
   );
+  ChatWebAPIUtils.changeRole(user, userProfile.role);
   // TODO .done
   // TODO .fail
   Dispatcher.dispatch({
