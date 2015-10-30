@@ -3,6 +3,7 @@ var XMPP = require('./xmpp.js');
 var ChatMessageUtils = require('./ChatMessageUtils');
 var urlUtils = require('./urlUtils');
 import UserProfileStore from '../stores/UserProfileStore';
+import { get } from '../../../js/request';
 
 var _connection, // raw connection
     _connectResolve,     
@@ -38,7 +39,6 @@ function onConnectFactory (resolve) {
             _connection.addHandler(
                 receiveArchivedPrivateMessage, Strophe.NS.MAM, "message", null);        
             getContacts();
-            _connection.vcard.init(_connection);
             loadUserProfile(Strophe.getNodeFromJid(_myJID));
             _connection.chatstates.init(_connection);
             if (chatConf.hasChatroom) {
@@ -227,26 +227,17 @@ function loadPrivateChatHistory (contact, before) {
 }
 
 function loadUserProfile (user) {
-    var jid = getBareJIDForNode(user);
-    if (userProfileLoadedFor.indexOf(user) === -1) {
-	userProfileLoadedFor.push(user);
-        _connection.vcard.get(
-	  vcard => {
-                var userProfile = XMPP.parse.vCard(vcard);
-                userProfile.user = user;
-                ChatServerActionCreators.receiveUserProfile(userProfile);
-	    },
-	  jid,
-          () => {
-            changeAvatar('sunshine');
-            // Assume vcard.set will work and update the UI
-            ChatServerActionCreators.receiveUserProfile({
-              role: chatConf.role,
-              avatar: 'sunshine'
-            });
-          }
-        );
-    }
+  console.log('loading profile', user);
+  var jid = getBareJIDForNode(user);
+  if (userProfileLoadedFor.indexOf(user) === -1) {
+    userProfileLoadedFor.push(user);
+    get(
+      // TODO fix hardcoded url
+      `/di/api/users/${user}/`)
+      .done(res => {
+        ChatServerActionCreators.receiveUserProfile(res);
+      });
+  }
 }
 
 function receivePrivateMessage (msg) {
@@ -307,53 +298,6 @@ function setupLogging () {
 function getBareJIDForNode (node) {
     return node + '@' + _domain;
 };
-
-function changeAvatar(avatarName) {
-  // TODO no convenience function provided for making vcards?
-  var role = Strophe.xmlElement('ROLE');
-  role.appendChild(Strophe.xmlTextNode(chatConf.role));
-
-  var photo = Strophe.xmlElement('PHOTO');
-  photo.appendChild(Strophe.xmlTextNode(avatarName));  // TODO prob make this full URI of avatar?
-  // TODO looks like strophe.vcard doesn't allow setting multiple elements?
-  // (sort of doesn't matter cos the data you set isn't validated, which is ok
-  // while we assume no other clients will connect)
-  var vcard = Strophe.xmlElement('XXX');
-  vcard.appendChild(role);
-  vcard.appendChild(photo);
-
-  // TODO handle error
-  _connection.vcard.set(
-    function (r) { },  // TODO handle something here?
-    vcard
-  );
-}
-
-function changeRole(user, roleName) {
-  console.log('change role', user, roleName);
-  // TODO no convenience function provided for making vcards?
-  var role = Strophe.xmlElement('ROLE');
-  role.appendChild(Strophe.xmlTextNode(roleName));
-
-  var photo = Strophe.xmlElement('PHOTO');
-  photo.appendChild(Strophe.xmlTextNode(
-    // TODO user profile might not be loaded yet
-    UserProfileStore.getForUser(user).avatar
-  ));  // TODO prob make this full URI of avatar?
-  // TODO looks like strophe.vcard doesn't allow setting multiple elements?
-  // (sort of doesn't matter cos the data you set isn't validated, which is ok
-  // while we assume no other clients will connect)
-  var vcard = Strophe.xmlElement('XXX');
-  vcard.appendChild(role);
-  vcard.appendChild(photo);
-
-  // TODO handle error
-  _connection.vcard.set(
-    function (r) { },  // TODO handle something here?
-    vcard,
-    getBareJIDForNode(user)
-  );
-}
 
 module.exports = {
 
@@ -435,10 +379,6 @@ module.exports = {
 	    getBareJIDForNode(to)
 	);
     },
-
-  changeAvatar: changeAvatar,
-  
-  changeRole: changeRole,
 
     joinChatroom: joinChatroom,
     

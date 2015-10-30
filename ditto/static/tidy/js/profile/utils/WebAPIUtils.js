@@ -1,7 +1,6 @@
-import {get, put} from '../../../../js/request';
+import {get, put, patch} from '../../../../js/request';
 import Dispatcher from '../dispatcher/Dispatcher';
 import ChatAppDispatcher from '../../../../flux-chat/js/dispatcher/ChatAppDispatcher';
-import ChatWebAPIUtils from '../../../../flux-chat/js/utils/ChatWebAPIUtils';
 
 export function getUserProfile(user) {
   get(
@@ -32,10 +31,6 @@ export function updateUserRole(user, userProfile) {
         type: 'UPDATE_USER_PROFILE_FAIL'
       });
     });
-  // TODO .done
-  // TODO .fail
-  // TODO this doesn't work for admin user changing another's role
-  ChatWebAPIUtils.changeRole(user, userProfile.role);
   // TODO .done
   // TODO .fail
   Dispatcher.dispatch({
@@ -69,5 +64,34 @@ export function updateUserBio(user, userProfile) {
   Dispatcher.dispatch({
     type: 'UPDATE_USER_PROFILE',
     userProfile: userProfile
+  });
+}
+
+export function updateUserAvatar(user, avatar) {
+  patch(
+  // TODO fix hardcoded url
+    `/di/api/users/${user}/`,
+    {avatar}
+  )
+    .done(() => {
+      Dispatcher.dispatch({
+        type: 'UPDATE_USER_PROFILE_SUCCESS'
+      });
+    })
+    .fail(() => {
+      Dispatcher.dispatch({
+        type: 'UPDATE_USER_PROFILE_FAIL'
+      });
+  });
+  // TODO sort out the duplicated dispatchers and stores
+  Dispatcher.dispatch({
+    type: 'UPDATE_USER_AVATAR',
+    user: user,
+    avatar: avatar
+  });
+  ChatAppDispatcher.dispatch({
+    type: 'CHANGE_AVATAR',
+    user: user,
+    avatarName: avatar
   });
 }

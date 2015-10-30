@@ -38,7 +38,7 @@ UserProfileStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     switch(action.type) {
 
     case ActionTypes.RECEIVE_USER_PROFILE:
-        _userProfiles[action.userProfile.user] = action.userProfile;
+        _userProfiles[action.userProfile.username] = action.userProfile;
         UserProfileStore.emitChange();
         break;
 

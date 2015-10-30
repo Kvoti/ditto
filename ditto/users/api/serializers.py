@@ -19,9 +19,13 @@ class UserSerializer(serializers.ModelSerializer):
     role = RoleField()
 
     def update(self, user, validated_data):
-        role = validated_data.pop('role')
+        if 'role' in validated_data:
+            role = validated_data.pop('role')
+        else:
+            role = None
         user = super(UserSerializer, self).update(user, validated_data)
-        user.groups = [role]
+        if role:
+            user.groups = [role]
         return user
     
     class Meta:
@@ -32,5 +36,6 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'role',
-            'bio'
+            'bio',
+            'avatar',
         )

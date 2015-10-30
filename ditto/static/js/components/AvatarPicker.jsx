@@ -1,5 +1,5 @@
 var React = require('react');
-var ChatUserProfileActionCreators = require('../../flux-chat/js/actions/ChatUserProfileActionCreators')
+import { updateUserAvatar } from '../../tidy/js/profile/utils/WebAPIUtils';
 
 var AvatarPicker = React.createClass({
     getAvatars: function () {
@@ -18,8 +18,8 @@ var AvatarPicker = React.createClass({
     render: function () {
 	var avatars = this.getAvatars().map(avatar => {
 	    var avatarName = avatar[0];
-	    var changeAvatar = function () {
-		ChatUserProfileActionCreators.changeAvatar(avatarName);
+	  var changeAvatar = function () {
+            updateUserAvatar(DITTO.other, avatarName);
 	    }
 	    return (
 		<li key={avatarName}><a onClick={changeAvatar} dangerouslySetInnerHTML={{__html: avatar[1] }} href="#"></a></li>

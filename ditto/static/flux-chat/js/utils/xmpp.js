@@ -70,12 +70,6 @@ module.exports = {
             setThreadFields(message);
             return message;
         },
-        vCard: function (vcard) {
-	    vcard = $(vcard);
-	    var role = vcard.find('ROLE').text();
-	    var avatar = vcard.find('PHOTO').text();
-	    return {role: role, avatar: avatar};
-        },
         presence: function (pres) {
             var msg = $(pres);
             var from = Strophe.getNodeFromJid(msg.attr('from'));

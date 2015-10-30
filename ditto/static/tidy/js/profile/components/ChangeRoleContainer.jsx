@@ -2,9 +2,7 @@ import React, { PropTypes} from 'react';
 import RoleStore from '../../../../configuration/js/stores/RoleStore';
 import UserProfileStore from '../stores/UserProfileStore';
 import ChangeRole from './ChangeRole';
-import { getUserProfile, updateUserRole } from '../utils/WebAPIUtils';
-
-getUserProfile(DITTO.other);
+import { updateUserRole } from '../utils/WebAPIUtils';
 
 function getStateFromStores() {
   return {

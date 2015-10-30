@@ -7,10 +7,31 @@ from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
+AVATARS = [
+    "sunshine",
+    "rocket",
+    "skull",
+    "zoom_lolly",
+    "fried_egg",
+    "flower",
+    "super_mario",
+    "ice_lolly",
+    "panda",
+    "hotdog",
+    "popcorn",
+    "melon",
+    "monkey",
+    "cupcake",
+]
 
 # Subclass AbstractUser
 class User(AbstractUser):
     bio = models.TextField(blank=True)
+    avatar = models.CharField(
+        max_length="10",
+        choices=zip(AVATARS, AVATARS),
+        default="sunshine"
+    )
     
     def __unicode__(self):
         return self.username
