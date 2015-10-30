@@ -1,5 +1,6 @@
 import {get, put} from '../../../../js/request';
 import Dispatcher from '../dispatcher/Dispatcher';
+import ChatAppDispatcher from '../../../../flux-chat/js/dispatcher/ChatAppDispatcher';
 import ChatWebAPIUtils from '../../../../flux-chat/js/utils/ChatWebAPIUtils';
 
 export function getUserProfile(user) {
@@ -40,6 +41,12 @@ export function updateUserRole(user, userProfile) {
   Dispatcher.dispatch({
     type: 'UPDATE_USER_PROFILE',
     userProfile: userProfile
+  });
+  // TODO we should only have/need the one dispatcher
+  ChatAppDispatcher.dispatch({
+    type: 'UPDATE_USER_PROFILE',
+    userProfile: userProfile,
+    user: user
   });
 }
 

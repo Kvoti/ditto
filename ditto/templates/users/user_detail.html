@@ -46,7 +46,7 @@
         <div class="col-md-6">
 	    <div class="well">
 		{% with role=object.groups.all.0.name %}
-                    <h2>{{ object.get_full_name|default:object.username }} | <span class="profile-role"><a href="{% url "ditto:people" %}#{{ role }}">{{ role }}</a></span> <span id="my-status"></span></h2>
+                    <h2>{{ object.get_full_name|default:object.username }} | <span id="profile-role"></span> <span id="my-status"></span></h2>
 		{% endwith %}
                 <p><em><strong>Joined: </strong> {{ object.date_joined }}</em></p>
 		<div{% if is_me %} id="user-bio"{% endif %}>{{ object.bio }}</div>

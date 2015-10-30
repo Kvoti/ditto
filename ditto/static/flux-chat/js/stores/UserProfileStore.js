@@ -48,6 +48,12 @@ UserProfileStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     case ActionTypes.CHANGE_AVATAR:
         _userProfiles[action.user].avatar = action.avatarName;
         UserProfileStore.emitChange();
+      break;
+
+    // Same with role changes, will eventually need to be broadcast
+    case 'UPDATE_USER_PROFILE':
+        _userProfiles[action.user].role = action.userProfile.role;
+        UserProfileStore.emitChange();
         break;
         
     default:

@@ -25,6 +25,7 @@ window.AvatarContainer = AvatarContainer;
 import BioContainer from '../../js/components/BioContainer';
 import NewMessageCount from '../../flux-chat/js/components/NewMessageCount';
 import ChangeRole from '../../tidy/js/profile/components/ChangeRoleContainer';
+import Role from '../../flux-chat/js/components/Role.react';
 
 if (chatConf.me) {
     ChatWebAPIUtils.connect(
@@ -159,6 +160,13 @@ let nmc = document.getElementById('new-message-count');
 if (nmc) {
   React.render(
       <NewMessageCount />, nmc
+  );
+}
+
+let role = document.getElementById('profile-role');
+if (role) {
+  React.render(
+      <Role user={DITTO.other} />, role
   );
 }
 
