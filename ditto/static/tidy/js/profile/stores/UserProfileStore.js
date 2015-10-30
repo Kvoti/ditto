@@ -7,6 +7,7 @@ import Dispatcher from '../dispatcher/Dispatcher';
 const CHANGE_EVENT = 'change';
 
 let _userProfile = null;
+let _status = null;
 
 const UserProfileStore = assign({}, EventEmitter.prototype, {
 
@@ -23,8 +24,12 @@ const UserProfileStore = assign({}, EventEmitter.prototype, {
   },
 
   get: function() {
-    return _userProfile
+    return _userProfile;
   },
+
+  getStatus: function() {
+    return _status;
+  }
 
 });
 
@@ -39,17 +44,20 @@ UserProfileStore.dispatchToken = Dispatcher.register(function(action) {
     
   case 'UPDATE_USER_PROFILE':
     _userProfile = action.userProfile;
+    _status = 'saving';
     UserProfileStore.emitChange();
     break;
 
-    // // mongooseim doesn't support pubsub so avatar changes are not
-    // // broadcast yet so we have to listen for this action so at least
-    // // the user sees their own avatar change immediately
-    // case ActionTypes.CHANGE_AVATAR:
-    //     _userProfiles[action.user].avatar = action.avatarName;
-    //     UserProfileStore.emitChange();
-    //     break;
+  case 'UPDATE_USER_PROFILE_SUCCESS':
+    _status = 'saved';
+    UserProfileStore.emitChange();
+    break;
     
+  case 'UPDATE_USER_PROFILE_FAIL':
+    _status = 'failed';
+    UserProfileStore.emitChange();
+    break;
+
   default:
     // do nothing
   }

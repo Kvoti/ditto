@@ -1,25 +1,28 @@
 import React from 'react';
-
+import UserProfileStore from '../../tidy/js/profile/stores/UserProfileStore';
+import { updateUserBio } from '../../tidy/js/profile/utils/WebAPIUtils';
 import Bio from './Bio';
-import {get, put} from '../request';
 
-// TODO connecting data container to endpoint is boiler-plate
-// (wrote redux-rest to handle this!)
+function getStateFromStores() {
+  return {
+    profile: UserProfileStore.get(),
+    status: UserProfileStore.getStatus()
+      
+  };
+}
+
 export default class BioContainer extends React.Component {
-  state = {
-    bio: null,
-    status: null
+  constructor(props) {
+    super(props);
+    this.state = getStateFromStores();
+  }
+  
+  componentDidMount() {
+    UserProfileStore.addChangeListener(this._onChange);
   }
 
-  componentDidMount() {
-    get(
-      // TODO fix hardcoded url
-      `/di/api/users/${DITTO.other}/`)
-      .done(res => {
-        console.log('got bio', res);
-	this.setState({bio: res});
-      });
-    // TODO .fail(
+  componentWillUnmount() {
+    UserProfileStore.removeChangeListener(this._onChange);
   }
 
   render() {
@@ -43,31 +46,21 @@ export default class BioContainer extends React.Component {
          null
          }
          <Bio
-                 bio={this.state.bio === null ? 'Loading...' : this.state.bio.bio}
-                 onSave={this._save}
+                 bio={this.state.profile === null ? 'Loading...' : this.state.profile.bio}
+                 onSave={this._updateBio}
          />
       </div>
     );
   }
 
-  _save = (newBio) => {
-    let bio = this.state.bio;
-    bio.bio = newBio;
-    this.setState(
-      {
-        bio: bio,
-        status: 'saving'
-      },
-      // TODO *never* sure order of setting state and making API call
-      () => {
-        put(`/di/api/users/${DITTO.other}/`, bio)
-          .done(() => {
-            this.setState({status: 'saved'});
-          })
-          .fail(() => {
-            this.setState({status: 'failed'});
-          });
-      }
+  _onChange = () => {
+    this.setState(getStateFromStores());
+  }
+
+  _updateBio = (bio) => {
+    updateUserBio(
+      DITTO.other,
+      {...this.state.profile, bio: bio}
     );
   }
 }

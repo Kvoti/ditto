@@ -2,7 +2,7 @@ import React, { PropTypes} from 'react';
 import RoleStore from '../../../../configuration/js/stores/RoleStore';
 import UserProfileStore from '../stores/UserProfileStore';
 import ChangeRole from './ChangeRole';
-import { getUserProfile, setUserProfile } from '../utils/WebAPIUtils';
+import { getUserProfile, updateUserRole } from '../utils/WebAPIUtils';
 
 getUserProfile(DITTO.other);
 
@@ -47,7 +47,7 @@ export default class ChangeRoleContainer extends React.Component {
   }
 
   _updateRole = (e) => {
-    setUserProfile(
+    updateUserRole(
       DITTO.other,
       {...this.state.profile, role: e.target.value}
     );
