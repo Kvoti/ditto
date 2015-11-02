@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
 
 
 class FakeTenant(object):
@@ -26,6 +27,10 @@ def _get_urls(tenant_slug):
     return tuple(
         patterns(
             '',
+            (r'^$', RedirectView.as_view(
+                pattern_name='ditto:home',
+                permanent=True,
+            )),
             url(r'^%s/' % tenant_slug, include('network_urls')),
             url(r'^main/', include('multitenancy.urls', namespace="ditto")),
         ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
