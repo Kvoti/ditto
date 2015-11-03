@@ -1,43 +1,67 @@
-import Validate from '../lib/form/Validate.jsx';
+import DelayedInput from '../lib/form/DelayedInput';
+import * as schema from 'data-schema/src/schema';
+import ControlErrors from 'react-form-builder/src/components/editors/renderer/ControlErrors';
+import ControlValidationIcon from 'react-form-builder/src/components/editors/renderer/ControlValidationIcon';
+import { controlRowErrorClassNames } from 'react-form-builder/src/components/editors/renderer/utils';
 
-var React = require('react/addons');
+var React = require('react');
 var RoleAndUserSelect = require('../../../configuration/js/components/RoleAndUserSelect.jsx');
 
+
 var CaseNoteEditor = React.createClass({
-    mixins: [React.addons.LinkedStateMixin],
-    
-    getInitialState () {
+  getInitialState () {
 	return {
-	    text: this.props.initialText || "",
-	    title: this.props.initialText || "",
+          caseNote: this._getCaseNote(),
 	    shareRoles: this.props.initialShareRoles || [],
-	    shareUsers: this.props.initialShareUsers || [],
-	    isValid: {
-		title: false,
-		text: false
-	    }
+	    shareUsers: this.props.initialShareUsers || []
 	};
     },
+
+  _getCaseNote() {
+    let caseNote = new schema.ManagedObject(schema.shape({
+      title: schema.string({isRequired: true}),
+      text: schema.string({isRequired: true})
+    }));
+    // TODO hacks here to manually call validate, need to fix ManagedObject constructor
+    caseNote.managed.set({
+      title: '',
+      text: ''
+    });
+    caseNote._isBound = {};
+    caseNote._validate();
+    caseNote._onChange = () => this.forceUpdate();
+    //////////////////////////////////////////////////
+    console.log('got case note', caseNote.managed.title.isBound, caseNote.managed.title.errors);
+    return caseNote;
+  },
     
-    render () {
+  render () {
+    console.log('rendering', this.state.caseNote.managed.text.get());
 	return (
-	    <div>
-		<Validate
+	  <div>
+            {this._wrap(
+		<DelayedInput
 			id="title"
-			isRequired={true}
-			messages={{isRequired: 'Please enter a title'}}
-			onChange={this._updateValidation.bind(this, 'title')}
-			>
-		    <input className="form-control" placeholder="Enter note title" value={this.state.title} onChange={this._updateSharing.bind(this, 'title')} />
-		</Validate>
-		<Validate
-	                id="text"
-			isRequired={true}
-			maxWords={150}
-			onChange={this._updateValidation.bind(this, 'text')}
-			>
-		    <textarea className="form-control" placeholder="Enter note text" value={this.state.text} onChange={this._updateSharing.bind(this, 'text')} />
-		</Validate>
+                        className="form-control"
+                        value={this.state.caseNote.managed.title.getPendingOrCurrent()}
+                        immediate={this.state.caseNote.managed.title.isBound}
+			onChange={v => this.state.caseNote.managed.title.set(v)}
+                        onPendingChange={v => this.state.caseNote.managed.title.pend().set(v)}
+		/>,
+              'title', 'title', this.state.caseNote.managed.title.errors)}
+                {this._wrap(
+		<DelayedInput
+                        immediate={this.state.caseNote.managed.text.isBound}
+			onChange={v => this.state.caseNote.managed.text.set(v)}
+                        onPendingChange={v => this.state.caseNote.managed.text.pend().set(v)}
+		        >
+                  <textarea
+                          className="form-control"
+                          id="text"
+                          value={this.state.caseNote.managed.text.getPendingOrCurrent()}
+                  />
+                </DelayedInput>,
+                  'text', 'text', this.state.caseNote.managed.text.errors)}
 		<p>Select any roles and/or users you want to share this note with.</p>
 		<RoleAndUserSelect
 			onChangeRoles={this._updateSharing.bind(this, 'shareRoles')}
@@ -48,7 +72,7 @@ var CaseNoteEditor = React.createClass({
 		<p>
 		    <button
 			    className="btn btn-success"
-			    disabled={!this.state.isValid.title ||!this.state.isValid.text}
+			    disabled={!this.state.caseNote.isValid()}
 			    onClick={this._onSave}
 			    >save</button>
 		    <button
@@ -59,6 +83,26 @@ var CaseNoteEditor = React.createClass({
 	);
     },
 
+  _wrap(control, ID, label, errors) {
+    return (
+      <div
+              className={controlRowErrorClassNames(errors, {'form-group': true})}
+              >
+        <label
+                htmlFor={ID}
+                className='control-label'
+                >
+          {label}{' *'}
+        </label>
+        <div style={{position: 'relative'}}>
+          {control}
+          <ControlValidationIcon controlID={ID} errors={errors} />
+        </div>
+        <ControlErrors errors={errors} />
+      </div>
+    );
+  },
+  
     _onCancel () {
 	this.setState(this.getInitialState());
     },
@@ -73,26 +117,17 @@ var CaseNoteEditor = React.createClass({
 	this.setState(update);
     },
 
-    _updateValidation (key, value) {
-	let validationFlags = this.state.isValid;
-	let currentValue = validationFlags[key];
-	console.log('update validation', key, currentValue, value);
-	validationFlags[key] = value;
-	this.setState({isValid: validationFlags});
-    },
-
     _onSave () {
 	this.props.onSave(
-	    this.state.title,
-	    this.state.text,
+	    this.state.caseNote.managed.title.get(),
+	    this.state.caseNote.managed.text.get(),
 	    this.state.shareUsers,
 	    this.state.shareRoles
 	);
-	this.setState({
-	    title: "",
-	    text: "",
-	    shareRoles: [],
-	    shareUsers: []
+      this.setState({
+        caseNote: this._getCaseNote(),
+	shareRoles: [],
+	shareUsers: []
 	});
     }
 
