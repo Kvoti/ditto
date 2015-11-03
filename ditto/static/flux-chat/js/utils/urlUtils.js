@@ -61,6 +61,10 @@ module.exports = {
     user (userID) {
         return this.users() + userID + '/';
     },
+
+  profile(username) {
+    return _fullUrl('users/') + username + '/';
+  },
     
     api: {
         roles () {

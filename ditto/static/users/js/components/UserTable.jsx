@@ -66,8 +66,8 @@ var UserTable = React.createClass({
   
     _renderUsername (username, key, user, rowIndex) {
 	// TODO need to escape username for use in url?
-	return (
-	    <Link to={urls.user(username)}>{username}</Link>
+      return (
+        <a href={urls.profile(username)}>{username}</a>
 	);
     },
     
