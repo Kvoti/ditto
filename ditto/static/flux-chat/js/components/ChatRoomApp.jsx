@@ -72,10 +72,12 @@ var ChatRoomApp = React.createClass({
 			    <WhosOnline stacked={true}/>
 			</div>
 		    </div>
+                    {ThreadStore.getRooms() > 1 ?
 		    <div className="col-md-3">
 			<h3>Other chatrooms</h3>
 			<RoomSection />
 		    </div>
+                    : null}
 		</div>
 	    );
         } else if (this.state.connection == ChatConstants.disconnected) {
