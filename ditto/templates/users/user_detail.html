@@ -54,8 +54,6 @@
             {% with accordion_id='user_content' %}
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
                     {% if show_casenotes %}{% include "users/_casenotes.html" with index=0 %}{% endif %}
-                    {% include "users/_evaluation.html" with index=1 %}
-                    {% include "users/_reports.html" with index=2 %}
                 </div>
             {% endwith %}
         </div>
