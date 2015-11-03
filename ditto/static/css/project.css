@@ -813,4 +813,12 @@ li.sortable-dragging .well
 .nav>li>a:hover {
     background-color: transparent !important;
 }
-		
+
+/* lighter purple for active session under 'My sessions' */
+.thread-section-session .list-group-item.active,
+.thread-section-session .list-group-item.active:hover,
+.thread-section-session .list-group-item.active:focus {
+  color: #fff;
+  background-color: #3b0073;
+  border-color: #3b0073;
+}
