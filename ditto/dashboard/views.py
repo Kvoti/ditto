@@ -206,4 +206,20 @@ def _columns(data, role, *keys):
         yield data[role]
     if keys:
         for key in keys:
-            yield data['%s_%s' % (role, key)]
+            value = data['%s_%s' % (role, key)]
+            # TODO remove this hack for displaying average ratings (can we do this in the SQL query?)
+            if key.endswith('avg_rating'):
+                # TODO get these from SessionRating.CHOICES
+                if value is not None:
+                    if 0 <= value < 0.5:
+                        text_value = 'Very poor'
+                    elif 0.5 <= value < 1.5:
+                        text_value = 'poor'
+                    elif 1.5 <= value < 2.5:
+                        text_value = 'OK'
+                    elif 2.5 <= value < 3.5:
+                        text_value = 'Good'
+                    elif 3.5 <= value <= 4:
+                        text_value = 'Very good'
+                    value = '%s (%s)' % (value, text_value)
+            yield value
