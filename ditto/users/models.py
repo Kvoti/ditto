@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Import the AbstractUser model
 from django.contrib.auth.models import AbstractUser
-
+from django.core.urlresolvers import reverse
 # Import the basic Django ORM models library
 from django.db import models
 
@@ -55,6 +55,12 @@ class User(AbstractUser):
     def role(self):
         return self.groups.all()[0]
 
+    def chat_link(self, other):
+        participants = [self.username, other.username]
+        participants.sort()
+        participants = ':'.join(participants)
+        return reverse('ditto:private_chat', args=(participants,))
+    
 # As registration forms as user-definable we need to store extra custom
 # data. I read this:
 # http://martinfowler.com/articles/schemaless/#relational-schemaless

@@ -38,6 +38,7 @@ class UserDetailView(LoginRequiredMixin, NavMixin, DetailView):
         context['reg_data'] = get_reg_data(self.object)
         context['show_casenotes'] = CaseNote.objects.filter_for_viewer(
             self.request.user).count()
+        context['chat_link'] = self.request.user.chat_link(self.object)
         return context
 
     
