@@ -51,10 +51,12 @@ var TicketTable = React.createClass({
     },
     
     render () {
-	var showingTicket;
+      var showingTicket;
+      let index;
 	if (this.props.params.id !== undefined) {
-	    showingTicket = this.state.dataList.find(
-		t => t.id == this.props.params.id);
+	    index = this.state.dataList.findIndex(
+	      t => t.id == this.props.params.id);
+          showingTicket = this.state.dataList[index];
 	}
 	return (
 	    <div>
@@ -123,7 +125,7 @@ var TicketTable = React.createClass({
 		  {this._isClaimable(showingTicket) ?
 		      <button
 		      className="btn btn-success"
-		      onClick={this._claim.bind(this, showingTicket)}
+		      onClick={this._claim.bind(this, index)}
 		      >
 		      Claim
 		      </button>
@@ -142,7 +144,7 @@ var TicketTable = React.createClass({
 	return ticket.assigned_to === DITTO.user && !ticket.is_resolved;
     },
     
-    _claim (index) {
+  _claim (index) {
 	var ticket = this.state.dataList[index];
 	var change = {};
 	change[index] = {assigned_to: {$set: DITTO.user}};
