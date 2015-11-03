@@ -26,13 +26,13 @@ var RoleAndUserSelect = React.createClass({
         this.setState(getStateFromStores());
     },
 
-    render () {
+  render () {
 	console.log('selected', this.props.selectedRoles);
 	return (
 	    <div>
 		<p>Select roles:
 		    <CheckList
-			    items={this.state.roles.map(r => r.name)}
+			    items={this.state.roles}
 			    selected={this.props.selectedRoles}
 			    onChange={this.props.onChangeRoles} />
 		</p>

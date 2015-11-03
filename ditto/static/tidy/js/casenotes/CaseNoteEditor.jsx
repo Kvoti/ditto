@@ -63,7 +63,11 @@ var CaseNoteEditor = React.createClass({
 	this.setState(this.getInitialState());
     },
     
-    _updateSharing (key, value) {
+  _updateSharing (key, valueOrEvent) {
+    // Urgh, Validate is a legacy thing which I was replacing with DelayedInput. For now, here,
+    // we have to figure out if we're passed a value or event (I kept flip-flopping on whether
+    // to pass through the original event or the value)
+    let value = valueOrEvent.target ? valueOrEvent.target.value : valueOrEvent;
 	var update = {};
 	update[key] = value;
 	this.setState(update);
