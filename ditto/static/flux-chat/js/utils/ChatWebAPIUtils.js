@@ -85,7 +85,7 @@ var getChatrooms = new Promise((resolve, reject) => {
 // return functions that call `resolve`...
 function receiveChatrooms (resolve) {
     return function (result) {
-        console.log('got chatrooms');
+//        console.log('got chatrooms');
         var roomList = XMPP.parse.roomList(result);
         resolve(roomList);
 	ChatServerActionCreators.receiveChatrooms(roomList);
@@ -98,7 +98,7 @@ getChatrooms.then(roomList => {
 	if (window.location.href.indexOf('chatroom') === -1) {
             // Anywhere outside of /chatrooms/ we just want to join the 'main' site chatroom
           let mainRoom = roomList.find(r => r.startsWith('main'));
-          console.log('joining', mainRoom);
+//          console.log('joining', mainRoom);
           joinChatroom(mainRoom);
 	}
     }
@@ -114,7 +114,7 @@ function joinChatroom (roomJID) {
     ]).then(result => {
         var [connection, roomList] = result;
         if (roomList.indexOf(roomJID) === -1) {
-            console.log('No such room', roomList);
+//            console.log('No such room', roomList);
             return;
         }
         // TODO this isn't quite the right place, should probably do
@@ -187,19 +187,19 @@ function acceptFriendRequest (from) {
 }
 
 function handleContacts (roster, item) {
+  console.log('roster', roster, item);
     // var friends = [];
     roster.forEach((friend, i) => {
 	var username = Strophe.getNodeFromJid(friend.jid);
-	if (friend.subscription !== 'none') {
-          loadPrivateChatHistory(friend.jid, "");
+      loadPrivateChatHistory(friend.jid, "");
 	    //     friends.push(username);
-	    loadUserProfile(username);
-	}
+      loadUserProfile(username);
     });
     return true;
 }
 
 function loadPrivateChatHistory (contact, before) {
+  console.log('loading history between', contact);
     if (historyLoadedFor.indexOf(contact) === -1 || before) {
         historyLoadedFor.push(contact);
       _connection.mam.query(
@@ -227,7 +227,7 @@ function loadPrivateChatHistory (contact, before) {
 }
 
 function loadUserProfile (user) {
-  console.log('loading profile', user);
+//  console.log('loading profile', user);
   var jid = getBareJIDForNode(user);
   if (userProfileLoadedFor.indexOf(user) === -1) {
     userProfileLoadedFor.push(user);
