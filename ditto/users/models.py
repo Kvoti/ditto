@@ -1,16 +1,37 @@
 # -*- coding: utf-8 -*-
 # Import the AbstractUser model
 from django.contrib.auth.models import AbstractUser
-
+from django.core.urlresolvers import reverse
 # Import the basic Django ORM models library
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
+AVATARS = [
+    "sunshine",
+    "rocket",
+    "skull",
+    "zoom_lolly",
+    "fried_egg",
+    "flower",
+    "super_mario",
+    "ice_lolly",
+    "panda",
+    "hotdog",
+    "popcorn",
+    "melon",
+    "monkey",
+    "cupcake",
+]
 
 # Subclass AbstractUser
 class User(AbstractUser):
     bio = models.TextField(blank=True)
+    avatar = models.CharField(
+        max_length="10",
+        choices=zip(AVATARS, AVATARS),
+        default="sunshine"
+    )
     
     def __unicode__(self):
         return self.username
@@ -19,9 +40,27 @@ class User(AbstractUser):
         permissions = (
             ('invite_user', 'Can invite a user'),
             ('guest', 'Guest permission'),
+            ('assign_role', 'Can assign role'),
         )
 
+    def custom_values(self):
+        role = self.groups.all()[0]
+        values = role.values
+        return {
+            'case_notes': values.case_notes_name,
+            'post_session_feedback': values.post_session_feedback_name,
+            'post_session_feedback_question': values.post_session_feedback_question
+        }
 
+    def role(self):
+        return self.groups.all()[0]
+
+    def chat_link(self, other):
+        participants = [self.username, other.username]
+        participants.sort()
+        participants = ':'.join(participants)
+        return reverse('ditto:private_chat', args=(participants,))
+    
 # As registration forms as user-definable we need to store extra custom
 # data. I read this:
 # http://martinfowler.com/articles/schemaless/#relational-schemaless

@@ -1,5 +1,5 @@
 # Bleeding edge Django
-django==1.8.4
+django==1.8.5
 
 # Configuration
 git+https://github.com/jezdez/django-configurations#egg=django-configurations

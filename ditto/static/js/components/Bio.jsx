@@ -49,12 +49,15 @@ export default class Bio extends React.Component {
     }
     return (
       <div>
-        <button type="button" className="btn btn-default btn-xs" aria-label="Edit"
-                onClick={this._edit}
-                >
-          <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        <p>
+          {this.state.currentValue ? this.state.currentValue : <em>Add your bio here</em>}
+          {' '}
+          <button type="button" className="btn btn-default btn-xs" aria-label="Edit"
+                  onClick={this._edit}
+                  >
+            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
         </button>
-        <p>{this.state.currentValue}</p>
+        </p>
       </div>
     );
   }

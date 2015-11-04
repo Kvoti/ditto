@@ -2,7 +2,7 @@ var React = require('react');
 var WhosOnlineStore = require('../stores/WhosOnlineStore');
 var UserProfileStore = require('../stores/UserProfileStore');
 var Avatar = require('./Avatar.react');
-var MessageLink = require('../../../js/components/MessageLink.jsx');
+var ProfileLink = require('../../../js/components/ProfileLink.jsx');
 var Role = require('./Role.react');
 
 function getStateFromStores() {
@@ -35,9 +35,9 @@ var WhosOnline = React.createClass({
                 return (
                         <div style={{height: 50, display: 'table'}} key={user}>
                         <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
-                        <MessageLink from={DITTO.user} to={user}>
+                        <ProfileLink username={user}>
                         {avatar ? <Avatar username={user} avatar={avatar} size={30} link={false} /> : null}
-                        </MessageLink>
+                        </ProfileLink>
                         </div>
                         <div style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: 5}}>
                         <b>{user}</b> <i>[<Role user={user} />]</i>
@@ -47,9 +47,9 @@ var WhosOnline = React.createClass({
             }
             return (
                     <div className="whosOnlineItem" key={user}>
-                    <MessageLink from={DITTO.user} to={user}>
+                    <ProfileLink username={user}>
                     {avatar ? <Avatar username={user} avatar={avatar} link={false}/> : null}
-                    </MessageLink>
+                    </ProfileLink>
                     <small>
                     <p className="username">{user}</p>
                     <p><i>[<Role user={user}/>]</i></p>

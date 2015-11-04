@@ -34,18 +34,23 @@ class Config(models.Model):
         'yeti'
     )
     TYPES = (
-        'Business',
-        'Social',
         'Charity',
-        'Volunteer',
+        'Not For Profit',
+        'Social Enterprise',
+        'NGO',
+        'Sole Proprietor',
+        'Partnership',
+        'Cooperative',
+        'Small Business',
+        'Corporation',
+        'Government Agency',
     )
     SIZES = (
         "100",
+        "250",
         "500",
-        "1,000",
-        "5,000",
-        "10,000",
-        "Uber",
+        "1000",
+        "1000+",
     )
     
     theme = models.CharField(
@@ -53,8 +58,9 @@ class Config(models.Model):
         max_length=20, choices=zip(THEMES, THEMES), blank=True)
     type = models.CharField(
         _("type"),
-        help_text=_("What sector are you?"),
-        max_length=20, choices=zip(TYPES, TYPES)
+        help_text=_("What type of organisation are you?"),
+        max_length=20, choices=zip(TYPES, TYPES),
+        default='Charity'
     )
     description = models.TextField(
         _("description"),
@@ -64,7 +70,7 @@ class Config(models.Model):
     size_cap = models.CharField(
         _("size cap"),
         max_length=10,
-        help_text=_("How many people are you likely to have?"),
+        help_text=_("How many people are you likely to have on your Kvoti network?"),
         choices=zip(SIZES, SIZES)
     )
 
@@ -116,3 +122,19 @@ class RegForm(models.Model):
 class GroupDescription(models.Model):
     group = models.OneToOneField('auth.Group', related_name="description")
     text = models.TextField(blank=True)
+
+
+class Values(models.Model):
+    """Ad-hoc values that can be customised."""
+    role = models.OneToOneField('auth.Group', related_name="values")
+    case_notes_name = models.CharField(
+        max_length=200,
+        default="case notes"
+    )
+    post_session_feedback_name = models.CharField(
+        max_length=200,
+        default="post-session feedback"
+    )
+    post_session_feedback_question = models.TextField(
+        default="How useful did you find the support given to you today?"
+    )

@@ -10,8 +10,6 @@ from django.contrib.sites.models import Site
 from django.views.decorators.http import require_POST
 
 import core
-from multitenancy.models import Tenant
-from multitenancy import tenant
 from users.models import User
 
 from . import forms

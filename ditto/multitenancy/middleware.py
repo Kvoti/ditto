@@ -1,34 +1,36 @@
-import logging
+from django.conf import settings
+from django.conf.urls import patterns, include, url
+from django.conf.urls.static import static
+from django.views.generic import RedirectView
 
-from django.http import Http404
-from django.contrib.sites.models import Site
-from . import tenant
 
+class FakeTenant(object):
+    is_main =  lambda self: False
+    is_configured = lambda self: True
+    id = 'di'
+
+    def chat_host(self):
+        if settings.DEBUG:
+            return 'network1.localhost'
+        return 'network1.ditto.technology'
+        
 
 # NOTE: this MUST come first in the middleware order
 class CurrentTenantMiddleware(object):
     def process_request(self, request):
-        try:
-            tenant._set_for_request(request)
-        except ValueError as e:
-            raise Http404(e)
-        request.urlconf = tenant._get_urls()
-        request.tenant = tenant
-        # TODO wonder what else is screwed up by changing _meta.db_table on the fly!!??
-        Site.objects.clear_cache()
+        request.tenant = FakeTenant()
+        request.urlconf = _get_urls('di')
+
         
-    def process_response(self, request, response):
-        logging.debug('unsetting tenant in response')
-        self._unset()
-        return response
-
-    # Take this out for now as it causes an error when trying to render a 404
-    # def process_exception(self, request, exception):
-    #     logging.debug('unsetting tenant in exception response')
-    #     self._unset()
-
-    def _unset(self):
-        try:
-            tenant._unset()
-        except AttributeError:
-            pass
+def _get_urls(tenant_slug):
+    # Note, need 'tuple' here otherwise url stuff blows up
+    return tuple(
+        patterns(
+            '',
+            (r'^$', RedirectView.as_view(
+                pattern_name='ditto:home',
+                permanent=True,
+            )),
+            url(r'^%s/' % tenant_slug, include('network_urls')),
+            url(r'^main/', include('multitenancy.urls', namespace="ditto")),
+        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))

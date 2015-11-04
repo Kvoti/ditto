@@ -2,7 +2,7 @@
 // TODO probably want to use a nicer widget than datetime-local. Also, not sure how widely it's supported
 
 var React = require('react/addons');
-var _ = require('lodash');
+import padLeft from 'lodash/string/padLeft';
 
 var timezoneOffsetString = getTimezoneOffsetString();
 
@@ -46,10 +46,10 @@ var DateTime = React.createClass({
 function localeStringFromDate (date) {
     console.log('converting', date);
     var year = date.getFullYear();
-    var month = _.padLeft(date.getMonth() + 1, 2, 0);
-    var day = _.padLeft(date.getDate(), 2, 0);
-    var hour = _.padLeft(date.getHours(), 2, 0);
-    var minute = _.padLeft(date.getMinutes(), 2, 0);
+    var month = padLeft(date.getMonth() + 1, 2, 0);
+    var day = padLeft(date.getDate(), 2, 0);
+    var hour = padLeft(date.getHours(), 2, 0);
+    var minute = padLeft(date.getMinutes(), 2, 0);
     var localeString = `${year}-${month}-${day}T${hour}:${minute}`;
     console.log('locale string', localeString);
     return localeString;
@@ -71,8 +71,8 @@ function getTimezoneOffsetString () {
     var timezoneOffset = x.getTimezoneOffset();
     var sign = timezoneOffset >= 0 ? '-' : '+';
     timezoneOffset = Math.abs(timezoneOffset);
-    var timezoneOffsetHours = _.padLeft(Math.floor(timezoneOffset / 60), 2, 0);
-    var timezoneOffsetMinutes = _.padLeft(timezoneOffset % 60, 2, 0);
+    var timezoneOffsetHours = padLeft(Math.floor(timezoneOffset / 60), 2, 0);
+    var timezoneOffsetMinutes = padLeft(timezoneOffset % 60, 2, 0);
     return `${sign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
 }
 

@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-
-{% block content %}
-    <h2>Roles</h2>
-    {% for role in roles %}
-	<h3 id="{{ role.name }}">{{ role.name }}</h3>
-	{{ role.description }}
-    {% endfor %}
-{% endblock %}

@@ -31,7 +31,7 @@ var RoomSection = React.createClass({
         var roomListItems = this.state.rooms.map(room => {
 	    var roomID = room.split('@')[0];
 	    return (
-		<Link key={roomID} className="list-group-item" to={urls.chatroom(roomID)}>{room}</Link>
+		<Link key={roomID} className="list-group-item" to={urls.chatroom(roomID)}>{Strophe.getNodeFromJid(room)}</Link>
 	    );
         });
         return (

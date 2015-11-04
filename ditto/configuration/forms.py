@@ -36,7 +36,8 @@ class BasicInfoForm(forms.ModelForm):
                 help_text=_("Type a name for network")
             ))] + self.fields.items()
         )
-
+        self.fields["theme"].choices = [("", "Kvoti"),] + list(self.fields["theme"].choices)[1:]
+        
     def save(self):
         super(BasicInfoForm, self).save()
         site = Site.objects.all()[0]

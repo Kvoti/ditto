@@ -26,6 +26,10 @@ var UserProfileStore = assign({}, EventEmitter.prototype, {
         return _userProfiles;
     },
 
+  getForUser: function(user) {
+    return _userProfiles[user];
+  }
+
 });
 UserProfileStore.setMaxListeners(0);  // unlimited
 
@@ -34,7 +38,7 @@ UserProfileStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     switch(action.type) {
 
     case ActionTypes.RECEIVE_USER_PROFILE:
-        _userProfiles[action.userProfile.user] = action.userProfile;
+        _userProfiles[action.userProfile.username] = action.userProfile;
         UserProfileStore.emitChange();
         break;
 
@@ -43,6 +47,12 @@ UserProfileStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     // the user sees their own avatar change immediately
     case ActionTypes.CHANGE_AVATAR:
         _userProfiles[action.user].avatar = action.avatarName;
+        UserProfileStore.emitChange();
+      break;
+
+    // Same with role changes, will eventually need to be broadcast
+    case 'UPDATE_USER_PROFILE':
+        _userProfiles[action.user].role = action.userProfile.role;
         UserProfileStore.emitChange();
         break;
         

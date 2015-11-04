@@ -54,13 +54,25 @@ module.exports = {
         return this.tickets() + ticketID + '/';
     },
     
-    users () {
-        return _fullUrl('dashboard/users/');
+  users () {
+    // TODO remove need for this horrible hack so we can use the UserTable on two
+    // different pages
+    let url;
+    if (window.location.href.indexOf('dashboard') !== -1 ) {
+      url = 'dashboard/users/';
+    } else {
+      url = 'people/';
+    }
+    return _fullUrl(url);
     },
     
     user (userID) {
         return this.users() + userID + '/';
     },
+
+  profile(username) {
+    return _fullUrl('users/') + username + '/';
+  },
     
     api: {
         roles () {
@@ -101,8 +113,11 @@ module.exports = {
         
         user (userID) {
             return this.users() + userID + '/';
-        }
-        
+        },
+
+      values(role) {
+        return _fullUrl(`api/values/${role}/`);
+        },
     }
 
 }

@@ -6,6 +6,7 @@ var UnreadThreadStore = require('../stores/UnreadThreadStore');
 var FluidHeightMixin = require('../../../js/mixins/FluidHeightMixin.jsx');
 var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
 var urls = require('../utils/urlUtils');
+import classNames from 'classnames';
 
 import { Link } from 'react-router';
 
@@ -53,8 +54,12 @@ var ThreadSection = React.createClass({
             this.state.unreadCount === 0 ?
             null :
             <span>Unread threads: {this.state.unreadCount}</span>;
+      let threadClassName = classNames({
+        'thread-section': true,
+        [`thread-section-${this.state.threadType}`]: true
+      });
         return (
-                <div className="thread-section">
+            <div className={threadClassName}>
                 <ul className="nav nav-tabs">
                 <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}>
                 {this.state.currentChatID ?

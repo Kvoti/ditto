@@ -27,8 +27,6 @@ import chat.models
 import configuration.models
 import core
 import dittoforms.models
-import multitenancy.models
-import multitenancy.tenant
 
 from users.models import User
 
@@ -47,8 +45,8 @@ def run():
     setup_interactions()
     setup_admin_users()
     setup_members()
-    setup_tenants()
     setup_reg_form()
+    setup_configurable_values()
     setup_chat_conf()
     setup_case_notes()
     setup_sessions()
@@ -113,6 +111,8 @@ def setup_permissions():
     perm.save()
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='invite_user')
+    Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
+    perm = Permission.objects.get(codename='assign_role')
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
     perm = Permission.objects.get(codename='configure_chatroom')
     Group.objects.get(name=core.ADMIN_ROLE).permissions.add(perm)
@@ -181,18 +181,6 @@ def _create_user(username, group_name, gender=None):
     user.groups.add(Group.objects.get(name=group_name))
 
 
-def setup_tenants():
-    user = User.objects.get(username='mark')
-    multitenancy.models.Tenant.objects.create(
-        user=user,
-        network_name='Kvoti',
-        slug='di',
-        is_configured=True,
-    )
-    if not multitenancy.tenant.is_main():
-        setup_site()
-
-
 def setup_reg_form():
     for role in Group.objects.all():
         form = dittoforms.models.FormSpec.objects.create(
@@ -205,6 +193,11 @@ def setup_reg_form():
         )
 
 
+def setup_configurable_values():
+    for role in Group.objects.all():
+        configuration.models.Values.objects.create(role=role)
+
+    
 def setup_chat_conf():
     room = chat.models.Room.objects.create(
         slug='main',

@@ -46,7 +46,7 @@ var RegForm = React.createClass({
 		<p>
 		<em>Fields in grey are mandatory</em>
 		</p>
-		<form className="form-horizontal">
+		<div className="form-horizontal">
 		<div className="form-group">
 		    <div className="col-md-8">
 			<input className="form-control" placeholder="Username" style={{backgroundColor: '#f5f5f5'}} />
@@ -68,7 +68,7 @@ var RegForm = React.createClass({
 		{this._renderFields()}
 		{this._renderAddableFields()}
 		<CustomField role={this.state.role} />
-		</form>
+		</div>
 	    </Panel>
 	);
     },

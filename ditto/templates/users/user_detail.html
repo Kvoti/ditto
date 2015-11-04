@@ -11,31 +11,19 @@
 		    <div data-avatar id="profile-avatar" data-name="{{ object.username }}"></div>
 		</div>
 	    </div>
+            {% if perms.users.assign_role %}
+              <div id="change-role"></div>
+            {% endif %}
             {% if is_me %}
                 <div id="change-avatar"></div>
             {% else %}
 		<div class="panel panel-default">
 		    <div class="panel-body">
 			<ul class="comms-list nav nav-pills nav-justified">
-			    {% include "users/_comm_button.html" with label="CHAT" id="chat" %}
+			    {% include "users/_comm_button.html" with label="CHAT" id="chat" link=chat_link %}
 			    {% include "users/_comm_button.html" with label="VIDEO CHAT" id="video" %}
 			    {% include "users/_comm_button.html" with label="AUDIO CHAT" id="audio" %}
 			</ul>
-		    </div>
-		</div>
-		<div class="panel panel-success">
-		    <div class="panel-heading">
-			<h4 class="panel-title">
-			    ACTIONS
-			</h4>
-		    </div>
-		    <div class="panel-body">
-			<p>Report {{ object.username }}</p>
-			<p>Block {{ object.username }}</p>
-			<p>Flag {{ object.username }}</p>
-			<p>Email {{ object.username }}</p>
-			<p>Invite {{ object.username }} to</p>
-			<p>Tag {{ object.username }}</p>
 		    </div>
 		</div>
 	    {% endif %}
@@ -43,7 +31,7 @@
         <div class="col-md-6">
 	    <div class="well">
 		{% with role=object.groups.all.0.name %}
-                    <h2>{{ object.get_full_name|default:object.username }} | <span class="profile-role"><a href="{% url "ditto:about" %}#{{ role }}">{{ role }}</a></span> <span id="my-status"></span></h2>
+                    <h2>{{ object.get_full_name|default:object.username }} | <span id="profile-role"></span> <span id="my-status"></span></h2>
 		{% endwith %}
                 <p><em><strong>Joined: </strong> {{ object.date_joined }}</em></p>
 		<div{% if is_me %} id="user-bio"{% endif %}>{{ object.bio }}</div>
@@ -51,17 +39,10 @@
             {% with accordion_id='user_content' %}
                 <div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
                     {% if show_casenotes %}{% include "users/_casenotes.html" with index=0 %}{% endif %}
-                    {% include "users/_evaluation.html" with index=1 %}
-                    {% include "users/_reports.html" with index=2 %}
                 </div>
             {% endwith %}
         </div>
 	<div class="col-md-3 main-sidebar">
-	    {% if is_me %}
-	    <div class="clearfix">
-		<a href="#" class="profile-tickets text-hide">Tickets</a>
-	    </div>
-	    {% endif %}
             {% with accordion_id='user_meta' footer=1 %}
 		<div class="panel-group" id=accordion_id role="tablist" aria-multiselectable="true">
 		    {% include "ditto/module/chatroom.html" with index=0 %}

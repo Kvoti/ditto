@@ -18,7 +18,7 @@
 	{% block css %}
 	    {% theme as theme %}
 	    <!-- Latest compiled and minified CSS -->
-	    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/{{ theme|yesno:"bootswatch,bootstrap" }}/3.3.1/{{ theme|default:"css" }}/bootstrap.min.css">
+	    {% if theme %}<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.3.2/{{ theme }}/bootstrap.min.css">{% endif %}
 	    
 	    <!-- Your stuff: Third-party css libraries go here -->
 	    {% if not theme %}<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">{% endif %}
@@ -45,7 +45,7 @@
 	{% endif %}
     </head>
 
-    <body class="{{ theme|default:"kvoti" }}">
+    <body class="{% theme as theme %}{{ theme|default:"kvoti" }}">
 	<div id="emptychat">{# empty container so chat still renders #}</div>
 	<nav class="header navbar navbar-default navbar-fixed-top navbar-inverse">
 	    <div class="container-fluid">
@@ -95,14 +95,15 @@
 	</script>
 
 	{% block javascript %}
-	    <script>
-		var DITTO = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}'};
+	  <script>
+          // TODO this should be passed as json and parsed
+		var DITTO = {tenant: '{{ request.tenant.id }}', user: '{{ request.user}}', postSessionQuestion: '{{ request.user.custom_values.post_session_feedback_question }}', other: '{{ object.username }}'};
 	    </script>
 	    <!-- Latest JQuery -->
 	    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 	    <!-- Latest compiled and minified JavaScript -->
-	    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
 	    <!-- Your stuff: Third-party javascript libraries go here -->
 	    
@@ -115,15 +116,7 @@
 		</script>
 
 		{# Note we can't 'require' strophe and its plugins as the npm version is not compatible with mongooseim #}
-		<script src="{% static 'vendor/strophe.js' %}"></script>
-		<script src="{% static 'vendor/strophe.rsm.js' %}"></script>
-		<script src="{% static 'vendor/strophe.mam.v0.2.js' %}"></script>
-		<script src="{% static 'vendor/strophe.roster.js' %}"></script>
-		<script src="{% static 'vendor/strophe.vcard.js' %}"></script>
-		<script src="{% static 'vendor/strophe.chatstates.js' %}"></script>
-		<script src="{% static 'vendor/strophe.muc.js' %}"></script>
-		{# Note this Notification shim is not available via npm either #}
-		<script src="{% static 'vendor/notification.js' %}"></script>
+		<script src="{% static 'vendor/bundle.js' %}"></script>
 		{% chat_config extra=chat_conf %}
                 <script>
                 function getNotificationPermission() {

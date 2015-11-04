@@ -8,11 +8,14 @@
         <h1>Welcome {{ request.user.username }}, to your new Kvoti network!</h1>
     </div>
     <div class="col-md-4 main-sidebar">
+      <form>
         <div class="form-group has-feedback">
-            <label class="control-label sr-only" for="search">Search</label>
-            <input type="search" class="form-control" id="search" placeholder="SEARCH">
+          <label class="control-label sr-only" for="search">Search</label>
+          {# type="search" messes up the styling here #}
+            <input type="text" class="form-control" id="search" placeholder="SEARCH">
             <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
         </div>
+      </form>
     </div>
 </div>    
 

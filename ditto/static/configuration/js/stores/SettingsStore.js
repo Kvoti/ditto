@@ -9,54 +9,6 @@ var ActionTypes = SettingsConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
 var _settings = {};
-RoleStore.getAll().map(role => {
-    _settings[role] = {
-        caseNotes: {
-            title: 'CASE NOTES'
-        },
-        postSessionFeedback: {
-            title: 'POST-SESSION FEEDBACK',
-            question: 'How useful did you find the support given to you today?',
-        },
-        impactFootprint: [
-            {
-                name: 'Conversations',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Sessions',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Feedback',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Blogs',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Comments',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Triage',
-                on: true,
-                showContent: true,
-            },
-            {
-                name: 'Case note',
-                on: true,
-                showContent: true,
-            },
-        ],
-    }
-});
 
 function getImpactFootprintItem (role, name) {
     var settings = _settings[role].impactFootprint;
@@ -93,13 +45,28 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
     },
 
     getCaseNotesSettingsForCurrentRole: function () {
-        var role = RoleStore.getCurrent();
-        return _settings[role].caseNotes;
+      var role = RoleStore.getCurrent();
+      if (!_settings[role]) {
+        _settings[role] = {};
+      }
+      return _settings[role].values ? {title: _settings[role].values.case_notes_name} : 'Loading ...'
     },
 
     getPostSessionFeedbackSettingsForCurrentRole: function () {
         var role = RoleStore.getCurrent();
-        return _settings[role].postSessionFeedback;
+      if (!_settings[role]) {
+        _settings[role] = {};
+      }
+      if (!_settings[role].values) {
+        return {
+            title: 'Loading ...',
+            question: 'Loading ...'
+        };
+      }
+      return {
+        title: _settings[role].values.post_session_feedback_name,
+        question: _settings[role].values.post_session_feedback_question
+      };
     },
     
     getImpactFootprintSettingsForCurrentRole: function () {
@@ -108,8 +75,8 @@ var SettingsStore = assign({}, EventEmitter.prototype, {
     },
     
     getRegFormSettingsForCurrentRole: function () {
-        var role = RoleStore.getCurrent();
-        return _settings[role].regForm;
+      var role = RoleStore.getCurrent();
+      return _settings[role] ? _settings[role].regForm : null;
     },
     
 });
@@ -119,17 +86,17 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
     switch(action.type) {
 
     case ActionTypes.UPDATE_CASE_NOTES_TITLE:
-        _settings[action.role].caseNotes.title = action.text;
+        _settings[action.role].values.case_notes_name = action.text;
         SettingsStore.emitChange();
         break;
         
     case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_TITLE:
-        _settings[action.role].postSessionFeedback.title = action.text;
+        _settings[action.role].values.post_session_feedback_name = action.text;
         SettingsStore.emitChange();
         break;
         
     case ActionTypes.UPDATE_POST_SESSION_FEEDBACK_QUESTION:
-        _settings[action.role].postSessionFeedback.question = action.text;
+        _settings[action.role].values.post_session_feedback_question = action.text;
         SettingsStore.emitChange();
         break;
 
@@ -199,10 +166,21 @@ SettingsStore.dispatchToken = SettingsAppDispatcher.register(function(action) {
         break;
 
     case ActionTypes.RECEIVE_REG_FORM_SETTINGS:
+      if (!_settings[action.role]) {
+        _settings[action.role] = {};
+      }
         _settings[action.role].regForm = action.settings;
         SettingsStore.emitChange();
         break;
-        
+
+    case ActionTypes.RECEIVE_VALUES:
+      if (!_settings[action.role]) {
+        _settings[action.role] = {};
+      }
+        _settings[action.role].values = action.values;
+        SettingsStore.emitChange();
+        break;
+      
     default:
         // do nothing
     }

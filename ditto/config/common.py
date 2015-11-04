@@ -22,9 +22,6 @@ class Common(Configuration):
 
     # APP CONFIGURATION
     DJANGO_APPS = (
-        # Must come first to patch model._meta
-        'multitenancy',
-        
         # Default Django apps:
         'django.contrib.auth',
         'django.contrib.contenttypes',

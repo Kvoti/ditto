@@ -2,6 +2,8 @@ var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 var XMPP = require('./xmpp.js');
 var ChatMessageUtils = require('./ChatMessageUtils');
 var urlUtils = require('./urlUtils');
+import UserProfileStore from '../stores/UserProfileStore';
+import { get } from '../../../js/request';
 
 var _connection, // raw connection
     _connectResolve,     
@@ -37,7 +39,6 @@ function onConnectFactory (resolve) {
             _connection.addHandler(
                 receiveArchivedPrivateMessage, Strophe.NS.MAM, "message", null);        
             getContacts();
-            _connection.vcard.init(_connection);
             loadUserProfile(Strophe.getNodeFromJid(_myJID));
             _connection.chatstates.init(_connection);
             if (chatConf.hasChatroom) {
@@ -84,7 +85,7 @@ var getChatrooms = new Promise((resolve, reject) => {
 // return functions that call `resolve`...
 function receiveChatrooms (resolve) {
     return function (result) {
-        console.log('got chatrooms');
+//        console.log('got chatrooms');
         var roomList = XMPP.parse.roomList(result);
         resolve(roomList);
 	ChatServerActionCreators.receiveChatrooms(roomList);
@@ -96,8 +97,9 @@ getChatrooms.then(roomList => {
 	// TODO something better than these path inspection hacks, pass some explicit option?
 	if (window.location.href.indexOf('chatroom') === -1) {
             // Anywhere outside of /chatrooms/ we just want to join the 'main' site chatroom
-            // TODO should be explicit about main chatroom instead of relying on roomList[0]
-            joinChatroom(roomList[0]);
+          let mainRoom = roomList.find(r => r.startsWith('main'));
+//          console.log('joining', mainRoom);
+          joinChatroom(mainRoom);
 	}
     }
 });
@@ -112,7 +114,7 @@ function joinChatroom (roomJID) {
     ]).then(result => {
         var [connection, roomList] = result;
         if (roomList.indexOf(roomJID) === -1) {
-            console.log('No such room', roomList);
+//            console.log('No such room', roomList);
             return;
         }
         // TODO this isn't quite the right place, should probably do
@@ -134,7 +136,7 @@ function receiveGroupMessage (msg) {
     if (message.from) {
 	// TODO always get an 'empty' message from the room
 	// itself, not sure why
-        ChatServerActionCreators.receivePrivateMessage(message);
+      ChatServerActionCreators.receivePrivateMessage(message, true);
     }
     return true;
 };
@@ -185,19 +187,19 @@ function acceptFriendRequest (from) {
 }
 
 function handleContacts (roster, item) {
+  console.log('roster', roster, item);
     // var friends = [];
     roster.forEach((friend, i) => {
 	var username = Strophe.getNodeFromJid(friend.jid);
-	if (friend.subscription !== 'none') {
-          loadPrivateChatHistory(friend.jid, "");
+      loadPrivateChatHistory(friend.jid, "");
 	    //     friends.push(username);
-	    loadUserProfile(username);
-	}
+      loadUserProfile(username);
     });
     return true;
 }
 
 function loadPrivateChatHistory (contact, before) {
+  console.log('loading history between', contact);
     if (historyLoadedFor.indexOf(contact) === -1 || before) {
         historyLoadedFor.push(contact);
       _connection.mam.query(
@@ -225,26 +227,17 @@ function loadPrivateChatHistory (contact, before) {
 }
 
 function loadUserProfile (user) {
-    var jid = getBareJIDForNode(user);
-    if (userProfileLoadedFor.indexOf(user) === -1) {
-	userProfileLoadedFor.push(user);
-        _connection.vcard.get(
-	  vcard => {
-                var userProfile = XMPP.parse.vCard(vcard);
-                userProfile.user = user;
-                ChatServerActionCreators.receiveUserProfile(userProfile);
-	    },
-	  jid,
-          () => {
-            changeAvatar('sunshine');
-            // Assume vcard.set will work and update the UI
-            ChatServerActionCreators.receiveUserProfile({
-              role: chatConf.role,
-              avatar: 'sunshine'
-            });
-          }
-        );
-    }
+//  console.log('loading profile', user);
+  var jid = getBareJIDForNode(user);
+  if (userProfileLoadedFor.indexOf(user) === -1) {
+    userProfileLoadedFor.push(user);
+    get(
+      // TODO fix hardcoded url
+      `/di/api/users/${user}/`)
+      .done(res => {
+        ChatServerActionCreators.receiveUserProfile(res);
+      });
+  }
 }
 
 function receivePrivateMessage (msg) {
@@ -306,27 +299,6 @@ function getBareJIDForNode (node) {
     return node + '@' + _domain;
 };
 
-function changeAvatar(avatarName) {
-  // TODO no convenience function provided for making vcards?
-  var role = Strophe.xmlElement('ROLE');
-  role.appendChild(Strophe.xmlTextNode(chatConf.role));
-
-  var photo = Strophe.xmlElement('PHOTO');
-  photo.appendChild(Strophe.xmlTextNode(avatarName));  // TODO prob make this full URI of avatar?
-  // TODO looks like strophe.vcard doesn't allow setting multiple elements?
-  // (sort of doesn't matter cos the data you set isn't validated, which is ok
-  // while we assume no other clients will connect)
-  var vcard = Strophe.xmlElement('XXX');
-  vcard.appendChild(role);
-  vcard.appendChild(photo);
-
-  // TODO handle error
-  _connection.vcard.set(
-    function (r) { },  // TODO handle something here?
-    vcard
-  );
-}
-
 module.exports = {
 
     connect: function (server, jid, password, nick, log=false) {
@@ -373,7 +345,7 @@ module.exports = {
 
             payload.c('thread').t(message.threadID);
             
-	    delete sentIsTyping[threadID];
+	    delete sentIsTyping[message.threadID];
 	    _connection.send(payload.tree()); // TODO handle error on message submit
         }
     },
@@ -407,8 +379,6 @@ module.exports = {
 	    getBareJIDForNode(to)
 	);
     },
-
-  changeAvatar: changeAvatar,
 
     joinChatroom: joinChatroom,
     

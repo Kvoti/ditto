@@ -1,5 +1,5 @@
 var React = require('react');
-var MessageLink = require('../../../js/components/MessageLink.jsx');
+var ProfileLink = require('../../../js/components/ProfileLink.jsx');
 var avatarSVGs = $('#avatar_svgs').text();
 
 var Avatar = React.createClass({
@@ -28,9 +28,9 @@ var Avatar = React.createClass({
         // or create a LinkedAvatar component?
         if (this.props.link) {
             avatar = (
-                <MessageLink from={DITTO.user} to={this.props.username}>
+                <ProfileLink username={this.props.username}>
                     {avatar}
-                </MessageLink>
+                </ProfileLink>
             );
         }
 	return avatar;

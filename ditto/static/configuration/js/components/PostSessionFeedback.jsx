@@ -47,17 +47,25 @@ var PostSessionFeedback = React.createClass({
 				value={this.state.settings[fieldName]}
 				/>;
 	    } else {
-		field = this.state.settings[fieldName] + ' [edit ' + fieldName + ']';
-	    }
+              let label = `Edit post session feedback ${fieldName}`;
+		field = (
+                  <span>
+                    {this.state.settings[fieldName]}{' '}
+                    <button type="button" className="btn btn-default btn-sm" aria-label={label} title={label} onClick={this._onDoubleClick.bind(this, fieldName)}>
+                      <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </button>
+                  </span>
+                );
+            }
 	    textFields[fieldName] = field;
 	});
 	return (
 	    <Panel header={header} bsStyle="primary">
 		<div className="panel panel-default">
-		    <div className="panel-heading" onDoubleClick={this._onDoubleClick.bind(this, 'title')}>
+		    <div className="panel-heading">
 			{textFields.title}
 		    </div>
-		    <div className="panel-body" onDoubleClick={this._onDoubleClick.bind(this, 'question')}>
+		    <div className="panel-body">
 			<p>{textFields.question}</p>
 			<p>
 			    <img alt="1" src="/static/images/ratings/1-rainy.png" />

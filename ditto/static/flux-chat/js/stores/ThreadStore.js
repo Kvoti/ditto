@@ -194,7 +194,7 @@ ThreadStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     case ActionTypes.RECEIVE_ROOM_LIST:
         _roomJIDs = action.rooms;
         if (!_currentRoomJID) {
-            _currentRoomJID = _roomJIDs[0];
+          _currentRoomJID = _roomJIDs.find(r => r.startsWith('main'));
             _currentID = Strophe.getNodeFromJid(_currentRoomJID);
             _threads[_currentID] = {
                 id: _currentID,

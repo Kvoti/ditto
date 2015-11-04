@@ -23,7 +23,9 @@ var UserTable = React.createClass({
 
     getInitialState () {
 	return {
-	    dataList: [],
+	  rows: [],
+          filteredRows: [],
+          filteredBy: null
 	}
     },
 
@@ -31,36 +33,58 @@ var UserTable = React.createClass({
 	get(urls.api.users())
 	    .done(res => {
 		if (this.isMounted()) {
-		    this.setState({dataList: res});
+		  this.setState({
+                    rows: res,
+                    filteredRows: [],
+                    filterBy: null
+                  }, () => this._filterRowsBy(this.state.filterBy));
 		}
 	    });
 	// TODO .fail(
     },
 
-    _rowGetter(index) {
-	return this.state.dataList[index];
-    },
+  _filterRowsBy(filterBy) {
 
+    var rows = this.state.rows.slice();
+    var filteredRows = filterBy ? rows.filter(function(row){
+      return row['username'].toLowerCase().indexOf(filterBy.toLowerCase()) >= 0
+    }) : rows;
+
+    this.setState({
+      filteredRows,
+      filterBy,
+    })
+  },
+
+  _rowGetter(rowIndex) {
+    return this.state.filteredRows[rowIndex];
+      },
+
+  _onFilterChange(e) {
+    this._filterRowsBy(e.target.value);
+  },
+  
     _renderUsername (username, key, user, rowIndex) {
 	// TODO need to escape username for use in url?
-	return (
-	    <Link to={urls.user(username)}>{username}</Link>
+      return (
+        <a href={urls.profile(username)}>{username}</a>
 	);
     },
     
     render () {
 	var showingUser;
 	if (this.props.params.username !== undefined) {
-	    showingUser = this.state.dataList.find(
+	    showingUser = this.state.rows.find(
 		t => t.username == this.props.params.username);
 	}
 	return (
 	    <div>
-		{!showingUser ?
+              <input onChange={this._onFilterChange} placeholder='Filter by username' />
+	      {!showingUser ?
 		 <Table
 		 rowHeight={50}
 		 rowGetter={this._rowGetter}
-		 rowsCount={this.state.dataList.length}
+		 rowsCount={this.state.rows.length}
 		 width={750}
 		 maxHeight={600}
 		 headerHeight={50}>

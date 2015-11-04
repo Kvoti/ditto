@@ -1,5 +1,27 @@
 <li role="presentation">
-    <a class="comms comms-{{ id }}" href="#">
-	<span class="text-hide">{{ label }}</span>
+  {% if link %}
+    <a class="comms comms-{{ id }}" href="{{ link|default:"#" }}">
+      <span class="text-hide">{{ label }}</span>
     </a>
+  {% else %}
+    <!-- Button trigger modal -->
+    <a class="comms comms-{{ id }}" data-toggle="modal" data-target="#myModal-{{ id }}">
+      <span class="text-hide">{{ label }}</span>
+    </a>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal-{{ id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-{{ id }}">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel-{{ id }}">Sorry</h4>
+          </div>
+          <div class="modal-body">
+            {{ label }} is not active yet.
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
 </li>

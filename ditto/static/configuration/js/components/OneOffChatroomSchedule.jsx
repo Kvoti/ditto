@@ -3,7 +3,7 @@ var RoleAndUserSelect = require('./RoleAndUserSelect.jsx');
 var utils = require('../utils');
 var RoomStore = require('../stores/RoomStore');
 var SettingsActionCreators = require('../actions/SettingsActionCreators');
-var _ = require('lodash');
+import isEqual from 'lodash/lang/isEqual';
 var assign = require('object-assign');
 var Alert = require('react-bootstrap/lib/Alert');
 var Button = require('react-bootstrap/lib/Button');
@@ -90,7 +90,7 @@ var OneOffChatroomSchedule = React.createClass({
 
     _isChanged () {
 	// TODO urgh, use immutable data here and make this easier!
-	return !_.isEqual(this.state.current, this.state.initial);
+	return !isEqual(this.state.current, this.state.initial);
     },
 
     _isValid () {

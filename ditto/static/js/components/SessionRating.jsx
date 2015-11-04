@@ -21,7 +21,7 @@ var SessionRating = React.createClass({
 	} else {
 	    rating = (
 		<form onSubmit={this._onSubmit}>
-		    <p>Please rate how useful you found this session</p>
+		    <p>{DITTO.postSessionQuestion}</p>
 		    {ChatConstants.sessionRatings.map((o,i) =>
 			<p key={o}>
 			<label><input

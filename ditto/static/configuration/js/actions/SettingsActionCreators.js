@@ -14,6 +14,14 @@ function saveRegSettings () {
     );
 }
 
+function saveValue(forRole, valueName, value) {
+    API.updateValues(
+      forRole,
+      valueName,
+      value
+    );
+}
+
 module.exports = {
 
     clickRole: function(role) {
@@ -31,7 +39,8 @@ module.exports = {
         API.getRegFormSettings(RoleStore.getCurrent());
     },
 
-    updateCaseNotesTitle: function (role, text) {
+  updateCaseNotesTitle: function (role, text) {
+    saveValue(role, 'case_notes_name', text);
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CASE_NOTES_TITLE,
             role: role,
@@ -43,6 +52,7 @@ module.exports = {
     // or whether to have a single updateText action that specifies *which* bit of text to be
     // updated.
     updatePostSessionFeedbackTitle: function (role, text) {
+      saveValue(role, 'post_session_feedback_name', text);
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.UPDATE_POST_SESSION_FEEDBACK_TITLE,
             role: role,
@@ -51,6 +61,7 @@ module.exports = {
     },
     
     updatePostSessionFeedbackQuestion: function (role, text) {
+      saveValue(role, 'post_session_feedback_question', text);
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.UPDATE_POST_SESSION_FEEDBACK_QUESTION,
             role: role,
@@ -152,7 +163,7 @@ module.exports = {
         saveRegSettings();
     },
     
-    receiveRegFormSettings: function (role, settings) {
+  receiveRegFormSettings: function (role, settings) {
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_REG_FORM_SETTINGS,
             role: role,
@@ -267,13 +278,24 @@ module.exports = {
         });
     },
 
-    receiveRoles (roles) {
+  receiveRoles (roles) {
+    // TODO prob better to inline the values into the roles API call, save on http requests
+    roles.forEach(r => API.getValues(r.name));
+    roles.forEach(r => API.getRegFormSettings(r.name));
         SettingsAppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_ROLES,
-            roles: roles,
+          roles: roles.map(r => r.name),
         });
     },
 
+  receiveValues (role, values) {
+        SettingsAppDispatcher.dispatch({
+          type: ActionTypes.RECEIVE_VALUES,
+          role: role,
+          values: values
+        });
+    },
+  
 };
 // TODO fix circ. dependency between api and this
 var API = require('../api/api');

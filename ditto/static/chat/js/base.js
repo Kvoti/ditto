@@ -18,10 +18,15 @@ var TicketTable = require('../../tickets/js/components/TicketTable.jsx');
 var UserTable = require('../../users/js/components/UserTable.jsx');
 var React = require('react');
 window.React = React; // export for http://fb.me/react-devtools
+// TODO remove this hack for people page
+window.AvatarContainer = AvatarContainer;
+//////////////////////////////////////////////////
 
-import FormContainer from 'react-form-builder/src/components/FormContainer';
 import BioContainer from '../../js/components/BioContainer';
 import NewMessageCount from '../../flux-chat/js/components/NewMessageCount';
+import ChangeRole from '../../tidy/js/profile/components/ChangeRoleContainer';
+import { getUserProfile } from '../../tidy/js/profile/utils/WebAPIUtils';
+import Role from '../../flux-chat/js/components/Role.react';
 
 if (chatConf.me) {
     ChatWebAPIUtils.connect(
@@ -100,14 +105,6 @@ if (chatroomSettings) {
     React.render(ChatroomSettings, chatroomSettings);
 }
 
-var formBuilder = document.getElementById('formbuilder');
-if (formBuilder) {
-    React.render(
-            <FormContainer />,
-        formBuilder
-    );
-}
-
 var caseNotes = document.getElementById('casenotes');
 if (caseNotes) {
     React.render(
@@ -160,9 +157,31 @@ if (bio) {
     );
 }
 
-React.render(
-    <NewMessageCount />, document.getElementById('new-message-count')
-);
+let nmc = document.getElementById('new-message-count');
+if (nmc) {
+  React.render(
+      <NewMessageCount />, nmc
+  );
+}
+
+let role = document.getElementById('profile-role');
+if (role) {
+  React.render(
+      <Role user={DITTO.other} />, role
+  );
+}
+
+let changeRole = document.getElementById('change-role');
+if (changeRole) {
+  getUserProfile(DITTO.other);
+  React.render(
+      <ChangeRole
+    currentRole="couns"
+    roles={['admin', 'couns', 'member']}
+    onChange={e => alert(e.target.value)}
+      />, changeRole
+  );
+}
 
 // TODO get this from config (DITTO.client or something)
 function hackGetClient () {
