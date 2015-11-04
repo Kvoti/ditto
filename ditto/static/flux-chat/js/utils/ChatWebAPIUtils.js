@@ -345,7 +345,7 @@ module.exports = {
 
             payload.c('thread').t(message.threadID);
             
-	    delete sentIsTyping[threadID];
+	    delete sentIsTyping[message.threadID];
 	    _connection.send(payload.tree()); // TODO handle error on message submit
         }
     },
