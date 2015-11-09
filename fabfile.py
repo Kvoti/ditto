@@ -22,20 +22,7 @@ def deploy(js=False):
         # TODO if last commit isn't pushed we could --amend and avoid
         # the extra commit
         local('git commit -m "Update production assets"')
-        local('git push')
-    with cd('/srv/venv/ditto'):
-        run('git fetch')
-        changes = run('git log ..origin/master --oneline --no-color --reverse > /tmp/log; cat /tmp/log')
-        run('git merge origin/master')
-        sudo('/srv/venv/bin/pip install -U -r /srv/venv/ditto/requirements/production.txt')
-        with cd('ditto'), shell_env(DJANGO_CONFIGURATION='Production'):
-            sudo(' ../../bin/python manage.py collectstatic --noinput',
-                 user="pydev")
-    run('apachectl graceful')
-    for line in changes.splitlines():
-        print green(line)
-    with settings(warn_only=True):
-        execute(email, changes)
+    local('git push heroku master')
     
 
 def builddb():
