@@ -16,7 +16,7 @@ def chat_config(context, other=None, extra=None):
     ############################################################
     user = context['request'].user
     chat_host = context['request'].tenant.chat_host()
-    server = "localhost" if settings.DEBUG else "chat.kvoti.technology"
+    server = "localhost" if settings.DEBUG else "178.62.105.186"
     if settings.DEBUG:
         password = ""
     else:
