@@ -23,6 +23,7 @@ def deploy(js=False):
         # the extra commit
         local('git commit -m "Update production assets"')
     changes = local('git log heroku/master.. --oneline --no-color --reverse > /tmp/log; cat /tmp/log', capture=True)
+    local('git push origin master')
     local('git push heroku master')
     for line in changes.splitlines():
         print green(line)
