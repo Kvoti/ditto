@@ -116,7 +116,7 @@ var SessionCreator = React.createClass({
 	    threadID = 'session:' + threadID;
 	}
 	this.transitionTo(
-	    urls[this.state.threadType](threadID)
+	    urls[this.state.threadType](encodeURIComponent(threadID))
 	);
         this.setState({
 	    text: '',

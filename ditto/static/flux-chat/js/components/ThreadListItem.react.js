@@ -27,7 +27,7 @@ var ThreadListItem = React.createClass({
       <Link className={cx({
           'list-group-item': true,
           'active': thread.id === this.props.currentThreadID
-      })} to={urls[this.props.threadType](thread.id)}>
+      })} to={urls[this.props.threadType](encodeURIComponent(thread.id))}>
 	    <p>{this.props.thread.name}</p>
             <LeftRightAlign>
             <p><b>{contact}</b> <em>[<Status user={contact} />]</em></p>
