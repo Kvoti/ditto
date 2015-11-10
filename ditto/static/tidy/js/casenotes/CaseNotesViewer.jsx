@@ -23,7 +23,7 @@ export default class CaseNotesViewer extends React.Component {
 
     _renderTitle = (title, key, caseNote, rowIndex) => {
 	return (
-	    <Link to={_absPath(`../${caseNote.client}/${caseNote.id}/`)}>{title}</Link>
+	    <div><Link to={_absPath(`../${caseNote.client}/${caseNote.id}/`)}>{title}</Link></div>
 	);
     }
     
