@@ -78,7 +78,6 @@ def reports(request):
             _sessions(),
             _users(),
             _case_notes(),
-            _private_messages(),
         ]
     })
 
@@ -124,31 +123,6 @@ def _case_notes():
         'heading': 'Case notes',
         'columns': ['Role', ''],
         'data': _rows(case_notes)
-    }
-
-
-def _private_messages():
-    # TODO this will BLOW UP HORRIBLY for a large number of users
-    # Eventually we'll probably need to do offline processing of the django
-    # and chat dbs so we can efficiently query private messages
-    pms = chat.models.PrivateMessage.objects
-    if settings.DEBUG:
-        pms = pms.using('chat')
-    counts = {}
-    for role in Group.objects.all():
-        usernames_in_group = list(User.objects.filter(
-            groups=role).values_list('username', flat=True))
-        if usernames_in_group:
-            counts[role.name] = Sum(
-                Case(When(user__user_name__in=usernames_in_group,
-                          then=1),
-                     output_field=IntegerField())
-            )
-    private_messages = pms.aggregate(**counts)
-    return {
-        'heading': 'Private messages',
-        'columns': ['Role', ''],
-        'data': _rows(private_messages)
     }
 
 
