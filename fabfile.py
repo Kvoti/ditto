@@ -22,7 +22,12 @@ def deploy(js=False):
         # TODO if last commit isn't pushed we could --amend and avoid
         # the extra commit
         local('git commit -m "Update production assets"')
+    changes = local('git log heroku/master.. --oneline --no-color --reverse > /tmp/log; cat /tmp/log', capture=True)
     local('git push heroku master')
+    for line in changes.splitlines():
+        print green(line)
+    with settings(warn_only=True):
+        execute(email, changes)
     
 
 def builddb():
