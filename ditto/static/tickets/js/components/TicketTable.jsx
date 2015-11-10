@@ -117,7 +117,7 @@ var TicketTable = React.createClass({
 		  {this._isResolvable(showingTicket) ?
 		      <button
 		      className="btn btn-success"
-		      onClick={this._resolve.bind(this, showingTicket)}
+		      onClick={this._resolve.bind(this, index)}
 		      >
 		      Resolve
 		      </button>
