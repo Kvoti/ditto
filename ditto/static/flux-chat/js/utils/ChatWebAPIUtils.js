@@ -19,6 +19,8 @@ var userProfileLoadedFor = [];
 
 var sentIsTyping = {};
 
+let MAMQueries = {};
+
 // Strophe.log = function (level, msg) {
 //     console.log(msg);
 // };
@@ -34,7 +36,25 @@ function onConnectFactory (resolve) {
         _connectionStatus = status_code;
         if (status_code == Strophe.Status.CONNECTED) {
             sendInitialPresence();
-	    addPrivateChatHandlers();
+	  addPrivateChatHandlers();
+
+          _connection.addHandler(
+            msg => {
+              console.log('error', msg);
+              let queryID = $(msg).attr('id');
+              if (MAMQueries.hasOwnProperty(queryID)) {
+                setTimeout(
+                  () => loadPrivateChatHistory(...MAMQueries[queryID], true),
+                  // TODO exponential back off here and limit number of retries?
+                  200
+                );
+              }
+              return true;
+            },
+            null,
+            'iq',
+            'error'
+          )
             _connection.mam.init(_connection);
             _connection.addHandler(
                 receiveArchivedPrivateMessage, Strophe.NS.MAM, "message", null);        
@@ -187,7 +207,7 @@ function acceptFriendRequest (from) {
 }
 
 function handleContacts (roster, item) {
-  console.log('roster', roster, item);
+//  console.log('roster', roster, item);
     // var friends = [];
     roster.forEach((friend, i) => {
 	var username = Strophe.getNodeFromJid(friend.jid);
@@ -198,11 +218,11 @@ function handleContacts (roster, item) {
     return true;
 }
 
-function loadPrivateChatHistory (contact, before) {
-  console.log('loading history between', contact);
-    if (historyLoadedFor.indexOf(contact) === -1 || before) {
-        historyLoadedFor.push(contact);
-      _connection.mam.query(
+function loadPrivateChatHistory (contact, before, force) {
+    if (historyLoadedFor.indexOf(contact) === -1 || before || force) {
+      historyLoadedFor.push(contact);
+      console.log('loading history between', contact, before);
+      let queryID = _connection.mam.query(
             Strophe.getBareJidFromJid(_myJID),
             {
                 'with': contact,
@@ -223,6 +243,9 @@ function loadPrivateChatHistory (contact, before) {
               }
             }
       );
+      // Save this query so we can re-issue if if fails
+      // TODO is there (a slight chance of) a race condition here?
+      MAMQueries[queryID] = [contact, before];
     }
 }
 
