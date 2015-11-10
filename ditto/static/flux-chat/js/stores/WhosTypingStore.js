@@ -32,11 +32,8 @@ var WhosTypingStore = assign({}, EventEmitter.prototype, {
 
     getForCurrentThread: function(user) {
       var threadID = ThreadStore.getCurrentID();
-      // chatstates doesn't know about threads so we don't know when someone
-      // is typing in a particular thread. (prob easy to modify chatstates js to pass
-      // <thread> in the message?)
       if (threadID) {
-        let key = threadID.split(':').slice(0, 2).join(':');
+        let key = getThreadKey(threadID);
         return _whosTyping[key];
       }
       return [];
@@ -45,16 +42,17 @@ var WhosTypingStore = assign({}, EventEmitter.prototype, {
 });
 
 WhosTypingStore.dispatchToken = ChatAppDispatcher.register(function(action) {
-
+  let key;
     switch(action.type) {
 
         // TODO need to make this work with threading
 
     case ActionTypes.RECEIVE_START_TYPING:
-        var whosTyping = _whosTyping[action.threadID];
+      key = getThreadKey(action.threadID);
+        var whosTyping = _whosTyping[key];
         if (!whosTyping) {
             whosTyping = [];
-            _whosTyping[action.threadID] = whosTyping;
+            _whosTyping[key] = whosTyping;
         }
       whosTyping.push(action.user);
       console.log('typing', _whosTyping);
@@ -62,7 +60,8 @@ WhosTypingStore.dispatchToken = ChatAppDispatcher.register(function(action) {
         break;
 
     case ActionTypes.RECEIVE_STOP_TYPING:
-        _removeAuthor(action.threadID, action.user);
+      key = getThreadKey(action.threadID);
+        _removeAuthor(key, action.user);
       console.log('typing', _whosTyping);
         WhosTypingStore.emitChange();
         break;
@@ -72,5 +71,13 @@ WhosTypingStore.dispatchToken = ChatAppDispatcher.register(function(action) {
     }
 
 });
+
+
+function getThreadKey(threadID) {
+  // chatstates doesn't know about threads so we don't know when someone
+  // is typing in a particular thread. (prob easy to modify chatstates js to pass
+  // <thread> in the message?)
+  return threadID.split(':').slice(0, 2).join(':');
+}
 
 module.exports = WhosTypingStore;
