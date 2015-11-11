@@ -819,3 +819,7 @@ li.sortable-dragging .well
   background-color: #3b0073;
   border-color: #3b0073;
 }
+
+.list-group-item.active p {
+    color: #fff;
+}

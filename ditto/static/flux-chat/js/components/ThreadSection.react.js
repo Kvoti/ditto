@@ -12,7 +12,7 @@ import { Link } from 'react-router';
 
 function getStateFromStores() {
     return {
-        threads: ThreadStore.getAllChrono(),
+        threads: ThreadStore.getAllGrouped(),
         currentThreadID: ThreadStore.getCurrentID(),
         currentChatID: ThreadStore.getCurrentChatID(),
         currentSessionID: ThreadStore.getCurrentSessionID(),
@@ -43,11 +43,11 @@ var ThreadSection = React.createClass({
         var threadListItems = this.state.threads.map(function(thread) {
             return (
                     <ThreadListItem
-                key={thread.id}
+                key={thread.contact}
                 thread={thread}
                 currentThreadID={this.state.currentThreadID}
 		threadType={this.state.threadType}
-                    />
+                />
             );
         }, this);
         var unread =
@@ -59,27 +59,35 @@ var ThreadSection = React.createClass({
         [`thread-section-${this.state.threadType}`]: true
       });
         return (
-            <div className={threadClassName}>
-                <ul className="nav nav-tabs">
-                <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}>
-                {this.state.currentChatID ?
-                 <Link to={urls.message(this.state.currentChatID)}>My chats</Link> :
-                 <Link to={urls.messages()}>My chats</Link>}
-                 
-                </li>
-                <li role="presentation" className={this.state.threadType === ThreadStore.session ? 'active' : ''}>
-                {this.state.currentSessionID ?
-                 <Link to={urls.session(this.state.currentSessionID)}>My sessions</Link> :
-                 <Link to={urls.sessions()}>My sessions</Link>}
-                </li>
-                 </ul>
-                <div className="thread-count">
-                {unread}
-            </div>
-                <div className="list-group" style={style}>
-                {threadListItems}
-            </div>
-		{this.state.threadType === ThreadStore.session && this.state.currentSessionID ? <Link className="btn btn-primary" to={urls.sessions()}>New session</Link> : null }
+          <div className={threadClassName}>
+          <ul className="nav nav-tabs">
+          <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}>
+          {this.state.currentChatID ?
+           <Link to={urls.message(this.state.currentChatID)}>My chats</Link> :
+                    <Link to={urls.messages()}>My chats</Link>}
+          
+          </li>
+          <li role="presentation" className={this.state.threadType === ThreadStore.session ? 'active' : ''}>
+          {this.state.currentSessionID ?
+           <Link to={urls.session(this.state.currentSessionID)}>My sessions</Link> :
+                    <Link to={urls.sessions()}>My sessions</Link>}
+          </li>
+          </ul>
+          <div className="thread-count">
+          {unread}
+          </div>
+
+
+          <div
+className="panel-group"
+id="accordion"
+role="tablist"
+aria-multiselectable="true"
+style={style}
+>
+          {threadListItems}
+          </div>
+	  {this.state.threadType === ThreadStore.session && this.state.currentSessionID ? <Link className="btn btn-primary" to={urls.sessions()}>New session</Link> : null }
 	    {this.state.threadType !== ThreadStore.session && this.state.currentChatID ? <Link className="btn btn-primary" to={urls.messages()}>New chat</Link> : null }
                 </div>
         );

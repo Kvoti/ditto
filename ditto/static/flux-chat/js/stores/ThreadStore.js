@@ -128,6 +128,37 @@ var ThreadStore = assign({}, EventEmitter.prototype, {
         return orderedThreads;
     },
 
+  getAllGrouped: function() {
+      let threadsByContact = {};
+    for (let id in this.getAll()) {
+      let thread = _threads[id];
+      if (thread.lastMessage) {
+        let contact = ChatMessageUtils.getMessageOther(id);
+          let group = threadsByContact[contact];
+          if (!group) {
+            threadsByContact[contact] = [];
+          }
+          threadsByContact[contact].push(thread);
+      }
+    }
+    let groupedThreads = [];
+    for (let contact in threadsByContact) {
+      groupedThreads.push({
+        contact,
+        threads: threadsByContact[contact]
+      });
+    }
+    groupedThreads.sort(function(a, b) {
+      if (a.contact < b.contact) {
+        return 1;
+      } else if (a.contact > b.contact) {
+        return -1;
+      }
+      return 0;
+    });
+    return groupedThreads;
+  },
+  
     getCurrentID: function() {
         return _currentID;
     },
