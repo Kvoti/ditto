@@ -46,7 +46,7 @@ var TicketTable = React.createClass({
 
     _renderTitle (title, key, ticket, rowIndex) {
 	return (
-	    <Link to={urls.ticket(ticket.id)}>{title}</Link>
+	    <div><Link to={urls.ticket(ticket.id)}>{title}</Link></div>
 	);
     },
     
