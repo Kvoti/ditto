@@ -63,13 +63,13 @@ var ThreadSection = React.createClass({
           <ul className="nav nav-tabs">
           <li role="presentation" className={this.state.threadType === ThreadStore.message ? 'active' : ''}>
           {this.state.currentChatID ?
-           <Link to={urls.message(this.state.currentChatID)}>My chats</Link> :
+           <Link to={urls.message(encodeURIComponent(this.state.currentChatID))}>My chats</Link> :
                     <Link to={urls.messages()}>My chats</Link>}
           
           </li>
           <li role="presentation" className={this.state.threadType === ThreadStore.session ? 'active' : ''}>
           {this.state.currentSessionID ?
-           <Link to={urls.session(this.state.currentSessionID)}>My sessions</Link> :
+           <Link to={urls.session(encodeURIComponent(this.state.currentSessionID))}>My sessions</Link> :
                     <Link to={urls.sessions()}>My sessions</Link>}
           </li>
           </ul>
