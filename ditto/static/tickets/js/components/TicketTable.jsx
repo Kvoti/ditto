@@ -113,13 +113,13 @@ var TicketTable = React.createClass({
 		 : null}
 		 {showingTicket ?
 		  <div>
-		  <TicketViewer ticket={showingTicket} />
 		  <Link
 		  className="btn btn-default"
 		  to={urls.tickets()}
 		  >
-		  Close
+		  Back
 		  </Link>
+		  <TicketViewer ticket={showingTicket} />
 		  {this._isResolvable(showingTicket) ?
 		      <button
 		      className="btn btn-success"
