@@ -53,6 +53,9 @@ class Ticket(models.Model):
     case_note = models.OneToOneField('casenotes.CaseNote', related_name="tickets")
 
     objects = TicketManager.from_queryset(TicketQuerySet)()
+
+    class Meta:
+        ordering = ('-created_at',)
     
     def claim(self, assign_to):
         if self.assigned_to:
