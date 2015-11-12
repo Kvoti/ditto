@@ -33,10 +33,10 @@ var ShowStatus = React.createClass({
 	} else {
 	    style.backgroundColor = 'red';
 	}
-	statusText = statusText || ChatConstants.chatStatus[code];
+	statusText = statusText || ChatConstants.chatStatus[this.props.code];
 	return (
 	    <span>
-		<i style={style}></i>
+		<i key={this.props.code} style={style}></i>
 		<span className="sr-only">{statusText}</span>
 		{this.props.message ? <em>{this.props.message}</em> : null}
 	    </span>
