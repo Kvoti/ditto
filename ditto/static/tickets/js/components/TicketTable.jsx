@@ -161,9 +161,9 @@ var TicketTable = React.createClass({
     },
     
     _resolve (index) {
-	var ticket = this.state.dataList[index];
-	var change = {};
-	change[index] = {is_resolved: {$set: true}};
+      var ticket = this.state.dataList[index];
+      // Remove resolved ticket from the list
+      var change = {$splice: [[index, 1]]};
 	// as usual optimistically update the ui then fire off the ajax request
 	this.setState({dataList: update(this.state.dataList, change)},
 	    () => post(ticket.resolve_url)

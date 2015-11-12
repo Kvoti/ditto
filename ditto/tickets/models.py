@@ -18,9 +18,9 @@ class TicketQuerySet(models.QuerySet):
         if user.has_perm('casenotes.manage_casenote'):
             # No filtering necessary as user has perm to manage all
             # case note tickets
-            return self
+            return self.unresolved()
         else:
-            return self._filter_shared_case_notes(user)
+            return self._filter_shared_case_notes(user).unresolved()
 
     def claimable(self, user):
         return self.manageable(user).unclaimed()
