@@ -12,7 +12,7 @@ export default class TicketViewer extends React.Component {
 	    <div>
 		<h3>{ticket.case_note.title}</h3>
 		{ticket.assigned_to ? <p><strong>Assigned to</strong> {ticket.assigned_to}</p> : null}
-		{ticket.assigned_to ? <p><strong>Resolved?</strong> {String(ticket.is_resolved)}</p> : null}
+		{ticket.assigned_to ? <p><strong>Resolved?</strong> {ticket.is_resolved ? 'YES' : 'NO'}</p> : null}
 		<p>{ticket.case_note.text}</p>
 	    </div>
 	);

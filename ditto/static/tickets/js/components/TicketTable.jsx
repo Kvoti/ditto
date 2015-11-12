@@ -49,6 +49,11 @@ var TicketTable = React.createClass({
 	    <div><Link to={urls.ticket(ticket.id)}>{title}</Link></div>
 	);
     },
+
+  _renderResolved (isResolved) {
+    let yesno = isResolved ? 'YES' : 'NO';
+    return <div>{yesno}</div>;
+  },
     
     render () {
       var showingTicket;
@@ -102,6 +107,7 @@ var TicketTable = React.createClass({
 		 label="RESOLVED?"
 		 width={150}
 		 dataKey="is_resolved"
+                 cellRenderer={this._renderResolved}
 		 />
 		 </Table>
 		 : null}
